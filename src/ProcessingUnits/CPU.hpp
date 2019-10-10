@@ -13,6 +13,8 @@
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
 
+#define ROM_BANK_SIZE 0x4000
+
 namespace GBEmulator
 {
 	class CPU {
@@ -50,6 +52,7 @@ namespace GBEmulator
 			unsigned short sp;
 		};
 
+		bool _halted;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;
@@ -57,6 +60,10 @@ namespace GBEmulator
 
 	public:
 		CPU(const std::string &romPath);
+
+		unsigned char read(unsigned short address);
+		void write(unsigned short address, unsigned char value);
+		bool executeNextInstruction();
 	};
 }
 
