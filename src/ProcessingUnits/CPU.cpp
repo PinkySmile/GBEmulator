@@ -30,6 +30,16 @@ namespace GBEmulator
 		0x20, 0xf5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xfb, 0x86, 0x20, 0x02, 0x3e, 0x01, 0xe0
 	};
 
+	const std::vector<std::function<void(CPU &, CPU::Registers &)>> CPU::_instructions{
+		//! 00; Instruction NOP: do nothing
+		[](CPU &, Registers &) {},
+		//! 01; Instruction LD bc, d16: read 16 bytes on pc and put in bc register
+		[](CPU &cpu, Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); },
+		//! 02; Instruction LD (bc), a: Stores a into the memory location pointed to by bc
+		[](CPU &cpu, Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); }
+
+	};
+
 	CPU::CPU(const std::string &romPath) :
 		_halted(false),
 		_rom(romPath, ROM_BANK_SIZE),
@@ -78,6 +88,19 @@ namespace GBEmulator
 		}
 	}
 
+	unsigned char CPU::fetchArgument()
+	{
+		unsigned char r = this->read(this->_registers.pc);
+		this->_registers.pc++;
+		return r;
+	}
+
+	unsigned short CPU::fetchArgument16()
+	{
+		return (this->fetchArgument() << 8U) | this->fetchArgument();
+	}
+
+
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
@@ -113,4 +136,7 @@ namespace GBEmulator
 		//this->_instructions[this->read(this->_registers.pc)](*this);
 		return true;
 	}
+
+
+
 }
