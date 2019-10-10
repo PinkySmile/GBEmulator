@@ -5,7 +5,7 @@
 ** CPU_Instructions.c
 */
 
-#include "CPU_Instructions.hpp"
+#include "CPUInstructions.hpp"
 #include "CPU.hpp"
 
 namespace GBEmulator::Instructions {

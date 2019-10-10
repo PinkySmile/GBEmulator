@@ -18,7 +18,7 @@
 #define RAM_SIZE 0x8000
 #define HRAM_SIZE 0x7F
 
-#include "CPU_Instructions.hpp"
+#include "CPUInstructions.hpp"
 
 namespace GBEmulator
 {
@@ -73,6 +73,15 @@ namespace GBEmulator
 
 
 	public:
+		class InvalidOpcodeException : public std::exception {
+		private:
+			char _buffer[40];
+
+		public:
+			InvalidOpcodeException(unsigned short op, unsigned short address);
+			const char *what() const noexcept override;
+		};
+
 		CPU(const std::string &romPath);
 
 		unsigned char read(unsigned short address);
