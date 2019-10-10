@@ -9,14 +9,18 @@
 #define GBEMULATOR_CPU_HPP
 
 #include <string>
+#include <functional>
 #include "APU.hpp"
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
 
 #define ROM_BANK_SIZE 0x4000
 
+#include "CPU_Instructions.hpp"
+
 namespace GBEmulator
 {
+
 	class CPU {
 	private:
 		struct Registers {
@@ -60,10 +64,15 @@ namespace GBEmulator
 		ROM _rom;
 		Registers _registers;
 
+		static const std::vector<std::function<void(CPU &, Registers &)>> _instructions;
+
+
 	public:
 		CPU(const std::string &romPath);
 
 		unsigned char read(unsigned short address);
+		unsigned char fetchArgument();
+		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);
 		bool executeNextInstruction();
 	};
