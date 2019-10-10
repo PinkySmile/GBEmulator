@@ -15,6 +15,7 @@ namespace GBEmulator
 {
 	class Memory {
 	private:
+		bool _readOnly;
 		unsigned char _currentBank;
 		unsigned short _bankSize;
 
@@ -22,10 +23,11 @@ namespace GBEmulator
 		std::vector<unsigned char> _memory;
 
 	public:
-		Memory(unsigned size, unsigned short bankSize);
+		Memory(unsigned size, unsigned short bankSize, bool readOnly = false);
 
 		void setBank(unsigned char bank);
 		unsigned char read(unsigned short address) const;
+		unsigned char rawRead(unsigned short address) const;
 		void write(unsigned short address,unsigned char value);
 	};
 }

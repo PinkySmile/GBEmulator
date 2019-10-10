@@ -52,6 +52,8 @@ namespace GBEmulator
 			unsigned short sp;
 		};
 
+		static const std::vector<unsigned char> _startupCode;
+
 		bool _halted;
 		APU _apu;
 		GPU _gpu;
