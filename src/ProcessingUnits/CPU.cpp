@@ -6,3 +6,8 @@
 */
 
 #include "CPU.hpp"
+
+namespace GBEmulator
+{
+
+}
