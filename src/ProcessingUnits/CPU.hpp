@@ -14,6 +14,8 @@
 #include "../Memory/ROM.hpp"
 
 #define ROM_BANK_SIZE 0x4000
+#define RAM_SIZE 0x8000
+#define HRAM_SIZE 0x7F
 
 namespace GBEmulator
 {
@@ -54,10 +56,13 @@ namespace GBEmulator
 
 		static const std::vector<unsigned char> _startupCode;
 
+		unsigned char _interrupt;
 		bool _halted;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;
+		Memory _ram;
+		Memory _hram;
 		Registers _registers;
 
 	public:
