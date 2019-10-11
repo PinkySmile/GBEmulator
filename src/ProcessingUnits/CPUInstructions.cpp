@@ -11,6 +11,9 @@
 namespace GBEmulator::Instructions
 {
 	const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions{
+		//! 11; RL c
+		{0x11, [](CPU &, CPU::Registers &reg){ return RL(reg, reg.c); }},
+
 		//! 7C; BIT 7,h
 		{0x7C, [](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 7); }},
 	};
@@ -72,6 +75,7 @@ namespace GBEmulator::Instructions
 		{0x16, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 17; RLA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+		{0x17, [](CPU &, CPU::Registers &reg){ return RL(reg, reg.a); }},
 
 		//! 18; JR *: The signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
@@ -446,6 +450,7 @@ namespace GBEmulator::Instructions
 		//! C0; RET nz: If condition cc is true, the top stack entry is popped into pc.
 
 		//! C1; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
+		{0xC1, [](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.bc); }},
 
 		//! C2; JP nz,**: If condition cc is true, ** is copied to pc.
 
@@ -454,6 +459,7 @@ namespace GBEmulator::Instructions
 		//! C4; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
 		//! C5; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
+		{0xC5, [](CPU &cpu, CPU::Registers &reg){ return PUSH(cpu, reg, reg.bc); }},
 
 		//! C6; ADD a,*: Adds * to a.
 
@@ -470,7 +476,7 @@ namespace GBEmulator::Instructions
 			unsigned char opcode = cpu.read(reg.pc++);
 
 			try {
-				return Instructions::_bitLevelInstructions.at(opcode)(cpu, reg);
+				return Instructions::_bitLevelInstructions.at(opcode)(cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION;
 			} catch (std::out_of_range &) {
 				throw CPU::InvalidOpcodeException(0xCB00U | opcode, reg.pc - 2);
 			}
@@ -607,8 +613,16 @@ namespace GBEmulator::Instructions
 
 	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value)
 	{
-		cpu.write(reg.sp--, value);
-		cpu.write(reg.sp--, value >> 8U);
+		cpu.write(--reg.sp, value >> 8U);
+		cpu.write(--reg.sp, value);
+		return PUSH_CYCLE_DURATION;
+	}
+
+	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value)
+	{
+		unsigned char temp = cpu.read(reg.sp++);
+
+		value = (cpu.read(reg.sp++) << 8U) | temp;
 		return PUSH_CYCLE_DURATION;
 	}
 
@@ -631,7 +645,7 @@ namespace GBEmulator::Instructions
 	unsigned char BIT(CPU::Registers &reg, unsigned char value, unsigned char bit)
 	{
 		setFlags(reg, ((1U << bit) & value) == 0 ? SET : UNSET, UNSET, SET, UNCHANGED);
-		return COMPLEX_BIT_OPERATION_CYCLE_DURATION;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
@@ -663,5 +677,14 @@ namespace GBEmulator::Instructions
 	{
 		value = cpu.read(address);
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+	}
+
+	unsigned char RL(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value << 1U) | reg.fc;
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 }

@@ -29,6 +29,7 @@ namespace GBEmulator
 		unsigned char read(unsigned short address) const;
 		unsigned char rawRead(unsigned short address) const;
 		void write(unsigned short address,unsigned char value);
+		void dump(unsigned short offset = 0) const;
 	};
 }
 

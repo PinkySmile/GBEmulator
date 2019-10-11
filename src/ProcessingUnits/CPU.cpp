@@ -37,7 +37,7 @@ namespace GBEmulator
 		this->_rom.setBank(1);
 	}
 
-	unsigned char CPU::read(unsigned short address)
+	unsigned char CPU::read(unsigned short address) const
 	{
 		switch (address) {
 		case 0x0000 ... 0x00FF:     //Startup code
@@ -157,5 +157,18 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+		for (unsigned int i = 0; i < 0x10000; i += 0x10) {
+			std::cout << std::setw(4) << std::setfill('0') << i << ":  ";
+			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
+				std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->read(j + i)) << " ";
+			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
+				std::cout << "   ";
+			std::cout << " ";
+			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
+				std::cout << static_cast<char>(std::isprint(this->read(j + i)) ? this->read(j + i) : '.');
+			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
+				std::cout << " ";
+			std::cout << std::endl;
+		}
 	}
 }

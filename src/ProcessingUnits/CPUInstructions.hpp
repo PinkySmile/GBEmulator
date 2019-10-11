@@ -44,6 +44,8 @@ namespace GBEmulator::Instructions
 	unsigned char CALL(CPU &cpu, CPU::Registers &reg, unsigned short address);
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address);
 	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value);
+	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value);
+	unsigned char RL(CPU::Registers &reg, unsigned char &value);
 
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _instructions;
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions;

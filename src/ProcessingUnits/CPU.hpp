@@ -77,7 +77,7 @@ namespace GBEmulator
 
 		CPU(const std::string &romPath);
 
-		unsigned char read(unsigned short address);
+		unsigned char read(unsigned short address)const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);
