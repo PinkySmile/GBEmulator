@@ -11,19 +11,18 @@
 
 namespace GBEmulator
 {
-	GPU::GPU() : _vram(VRAM_SIZE, 0), _oam(OAM_SIZE, ROM_BANK_SIZE) {
+	GPU::GPU() : _vram(VRAM_SIZE, ROM_BANK_SIZE), _oam(OAM_SIZE, ROM_BANK_SIZE) {
 		sf::RenderWindow window(sf::VideoMode(160, 144), "GPU Test");
 
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
-		for (int i = 0; i < 16; i++)
+		for (int i = 0; i < 64; i++)
 			_vram.write(i, mushroom[i]);
 		_oam.write(0, 80);
 		_oam.write(1, 72);
 		_oam.write(2, 0);
 		_oam.write(3, 0);
 
-		for (int i = 0; i < 1; i++)
-			_textures.push_back(getTextureFromTile(getTile(i)));
+		loadTextures();
 
 		while (window.isOpen())
 		{
@@ -42,12 +41,14 @@ namespace GBEmulator
 
 	std::vector<int> GPU::getTile(std::size_t id) {
 		std::vector<int> tile(64);
+		int k = 0;
 
-		for (int i = id; i < id + 16; i += 2) {
+		for (int i = id * 16; i < (id + 1) * 16; i += 2) {
 			auto layer1 = decToBin(_vram.read(i));
 			auto layer2 = decToBin(_vram.read(i + 1));
 			for (int j = 0; j < 8; j++)
-				tile[j + 4 * i] = (layer1[j] * 2) + layer2[j];
+				tile[j + 4 * k] = (layer1[j] * 2) + layer2[j];
+			k+=2;
 		}
 		return tile;
 	}
@@ -75,6 +76,7 @@ namespace GBEmulator
 			pixels[3 + i * 4] = this->COLORS[tile[i]].a;
 		}
 		texture.update(pixels);
+		delete[] pixels;
 		return texture;
 	}
 
@@ -92,7 +94,7 @@ namespace GBEmulator
 		return sprite;
 	}
 
-	unsigned char GPU::readVRAM(unsigned short address) {
+	unsigned char GPU::readVRAM(unsigned short address) const {
 
 		return _vram.read(address);
 	}
@@ -101,12 +103,17 @@ namespace GBEmulator
 		_vram.write(address, value);
 	}
 
-	unsigned char GPU::readOAM(unsigned short address) {
+	unsigned char GPU::readOAM(unsigned short address) const {
 
 		return _oam.read(address);
 	}
 
 	void GPU::writeOAM(unsigned short address, unsigned char value) {
 		_oam.write(address, value);
+	}
+
+	void GPU::loadTextures() {
+		for (int i = 0; i < 256; i++)
+			_textures.push_back(getTextureFromTile(getTile(i)));
 	}
 }

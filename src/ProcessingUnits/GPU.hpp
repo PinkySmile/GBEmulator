@@ -27,9 +27,9 @@ namespace GBEmulator
 
 	public:
 		GPU();
-		unsigned char readVRAM(unsigned short address);
+		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
-		unsigned char readOAM(unsigned short address);
+		unsigned char readOAM(unsigned short address) const;
 		void writeOAM(unsigned short address, unsigned char value);
 
 	private:
@@ -37,6 +37,7 @@ namespace GBEmulator
 		std::vector<int> decToBin(int nbr);
 		sf::Texture getTextureFromTile(std::vector<int> tile);
 		sf::Sprite getSprite();
+		void loadTextures();
 	};
 }
 
