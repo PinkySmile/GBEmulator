@@ -27,38 +27,38 @@ namespace GBEmulator
 		struct Registers {
 			union {
 				struct {
-					unsigned char a;
 					union {
 						unsigned char f;
 						struct {
-							unsigned char fz : 1;
-							unsigned char fn : 1;
-							unsigned char fh : 1;
-							unsigned char fc : 1;
+							bool fz : 1;
+							bool fn : 1;
+							bool fh : 1;
+							bool fc : 1;
 							unsigned char _ : 4;
 						};
 					};
+					unsigned char a;
 				};
 				unsigned short af;
 			};
 			union {
 				struct {
-					unsigned char b;
 					unsigned char c;
+					unsigned char b;
 				};
 				unsigned short bc;
 			};
 			union {
 				struct {
-					unsigned char d;
 					unsigned char e;
+					unsigned char d;
 				};
 				unsigned short de;
 			};
 			union {
 				struct {
-					unsigned char h;
 					unsigned char l;
+					unsigned char h;
 				};
 				unsigned short hl;
 			};
@@ -82,6 +82,7 @@ namespace GBEmulator
 		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);
 		bool executeNextInstruction();
+		void dump() const;
 
 	private:
 		static const std::vector<unsigned char> _startupCode;
@@ -94,6 +95,7 @@ namespace GBEmulator
 		Memory _hram;
 		Registers _registers;
 		unsigned char _interrupt;
+		unsigned long _totalCycles;
 	};
 }
 

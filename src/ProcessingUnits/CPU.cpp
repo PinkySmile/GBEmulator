@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <cstring>
+#include <iostream>
+#include <iomanip>
 #include "CPU.hpp"
 #include "CPUInstructions.hpp"
 
@@ -134,7 +136,7 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			Instructions::_instructions.at(opcode)(*this, this->_registers);
+			this->_totalCycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
@@ -142,6 +144,17 @@ namespace GBEmulator
 		return true;
 	}
 
-
-
+	void CPU::dump() const
+	{
+		std::cout << std::hex << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << static_cast<int>(this->_registers.a) << ", f: " << static_cast<int>(this->_registers.f) << ")" << std::endl;
+		std::cout << std::hex << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << static_cast<int>(this->_registers.b) << ", c: " << static_cast<int>(this->_registers.c) << ")" << std::endl;
+		std::cout << std::hex << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << static_cast<int>(this->_registers.d) << ", e: " << static_cast<int>(this->_registers.e) << ")" << std::endl;
+		std::cout << std::hex << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << static_cast<int>(this->_registers.h) << ", l: " << static_cast<int>(this->_registers.l) << ")" << std::endl;
+		std::cout << std::hex << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
+		std::cout << std::hex << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
+		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
+		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
+		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
+		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+	}
 }
