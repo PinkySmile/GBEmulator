@@ -27,12 +27,13 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath) :
+	CPU::CPU(const std::string &romPath, sf::RenderWindow &screen) :
 		_halted(false),
 		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{0, 0, 0, 0, 0, 0}
+		_registers{0, 0, 0, 0, 0, 0},
+		_gpu(screen)
 	{
 		this->_rom.setBank(1);
 	}

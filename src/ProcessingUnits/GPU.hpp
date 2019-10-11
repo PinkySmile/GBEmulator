@@ -23,11 +23,11 @@ namespace GBEmulator
 	private:
 		Memory _vram;
 		Memory _oam;
-		sf::RenderWindow _screen;
+		sf::RenderWindow &_screen;
 		std::vector<sf::Texture> _textures;
 
 	public:
-		GPU(sf::RenderWindow *screen);
+		GPU(sf::RenderWindow &screen);
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;

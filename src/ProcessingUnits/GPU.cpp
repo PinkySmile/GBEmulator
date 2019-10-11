@@ -11,7 +11,8 @@
 
 namespace GBEmulator
 {
-	GPU::GPU(sf::RenderWindow *screen) :
+	GPU::GPU(sf::RenderWindow &screen) :
+	_screen(screen),
 	_vram(VRAM_SIZE, ROM_BANK_SIZE),
 	_oam(OAM_SIZE, ROM_BANK_SIZE)
 	{
