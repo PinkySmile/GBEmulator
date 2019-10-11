@@ -435,35 +435,35 @@ namespace GBEmulator::Instructions
 
 		//! BB; CP e: Subtracts e from a and affects flags according to the result. a is not modified.
 
-		//! BC; BITS: BITS
+		//! BC; CP h: Subtracts h from a and affects flags according to the result. a is not modified.
 
-		//! BD; CP h: Subtracts h from a and affects flags according to the result. a is not modified.
+		//! BD; CP l: Subtracts l from a and affects flags according to the result. a is not modified.
 
-		//! BE; CP l: Subtracts l from a and affects flags according to the result. a is not modified.
+		//! BE; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
 
-		//! BF; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
+		//! BF; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
 
-		//! C0; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
+		//! C0; RET nz: If condition cc is true, the top stack entry is popped into pc.
 
-		//! C1; RET nz: If condition cc is true, the top stack entry is popped into pc.
+		//! C1; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
 
-		//! C2; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
+		//! C2; JP nz,**: If condition cc is true, ** is copied to pc.
 
-		//! C3; JP nz,**: If condition cc is true, ** is copied to pc.
+		//! C3; JP **: ** is copied to pc.
 
-		//! C4; JP **: ** is copied to pc.
+		//! C4; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
-		//! C5; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! C5; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
 
-		//! C6; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
+		//! C6; ADD a,*: Adds * to a.
 
-		//! C7; ADD a,*: Adds * to a.
+		//! C7; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
 
-		//! C8; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
+		//! C8; RET z: If condition cc is true, the top stack entry is popped into pc.
 
-		//! C9; RET z: If condition cc is true, the top stack entry is popped into pc.
+		//! C9; RET: The top stack entry is popped into pc.
 
-		//! CA; RET: The top stack entry is popped into pc.
+		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
 
 		//! CB; Prefix for bit level instructions
 		{0xCB, [](CPU &cpu, CPU::Registers &reg) {
