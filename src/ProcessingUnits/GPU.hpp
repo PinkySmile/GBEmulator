@@ -23,20 +23,22 @@ namespace GBEmulator
 	private:
 		Memory _vram;
 		Memory _oam;
+		sf::RenderWindow _screen;
 		std::vector<sf::Texture> _textures;
 
 	public:
-		GPU();
+		GPU(sf::RenderWindow *screen);
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;
 		void writeOAM(unsigned short address, unsigned char value);
+		void update(int cycle);
 
 	private:
 		std::vector<int> getTile(std::size_t id);
 		std::vector<int> decToBin(int nbr);
 		sf::Texture getTextureFromTile(std::vector<int> tile);
-		sf::Sprite getSprite();
+		std::vector<sf::Sprite> getSprites();
 		void loadTextures();
 	};
 }

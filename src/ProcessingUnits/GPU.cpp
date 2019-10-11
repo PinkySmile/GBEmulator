@@ -11,9 +11,10 @@
 
 namespace GBEmulator
 {
-	GPU::GPU() : _vram(VRAM_SIZE, ROM_BANK_SIZE), _oam(OAM_SIZE, ROM_BANK_SIZE) {
-		sf::RenderWindow window(sf::VideoMode(160, 144), "GPU Test");
-
+	GPU::GPU(sf::RenderWindow *screen) :
+	_vram(VRAM_SIZE, ROM_BANK_SIZE),
+	_oam(OAM_SIZE, ROM_BANK_SIZE)
+	{
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
 		for (int i = 0; i < 64; i++)
 			_vram.write(i, mushroom[i]);
@@ -23,20 +24,6 @@ namespace GBEmulator
 		_oam.write(3, 0);
 
 		loadTextures();
-
-		while (window.isOpen())
-		{
-			sf::Event event;
-			while (window.pollEvent(event))
-				if (event.type == sf::Event::Closed)
-					window.close();
-
-			window.clear(sf::Color::White);
-
-			window.draw(getSprite());
-
-			window.display();
-		}
 	}
 
 	std::vector<int> GPU::getTile(std::size_t id) {
@@ -80,20 +67,6 @@ namespace GBEmulator
 		return texture;
 	}
 
-	sf::Sprite GPU::getSprite() {
-		sf::Sprite sprite;
-
-		float x = _oam.read(0);
-		float y = _oam.read(1);
-		int type = _oam.read(2);
-		int flag = _oam.read(3);
-
-		sprite.setTexture(_textures[type]);
-		sprite.setPosition(x, y);
-
-		return sprite;
-	}
-
 	unsigned char GPU::readVRAM(unsigned short address) const {
 
 		return _vram.read(address);
@@ -115,5 +88,29 @@ namespace GBEmulator
 	void GPU::loadTextures() {
 		for (int i = 0; i < 256; i++)
 			_textures.push_back(getTextureFromTile(getTile(i)));
+	}
+
+	void GPU::update(int cycle) {
+		if (cycle%500 == 0) {
+			auto sprites = getSprites();
+			for (auto &sprite : sprites)
+				_screen.draw(sprite);
+		}
+	}
+
+	std::vector<sf::Sprite> GPU::getSprites() {
+		sf::Sprite sprite;
+		std::vector<sf::Sprite> sprites;
+
+		for (int   i = 0; i < 160; i += 4) {
+			float x = _oam.read(i);
+			float y = _oam.read(i + 1);
+			int type = _oam.read(i + 2);
+			int flag = _oam.read(i + 3);
+			sprite.setTexture(_textures[type]);
+			sprite.setPosition(x, y);
+			sprites.push_back(sprite);
+		}
+		return std::vector<sf::Sprite>();
 	}
 }
