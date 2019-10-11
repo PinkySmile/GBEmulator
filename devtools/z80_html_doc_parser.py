@@ -13,4 +13,4 @@ al.insert(0xED, ("EXTD", "EXTD"))
 al.insert(0xFD, ("IV", "IV"))
 
 
-print('\n'.join(f"//! {i:02X}; {f(v[1])}: {v[0]}" for i, v in enumerate(al)))
+print('\n\n'.join(f"//! {i:02X}; {f(v[1])}: {v[0]}" for i, v in enumerate(al)))
