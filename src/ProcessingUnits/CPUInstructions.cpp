@@ -29,8 +29,10 @@ namespace GBEmulator::Instructions
 		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
+		{0x03, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.bc); }},
 
 		//! 04; INC b: Adds one to b.
+		{0x04, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.b); }},
 
 		//! 05; DEC b: Subtracts one from b.
 		{0x05,[](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.b); }},
@@ -40,7 +42,7 @@ namespace GBEmulator::Instructions
 
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 
-		//! 08; LD (a16), SP: --
+		//! 08; LD (**), SP: Load the value pointed to by ** to sp
 
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
@@ -48,11 +50,13 @@ namespace GBEmulator::Instructions
 		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }},
 
 		//! 0B; DEC bc: Subtracts one from bc.
+		{0x0B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.bc); }},
 
 		//! 0C; INC c: Adds one to c.
 		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.c); }},
 
 		//! 0D; DEC c: Subtracts one from c.
+		{0x0D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.c); }},
 
 		//! 0E; LD c,*: Loads * into c.
 		{0x0E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -81,6 +85,7 @@ namespace GBEmulator::Instructions
 		{0x17, [](CPU &, CPU::Registers &reg){ return RL(reg, reg.a); }},
 
 		//! 18; JR *: The signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		{0x18, [](CPU &cpu, CPU::Registers &reg){ return JR(reg, true, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 19; ADD hl,de: The value of de is added to hl.
 
@@ -120,6 +125,7 @@ namespace GBEmulator::Instructions
 		//! 27; DAA: Adjusts a for BCD addition and subtraction operations.
 
 		//! 28; JR z,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		{0x28, [](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
 
@@ -133,7 +139,7 @@ namespace GBEmulator::Instructions
 		//! 2D; DEC l: Subtracts one from l.
 
 		//! 2E; LD l,*: Loads * into l.
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
+		{0x2E, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 2F; CPL: The contents of a are inverted (one's complement).
 
@@ -167,6 +173,7 @@ namespace GBEmulator::Instructions
 		//! 3C; INC a: Adds one to a.
 
 		//! 3D; DEC a: Subtracts one from a.
+		{0x3D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.a); }},
 
 		//! 3E; LD a,*: Loads * into a.
 		{0x3E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
@@ -359,7 +366,7 @@ namespace GBEmulator::Instructions
 		{0x7D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.l); }},
 
 		//! 7E; LD a,(hl): The contents of (hl) are loaded into a.
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.hl); }},
+		{0x7E, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 7F; LD a,a: The contents of a are loaded into a.
 		{0x7F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.a); }},
@@ -445,22 +452,22 @@ namespace GBEmulator::Instructions
 		//! A7; AND a: Bitwise AND on a with a.
 
 		//! A8; XOR b: Bitwise XOR on a with b.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.b); }},
+		{0xA8, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.b); }},
 
 		//! A9; XOR c: Bitwise XOR on a with c.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
+		{0xA9, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AA; XOR d: Bitwise XOR on a with d.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.d); }},
+		{0xAA, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.d); }},
 
 		//! AB; XOR e: Bitwise XOR on a with e.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.e); }},
+		{0xAB, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.e); }},
 
 		//! AC; XOR h: Bitwise XOR on a with h.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.h); }},
+		{0xAC, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.h); }},
 
 		//! AD; XOR l: Bitwise XOR on a with l.
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
+		{0xAD, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
 
@@ -599,7 +606,7 @@ namespace GBEmulator::Instructions
 		//! E9; JP (hl): Loads the value of hl into pc.
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
+		{0xEA, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! EB; UNUSED
 
@@ -613,6 +620,7 @@ namespace GBEmulator::Instructions
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
 
 		//! F0; LD a,(FF00+*): Load the value at address $FF00+* to a
+		{0xF0, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument() + 0xFF00) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! F1; POP af: The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again.
 
@@ -643,6 +651,7 @@ namespace GBEmulator::Instructions
 		//! FD; UNUSED
 
 		//! FE; CP *: Subtracts * from a and affects flags according to the result. a is not modified.
+		{0xFE, [](CPU &cpu, CPU::Registers &reg) { return CP(reg, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! FF; RST 38h: The current pc value plus one is pushed onto the stack, then is loaded with 38h.
 
@@ -824,7 +833,7 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value & 0xf) - 1) & 0x8) == 0x8;
 
-		value++;
+		value--;
 		setFlags(
 			reg,
 			value == 0 ? SET : UNSET,
@@ -845,5 +854,12 @@ namespace GBEmulator::Instructions
 	{
 		value--;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char CP(CPU::Registers &reg, unsigned char value)
+	{
+		unsigned char buf = reg.a;
+
+		return SUB8(reg, buf, value);
 	}
 }
