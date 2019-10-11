@@ -33,6 +33,7 @@ namespace GBEmulator::Instructions
 		//! 04; INC b: Adds one to b.
 
 		//! 05; DEC b: Subtracts one from b.
+		{0x05,[](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.b); }},
 
 		//! 06; LD b,*: Loads * into b.
 		{0x06, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -44,12 +45,12 @@ namespace GBEmulator::Instructions
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
 		//! 0A; LD a,(bc): Loads the value pointed to by bc into a.
-		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }}
+		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }},
 
 		//! 0B; DEC bc: Subtracts one from bc.
 
 		//! 0C; INC c: Adds one to c.
-		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.c + 1) + ARITHMETIC_OPERATION_CYCLE_DURATION; }},
+		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.c); }},
 
 		//! 0D; DEC c: Subtracts one from c.
 
@@ -67,6 +68,7 @@ namespace GBEmulator::Instructions
 		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.de, reg.a); }},
 
 		//! 13; INC de: Adds one to de.
+		{0x13, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.de); }},
 
 		//! 14; INC d: Adds one to d.
 
@@ -106,6 +108,7 @@ namespace GBEmulator::Instructions
 		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl++, reg.a); }},
 
 		//! 23; INC hl: Adds one to hl.
+		{0x23, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.hl); }},
 
 		//! 24; INC h: Adds one to h.
 
@@ -517,6 +520,7 @@ namespace GBEmulator::Instructions
 		//! C8; RET z: If condition cc is true, the top stack entry is popped into pc.
 
 		//! C9; RET: The top stack entry is popped into pc.
+		{0xC9, [](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.pc); }},
 
 		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
 
@@ -595,7 +599,7 @@ namespace GBEmulator::Instructions
 		//! E9; JP (hl): Loads the value of hl into pc.
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, cpu.fetchArgument16(), reg.a) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! EB; UNUSED
 
@@ -627,7 +631,7 @@ namespace GBEmulator::Instructions
 		//! F8; LD hl,sp+**: Load sp+** to hl
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD16(cpu, reg.sp, reg.hl); }},
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); }},
 
 		//! FA; LD a,(**): Load the value pointed to by address ** to a
 		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
@@ -701,7 +705,7 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char XOR(CPU::Registers &reg, unsigned char &value)
+	unsigned char XOR(CPU::Registers &reg, unsigned char value)
 	{
 		reg.a ^= value;
 		setFlags(reg, reg.a == 0 ? SET : UNSET, UNSET, UNSET, UNSET);
@@ -739,5 +743,107 @@ namespace GBEmulator::Instructions
 		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
 		value = newValue;
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	{
+		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
+
+		value1 += value2;
+		setFlags(
+			reg,
+			value1 == 0 ? SET : UNSET,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value1 < value2 ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	{
+		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x8U) == 0x8U;
+
+		value1 -= value2;
+		setFlags(
+			reg,
+			value1 == 0 ? SET : UNSET,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value1 + value2 > 0xFF ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2, bool changeFlags)
+	{
+		bool halfCarry = (((value1 & 0xFFU) + (value2 & 0xFFU)) & 0x100U) == 0x100U;
+
+		value1 += value2;
+		setFlags(
+			reg,
+			UNCHANGED,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value1 < value2 ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2, bool changeFlags)
+	{
+		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x80U) == 0x80U;
+
+		value1 -= value2;
+		setFlags(
+			reg,
+			UNCHANGED,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value1 + value2 > 0xFF ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char INC8(CPU::Registers &reg, unsigned char &value)
+	{
+		bool halfCarry = (((value & 0xf) + 1) & 0x10) == 0x10;
+
+		value++;
+		setFlags(
+			reg,
+			value == 0 ? SET : UNSET,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value == 0 ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char DEC8(CPU::Registers &reg, unsigned char &value)
+	{
+		bool halfCarry = (((value & 0xf) - 1) & 0x8) == 0x8;
+
+		value++;
+		setFlags(
+			reg,
+			value == 0 ? SET : UNSET,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value == 0xFF ? SET : UNSET
+		);
+		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char INC16(CPU::Registers &reg, unsigned short &value)
+	{
+		value++;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char DEC16(CPU::Registers &reg, unsigned short &value)
+	{
+		value--;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 }

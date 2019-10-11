@@ -119,6 +119,9 @@ namespace GBEmulator
 		case 0xFE00 ... 0xFE9F: //TODO: OAM
 			break;
 
+		case 0xFF80 ... 0xFFFE: //HRAM
+			this->_hram.write(address - 0xFF80, value);
+
 		case 0xFFFF:            //Interrupt enable
 			this->_interrupt = value;
 			break;
