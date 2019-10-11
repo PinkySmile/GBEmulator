@@ -45,6 +45,7 @@ namespace GBEmulator::Instructions
 		//! 0B; DEC bc: Subtracts one from bc.
 
 		//! 0C; INC c: Adds one to c.
+		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.c + 1) + ARITHMETIC_OPERATION_CYCLE_DURATION; }},
 
 		//! 0D; DEC c: Subtracts one from c.
 
@@ -77,6 +78,7 @@ namespace GBEmulator::Instructions
 		//! 19; ADD hl,de: The value of de is added to hl.
 
 		//! 1A; LD a,(de): Loads the value pointed to by de into a.
+		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LDfromPTR(cpu, reg.de, reg.a); }},
 
 		//! 1B; DEC de: Subtracts one from de.
 
@@ -294,6 +296,7 @@ namespace GBEmulator::Instructions
 		//! 76; HALT: Suspends CPU operation until an interrupt or reset occurs.
 
 		//! 77; LD (hl),a: The contents of a are loaded into (hl).
+		{0x77, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.a); }},
 
 		//! 78; LD a,b: The contents of b are loaded into a.
 
@@ -476,6 +479,7 @@ namespace GBEmulator::Instructions
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
 		//! CD; CALL **: The current pc value plus three is pushed onto the stack, then is loaded with **.
+		{0xCD, [](CPU &cpu, CPU::Registers &reg){ return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! CE; ADC a,*: Adds * and the carry flag to a.
 
@@ -514,6 +518,7 @@ namespace GBEmulator::Instructions
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
 
 		//! E0; LD (FF00+*),a: Load a to the address $FF00+*
+		{0xE0, [](CPU &cpu, CPU::Registers &reg){ return LDtoPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a); }},
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
 
@@ -593,11 +598,33 @@ namespace GBEmulator::Instructions
 			reg.fc = c;
 	}
 
+	unsigned char CALL(CPU &cpu, CPU::Registers &reg, unsigned short address)
+	{
+		PUSH(cpu, reg, reg.pc);
+		JP(reg, true, address);
+		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+	}
+
+	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value)
+	{
+		cpu.write(reg.sp--, value);
+		cpu.write(reg.sp--, value >> 8U);
+		return PUSH_CYCLE_DURATION;
+	}
+
 	unsigned char JR(CPU::Registers &reg, bool cond, char off)
 	{
 		if (!cond)
 			return BASIC_BIT_OPERATION_CYCLE_DURATION;
 		reg.pc += off;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+	}
+
+	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address)
+	{
+		if (!cond)
+			return BASIC_BIT_OPERATION_CYCLE_DURATION;
+		reg.pc = address;
 		return BASIC_BIT_OPERATION_CYCLE_DURATION + JUMP_CYCLE_DURATION;
 	}
 
@@ -626,10 +653,15 @@ namespace GBEmulator::Instructions
 		return LD_CYCLE_DURATION;
 	}
 
-	unsigned char LDtoPTR(CPU &cpu, unsigned short address,
-			      unsigned char value)
+	unsigned char LDtoPTR(CPU &cpu, unsigned short address, unsigned char value)
 	{
 		cpu.write(address, value);
+		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+	}
+
+	unsigned char LDfromPTR(CPU &cpu, unsigned short address, unsigned char &value)
+	{
+		value = cpu.read(address);
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
 	}
 }
