@@ -49,8 +49,8 @@ namespace GBEmulator
 		case 0x4000 ... 0x7FFF:     //ROM1
 			return this->_rom.read(address - 0x4000);
 
-		case 0x8000 ... 0x9FFF:     //TODO: VRAM
-			return 0xFF;
+		case 0x8000 ... 0x9FFF:     //VRAM
+			return this->_gpu.readVRAM(address - 0x8000);
 
 		case 0xA000 ... 0xBFFF:     //TODO: Cartridge RAM (SRAM)
 			return 0xFF;
@@ -61,8 +61,8 @@ namespace GBEmulator
 		case 0xE000 ... 0xFDFF:     //Echo RAM
 			return this->_ram.read(address - 0xE000);
 
-		case 0xFE00 ... 0xFE9F:     //TODO: OAM
-			return 0xFF;
+		case 0xFE00 ... 0xFE9F:     //OAM
+			return this->_gpu.readOAM(address - 0xFE00);
 
 		case 0xFEA0 ... 0xFEFF:     //Unusable
 			return 0xFF;
@@ -104,8 +104,8 @@ namespace GBEmulator
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
-		case 0x8000 ... 0x9FFF: //TODO: VRAM
-			break;
+		case 0x8000 ... 0x9FFF: //VRAM
+			return this->_gpu.writeVRAM(address - 0x8000, value);
 
 		case 0xA000 ... 0xBFFF: //TODO: Cartridge RAM (SRAM)
 			break;
@@ -116,8 +116,8 @@ namespace GBEmulator
 		case 0xE000 ... 0xFDFF: //Echo RAM
 			return this->_ram.write(address - 0xE000, value);
 
-		case 0xFE00 ... 0xFE9F: //TODO: OAM
-			break;
+		case 0xFE00 ... 0xFE9F: //OAM
+			return this->_gpu.writeOAM(address - 0xFE00, value);
 
 		case 0xFFFF:            //Interrupt enable
 			this->_interrupt = value;
