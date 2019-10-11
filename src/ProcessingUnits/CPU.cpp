@@ -8,25 +8,16 @@
 #include <vector>
 #include <cstring>
 #include "CPU.hpp"
+#include "CPUInstructions.hpp"
 
 namespace GBEmulator
 {
-	const std::vector<std::function<void(CPU &, CPU::Registers &)>> CPU::_instructions{
-		//! 00; Instruction NOP: do nothing
-		[](CPU &, Registers &) {},
-		//! 01; Instruction LD bc, d16: read 16 bytes on pc and put in bc register
-		[](CPU &cpu, Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); },
-		//! 02; Instruction LD (bc), a: Stores a into the memory location pointed to by bc
-		[](CPU &cpu, Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); }
-
-	};
-
 	CPU::InvalidOpcodeException::InvalidOpcodeException(unsigned short op, unsigned short address)
 	{
 		if (op & 0xFF00U)
-			sprintf(this->_buffer, "Invalid opcode 0x%04x at address 0x%04x", op, address);
+			sprintf(this->_buffer, "Invalid opcode 0x%04X at address 0x%04X", op, address);
 		else
-			sprintf(this->_buffer, "Invalid opcode 0x%02x at address 0x%04x", op, address);
+			sprintf(this->_buffer, "Invalid opcode 0x%02X at address 0x%04X", op, address);
 	}
 
 	const char *CPU::InvalidOpcodeException::what() const noexcept
@@ -59,7 +50,7 @@ namespace GBEmulator
 		case 0x8000 ... 0x9FFF:     //TODO: VRAM
 			return 0xFF;
 
-		case 0xA000 ... 0xBFFF:     //TODO: Cartridge RAM
+		case 0xA000 ... 0xBFFF:     //TODO: Cartridge RAM (SRAM)
 			return 0xFF;
 
 		case 0xC000 ... 0xDFFF:     //Working RAM
@@ -74,7 +65,16 @@ namespace GBEmulator
 		case 0xFEA0 ... 0xFEFF:     //Unusable
 			return 0xFF;
 
-		case 0xFF00 ... 0xFF7F:     //I/O ports
+		case 0xFF00 ... 0xFF0F:     //I/O ports
+			return 0xFF;
+
+		case 0xFF10 ... 0xFF2F:     //APU
+			return 0xFF;
+
+		case 0xFF30 ... 0xFF3F:     //Wave Pattern RAM
+			return 0xFF;
+
+		case 0xFF40 ... 0xFF7F:     //I/O ports
 			return 0xFF;
 
 		case 0xFF80 ... 0xFFFE:     //HRAM
@@ -105,7 +105,7 @@ namespace GBEmulator
 		case 0x8000 ... 0x9FFF: //TODO: VRAM
 			break;
 
-		case 0xA000 ... 0xBFFF: //TODO: Cartridge RAM
+		case 0xA000 ... 0xBFFF: //TODO: Cartridge RAM (SRAM)
 			break;
 
 		case 0xC000 ... 0xDFFF: //Working RAM
@@ -134,7 +134,7 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			CPU::_instructions.at(opcode)(*this, this->_registers);
+			Instructions::_instructions.at(opcode)(*this, this->_registers);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);

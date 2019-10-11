@@ -14,22 +14,30 @@
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
 
+
 #define ROM_BANK_SIZE 0x4000
 #define RAM_SIZE 0x8000
 #define HRAM_SIZE 0x7F
 
-#include "CPUInstructions.hpp"
 
 namespace GBEmulator
 {
-
 	class CPU {
-	private:
+	public:
 		struct Registers {
 			union {
 				struct {
 					unsigned char a;
-					unsigned char f;
+					union {
+						unsigned char f;
+						struct {
+							unsigned char cz : 1;
+							unsigned char cn : 1;
+							unsigned char ch : 1;
+							unsigned char cc : 1;
+							unsigned char _ : 4;
+						};
+					};
 				};
 				unsigned short af;
 			};
@@ -58,21 +66,6 @@ namespace GBEmulator
 			unsigned short sp;
 		};
 
-		static const std::vector<unsigned char> _startupCode;
-
-		unsigned char _interrupt;
-		bool _halted;
-		APU _apu;
-		GPU _gpu;
-		ROM _rom;
-		Memory _ram;
-		Memory _hram;
-		Registers _registers;
-
-		static const std::vector<std::function<void(CPU &, Registers &)>> _instructions;
-
-
-	public:
 		class InvalidOpcodeException : public std::exception {
 		private:
 			char _buffer[40];
@@ -89,6 +82,18 @@ namespace GBEmulator
 		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);
 		bool executeNextInstruction();
+
+	private:
+		static const std::vector<unsigned char> _startupCode;
+
+		APU _apu;
+		GPU _gpu;
+		ROM _rom;
+		bool _halted;
+		Memory _ram;
+		Memory _hram;
+		Registers _registers;
+		unsigned char _interrupt;
 	};
 }
 
