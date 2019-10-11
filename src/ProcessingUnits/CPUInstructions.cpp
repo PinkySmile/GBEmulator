@@ -20,7 +20,7 @@ namespace GBEmulator::Instructions
 		{0x00, [](CPU &, CPU::Registers &) { return NOP_CYCLE_DURATION; }},
 
 		//! 01; LD bc,**: Loads ** into bc.
-		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()); }},
+		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 02; LD (bc), a: Stores a into the memory location pointed to by bc
 		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.bc, reg.a); }},
@@ -32,7 +32,7 @@ namespace GBEmulator::Instructions
 		//! 05; DEC b: Subtracts one from b.
 
 		//! 06; LD b,*: Loads * into b.
-		{0x06, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, cpu.fetchArgument()); }},
+		{0x06, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 
@@ -49,17 +49,17 @@ namespace GBEmulator::Instructions
 		//! 0D; DEC c: Subtracts one from c.
 
 		//! 0E; LD c,*: Loads * into c.
-		{0x0E, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, cpu.fetchArgument()); }},
+		{0x0E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 0F; RRCA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
 
 		//! 10; DJNZ *: The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
 		//! 11; LD de,**: Loads ** into de.
-		{0x11, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD16(reg.de, cpu.fetchArgument16()); }},
+		{0x11, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.de, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 12; LD (de),a: Stores a into the memory location pointed to by de.
-		{0x12, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, reg.de, reg.a); }},
+		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.de, reg.a); }},
 
 		//! 13; INC de: Adds one to de.
 
@@ -68,7 +68,7 @@ namespace GBEmulator::Instructions
 		//! 15; DEC d: Subtracts one from d.
 
 		//! 16; LD d,*: Loads * into d.
-		{0x16, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, cpu.fetchArgument()); }},
+		{0x16, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 17; RLA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 
@@ -85,7 +85,7 @@ namespace GBEmulator::Instructions
 		//! 1D; DEC e: Subtracts one from e.
 
 		//! 1E; LD e,*: Loads * into e.
-		{0x1E, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.e, cpu.fetchArgument()); }},
+		{0x1E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 1F; RRA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 
@@ -96,7 +96,7 @@ namespace GBEmulator::Instructions
 		{0x21, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 22; LD (**),hl: Stores hl into the memory location pointed to by **.
-		{0x22, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, cpu.fetchArgument16(), reg.hl); }}, //TODO: reg.hl into uchar ??
+		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, cpu.fetchArgument16(), reg.hl) + FETCH_ARGUMENT16_CYLCE_DURATION; }}, //TODO: reg.hl into uchar ??
 
 		//! 23; INC hl: Adds one to hl.
 
@@ -105,7 +105,7 @@ namespace GBEmulator::Instructions
 		//! 25; DEC h: Subtracts one from h.
 
 		//! 26; LD h,*: Loads * into h.
-		{0x26, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.h, cpu.fetchArgument()); }},
+		{0x26, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 27; DAA: Adjusts a for BCD addition and subtraction operations.
 
@@ -140,7 +140,7 @@ namespace GBEmulator::Instructions
 		//! 35; DEC (hl): Subtracts one from (hl).
 
 		//! 36; LD (hl),*: Loads * into (hl).
-		{0x36, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, reg.hl, cpu.fetchArgument()); }},
+		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 37; SCF: Sets the carry flag.
 
@@ -157,81 +157,81 @@ namespace GBEmulator::Instructions
 		//! 3D; DEC a: Subtracts one from a.
 
 		//! 3E; LD a,*: Loads * into a.
-		{0x3E, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.a, cpu.fetchArgument()); }},
+		{0x3E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 3F; CCF: Inverts the carry flag.
 
 		//! 40; LD b,b: The contents of b are loaded into b.
-		{0x40, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.b); }},
+		{0x40, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.b); }},
 
 		//! 41; LD b,c: The contents of c are loaded into b.
-		{0x41, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.c); }},
+		{0x41, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.c); }},
 
 		//! 42; LD b,d: The contents of d are loaded into b.
-		{0x42, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.d); }},
+		{0x42, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.d); }},
 
 		//! 43; LD b,e: The contents of e are loaded into b.
-		{0x43, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.e); }},
+		{0x43, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.e); }},
 
 		//! 44; LD b,h: The contents of h are loaded into b.
-		{0x44, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.h); }},
+		{0x44, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.h); }},
 
 		//! 45; LD b,l: The contents of l are loaded into b.
-		{0x45, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.l); }},
+		{0x45, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.l); }},
 
 		//! 46; LD b,(hl): The contents of (hl) are loaded into b.
 
 		//! 47; LD b,a: The contents of a are loaded into b.
-		{0x47, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.b, reg.a); }},
+		{0x47, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.a); }},
 
 		//! 48; LD c,b: The contents of b are loaded into c.
-		{0x48, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.b); }},
+		{0x48, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.b); }},
 
 		//! 49; LD c,c: The contents of c are loaded into c.
-		{0x49, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.c); }},
+		{0x49, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.c); }},
 
 		//! 4A; LD c,d: The contents of d are loaded into c.
-		{0x4A, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.d); }},
+		{0x4A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.d); }},
 
 		//! 4B; LD c,e: The contents of e are loaded into c.
-		{0x4B, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.e); }},
+		{0x4B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.e); }},
 
 		//! 4C; LD c,h: The contents of h are loaded into c.
-		{0x4C, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.h); }},
+		{0x4C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.h); }},
 
 		//! 4D; LD c,l: The contents of l are loaded into c.
-		{0x4D, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.l); }},
+		{0x4D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.l); }},
 
 		//! 4E; LD c,(hl): The contents of (hl) are loaded into c.
 
 		//! 4F; LD c,a: The contents of a are loaded into c.
-		{0x4F, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.c, reg.a); }},
+		{0x4F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.a); }},
 
 		//! 50; LD d,b: The contents of b are loaded into d.
-		{0x50, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.b); }},
+		{0x50, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.b); }},
 
 		//! 51; LD d,c: The contents of c are loaded into d.
-		{0x51, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.c); }},
+		{0x51, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.c); }},
 
 		//! 52; LD d,d: The contents of d are loaded into d.
-		{0x52, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.d); }},
+		{0x52, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.d); }},
 
 		//! 53; LD d,e: The contents of e are loaded into d.
-		{0x53, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.e); }},
+		{0x53, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.e); }},
 
 		//! 54; LD d,h: The contents of h are loaded into d.
-		{0x54, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.h); }},
+		{0x54, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.h); }},
 
 		//! 55; LD d,l: The contents of l are loaded into d.
-		{0x55, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.l); }},
+		{0x55, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.l); }},
 
 		//! 56; LD d,(hl): The contents of (hl) are loaded into d.
 
 		//! 57; LD d,a: The contents of a are loaded into d.
-		{0x57, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.d, reg.a); }},
+		{0x57, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.a); }},
 
 		//! 58; LD e,b: The contents of b are loaded into e.
-		{0x58, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD8(reg.e, reg.b); }},
+		{0x58, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.b); }},
 
 		//! 59; LD e,c: The contents of c are loaded into e.
 
