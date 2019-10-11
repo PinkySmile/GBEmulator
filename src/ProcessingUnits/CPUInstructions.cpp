@@ -442,21 +442,27 @@ namespace GBEmulator::Instructions
 		//! A7; AND a: Bitwise AND on a with a.
 
 		//! A8; XOR b: Bitwise XOR on a with b.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.b); }},
 
 		//! A9; XOR c: Bitwise XOR on a with c.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AA; XOR d: Bitwise XOR on a with d.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.d); }},
 
 		//! AB; XOR e: Bitwise XOR on a with e.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.e); }},
 
 		//! AC; XOR h: Bitwise XOR on a with h.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.h); }},
 
 		//! AD; XOR l: Bitwise XOR on a with l.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
 
 		//! AF; XOR a: Bitwise XOR a with a
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a, reg.a); }},
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a); }},
 
 		//! B0; OR b: Bitwise OR on a with b.
 
@@ -598,6 +604,7 @@ namespace GBEmulator::Instructions
 		//! ED; UNUSED
 
 		//! EE; XOR *: Bitwise XOR on a with *.
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
 
@@ -694,10 +701,10 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	unsigned char XOR(CPU::Registers &reg, unsigned char &value)
 	{
-		value1 ^= value2;
-		setFlags(reg, value1 == 0 ? SET : UNSET, UNSET, UNSET, UNSET);
+		reg.a ^= value;
+		setFlags(reg, reg.a == 0 ? SET : UNSET, UNSET, UNSET, UNSET);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
