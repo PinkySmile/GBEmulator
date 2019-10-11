@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "ProcessingUnits/CPU.hpp"
 
 int main(int argc, char **argv)
@@ -10,6 +12,11 @@ int main(int argc, char **argv)
 
 	GBEmulator::CPU cpu(argv[1]);
 
-	while (cpu.executeNextInstruction());
+	try {
+		while (cpu.executeNextInstruction());
+	} catch (std::exception &e) {
+		cpu.dump();
+		std::cerr << "Fatal error: " << e.what() << std::endl;
+	}
 	return EXIT_SUCCESS;
 }

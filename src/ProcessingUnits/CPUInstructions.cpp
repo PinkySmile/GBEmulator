@@ -10,19 +10,20 @@
 
 namespace GBEmulator::Instructions
 {
-	const std::map<unsigned char, std::function<void(CPU &, CPU::Registers &)>> _bitLevelInstructions{
-
+	const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions{
+		//! 7C; BIT 7,h
+		{0x7C, [](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 7); }},
 	};
 
-	const std::map<unsigned char, std::function<void(CPU &, CPU::Registers &)>> _instructions{
+	const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _instructions{
 		//! 00; NOP: do nothing
-		{0x00, [](CPU &, CPU::Registers &) {}},
+		{0x00, [](CPU &, CPU::Registers &) { return NOP_CYCLE_DURATION; }},
 
 		//! 01; LD bc,**: Loads ** into bc.
-		{0x01, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); }},
+		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()); }},
 
 		//! 02; LD (bc), a: Stores a into the memory location pointed to by bc
-		{0x02, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, reg.bc, reg.a); }},
+		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
 
@@ -89,9 +90,10 @@ namespace GBEmulator::Instructions
 		//! 1F; RRA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
 
 		//! 20; JR nz,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		{0x20, [](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 21; LD hl, **: Loads ** into hl register
-		{0x21, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD16(reg.hl, cpu.fetchArgument16()); }},
+		{0x21, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 22; LD (**),hl: Stores hl into the memory location pointed to by **.
 		{0x22, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, cpu.fetchArgument16(), reg.hl); }}, //TODO: reg.hl into uchar ??
@@ -126,10 +128,10 @@ namespace GBEmulator::Instructions
 		//! 30; JR nc,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
 		//! 31; LD sp, **: Loads ** into sp register
-		{0x31, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD16(reg.sp, cpu.fetchArgument16()); }},
+		{0x31, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 32; LD [hl-], a: Loads a into address pointed to by hl and decrement hl
-		{0x32, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, reg.hl--, reg.a); }},
+		//! 32; LD (hl-), a: Loads a into address pointed to by hl and decrement hl
+		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
 
@@ -404,7 +406,7 @@ namespace GBEmulator::Instructions
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
 
 		//! AF; XOR a: Bitwise XOR a with a
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { reg.a ^= reg.a; }},
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a, reg.a); }},
 
 		//! B0; OR b: Bitwise OR on a with b.
 
@@ -465,7 +467,7 @@ namespace GBEmulator::Instructions
 			unsigned char opcode = cpu.read(reg.pc++);
 
 			try {
-				Instructions::_bitLevelInstructions.at(opcode)(cpu, reg);
+				return Instructions::_bitLevelInstructions.at(opcode)(cpu, reg);
 			} catch (std::out_of_range &) {
 				throw CPU::InvalidOpcodeException(0xCB00U | opcode, reg.pc - 2);
 			}
@@ -577,17 +579,55 @@ namespace GBEmulator::Instructions
 
 	};
 
-	void LD8(unsigned char &register1, unsigned char value) {
-		register1 = value;
+	void setFlags(CPU::Registers &reg, FlagValue z, FlagValue n, FlagValue h, FlagValue c)
+	{
+		reg._ = 0;
+		if (z != UNCHANGED)
+			reg.fz = z;
+		if (n != UNCHANGED)
+			reg.fn = n;
+		if (h != UNCHANGED)
+			reg.fh = h;
+		if (c != UNCHANGED)
+			reg.fc = c;
 	}
 
-	void LD16(unsigned short &double_register, unsigned short value)
+	unsigned char JR(CPU::Registers &reg, bool cond, char off)
+	{
+		if (!cond)
+			return BASIC_BIT_OPERATION_CYCLE_DURATION;
+		reg.pc += off;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+	}
+
+	unsigned char BIT(CPU::Registers &reg, unsigned char value, unsigned char bit)
+	{
+		setFlags(reg, ((1U << bit) & value) == 0 ? SET : UNSET, UNSET, SET, UNCHANGED);
+		return COMPLEX_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	{
+		value1 ^= value2;
+		setFlags(reg, value1 == 0 ? SET : UNSET, UNSET, UNSET, UNSET);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char LD8(unsigned char &register1, unsigned char value)
+	{
+		register1 = value;
+		return LD_CYCLE_DURATION;
+	}
+
+	unsigned char LD16(unsigned short &double_register, unsigned short value)
 	{
 		double_register = value;
+		return LD_CYCLE_DURATION;
 	}
 
-	void LDPTR(CPU &cpu, unsigned short address, unsigned char value)
+	unsigned char LDPTR(CPU &cpu, unsigned short address, unsigned char value)
 	{
 		cpu.write(address, value);
+		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
 	}
 }
