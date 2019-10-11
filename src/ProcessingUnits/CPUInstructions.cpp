@@ -11,6 +11,9 @@
 namespace GBEmulator::Instructions
 {
 	const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions{
+		//! 11; RL c
+		{0x11, [](CPU &, CPU::Registers &reg){ return RL(reg, reg.c); }},
+
 		//! 7C; BIT 7,h
 		{0x7C, [](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 7); }},
 	};
@@ -23,7 +26,7 @@ namespace GBEmulator::Instructions
 		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 02; LD (bc), a: Stores a into the memory location pointed to by bc
-		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.bc, reg.a); }},
+		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
 
@@ -36,7 +39,7 @@ namespace GBEmulator::Instructions
 
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 
-		//! 08; EX af,af': Exchanges the 16-bit contents of af and af'.
+		//! 08; LD (a16), SP: --
 
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
@@ -45,6 +48,7 @@ namespace GBEmulator::Instructions
 		//! 0B; DEC bc: Subtracts one from bc.
 
 		//! 0C; INC c: Adds one to c.
+		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.c + 1) + ARITHMETIC_OPERATION_CYCLE_DURATION; }},
 
 		//! 0D; DEC c: Subtracts one from c.
 
@@ -53,13 +57,13 @@ namespace GBEmulator::Instructions
 
 		//! 0F; RRCA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
 
-		//! 10; DJNZ *: The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		//! 10; STOP: --
 
 		//! 11; LD de,**: Loads ** into de.
 		{0x11, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.de, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 12; LD (de),a: Stores a into the memory location pointed to by de.
-		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.de, reg.a); }},
+		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.de, reg.a); }},
 
 		//! 13; INC de: Adds one to de.
 
@@ -71,12 +75,14 @@ namespace GBEmulator::Instructions
 		{0x16, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 17; RLA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
+		{0x17, [](CPU &, CPU::Registers &reg){ return RL(reg, reg.a); }},
 
 		//! 18; JR *: The signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
 		//! 19; ADD hl,de: The value of de is added to hl.
 
 		//! 1A; LD a,(de): Loads the value pointed to by de into a.
+		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LDfromPTR(cpu, reg.de, reg.a); }},
 
 		//! 1B; DEC de: Subtracts one from de.
 
@@ -95,8 +101,8 @@ namespace GBEmulator::Instructions
 		//! 21; LD hl, **: Loads ** into hl register
 		{0x21, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 22; LD (**),hl: Stores hl into the memory location pointed to by **.
-		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, cpu.fetchArgument16(), reg.hl) + FETCH_ARGUMENT16_CYLCE_DURATION; }}, //TODO: reg.hl into uchar ??
+		//! 22; LDI (hl),a: Loads a to the address pointed to by hl and increment hl
+		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl++, reg.a); }},
 
 		//! 23; INC hl: Adds one to hl.
 
@@ -113,7 +119,7 @@ namespace GBEmulator::Instructions
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
 
-		//! 2A; LD hl,(**): Loads the value pointed to by ** into hl.
+		//! 2A; LDI a,(hl): Loads the value pointed to by hl to a and increments hl
 
 		//! 2B; DEC hl: Subtracts one from hl.
 
@@ -131,7 +137,7 @@ namespace GBEmulator::Instructions
 		{0x31, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 32; LD (hl-), a: Loads a into address pointed to by hl and decrement hl
-		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl--, reg.a); }},
+		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
 
@@ -140,7 +146,7 @@ namespace GBEmulator::Instructions
 		//! 35; DEC (hl): Subtracts one from (hl).
 
 		//! 36; LD (hl),*: Loads * into (hl).
-		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
+		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 37; SCF: Sets the carry flag.
 
@@ -148,7 +154,7 @@ namespace GBEmulator::Instructions
 
 		//! 39; ADD hl,sp: The value of hl is added to hl.
 
-		//! 3A; LD a,(**): Loads the value pointed to by ** into a.
+		//! 3A; LDD a,(hl): Load the value pointed to by hl to a and decrements hl
 
 		//! 3B; DEC sp: Subtracts one from sp.
 
@@ -294,6 +300,7 @@ namespace GBEmulator::Instructions
 		//! 76; HALT: Suspends CPU operation until an interrupt or reset occurs.
 
 		//! 77; LD (hl),a: The contents of a are loaded into (hl).
+		{0x77, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.a); }},
 
 		//! 78; LD a,b: The contents of b are loaded into a.
 
@@ -432,42 +439,44 @@ namespace GBEmulator::Instructions
 
 		//! BB; CP e: Subtracts e from a and affects flags according to the result. a is not modified.
 
-		//! BC; BITS: BITS
+		//! BC; CP h: Subtracts h from a and affects flags according to the result. a is not modified.
 
-		//! BD; CP h: Subtracts h from a and affects flags according to the result. a is not modified.
+		//! BD; CP l: Subtracts l from a and affects flags according to the result. a is not modified.
 
-		//! BE; CP l: Subtracts l from a and affects flags according to the result. a is not modified.
+		//! BE; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
 
-		//! BF; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
+		//! BF; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
 
-		//! C0; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
+		//! C0; RET nz: If condition cc is true, the top stack entry is popped into pc.
 
-		//! C1; RET nz: If condition cc is true, the top stack entry is popped into pc.
+		//! C1; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
+		{0xC1, [](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.bc); }},
 
-		//! C2; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
+		//! C2; JP nz,**: If condition cc is true, ** is copied to pc.
 
-		//! C3; JP nz,**: If condition cc is true, ** is copied to pc.
+		//! C3; JP **: ** is copied to pc.
 
-		//! C4; JP **: ** is copied to pc.
+		//! C4; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
-		//! C5; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! C5; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
+		{0xC5, [](CPU &cpu, CPU::Registers &reg){ return PUSH(cpu, reg, reg.bc); }},
 
-		//! C6; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
+		//! C6; ADD a,*: Adds * to a.
 
-		//! C7; ADD a,*: Adds * to a.
+		//! C7; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
 
-		//! C8; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
+		//! C8; RET z: If condition cc is true, the top stack entry is popped into pc.
 
-		//! C9; RET z: If condition cc is true, the top stack entry is popped into pc.
+		//! C9; RET: The top stack entry is popped into pc.
 
-		//! CA; RET: The top stack entry is popped into pc.
+		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
 
 		//! CB; Prefix for bit level instructions
 		{0xCB, [](CPU &cpu, CPU::Registers &reg) {
 			unsigned char opcode = cpu.read(reg.pc++);
 
 			try {
-				return Instructions::_bitLevelInstructions.at(opcode)(cpu, reg);
+				return Instructions::_bitLevelInstructions.at(opcode)(cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION;
 			} catch (std::out_of_range &) {
 				throw CPU::InvalidOpcodeException(0xCB00U | opcode, reg.pc - 2);
 			}
@@ -476,6 +485,7 @@ namespace GBEmulator::Instructions
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
 		//! CD; CALL **: The current pc value plus three is pushed onto the stack, then is loaded with **.
+		{0xCD, [](CPU &cpu, CPU::Registers &reg){ return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! CE; ADC a,*: Adds * and the carry flag to a.
 
@@ -487,7 +497,7 @@ namespace GBEmulator::Instructions
 
 		//! D2; JP nc,**: If condition cc is true, ** is copied to pc.
 
-		//! D3; OUT (*),a: The value of a is written to port *.
+		//! D3; UNUSED
 
 		//! D4; CALL nc,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
@@ -499,29 +509,31 @@ namespace GBEmulator::Instructions
 
 		//! D8; RET c: If condition cc is true, the top stack entry is popped into pc.
 
-		//! D9; EXX: Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
+		//! D9; RETI
 
 		//! DA; JP c,**: If condition cc is true, ** is copied to pc.
 
-		//! DB; IN a,(*): A byte from port * is written to a.
+		//! DB; UNUSED
 
 		//! DC; CALL c,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
-		//! DD; IX: IX
+		//! DD; UNUSED
 
 		//! DE; SBC a,*: Subtracts * and the carry flag from a.
 
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
 
-		//! E0; RET po: If condition cc is true, the top stack entry is popped into pc.
+		//! E0; LD (FF00+*),a: Load a to the address $FF00+*
+		{0xE0, [](CPU &cpu, CPU::Registers &reg){ return LDtoPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a); }},
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
 
-		//! E2; JP po,**: If condition cc is true, ** is copied to pc.
+		//! E2; LD (FF00+c),a: Load a to the address $FF00+c
+		{0xE2, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.c + 0xFF00, reg.a); }},
 
-		//! E3; EX (sp),hl: Exchanges (sp) with l, and (sp+1) with h.
+		//! E3; UNUSED
 
-		//! E4; CALL po,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! E4; UNUSED
 
 		//! E5; PUSH hl: sp is decremented and h is stored into the memory location pointed to by sp. sp is decremented again and l is stored into the memory location pointed to by sp.
 
@@ -529,31 +541,31 @@ namespace GBEmulator::Instructions
 
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
 
-		//! E8; RET pe: If condition cc is true, the top stack entry is popped into pc.
+		//! E8; ADD SP,**: Add ** to sp
 
 		//! E9; JP (hl): Loads the value of hl into pc.
 
-		//! EA; JP pe,**: If condition cc is true, ** is copied to pc.
+		//! EA; LD (**),a: Load a into the address pointed to by **
 
-		//! EB; EX de,hl: Exchanges the 16-bit contents of de and hl.
+		//! EB; UNUSED
 
-		//! EC; CALL pe,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! EC; UNUSED
 
-		//! ED; EXTD: EXTD
+		//! ED; UNUSED
 
 		//! EE; XOR *: Bitwise XOR on a with *.
 
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
 
-		//! F0; RET p: If condition cc is true, the top stack entry is popped into pc.
+		//! F0; LD a,(FF00+*): Load the value at address $FF00+* to a
 
 		//! F1; POP af: The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again.
 
-		//! F2; JP p,**: If condition cc is true, ** is copied to pc.
+		//! F2; LD a,(FF00+c): Load the value at address $FF00+c to a
 
 		//! F3; DI: Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 
-		//! F4; CALL p,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! F4; UNUSED
 
 		//! F5; PUSH af: sp is decremented and a is stored into the memory location pointed to by sp. sp is decremented again and f is stored into the memory location pointed to by sp.
 
@@ -561,17 +573,17 @@ namespace GBEmulator::Instructions
 
 		//! F7; RST 30h: The current pc value plus one is pushed onto the stack, then is loaded with 30h.
 
-		//! F8; RET m: If condition cc is true, the top stack entry is popped into pc.
+		//! F8; LD hl,sp+**: Load sp+** to hl
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 
-		//! FA; JP m,**: If condition cc is true, ** is copied to pc.
+		//! FA; LD a,(**): Load the value pointed to by address ** to a
 
 		//! FB; EI: Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 
-		//! FC; CALL m,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! FC; UNUSED
 
-		//! FD; IV: IV
+		//! FD; UNUSED
 
 		//! FE; CP *: Subtracts * from a and affects flags according to the result. a is not modified.
 
@@ -592,6 +604,28 @@ namespace GBEmulator::Instructions
 			reg.fc = c;
 	}
 
+	unsigned char CALL(CPU &cpu, CPU::Registers &reg, unsigned short address)
+	{
+		PUSH(cpu, reg, reg.pc);
+		JP(reg, true, address);
+		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+	}
+
+	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value)
+	{
+		cpu.write(--reg.sp, value >> 8U);
+		cpu.write(--reg.sp, value);
+		return PUSH_CYCLE_DURATION;
+	}
+
+	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value)
+	{
+		unsigned char temp = cpu.read(reg.sp++);
+
+		value = (cpu.read(reg.sp++) << 8U) | temp;
+		return PUSH_CYCLE_DURATION;
+	}
+
 	unsigned char JR(CPU::Registers &reg, bool cond, char off)
 	{
 		if (!cond)
@@ -600,10 +634,18 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION + JUMP_CYCLE_DURATION;
 	}
 
+	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address)
+	{
+		if (!cond)
+			return BASIC_BIT_OPERATION_CYCLE_DURATION;
+		reg.pc = address;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+	}
+
 	unsigned char BIT(CPU::Registers &reg, unsigned char value, unsigned char bit)
 	{
 		setFlags(reg, ((1U << bit) & value) == 0 ? SET : UNSET, UNSET, SET, UNCHANGED);
-		return COMPLEX_BIT_OPERATION_CYCLE_DURATION;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
@@ -625,9 +667,24 @@ namespace GBEmulator::Instructions
 		return LD_CYCLE_DURATION;
 	}
 
-	unsigned char LDPTR(CPU &cpu, unsigned short address, unsigned char value)
+	unsigned char LDtoPTR(CPU &cpu, unsigned short address, unsigned char value)
 	{
 		cpu.write(address, value);
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+	}
+
+	unsigned char LDfromPTR(CPU &cpu, unsigned short address, unsigned char &value)
+	{
+		value = cpu.read(address);
+		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+	}
+
+	unsigned char RL(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value << 1U) | reg.fc;
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 }

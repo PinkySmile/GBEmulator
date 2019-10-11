@@ -30,11 +30,11 @@ namespace GBEmulator
 					union {
 						unsigned char f;
 						struct {
-							bool fz : 1;
-							bool fn : 1;
-							bool fh : 1;
-							bool fc : 1;
 							unsigned char _ : 4;
+							bool fc : 1;
+							bool fh : 1;
+							bool fn : 1;
+							bool fz : 1;
 						};
 					};
 					unsigned char a;
@@ -77,7 +77,7 @@ namespace GBEmulator
 
 		CPU(const std::string &romPath);
 
-		unsigned char read(unsigned short address);
+		unsigned char read(unsigned short address)const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);

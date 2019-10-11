@@ -7,7 +7,7 @@ with open('raw_html.txt') as fd:
 
 al = re.findall(r"^<td axis=\".{6}\|\d+\|\d+/?\d*\|([^\"]+)\">([^<].+)</td>$", raw_html, re.MULTILINE)
 
-al.insert(0xBC, ("BITS", "BITS"))
+al.insert(0xCB, ("BITS", "BITS"))
 al.insert(0xDD, ("IX", "IX"))
 al.insert(0xED, ("EXTD", "EXTD"))
 al.insert(0xFD, ("IV", "IV"))

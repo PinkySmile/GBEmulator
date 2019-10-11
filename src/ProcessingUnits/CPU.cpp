@@ -37,7 +37,7 @@ namespace GBEmulator
 		this->_rom.setBank(1);
 	}
 
-	unsigned char CPU::read(unsigned short address)
+	unsigned char CPU::read(unsigned short address) const
 	{
 		switch (address) {
 		case 0x0000 ... 0x00FF:     //Startup code
@@ -146,15 +146,29 @@ namespace GBEmulator
 
 	void CPU::dump() const
 	{
-		std::cout << std::hex << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << static_cast<int>(this->_registers.a) << ", f: " << static_cast<int>(this->_registers.f) << ")" << std::endl;
-		std::cout << std::hex << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << static_cast<int>(this->_registers.b) << ", c: " << static_cast<int>(this->_registers.c) << ")" << std::endl;
-		std::cout << std::hex << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << static_cast<int>(this->_registers.d) << ", e: " << static_cast<int>(this->_registers.e) << ")" << std::endl;
-		std::cout << std::hex << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << static_cast<int>(this->_registers.h) << ", l: " << static_cast<int>(this->_registers.l) << ")" << std::endl;
-		std::cout << std::hex << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
-		std::cout << std::hex << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
+		std::cout << std::hex << std::uppercase;
+		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a) << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
+		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b) << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
+		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d) << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
+		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h) << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+		std::cout << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
+		std::cout << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
 		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+		for (unsigned int i = 0; i < 0x10000; i += 0x10) {
+			std::cout << std::setw(4) << std::setfill('0') << i << ":  ";
+			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
+				std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->read(j + i)) << " ";
+			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
+				std::cout << "   ";
+			std::cout << " ";
+			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
+				std::cout << static_cast<char>(std::isprint(this->read(j + i)) ? this->read(j + i) : '.');
+			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
+				std::cout << " ";
+			std::cout << std::endl;
+		}
 	}
 }
