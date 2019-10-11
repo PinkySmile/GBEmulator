@@ -20,10 +20,10 @@ namespace GBEmulator::Instructions
 		{0x00, [](CPU &, CPU::Registers &) { return NOP_CYCLE_DURATION; }},
 
 		//! 01; LD bc,**: Loads ** into bc.
-		{0x01, [](CPU &cpu, CPU::Registers &reg) { Instructions::LD16(reg.bc, cpu.fetchArgument16()); }},
+		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()); }},
 
 		//! 02; LD (bc), a: Stores a into the memory location pointed to by bc
-		{0x02, [](CPU &cpu, CPU::Registers &reg) { Instructions::LDPTR(cpu, reg.bc, reg.a); }},
+		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
 
@@ -374,7 +374,7 @@ namespace GBEmulator::Instructions
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
 
 		//! AF; XOR a: Bitwise XOR a with a
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { reg.a ^= reg.a; }},
+		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a, reg.a); }},
 
 		//! B0; OR b: Bitwise OR on a with b.
 
