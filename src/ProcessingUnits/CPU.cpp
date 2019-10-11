@@ -29,6 +29,8 @@ namespace GBEmulator
 
 	CPU::CPU(const std::string &romPath) :
 		_halted(false),
+		_interrupt(0x00),
+		_totalCycles(0),
 		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
