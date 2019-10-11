@@ -9,5 +9,21 @@
 
 namespace GBEmulator
 {
+    APU::APU() :
+    _memory(0x2F, 0x2F)
+    {
 
+    }
+
+    void APU::write(unsigned short address, unsigned char value)
+    {
+        this->_memory.write(address, value);
+    }
+
+    unsigned char APU::read(unsigned short address) const
+    {
+        return this->_memory.read(address);
+    }
+
+    APU::~APU() = default;
 }
