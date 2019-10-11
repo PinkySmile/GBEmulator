@@ -40,7 +40,7 @@ namespace GBEmulator::Instructions
 	unsigned char LD8(unsigned char &value1, unsigned char value2);
 	unsigned char LD16(unsigned short &value1, unsigned short value2);
 	unsigned char LDtoPTR(CPU &cpu, unsigned short address, unsigned char value);
-	unsigned char LDfromPTR(CPU &cpu, unsigned short address, unsigned char &value);
+	unsigned char LDfromPTR(CPU &cpu, unsigned char &value, unsigned short address);
 	unsigned char CALL(CPU &cpu, CPU::Registers &reg, unsigned short address);
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address);
 	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value);

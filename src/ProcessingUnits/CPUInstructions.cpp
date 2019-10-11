@@ -44,6 +44,7 @@ namespace GBEmulator::Instructions
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
 		//! 0A; LD a,(bc): Loads the value pointed to by bc into a.
+		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }}
 
 		//! 0B; DEC bc: Subtracts one from bc.
 
@@ -82,7 +83,7 @@ namespace GBEmulator::Instructions
 		//! 19; ADD hl,de: The value of de is added to hl.
 
 		//! 1A; LD a,(de): Loads the value pointed to by de into a.
-		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LDfromPTR(cpu, reg.de, reg.a); }},
+		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LDfromPTR(cpu, reg.a, reg.de); }},
 
 		//! 1B; DEC de: Subtracts one from de.
 
@@ -120,6 +121,7 @@ namespace GBEmulator::Instructions
 		//! 29; ADD hl,hl: The value of hl is added to hl.
 
 		//! 2A; LDI a,(hl): Loads the value pointed to by hl to a and increments hl
+		{0x2A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 2B; DEC hl: Subtracts one from hl.
 
@@ -128,6 +130,7 @@ namespace GBEmulator::Instructions
 		//! 2D; DEC l: Subtracts one from l.
 
 		//! 2E; LD l,*: Loads * into l.
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 2F; CPL: The contents of a are inverted (one's complement).
 
@@ -186,6 +189,7 @@ namespace GBEmulator::Instructions
 		{0x45, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.l); }},
 
 		//! 46; LD b,(hl): The contents of (hl) are loaded into b.
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.b, reg.hl); }},
 
 		//! 47; LD b,a: The contents of a are loaded into b.
 		{0x47, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.a); }},
@@ -209,6 +213,7 @@ namespace GBEmulator::Instructions
 		{0x4D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.l); }},
 
 		//! 4E; LD c,(hl): The contents of (hl) are loaded into c.
+		{0x4E, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.c, reg.hl); }},
 
 		//! 4F; LD c,a: The contents of a are loaded into c.
 		{0x4F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.a); }},
@@ -232,6 +237,7 @@ namespace GBEmulator::Instructions
 		{0x55, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.l); }},
 
 		//! 56; LD d,(hl): The contents of (hl) are loaded into d.
+		{0x56, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.d, reg.hl); }},
 
 		//! 57; LD d,a: The contents of a are loaded into d.
 		{0x57, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.a); }},
@@ -240,62 +246,91 @@ namespace GBEmulator::Instructions
 		{0x58, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.b); }},
 
 		//! 59; LD e,c: The contents of c are loaded into e.
+		{0x59, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.c); }},
 
 		//! 5A; LD e,d: The contents of d are loaded into e.
+		{0x5A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.d); }},
 
 		//! 5B; LD e,e: The contents of e are loaded into e.
+		{0x5B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.e); }},
 
 		//! 5C; LD e,h: The contents of h are loaded into e.
+		{0x5C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.h); }},
 
 		//! 5D; LD e,l: The contents of l are loaded into e.
+		{0x5D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.l); }},
 
 		//! 5E; LD e,(hl): The contents of (hl) are loaded into e.
+		{0x5E, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.e, reg.hl); }},
 
 		//! 5F; LD e,a: The contents of a are loaded into e.
+		{0x5F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.a); }},
 
 		//! 60; LD h,b: The contents of b are loaded into h.
+		{0x60, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.b); }},
 
 		//! 61; LD h,c: The contents of c are loaded into h.
+		{0x61, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.c); }},
 
 		//! 62; LD h,d: The contents of d are loaded into h.
+		{0x62, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.d); }},
 
 		//! 63; LD h,e: The contents of e are loaded into h.
+		{0x63, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.e); }},
 
 		//! 64; LD h,h: The contents of h are loaded into h.
+		{0x64, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.h); }},
 
 		//! 65; LD h,l: The contents of l are loaded into h.
+		{0x65, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.l); }},
 
 		//! 66; LD h,(hl): The contents of (hl) are loaded into h.
+		{0x66, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.h, reg.hl); }},
 
 		//! 67; LD h,a: The contents of a are loaded into h.
+		{0x67, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.a); }},
 
 		//! 68; LD l,b: The contents of b are loaded into l.
+		{0x68, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.b); }},
 
 		//! 69; LD l,c: The contents of c are loaded into l.
+		{0x69, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.c); }},
 
 		//! 6A; LD l,d: The contents of d are loaded into l.
+		{0x6A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.d); }},
 
 		//! 6B; LD l,e: The contents of e are loaded into l.
+		{0x6B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.e); }},
 
 		//! 6C; LD l,h: The contents of h are loaded into l.
+		{0x6C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.h); }},
 
 		//! 6D; LD l,l: The contents of l are loaded into l.
+		{0x6D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.l); }},
 
 		//! 6E; LD l,(hl): The contents of (hl) are loaded into l.
+		{0x6E, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.l, reg.hl); }},
 
 		//! 6F; LD l,a: The contents of a are loaded into l.
+		{0x6F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.a); }},
 
 		//! 70; LD (hl),b: The contents of b are loaded into (hl).
+		{0x70, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.b); }},
 
 		//! 71; LD (hl),c: The contents of c are loaded into (hl).
+		{0x71, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.c); }},
 
 		//! 72; LD (hl),d: The contents of d are loaded into (hl).
+		{0x72, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.d); }},
 
 		//! 73; LD (hl),e: The contents of e are loaded into (hl).
+		{0x73, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.e); }},
 
 		//! 74; LD (hl),h: The contents of h are loaded into (hl).
+		{0x74, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.h); }},
 
 		//! 75; LD (hl),l: The contents of l are loaded into (hl).
+		{0x75, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.l); }},
 
 		//! 76; HALT: Suspends CPU operation until an interrupt or reset occurs.
 
@@ -303,20 +338,28 @@ namespace GBEmulator::Instructions
 		{0x77, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, reg.a); }},
 
 		//! 78; LD a,b: The contents of b are loaded into a.
+		{0x78, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.b); }},
 
 		//! 79; LD a,c: The contents of c are loaded into a.
+		{0x79, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.c); }},
 
 		//! 7A; LD a,d: The contents of d are loaded into a.
+		{0x7A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.d); }},
 
 		//! 7B; LD a,e: The contents of e are loaded into a.
+		{0x7B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.e); }},
 
 		//! 7C; LD a,h: The contents of h are loaded into a.
+		{0x7C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.h); }},
 
 		//! 7D; LD a,l: The contents of l are loaded into a.
+		{0x7D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.l); }},
 
 		//! 7E; LD a,(hl): The contents of (hl) are loaded into a.
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 7F; LD a,a: The contents of a are loaded into a.
+		{0x7F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.a); }},
 
 		//! 80; ADD a,b: Adds b to a.
 
@@ -546,6 +589,7 @@ namespace GBEmulator::Instructions
 		//! E9; JP (hl): Loads the value of hl into pc.
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, cpu.fetchArgument16(), reg.a) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! EB; UNUSED
 
@@ -576,8 +620,10 @@ namespace GBEmulator::Instructions
 		//! F8; LD hl,sp+**: Load sp+** to hl
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD16(cpu, reg.sp, reg.hl); }},
 
 		//! FA; LD a,(**): Load the value pointed to by address ** to a
+		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! FB; EI: Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 
@@ -673,7 +719,7 @@ namespace GBEmulator::Instructions
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
 	}
 
-	unsigned char LDfromPTR(CPU &cpu, unsigned short address, unsigned char &value)
+	unsigned char LDfromPTR(CPU &cpu, unsigned char &value, unsigned short address)
 	{
 		value = cpu.read(address);
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
