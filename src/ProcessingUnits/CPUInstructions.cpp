@@ -36,7 +36,7 @@ namespace GBEmulator::Instructions
 
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 
-		//! 08; EX af,af': Exchanges the 16-bit contents of af and af'.
+		//! 08; LD (a16), SP: --
 
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
@@ -53,7 +53,7 @@ namespace GBEmulator::Instructions
 
 		//! 0F; RRCA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
 
-		//! 10; DJNZ *: The b register is decremented, and if not zero, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
+		//! 10; STOP: --
 
 		//! 11; LD de,**: Loads ** into de.
 		{0x11, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.de, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
@@ -95,8 +95,7 @@ namespace GBEmulator::Instructions
 		//! 21; LD hl, **: Loads ** into hl register
 		{0x21, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 22; LD (**),hl: Stores hl into the memory location pointed to by **.
-		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, cpu.fetchArgument16(), reg.hl) + FETCH_ARGUMENT16_CYLCE_DURATION; }}, //TODO: reg.hl into uchar ??
+		//! 22; LDI (hl),a: --
 
 		//! 23; INC hl: Adds one to hl.
 
@@ -113,7 +112,7 @@ namespace GBEmulator::Instructions
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
 
-		//! 2A; LD hl,(**): Loads the value pointed to by ** into hl.
+		//! 2A; LDI a,hl: --
 
 		//! 2B; DEC hl: Subtracts one from hl.
 
@@ -130,7 +129,7 @@ namespace GBEmulator::Instructions
 		//! 31; LD sp, **: Loads ** into sp register
 		{0x31, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 32; LD (hl-), a: Loads a into address pointed to by hl and decrement hl
+		//! 32; LDD (hl), a: Loads a into address pointed to by hl and decrement hl
 		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
@@ -148,7 +147,7 @@ namespace GBEmulator::Instructions
 
 		//! 39; ADD hl,sp: The value of hl is added to hl.
 
-		//! 3A; LD a,(**): Loads the value pointed to by ** into a.
+		//! 3A; LDD a,(hl): --
 
 		//! 3B; DEC sp: Subtracts one from sp.
 
@@ -487,7 +486,7 @@ namespace GBEmulator::Instructions
 
 		//! D2; JP nc,**: If condition cc is true, ** is copied to pc.
 
-		//! D3; OUT (*),a: The value of a is written to port *.
+		//! D3; UNUSED
 
 		//! D4; CALL nc,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
@@ -499,29 +498,29 @@ namespace GBEmulator::Instructions
 
 		//! D8; RET c: If condition cc is true, the top stack entry is popped into pc.
 
-		//! D9; EXX: Exchanges the 16-bit contents of bc, de, and hl with bc', de', and hl'.
+		//! D9; RETI
 
 		//! DA; JP c,**: If condition cc is true, ** is copied to pc.
 
-		//! DB; IN a,(*): A byte from port * is written to a.
+		//! DB; UNUSED
 
 		//! DC; CALL c,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 
-		//! DD; IX: IX
+		//! DD; UNUSED
 
 		//! DE; SBC a,*: Subtracts * and the carry flag from a.
 
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
 
-		//! E0; RET po: If condition cc is true, the top stack entry is popped into pc.
+		//! E0; LD (FF00+n),a: --
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
 
-		//! E2; JP po,**: If condition cc is true, ** is copied to pc.
+		//! E2; LD (FF00+c),a: --
 
-		//! E3; EX (sp),hl: Exchanges (sp) with l, and (sp+1) with h.
+		//! E3; UNUSED
 
-		//! E4; CALL po,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! E4; UNUSED
 
 		//! E5; PUSH hl: sp is decremented and h is stored into the memory location pointed to by sp. sp is decremented again and l is stored into the memory location pointed to by sp.
 
@@ -529,31 +528,31 @@ namespace GBEmulator::Instructions
 
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
 
-		//! E8; RET pe: If condition cc is true, the top stack entry is popped into pc.
+		//! E8; ADD SP,dd: --
 
 		//! E9; JP (hl): Loads the value of hl into pc.
 
-		//! EA; JP pe,**: If condition cc is true, ** is copied to pc.
+		//! EA; LD (**),a: --
 
-		//! EB; EX de,hl: Exchanges the 16-bit contents of de and hl.
+		//! EB; UNUSED
 
-		//! EC; CALL pe,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! EC; UNUSED
 
-		//! ED; EXTD: EXTD
+		//! ED; UNUSED
 
 		//! EE; XOR *: Bitwise XOR on a with *.
 
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
 
-		//! F0; RET p: If condition cc is true, the top stack entry is popped into pc.
+		//! F0; LD a,(FF00+n)
 
 		//! F1; POP af: The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again.
 
-		//! F2; JP p,**: If condition cc is true, ** is copied to pc.
+		//! F2; LD a,(FF00+C)
 
 		//! F3; DI: Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 
-		//! F4; CALL p,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! F4; UNUSED
 
 		//! F5; PUSH af: sp is decremented and a is stored into the memory location pointed to by sp. sp is decremented again and f is stored into the memory location pointed to by sp.
 
@@ -561,17 +560,17 @@ namespace GBEmulator::Instructions
 
 		//! F7; RST 30h: The current pc value plus one is pushed onto the stack, then is loaded with 30h.
 
-		//! F8; RET m: If condition cc is true, the top stack entry is popped into pc.
+		//! F8; LD hl,SP+dd
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 
-		//! FA; JP m,**: If condition cc is true, ** is copied to pc.
+		//! FA; LD a,(**)
 
 		//! FB; EI: Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 
-		//! FC; CALL m,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
+		//! FC; UNUSED
 
-		//! FD; IV: IV
+		//! FD; UNUSED
 
 		//! FE; CP *: Subtracts * from a and affects flags according to the result. a is not modified.
 
