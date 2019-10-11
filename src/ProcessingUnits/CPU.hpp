@@ -30,11 +30,11 @@ namespace GBEmulator
 					union {
 						unsigned char f;
 						struct {
-							bool fz : 1;
-							bool fn : 1;
-							bool fh : 1;
-							bool fc : 1;
 							unsigned char _ : 4;
+							bool fc : 1;
+							bool fh : 1;
+							bool fn : 1;
+							bool fz : 1;
 						};
 					};
 					unsigned char a;

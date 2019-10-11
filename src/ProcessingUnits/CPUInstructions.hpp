@@ -36,7 +36,8 @@ namespace GBEmulator::Instructions
 	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
 	unsigned char LD8(unsigned char &value1, unsigned char value2);
 	unsigned char LD16(unsigned short &value1, unsigned short value2);
-	unsigned char LDPTR(CPU &cpu, unsigned short address, unsigned char value);
+	unsigned char LDtoPTR(CPU &cpu, unsigned short address,
+			      unsigned char value);
 
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _instructions;
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions;

@@ -23,7 +23,7 @@ namespace GBEmulator::Instructions
 		{0x01, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.bc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 02; LD (bc), a: Stores a into the memory location pointed to by bc
-		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.bc, reg.a); }},
+		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
 
@@ -59,7 +59,7 @@ namespace GBEmulator::Instructions
 		{0x11, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.de, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 12; LD (de),a: Stores a into the memory location pointed to by de.
-		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.de, reg.a); }},
+		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.de, reg.a); }},
 
 		//! 13; INC de: Adds one to de.
 
@@ -95,7 +95,8 @@ namespace GBEmulator::Instructions
 		//! 21; LD hl, **: Loads ** into hl register
 		{0x21, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 22; LDI (hl),a: --
+		//! 22; LDI (hl),a: Loads a to the address pointed to by hl and increment hl
+		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl++, reg.a); }},
 
 		//! 23; INC hl: Adds one to hl.
 
@@ -112,7 +113,7 @@ namespace GBEmulator::Instructions
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
 
-		//! 2A; LDI a,hl: --
+		//! 2A; LDI a,(hl): Loads the value pointed to by hl to a and increments hl
 
 		//! 2B; DEC hl: Subtracts one from hl.
 
@@ -129,8 +130,8 @@ namespace GBEmulator::Instructions
 		//! 31; LD sp, **: Loads ** into sp register
 		{0x31, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
-		//! 32; LDD (hl), a: Loads a into address pointed to by hl and decrement hl
-		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl--, reg.a); }},
+		//! 32; LD (hl-), a: Loads a into address pointed to by hl and decrement hl
+		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
 
@@ -139,7 +140,7 @@ namespace GBEmulator::Instructions
 		//! 35; DEC (hl): Subtracts one from (hl).
 
 		//! 36; LD (hl),*: Loads * into (hl).
-		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LDPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
+		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 37; SCF: Sets the carry flag.
 
@@ -147,7 +148,7 @@ namespace GBEmulator::Instructions
 
 		//! 39; ADD hl,sp: The value of hl is added to hl.
 
-		//! 3A; LDD a,(hl): --
+		//! 3A; LDD a,(hl): Load the value pointed to by hl to a and decrements hl
 
 		//! 3B; DEC sp: Subtracts one from sp.
 
@@ -512,11 +513,12 @@ namespace GBEmulator::Instructions
 
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
 
-		//! E0; LD (FF00+n),a: --
+		//! E0; LD (FF00+*),a: Load a to the address $FF00+*
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
 
-		//! E2; LD (FF00+c),a: --
+		//! E2; LD (FF00+c),a: Load a to the address $FF00+c
+		{0xE2, [](CPU &cpu, CPU::Registers &reg) { return LDtoPTR(cpu, reg.c + 0xFF00, reg.a); }},
 
 		//! E3; UNUSED
 
@@ -528,11 +530,11 @@ namespace GBEmulator::Instructions
 
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
 
-		//! E8; ADD SP,dd: --
+		//! E8; ADD SP,**: Add ** to sp
 
 		//! E9; JP (hl): Loads the value of hl into pc.
 
-		//! EA; LD (**),a: --
+		//! EA; LD (**),a: Load a into the address pointed to by **
 
 		//! EB; UNUSED
 
@@ -544,11 +546,11 @@ namespace GBEmulator::Instructions
 
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
 
-		//! F0; LD a,(FF00+n)
+		//! F0; LD a,(FF00+*): Load the value at address $FF00+* to a
 
 		//! F1; POP af: The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again.
 
-		//! F2; LD a,(FF00+C)
+		//! F2; LD a,(FF00+c): Load the value at address $FF00+c to a
 
 		//! F3; DI: Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 
@@ -560,11 +562,11 @@ namespace GBEmulator::Instructions
 
 		//! F7; RST 30h: The current pc value plus one is pushed onto the stack, then is loaded with 30h.
 
-		//! F8; LD hl,SP+dd
+		//! F8; LD hl,sp+**: Load sp+** to hl
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 
-		//! FA; LD a,(**)
+		//! FA; LD a,(**): Load the value pointed to by address ** to a
 
 		//! FB; EI: Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
 
@@ -624,7 +626,8 @@ namespace GBEmulator::Instructions
 		return LD_CYCLE_DURATION;
 	}
 
-	unsigned char LDPTR(CPU &cpu, unsigned short address, unsigned char value)
+	unsigned char LDtoPTR(CPU &cpu, unsigned short address,
+			      unsigned char value)
 	{
 		cpu.write(address, value);
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
