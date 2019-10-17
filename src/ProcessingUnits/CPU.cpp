@@ -181,6 +181,7 @@ namespace GBEmulator
 	void CPU::_executeInterrupt(unsigned int id)
 	{
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptMasterEnableFlag = false;
 		this->_sleeping = false;
 	}
 
@@ -194,8 +195,7 @@ namespace GBEmulator
 			return 0xFF;
 		}
 	}
-
-	void CPU::_writeIOPort(unsigned char address, unsigned char value)
+;	void CPU::_writeIOPort(unsigned char address, unsigned char value)
 	{
 		switch (address) {
 		case INTERRUPT_REQUESTS:
@@ -221,10 +221,22 @@ namespace GBEmulator
 	void CPU::dumpRegisters() const
 	{
 		std::cout << std::hex << std::uppercase;
-		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a) << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
-		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b) << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
-		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d) << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
-		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h) << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af;
+		std::cout << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a);
+		std::cout << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
+
+		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc;
+		std::cout << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b);
+		std::cout << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
+
+		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de;
+		std::cout << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d);
+		std::cout << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
+
+		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl;
+		std::cout << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h);
+		std::cout << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+
 		std::cout << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
 		std::cout << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
 		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
