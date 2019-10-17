@@ -13,12 +13,14 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	GBEmulator::CPU cpu(argv[1]);
+	sf::RenderWindow window{sf::VideoMode{640, 576}, "GBEmulator"};
+	GBEmulator::CPU cpu(argv[1], window);
 
 	try {
 		size_t value = 0;
 
-		while (cpu.executeNextInstruction()) {
+		while (!cpu.isHalted()) {
+			cpu.update();
 			if (value++ % 256 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;

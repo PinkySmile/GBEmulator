@@ -11,9 +11,10 @@
 
 namespace GBEmulator
 {
-	GPU::GPU(sf::RenderWindow *screen) :
-	_vram(VRAM_SIZE, ROM_BANK_SIZE),
-	_oam(OAM_SIZE, ROM_BANK_SIZE)
+	GPU::GPU(sf::RenderWindow &screen) :
+		_vram(VRAM_SIZE, ROM_BANK_SIZE),
+		_oam(OAM_SIZE, ROM_BANK_SIZE),
+		_screen(screen)
 	{
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
 		for (int i = 0; i < 64; i++)
@@ -91,7 +92,7 @@ namespace GBEmulator
 	}
 
 	void GPU::update(int cycle) {
-		if (cycle%500 == 0) {
+		if (cycle % 500 == 0) {
 			auto sprites = getSprites();
 			for (auto &sprite : sprites)
 				_screen.draw(sprite);
@@ -111,6 +112,6 @@ namespace GBEmulator
 			sprite.setPosition(x, y);
 			sprites.push_back(sprite);
 		}
-		return std::vector<sf::Sprite>();
+		return sprites;
 	}
 }
