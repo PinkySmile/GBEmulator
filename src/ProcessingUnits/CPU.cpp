@@ -195,7 +195,8 @@ namespace GBEmulator
 			return 0xFF;
 		}
 	}
-;	void CPU::_writeIOPort(unsigned char address, unsigned char value)
+
+	void CPU::_writeIOPort(unsigned char address, unsigned char value)
 	{
 		switch (address) {
 		case INTERRUPT_REQUESTS:
