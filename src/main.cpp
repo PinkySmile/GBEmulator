@@ -15,7 +15,8 @@ int main(int argc, char **argv)
 	try {
 		size_t value = 0;
 
-		while (cpu.executeNextInstruction()) {
+		while (!cpu.isHalted()) {
+			cpu.update();
 			if (value++ % 256 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;

@@ -8,22 +8,94 @@
 #ifndef GBEMULATOR_CPU_HPP
 #define GBEMULATOR_CPU_HPP
 
+
 #include <string>
 #include <functional>
 #include "APU.hpp"
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
 
-
+//The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
+
+//The total size of the working RAM
 #define RAM_SIZE 0x8000
+
+//The total size of te high RAM
 #define HRAM_SIZE 0x7F
 
+//The number of interrupts
+#define NB_INTERRUPT_BITS 5
+
+//The size of the interrupt code
+#define INTERRUPT_CODE_SIZE 0x8
+
+//The address of the first interrupt
+#define INTERRUPT_CODE_OFFSET 0x40
+
+//The startup code
+#define STARTUP_CODE_RANGE 0x0000 ... 0x00FF
+
+//The first bank of the ROM (ROM0)
+#define ROM0_RANGE 0x0100 ... 0x3FFF
+
+//The switchable ROM bank (ROM1)
+#define ROM1_RANGE 0x4000 ... 0x7FFF
+#define ROM1_STARTING_ADDRESS 0x4000
+
+//Video RAM
+#define VRAM_RANGE 0x8000 ... 0x9FFF
+
+//Cartridge RAM
+#define SRAM_RANGE 0xA000 ... 0xBFFF
+
+//Working RAM
+#define WRAM_RANGE 0xC000 ... 0xDFFF
+#define WRAM_STARTING_ADDRESS 0xC000
+
+//Echo RAM (Echoing the WRAM)
+#define ECHO_RAM_RANGE 0xE000 ... 0xFDFF
+#define ECHO_RAM_STARTING_ADDRESS 0xE000
+
+//Object attributes matrix
+#define OAM_RANGE 0xFE00 ... 0xFE9F
+
+//The first range of I/O ports
+#define IO_PORT1_RANGE 0xFF00 ... 0xFF0F
+#define IO_PORTS_STARTING_ADDRESS 0xFF00
+
+//The APU
+#define APU_RANGE 0xFF10 ... 0xFF2F
+
+//The wave pattern RAM
+#define WPRAM_RANGE 0xFF30 ... 0xFF3F
+
+//The second range of I/O ports
+#define IO_PORT2_RANGE 0xFF40 ... 0xFF7F
+
+//High RAM
+#define HRAM_RANGE 0xFF80 ... 0xFFFE
+#define HRAM_STARTING_ADDRESS 0xFF80
+
+//Interrupt enable
+#define INTERRUPT_ENABLE_ADDRESS 0xFFFF
 
 namespace GBEmulator
 {
 	class CPU {
 	public:
+		enum InterruptsKind {
+			VBLANK =   0,
+			LCD_STAT = 1U << 1U,
+			TIMER =    1U << 2U,
+			SERIAL =   1U << 3U,
+			JOYPAD =   1U << 4U,
+		};
+
+		enum IOPorts {
+			INTERRUPT_REQUESTS = 0x0F,
+		};
+
 		struct Registers {
 			union {
 				struct {
@@ -77,14 +149,15 @@ namespace GBEmulator
 
 		CPU(const std::string &romPath);
 
-		unsigned char read(unsigned short address)const;
+		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
 		void write(unsigned short address, unsigned char value);
-		bool executeNextInstruction();
 		void dump() const;
+		bool isHalted() const;
 		void dumpMemory() const;
 		void dumpRegisters() const;
+		void update();
 
 	private:
 		static const std::vector<unsigned char> _startupCode;
@@ -93,11 +166,20 @@ namespace GBEmulator
 		GPU _gpu;
 		ROM _rom;
 		bool _halted;
+		bool _sleeping;
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
-		unsigned char _interrupt;
 		unsigned long _totalCycles;
+		unsigned char _interruptEnabled;
+		unsigned char _interruptRequest;
+		bool _interruptMasterEnableFlag;
+
+		void _checkInterrupts();
+		void _executeNextInstruction();
+		void _executeInterrupt(unsigned int id);
+		unsigned char _readIOPort(unsigned char address) const;
+		void _writeIOPort(unsigned char address, unsigned char value);
 	};
 }
 
