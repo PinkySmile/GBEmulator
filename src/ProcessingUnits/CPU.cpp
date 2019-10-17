@@ -161,20 +161,21 @@ namespace GBEmulator
 		if (this->_halted)
 			return;
 
-		if (this->_interruptMasterEnableFlag)
-			return this->_checkInterrupts();
+		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
+			return;
 
 		if (!this->_sleeping)
 			this->_executeNextInstruction();
 	}
 
-	void CPU::_checkInterrupts()
+	bool CPU::_checkInterrupts()
 	{
 		unsigned char mask = this->_interruptEnabled & this->_interruptRequest;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if (mask & (1U << i))
-				return this->_executeInterrupt(i);
+				return this->_executeInterrupt(i), true;
+		return false;
 	}
 
 	void CPU::_executeInterrupt(unsigned int id)

@@ -176,7 +176,7 @@ namespace GBEmulator
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;
 
-		void _checkInterrupts();
+		bool _checkInterrupts();
 		void _executeNextInstruction();
 		void _executeInterrupt(unsigned int id);
 		unsigned char _readIOPort(unsigned char address) const;
