@@ -37,6 +37,7 @@ namespace GBEmulator
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{0, 0, 0, 0, 0, 0},
+		_internalRomEnabled(true),
 		_interruptMasterEnableFlag(true)
 	{
 		this->_rom.setBank(1);
@@ -46,7 +47,8 @@ namespace GBEmulator
 	{
 		switch (address) {
 		case STARTUP_CODE_RANGE:
-			return CPU::_startupCode.at(address);
+			if (this->_internalRomEnabled)
+				return CPU::_startupCode.at(address);
 
 		case ROM0_RANGE:
 			return this->_rom.rawRead(address);

@@ -170,6 +170,7 @@ namespace GBEmulator
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
+		bool _internalRomEnabled;
 		unsigned long _totalCycles;
 		unsigned char _interruptEnabled;
 		unsigned char _interruptRequest;
