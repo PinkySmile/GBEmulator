@@ -83,6 +83,8 @@ namespace GBEmulator
 		void write(unsigned short address, unsigned char value);
 		bool executeNextInstruction();
 		void dump() const;
+		void dumpMemory() const;
+		void dumpRegisters() const;
 
 	private:
 		static const std::vector<unsigned char> _startupCode;

@@ -29,6 +29,8 @@ namespace GBEmulator
 
 	CPU::CPU(const std::string &romPath) :
 		_halted(false),
+		_interrupt(0x00),
+		_totalCycles(0),
 		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
@@ -119,6 +121,9 @@ namespace GBEmulator
 		case 0xFE00 ... 0xFE9F: //OAM
 			return this->_gpu.writeOAM(address - 0xFE00, value);
 
+		case 0xFF80 ... 0xFFFE: //HRAM
+			this->_hram.write(address - 0xFF80, value);
+
 		case 0xFFFF:            //Interrupt enable
 			this->_interrupt = value;
 			break;
@@ -144,7 +149,7 @@ namespace GBEmulator
 		return true;
 	}
 
-	void CPU::dump() const
+	void CPU::dumpRegisters() const
 	{
 		std::cout << std::hex << std::uppercase;
 		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a) << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
@@ -157,6 +162,10 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+	}
+
+	void CPU::dumpMemory() const
+	{
 		for (unsigned int i = 0; i < 0x10000; i += 0x10) {
 			std::cout << std::setw(4) << std::setfill('0') << i << ":  ";
 			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
@@ -170,5 +179,11 @@ namespace GBEmulator
 				std::cout << " ";
 			std::cout << std::endl;
 		}
+	}
+
+	void CPU::dump() const
+	{
+		this->dumpMemory();
+		this->dumpRegisters();
 	}
 }

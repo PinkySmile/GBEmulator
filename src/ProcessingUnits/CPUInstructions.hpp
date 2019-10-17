@@ -36,16 +36,25 @@ namespace GBEmulator::Instructions
 	unsigned char JR(CPU::Registers &reg, bool cond, char off);
 	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address);
 	unsigned char BIT(CPU::Registers &reg, unsigned char value, unsigned char bit);
-	unsigned char XOR(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
+	unsigned char XOR(CPU::Registers &reg, unsigned char value);
 	unsigned char LD8(unsigned char &value1, unsigned char value2);
 	unsigned char LD16(unsigned short &value1, unsigned short value2);
+	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
+	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
+	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);
+	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);
+	unsigned char INC8(CPU::Registers &reg, unsigned char &value);
+	unsigned char DEC8(CPU::Registers &reg, unsigned char &value);
+	unsigned char INC16(CPU::Registers &reg, unsigned short &value);
+	unsigned char DEC16(CPU::Registers &reg, unsigned short &value);
 	unsigned char LDtoPTR(CPU &cpu, unsigned short address, unsigned char value);
-	unsigned char LDfromPTR(CPU &cpu, unsigned short address, unsigned char &value);
+	unsigned char LDfromPTR(CPU &cpu, unsigned char &value, unsigned short address);
 	unsigned char CALL(CPU &cpu, CPU::Registers &reg, unsigned short address);
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address);
 	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value);
 	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value);
 	unsigned char RL(CPU::Registers &reg, unsigned char &value);
+	unsigned char CP(CPU::Registers &reg, unsigned char value);
 
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _instructions;
 	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions;
