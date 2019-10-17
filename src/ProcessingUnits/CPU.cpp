@@ -161,11 +161,11 @@ namespace GBEmulator
 		if (this->_halted)
 			return;
 
+		if (this->_interruptMasterEnableFlag)
+			return this->_checkInterrupts();
+
 		if (!this->_sleeping)
 			this->_executeNextInstruction();
-
-		if (this->_interruptMasterEnableFlag)
-			this->_checkInterrupts();
 	}
 
 	void CPU::_checkInterrupts()
@@ -180,6 +180,7 @@ namespace GBEmulator
 	void CPU::_executeInterrupt(unsigned int id)
 	{
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_sleeping = false;
 	}
 
 	unsigned char CPU::_readIOPort(unsigned char address) const
