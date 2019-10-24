@@ -23,11 +23,20 @@ void GBEmulator::Graphics::LCDSFML::write(GBEmulator::Graphics::Sprite sprite) {
 	if (sprite.y_flip)
 		s.setScale(1, -1);
 
-	this->draw(s);
+	if (sprite.priority)
+		this->_forground.push_back(s);
+	else
+		this->_background.push_back(s);
 }
 
 void GBEmulator::Graphics::LCDSFML::display() {
+	for (auto &sprite : this->_background)
+		this->draw(sprite);
+	for (auto &sprite : this->_forground)
+		this->draw(sprite);
 	this->_texture.clear();
+	this->_background.clear();
+	this->_forground.clear();
 	sf::RenderWindow::display();
 }
 
@@ -41,7 +50,7 @@ sf::Texture GBEmulator::Graphics::LCDSFML::getTextureFromTile(std::vector<int> t
 		pixels[1 + i * 4] = this->_colors[tile[i]].g;
 		pixels[2 + i * 4] = this->_colors[tile[i]].b;
 		if (tile[i] == 0 && forground)
-			pixels[3 + i * 4] = 255;
+			pixels[3 + i * 4] = 0;
 		else
 			pixels[3 + i * 4] = this->_colors[tile[i]].a;
 	}

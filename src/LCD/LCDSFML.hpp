@@ -16,6 +16,8 @@ namespace GBEmulator::Graphics
 	private:
 		std::vector<sf::Color> _colors = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 		std::vector<sf::Texture> _texture;
+		std::vector<sf::Sprite> _forground;
+		std::vector<sf::Sprite> _background;
 
 	public:
 		LCDSFML(sf::VideoMode mode, const std::string &title);
