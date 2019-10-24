@@ -93,7 +93,9 @@ namespace GBEmulator
 		};
 
 		enum IOPorts {
+			DIVIDER            = 0x04,
 			INTERRUPT_REQUESTS = 0x0F,
+
 		};
 
 		struct Registers {
@@ -171,7 +173,7 @@ namespace GBEmulator
 		Memory _hram;
 		Registers _registers;
 		bool _internalRomEnabled;
-		unsigned long _totalCycles;
+		unsigned short _divRegister;
 		unsigned char _interruptEnabled;
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;

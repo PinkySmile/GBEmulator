@@ -33,7 +33,7 @@ namespace GBEmulator
 		_sleeping(false),
 		_interruptRequest(0x00),
 		_interruptEnabled(0x00),
-		_totalCycles(0),
+		_divRegister(0),
 		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
@@ -198,6 +198,9 @@ namespace GBEmulator
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest;
 
+		case DIVIDER:
+			return this->_divRegister >> 8U;
+
 		default:
 			return 0xFF;
 		}
@@ -209,6 +212,11 @@ namespace GBEmulator
 		case INTERRUPT_REQUESTS:
 			this->_interruptRequest = value;
 			break;
+
+		case DIVIDER:
+			this->_divRegister = 0;
+			break;
+
 		default:
 			break;
 		}
@@ -221,7 +229,7 @@ namespace GBEmulator
 		try {
 			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
 
-			this->_totalCycles += cycles;
+			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
