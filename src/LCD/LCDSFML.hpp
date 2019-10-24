@@ -16,16 +16,16 @@ namespace GBEmulator::Graphics
 	private:
 		std::vector<sf::Color> _colors = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 		std::vector<sf::Texture> _texture;
-		std::vector<sf::Sprite> _forground;
-		std::vector<sf::Sprite> _background;
+		sf::Sprite _sprite;
 
 	public:
 		LCDSFML(sf::VideoMode mode, const std::string &title);
-		void write(Sprite sprite) override;
+		void updateTexture(unsigned char *tile, size_t id) override;
+		void drawSprite(Sprite sprite) override;
 		void display() override;
 
 	private:
-		sf::Texture getTextureFromTile(std::vector<int> tile, bool forground) const;
+		void _getTextureFromTile(unsigned char *tile, sf::Texture &texture) const;
 	};
 }
 

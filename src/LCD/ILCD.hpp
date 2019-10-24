@@ -13,10 +13,10 @@
 
 namespace GBEmulator::Graphics
 {
-	typedef struct s_sprite {
+	struct Sprite {
 		int x;
 		int y;
-		std::vector<int> tile;
+		unsigned int texture_id;
 		union {
 			struct {
 				unsigned char cgb_palette_number:3;
@@ -28,11 +28,16 @@ namespace GBEmulator::Graphics
 			};
 			unsigned char flags;
 		};
-	} Sprite;
+	};
 
 	class ILCD {
+	private:
+		unsigned char _screenColor;
+
 	public:
-		virtual void write(Sprite sprite) = 0;
+		virtual void setColor(unsigned char color);
+		virtual void updateTexture(unsigned char *tile, size_t id) = 0;
+		virtual void drawSprite(Sprite sprite) = 0;
 		virtual void display() = 0;
 	};
 }

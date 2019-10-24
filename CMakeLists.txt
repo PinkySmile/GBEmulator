@@ -29,6 +29,7 @@ add_executable(
         src/LCD/ILCD.hpp
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
+        src/LCD/ILCD.cpp
 )
 
 target_link_libraries(
