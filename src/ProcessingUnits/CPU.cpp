@@ -27,13 +27,19 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, sf::RenderWindow &screen) :
+	CPU::CPU(const std::string &romPath, sf::RenderWindow &window) :
+		_gpu(window),
 		_halted(false),
+		_sleeping(false),
+		_interruptRequest(0x00),
+		_interruptEnabled(0x00),
+		_totalCycles(0),
 		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{0, 0, 0, 0, 0, 0},
-		_gpu(screen)
+		_internalRomEnabled(true),
+		_interruptMasterEnableFlag(true)
 	{
 		this->_rom.setBank(1);
 	}
@@ -41,52 +47,52 @@ namespace GBEmulator
 	unsigned char CPU::read(unsigned short address) const
 	{
 		switch (address) {
-		case 0x0000 ... 0x00FF:     //Startup code
-			return CPU::_startupCode.at(address);
+		case STARTUP_CODE_RANGE:
+			if (this->_internalRomEnabled)
+				return CPU::_startupCode.at(address);
 
-		case 0x0100 ... 0x3FFF:     //ROM0
+		case ROM0_RANGE:
 			return this->_rom.rawRead(address);
 
-		case 0x4000 ... 0x7FFF:     //ROM1
-			return this->_rom.read(address - 0x4000);
+		case ROM1_RANGE:
+			return this->_rom.read(address - ROM1_STARTING_ADDRESS);
 
-		case 0x8000 ... 0x9FFF:     //VRAM
+		case VRAM_RANGE:
 			return this->_gpu.readVRAM(address - 0x8000);
 
-		case 0xA000 ... 0xBFFF:     //TODO: Cartridge RAM (SRAM)
+		case SRAM_RANGE:
 			return 0xFF;
 
-		case 0xC000 ... 0xDFFF:     //Working RAM
-			return this->_ram.read(address - 0xC000);
+		case WRAM_RANGE:
+			return this->_ram.read(address - WRAM_STARTING_ADDRESS);
 
-		case 0xE000 ... 0xFDFF:     //Echo RAM
-			return this->_ram.read(address - 0xE000);
+		case ECHO_RAM_RANGE:
+			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
 
-		case 0xFE00 ... 0xFE9F:     //OAM
+		case OAM_RANGE:
 			return this->_gpu.readOAM(address - 0xFE00);
 
-		case 0xFEA0 ... 0xFEFF:     //Unusable
+		case IO_PORT1_RANGE:
+			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
+
+		case APU_RANGE:
 			return 0xFF;
 
-		case 0xFF00 ... 0xFF0F:     //I/O ports
+		case WPRAM_RANGE:
 			return 0xFF;
 
-		case 0xFF10 ... 0xFF2F:     //APU
+		case IO_PORT2_RANGE:
+			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
+
+		case HRAM_RANGE:
+			return this->_hram.read(address - HRAM_STARTING_ADDRESS);
+
+		case INTERRUPT_ENABLE_ADDRESS:
+			return this->_interruptRequest;
+
+		default:
 			return 0xFF;
-
-		case 0xFF30 ... 0xFF3F:     //Wave Pattern RAM
-			return 0xFF;
-
-		case 0xFF40 ... 0xFF7F:     //I/O ports
-			return 0xFF;
-
-		case 0xFF80 ... 0xFFFE:     //HRAM
-			return this->_hram.read(address - 0xFF80);
-
-		case 0xFFFF:                //Interrupt enable
-			return this->_interrupt;
 		}
-		return 0xFF;
 	}
 
 	unsigned char CPU::fetchArgument()
@@ -105,59 +111,153 @@ namespace GBEmulator
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
-		case 0x8000 ... 0x9FFF: //VRAM
+		case VRAM_RANGE:
 			return this->_gpu.writeVRAM(address - 0x8000, value);
 
-		case 0xA000 ... 0xBFFF: //TODO: Cartridge RAM (SRAM)
+		case SRAM_RANGE:
 			break;
 
-		case 0xC000 ... 0xDFFF: //Working RAM
-			return this->_ram.write(address - 0xC000, value);
+		case WRAM_RANGE:
+			return this->_ram.write(address - WRAM_STARTING_ADDRESS, value);
 
-		case 0xE000 ... 0xFDFF: //Echo RAM
-			return this->_ram.write(address - 0xE000, value);
+		case ECHO_RAM_RANGE:
+			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
 
-		case 0xFE00 ... 0xFE9F: //OAM
+		case IO_PORT1_RANGE:
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		case APU_RANGE:
+			return;
+
+		case WPRAM_RANGE:
+			return;
+
+		case IO_PORT2_RANGE:
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		case OAM_RANGE:
 			return this->_gpu.writeOAM(address - 0xFE00, value);
 
-		case 0xFFFF:            //Interrupt enable
-			this->_interrupt = value;
+		case HRAM_RANGE:
+			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
+
+		case INTERRUPT_ENABLE_ADDRESS:
+			this->_interruptRequest = value;
 			break;
 
-		default:                //Read only address
+		//Read only address
+		default:
 			break;
 		}
 	}
 
-	bool CPU::executeNextInstruction()
+	bool CPU::isHalted() const
+	{
+		return this->_halted;
+	}
+
+	void CPU::update()
 	{
 		if (this->_halted)
-			return false;
+			return;
 
+		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
+			return;
+
+		if (!this->_sleeping)
+			this->_executeNextInstruction();
+		else
+			this->_updateComponents(4);
+	}
+
+	void CPU::_updateComponents(unsigned int cycles)
+	{
+		this->_gpu.update(cycles);
+	}
+
+	bool CPU::_checkInterrupts()
+	{
+		unsigned char mask = this->_interruptEnabled & this->_interruptRequest;
+
+		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
+			if (mask & (1U << i))
+				return this->_executeInterrupt(i), true;
+		return false;
+	}
+
+	void CPU::_executeInterrupt(unsigned int id)
+	{
+		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptMasterEnableFlag = false;
+		this->_sleeping = false;
+	}
+
+	unsigned char CPU::_readIOPort(unsigned char address) const
+	{
+		switch (address) {
+		case INTERRUPT_REQUESTS:
+			return this->_interruptRequest;
+
+		default:
+			return 0xFF;
+		}
+	}
+
+	void CPU::_writeIOPort(unsigned char address, unsigned char value)
+	{
+		switch (address) {
+		case INTERRUPT_REQUESTS:
+			this->_interruptRequest = value;
+			break;
+		default:
+			break;
+		}
+	}
+
+	void CPU::_executeNextInstruction()
+	{
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			this->_totalCycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+
+			this->_totalCycles += cycles;
+			this->_updateComponents(cycles);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
 		}
-		return true;
 	}
 
-	void CPU::dump() const
+	void CPU::dumpRegisters() const
 	{
 		std::cout << std::hex << std::uppercase;
-		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a) << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
-		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b) << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
-		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d) << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
-		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h) << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af;
+		std::cout << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a);
+		std::cout << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
+
+		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc;
+		std::cout << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b);
+		std::cout << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
+
+		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de;
+		std::cout << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d);
+		std::cout << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
+
+		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl;
+		std::cout << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h);
+		std::cout << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+
 		std::cout << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
 		std::cout << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
 		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+	}
+
+	void CPU::dumpMemory() const
+	{
 		for (unsigned int i = 0; i < 0x10000; i += 0x10) {
 			std::cout << std::setw(4) << std::setfill('0') << i << ":  ";
 			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
@@ -171,5 +271,11 @@ namespace GBEmulator
 				std::cout << " ";
 			std::cout << std::endl;
 		}
+	}
+
+	void CPU::dump() const
+	{
+		this->dumpMemory();
+		this->dumpRegisters();
 	}
 }

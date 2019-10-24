@@ -12,9 +12,9 @@
 namespace GBEmulator
 {
 	GPU::GPU(sf::RenderWindow &screen) :
-	_screen(screen),
-	_vram(VRAM_SIZE, ROM_BANK_SIZE),
-	_oam(OAM_SIZE, ROM_BANK_SIZE)
+		_vram(VRAM_SIZE, ROM_BANK_SIZE),
+		_oam(OAM_SIZE, ROM_BANK_SIZE),
+		_screen(screen)
 	{
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
 		for (int i = 0; i < 64; i++)
@@ -29,27 +29,14 @@ namespace GBEmulator
 
 	std::vector<int> GPU::getTile(std::size_t id) {
 		std::vector<int> tile(64);
-		int k = 0;
 
-		for (int i = id * 16; i < (id + 1) * 16; i += 2) {
-			auto layer1 = decToBin(_vram.read(i));
-			auto layer2 = decToBin(_vram.read(i + 1));
-			for (int j = 0; j < 8; j++)
-				tile[j + 4 * k] = (layer1[j] * 2) + layer2[j];
-			k+=2;
+		for (int i = 0; i < 16; i += 2) {
+			auto layer1 = this->_vram.read(i + id * 16);
+			auto layer2 = this->_vram.read(i + id * 16 + 1);
+			for (unsigned j = 0; j < 8; j++)
+				tile[j + 4 * i] = (((1U << j & layer1) != 0) * 2) + ((1U << j & layer2) != 0);
 		}
 		return tile;
-	}
-
-	std::vector<int> GPU::decToBin(int nbr) {
-		std::vector<int> result(8);
-
-		for (int i = 0; i < 8; i++)
-		{
-			result[i] = nbr % 2;
-			nbr = nbr / 2;
-		}
-		return result;
 	}
 
 	sf::Texture GPU::getTextureFromTile(std::vector<int> tile) {
@@ -87,31 +74,33 @@ namespace GBEmulator
 	}
 
 	void GPU::loadTextures() {
+		this->_textures.clear();
 		for (int i = 0; i < 256; i++)
-			_textures.push_back(getTextureFromTile(getTile(i)));
+			this->_textures.push_back(getTextureFromTile(getTile(i)));
 	}
 
 	void GPU::update(int cycle) {
-		if (cycle%500 == 0) {
-			auto sprites = getSprites();
+		this->_cycles += cycle;
+		if (this->_cycles > 500) {
+			this->_cycles -= 500;
+			auto sprites = _getSprites();
 			for (auto &sprite : sprites)
 				_screen.draw(sprite);
+			this->_screen.display();
 		}
 	}
 
-	std::vector<sf::Sprite> GPU::getSprites() {
+	std::vector<sf::Sprite> GPU::_getSprites() {
 		sf::Sprite sprite;
 		std::vector<sf::Sprite> sprites;
 
-		for (int   i = 0; i < 160; i += 4) {
-			float x = _oam.read(i);
-			float y = _oam.read(i + 1);
-			int type = _oam.read(i + 2);
+		for (int i = 0; i < 160; i += 4) {
 			int flag = _oam.read(i + 3);
-			sprite.setTexture(_textures[type]);
-			sprite.setPosition(x, y);
+
+			sprite.setTexture(this->_textures.at(this->_oam.read(i + 2)), true);
+			sprite.setPosition(this->_oam.read(i), this->_oam.read(i + 1));
 			sprites.push_back(sprite);
 		}
-		return std::vector<sf::Sprite>();
+		return sprites;
 	}
 }

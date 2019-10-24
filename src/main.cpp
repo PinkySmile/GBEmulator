@@ -1,8 +1,10 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <memory>
 #include "ProcessingUnits/CPU.hpp"
+
+
+#include "ProcessingUnits/GPU.hpp"
 
 int main(int argc, char **argv)
 {
@@ -11,37 +13,25 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	sf::RenderWindow screen(sf::VideoMode(800, 600), "GameNonBinaire");
-	sf::Event event;
-	bool cpuHalted = false;
-	std::string lastError;
-	std::unique_ptr<GBEmulator::CPU> cpu{new GBEmulator::CPU(argv[1], screen)};
+	sf::RenderWindow window{sf::VideoMode{640, 576}, "GBEmulator"};
+	GBEmulator::CPU cpu(argv[1], window);
+	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
-	while (screen.isOpen())
-	{
-		while (screen.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				screen.close();
-			if (event.type == sf::Event::KeyPressed && cpuHalted) {
-				cpu.reset(new GBEmulator::CPU(argv[1], screen));
-				cpuHalted = false;
+	window.setView(view);
+	try {
+		size_t value = 0;
+
+		while (!cpu.isHalted()) {
+			cpu.update();
+			if (value++ % 256 == 0) {
+				cpu.dumpRegisters();
+				std::cout << std::endl;
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
 		}
-
-		if (cpuHalted) {
-			screen.clear(sf::Color::Black);
-			screen.display();
-		} else {
-			try {
-				cpuHalted = !cpu->executeNextInstruction();
-			} catch (std::exception &e) {
-				cpu->dump();
-				std::cerr << "Fatal error: " << e.what() << std::endl;
-				lastError = e.what();
-			}
-		}
+	} catch (std::exception &e) {
+		cpu.dump();
+		std::cerr << "Fatal error: " << e.what() << std::endl;
 	}
-
 	return EXIT_SUCCESS;
 }
