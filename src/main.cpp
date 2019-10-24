@@ -3,6 +3,8 @@
 #include <thread>
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
+#include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
+#include "Network/GbgProtocolNetworkInterface.hpp"
 
 int main(int argc, char **argv)
 {
@@ -12,16 +14,32 @@ int main(int argc, char **argv)
 	}
 
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
-	GBEmulator::CPU cpu(argv[1], window);
+	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
+		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},
+		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::Z},
+		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
+		{GBEmulator::Input::JOYPAD_DOWN, sf::Keyboard::Down},
+		{GBEmulator::Input::JOYPAD_LEFT, sf::Keyboard::Left},
+		{GBEmulator::Input::JOYPAD_RIGHT, sf::Keyboard::Right},
+		{GBEmulator::Input::JOYPAD_START, sf::Keyboard::Return},
+		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
+	});
+	GBEmulator::Network::GBGProtocolCableInterface network;
+	GBEmulator::CPU cpu(argv[1], window, joypad, network);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
 	window.setView(view);
 	try {
 		size_t value = 0;
+		sf::Event event;
 
-		while (!cpu.isHalted()) {
+		while (!cpu.isHalted() && window.isOpen()) {
+			while (window.pollEvent(event))
+				if (event.type == sf::Event::Closed)
+					window.close();
+
 			cpu.update();
-			if (value++ % 256 == 0) {
+			if (value++ % 1024 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
