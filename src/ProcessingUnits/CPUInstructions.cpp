@@ -44,7 +44,7 @@ namespace GBEmulator::Instructions
 		//! 09; ADD hl,bc: The value of bc is added to hl.
 
 		//! 0A; LD a,(bc): Loads the value pointed to by bc into a.
-		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }}
+		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LDfromPTR(cpu, reg.a, reg.bc); }},
 
 		//! 0B; DEC bc: Subtracts one from bc.
 
