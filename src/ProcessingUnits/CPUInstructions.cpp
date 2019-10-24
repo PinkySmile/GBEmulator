@@ -169,11 +169,12 @@ namespace GBEmulator::Instructions
 		{0x33, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.sp); }},
 
 		//! 34; INC (hl): Adds one to (hl).
+		{0x34, [](CPU &cpu, CPU::Registers &reg) { return INCPTR(cpu, reg, reg.hl); }},
 
 		//! 35; DEC (hl): Subtracts one from (hl).
+		{0x35, [](CPU &cpu, CPU::Registers &reg) { return DECPTR(cpu, reg, reg.hl); }},
 
 		//! 36; LD (hl),*: Loads * into (hl).
-		{0x36, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, cpu.fetchArgument())  + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 37; SCF: Sets the carry flag.
 
@@ -408,6 +409,7 @@ namespace GBEmulator::Instructions
 		{0x85, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l); }},
 
 		//! 86; ADD a,(hl): Adds (hl) to a.
+		{0x86, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! 87; ADD a,a: Adds a to a.
 		{0x87, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); }},
@@ -469,20 +471,28 @@ namespace GBEmulator::Instructions
 		//! 9F; SBC a,a: Subtracts a and the carry flag from a.
 
 		//! A0; AND b: Bitwise AND on a with b.
+		{0xA0, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.b); }},
 
 		//! A1; AND c: Bitwise AND on a with c.
+		{0xA1, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.c); }},
 
 		//! A2; AND d: Bitwise AND on a with d.
+		{0xA2, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.d); }},
 
 		//! A3; AND e: Bitwise AND on a with e.
+		{0xA3, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.e); }},
 
 		//! A4; AND h: Bitwise AND on a with h.
+		{0xA4, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.h); }},
 
 		//! A5; AND l: Bitwise AND on a with l.
+		{0xA5, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.l); }},
 
 		//! A6; AND (hl): Bitwise AND on a with (hl).
+		{0xA6, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! A7; AND a: Bitwise AND on a with a.
+		{0xA7, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.a); }},
 
 		//! A8; XOR b: Bitwise XOR on a with b.
 		{0xA8, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.b); }},
@@ -503,25 +513,34 @@ namespace GBEmulator::Instructions
 		{0xAD, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
+		{0xAE, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! AF; XOR a: Bitwise XOR a with a
 		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a); }},
 
 		//! B0; OR b: Bitwise OR on a with b.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.b); }},
 
 		//! B1; OR c: Bitwise OR on a with c.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.c); }},
 
 		//! B2; OR d: Bitwise OR on a with d.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.d); }},
 
 		//! B3; OR e: Bitwise OR on a with e.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.e); }},
 
 		//! B4; OR h: Bitwise OR on a with h.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.h); }},
 
 		//! B5; OR l: Bitwise OR on a with l.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.l); }},
 
 		//! B6; OR (hl): Bitwise OR on a with (hl).
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! B7; OR a: Bitwise OR on a with a.
+		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.a); }},
 
 		//! B8; CP b: Subtracts b from a and affects flags according to the result. a is not modified.
 
@@ -554,6 +573,7 @@ namespace GBEmulator::Instructions
 		{0xC5, [](CPU &cpu, CPU::Registers &reg){ return PUSH(cpu, reg, reg.bc); }},
 
 		//! C6; ADD a,*: Adds * to a.
+		{0xC6, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! C7; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
 
@@ -808,6 +828,13 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
+	unsigned char OR8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	{
+		value1 |= value2;
+		setFlags(reg, value1 == 0 ? SET : UNSET, UNSET, UNSET, UNSET);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
 	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
 	{
 		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
@@ -818,7 +845,7 @@ namespace GBEmulator::Instructions
 			value1 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 + value2 > 0xFF ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -833,7 +860,7 @@ namespace GBEmulator::Instructions
 			value1 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFF ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -848,7 +875,7 @@ namespace GBEmulator::Instructions
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 + value2 > 0xFFFF ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
@@ -863,7 +890,7 @@ namespace GBEmulator::Instructions
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFF ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
@@ -878,7 +905,7 @@ namespace GBEmulator::Instructions
 			value == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value == 0 ? SET : UNSET
+			UNCHANGED
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -893,7 +920,7 @@ namespace GBEmulator::Instructions
 			value == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value == 0xFF ? SET : UNSET
+			UNCHANGED
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -908,6 +935,24 @@ namespace GBEmulator::Instructions
 	{
 		value--;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address)
+	{
+		auto tmp = cpu.read(address);
+		auto rt_value = INC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+
+		cpu.write(address, tmp);
+		return rt_value;
+	}
+
+	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address)
+	{
+		auto tmp = cpu.read(address);
+		auto rt_value = DEC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+
+		cpu.write(address, tmp);
+		return rt_value;
 	}
 
 	unsigned char CP(CPU::Registers &reg, unsigned char value)
