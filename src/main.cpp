@@ -13,7 +13,16 @@ int main(int argc, char **argv)
 	GBEmulator::CPU cpu(argv[1]);
 
 	try {
-		while (cpu.executeNextInstruction());
+		size_t value = 0;
+
+		while (!cpu.isHalted()) {
+			cpu.update();
+			if (value++ % 256 == 0) {
+				cpu.dumpRegisters();
+				std::cout << std::endl;
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+		}
 	} catch (std::exception &e) {
 		cpu.dump();
 		std::cerr << "Fatal error: " << e.what() << std::endl;
