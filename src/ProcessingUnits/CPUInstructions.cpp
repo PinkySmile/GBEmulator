@@ -43,8 +43,10 @@ namespace GBEmulator::Instructions
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
 
 		//! 08; LD (**), SP: Load the value pointed to by sp to **
+		{0x08, [](CPU &cpu, CPU::Registers &reg) { return LD16toPTR(cpu, cpu.fetchArgument16(), reg.sp) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 09; ADD hl,bc: The value of bc is added to hl.
+		{0x09, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.bc); }},
 
 		//! 0A; LD a,(bc): Loads the value pointed to by bc into a.
 		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, reg.bc); }},
@@ -75,8 +77,10 @@ namespace GBEmulator::Instructions
 		{0x13, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.de); }},
 
 		//! 14; INC d: Adds one to d.
+		{0x14, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.d); }},
 
 		//! 15; DEC d: Subtracts one from d.
+		{0x14, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.d); }},
 
 		//! 16; LD d,*: Loads * into d.
 		{0x16, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -88,15 +92,19 @@ namespace GBEmulator::Instructions
 		{0x18, [](CPU &cpu, CPU::Registers &reg){ return JR(reg, true, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 19; ADD hl,de: The value of de is added to hl.
+		{0x19, [](CPU &, CPU::Registers &reg){ return ADD16(reg, reg.hl, reg.de); }},
 
 		//! 1A; LD a,(de): Loads the value pointed to by de into a.
 		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LD8fromPTR(cpu, reg.a, reg.de); }},
 
 		//! 1B; DEC de: Subtracts one from de.
+		{0x1B, [](CPU &cpu, CPU::Registers &reg){ return DEC16(reg, reg.de); }},
 
 		//! 1C; INC e: Adds one to e.
+		{0x1C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.e); }},
 
 		//! 1D; DEC e: Subtracts one from e.
+		{0x1D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.e); }},
 
 		//! 1E; LD e,*: Loads * into e.
 		{0x1E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -116,8 +124,10 @@ namespace GBEmulator::Instructions
 		{0x23, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.hl); }},
 
 		//! 24; INC h: Adds one to h.
+		{0x24, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.h); }},
 
 		//! 25; DEC h: Subtracts one from h.
+		{0x25, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.h); }},
 
 		//! 26; LD h,*: Loads * into h.
 		{0x26, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -128,15 +138,19 @@ namespace GBEmulator::Instructions
 		{0x28, [](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
+		{0x29, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.hl); }},
 
 		//! 2A; LDI a,(hl): Loads the value pointed to by hl to a and increments hl
 		{0x2A, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 2B; DEC hl: Subtracts one from hl.
+		{0x2B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.hl); }},
 
 		//! 2C; INC l: Adds one to l.
+		{0x2C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.l); }},
 
 		//! 2D; DEC l: Subtracts one from l.
+		{0x2D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.l); }},
 
 		//! 2E; LD l,*: Loads * into l.
 		{0x2E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -152,6 +166,7 @@ namespace GBEmulator::Instructions
 		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
+		{0x33, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.sp); }},
 
 		//! 34; INC (hl): Adds one to (hl).
 
@@ -165,12 +180,15 @@ namespace GBEmulator::Instructions
 		//! 38; JR c,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
 		//! 39; ADD hl,sp: The value of hl is added to hl.
+		{0x39, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.sp); }},
 
 		//! 3A; LDD a,(hl): Load the value pointed to by hl to a and decrements hl
 
 		//! 3B; DEC sp: Subtracts one from sp.
+		{0x3B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.sp); }},
 
 		//! 3C; INC a: Adds one to a.
+		{0x3C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.a); }},
 
 		//! 3D; DEC a: Subtracts one from a.
 		{0x3D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.a); }},
@@ -372,20 +390,27 @@ namespace GBEmulator::Instructions
 		{0x7F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.a); }},
 
 		//! 80; ADD a,b: Adds b to a.
+		{0x80, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b); }},
 
 		//! 81; ADD a,c: Adds c to a.
+		{0x81, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c); }},
 
 		//! 82; ADD a,d: Adds d to a.
+		{0x82, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d); }},
 
 		//! 83; ADD a,e: Adds e to a.
+		{0x83, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e); }},
 
 		//! 84; ADD a,h: Adds h to a.
+		{0x84, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h); }},
 
 		//! 85; ADD a,l: Adds l to a.
+		{0x85, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l); }},
 
 		//! 86; ADD a,(hl): Adds (hl) to a.
 
 		//! 87; ADD a,a: Adds a to a.
+		{0x87, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); }},
 
 		//! 88; ADC a,b: Adds b and the carry flag to a.
 
@@ -404,20 +429,28 @@ namespace GBEmulator::Instructions
 		//! 8F; ADC a,a: Adds a and the carry flag to a.
 
 		//! 90; SUB b: Subtracts b from a.
+		{0x90, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b); }},
 
 		//! 91; SUB c: Subtracts c from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c); }},
 
 		//! 92; SUB d: Subtracts d from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d); }},
 
 		//! 93; SUB e: Subtracts e from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e); }},
 
 		//! 94; SUB h: Subtracts h from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h); }},
 
 		//! 95; SUB l: Subtracts l from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l); }},
 
 		//! 96; SUB (hl): Subtracts (hl) from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! 97; SUB a: Subtracts a from a.
+		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); }},
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
 
@@ -745,6 +778,20 @@ namespace GBEmulator::Instructions
 		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
 	}
 
+	unsigned char LD16toPTR(CPU &cpu, unsigned short address, unsigned short value)
+	{
+		cpu.write(address, value & 0x00FFU);
+		cpu.write(address + 1, value >> 8U);
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+	}
+
+	unsigned char LD16fromPTR(CPU &cpu, unsigned short &value, unsigned short address)
+	{
+		value = cpu.read(address);
+		value += cpu.read(address + 1) << 8U;
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+	}
+
 	unsigned char RL(CPU::Registers &reg, unsigned char &value)
 	{
 		unsigned char newValue = (value << 1U) | reg.fc;
@@ -784,7 +831,7 @@ namespace GBEmulator::Instructions
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2, bool changeFlags)
+	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
 		bool halfCarry = (((value1 & 0xFFU) + (value2 & 0xFFU)) & 0x100U) == 0x100U;
 
@@ -799,7 +846,7 @@ namespace GBEmulator::Instructions
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 
-	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2, bool changeFlags)
+	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
 		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x80U) == 0x80U;
 
