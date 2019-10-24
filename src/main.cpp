@@ -2,10 +2,8 @@
 #include <chrono>
 #include <thread>
 #include "ProcessingUnits/CPU.hpp"
-
-
-#include "ProcessingUnits/GPU.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
+#include "Network/GbgProtocolNetworkInterface.hpp"
 
 int main(int argc, char **argv)
 {
@@ -25,7 +23,8 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::JOYPAD_START, sf::Keyboard::Return},
 		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
 	});
-	GBEmulator::CPU cpu(argv[1], window, joypad);
+	GBEmulator::Network::GBGProtocolCableInterface network;
+	GBEmulator::CPU cpu(argv[1], window, joypad, network);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
 	window.setView(view);
@@ -39,7 +38,7 @@ int main(int argc, char **argv)
 					window.close();
 
 			cpu.update();
-			if (value++ % 512 == 0) {
+			if (value++ % 1024 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));

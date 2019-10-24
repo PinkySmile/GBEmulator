@@ -27,7 +27,7 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad) :
+	CPU::CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
 		_gpu(window),
 		_rom(romPath, ROM_BANK_SIZE),
 		_buttonEnabled(false),
@@ -42,7 +42,8 @@ namespace GBEmulator
 		_joypad(joypad),
 		_interruptMasterEnableFlag(true),
 		_interruptRequest(0x00),
-		_interruptEnabled(0x00)
+		_interruptEnabled(0x00),
+		_cable(cable)
 	{
 		this->_rom.setBank(1);
 	}
@@ -223,6 +224,9 @@ namespace GBEmulator
 	unsigned char CPU::_readIOPort(unsigned char address) const
 	{
 		switch (address) {
+		case SERIAL_DATA:
+			return this->_cable.byte;
+
 		case JOYPAD_REGISTER:
 			return this->_generateJoypadByte();
 
@@ -240,6 +244,10 @@ namespace GBEmulator
 	void CPU::_writeIOPort(unsigned char address, unsigned char value)
 	{
 		switch (address) {
+		case SERIAL_DATA:
+			this->_cable.byte = value;
+			break;
+
 		case JOYPAD_REGISTER:
 
 

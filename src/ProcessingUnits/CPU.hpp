@@ -15,6 +15,7 @@
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
+#include "../Network/CableInterface.hpp"
 
 //The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
@@ -95,6 +96,7 @@ namespace GBEmulator
 
 		enum IOPorts {
 			JOYPAD_REGISTER    = 0x00,
+			SERIAL_DATA        = 0x01,
 			DIVIDER            = 0x04,
 			INTERRUPT_REQUESTS = 0x0F,
 
@@ -151,7 +153,7 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad);
+		CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
 
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
@@ -182,6 +184,7 @@ namespace GBEmulator
 		unsigned char _interruptEnabled;
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;
+		Network::CableInterface &_cable;
 
 		void _updateComponents(unsigned int cycles);
 		bool _checkInterrupts();

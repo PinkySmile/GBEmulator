@@ -22,6 +22,10 @@ add_executable(
 	src/Joypad/JoypadEmulator.hpp
 	src/Joypad/SfmlKeyboardJoypadEmulator.cpp
 	src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+	src/Network/CableInterface.hpp
+	src/Network/CableInterface.cpp
+	src/Network/GbgProtocolNetworkInterface.cpp
+	src/Network/GbgProtocolNetworkInterface.hpp
 )
 
 target_link_libraries(
