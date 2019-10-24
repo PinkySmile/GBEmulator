@@ -14,6 +14,7 @@ namespace GBEmulator::Graphics
 {
 	class LCDSFML : public ILCD, public sf::RenderWindow {
 	private:
+		std::vector<sf::Color> _colors = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 		std::vector<sf::Texture> _texture;
 
 	public:
@@ -22,7 +23,7 @@ namespace GBEmulator::Graphics
 		void display() override;
 
 	private:
-		sf::Texture getTextureFromTile(std::vector<int> tile, bool forground) const override;
+		sf::Texture getTextureFromTile(std::vector<int> tile, bool forground) const;
 	};
 }
 

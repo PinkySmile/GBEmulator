@@ -37,13 +37,13 @@ sf::Texture GBEmulator::Graphics::LCDSFML::getTextureFromTile(std::vector<int> t
 
 	texture.create(8, 8);
 	for (int i = 0; i < 64; i++) {
-		pixels[0 + i * 4] = this->COLORS[tile[i]].r;
-		pixels[1 + i * 4] = this->COLORS[tile[i]].g;
-		pixels[2 + i * 4] = this->COLORS[tile[i]].b;
+		pixels[0 + i * 4] = this->_colors[tile[i]].r;
+		pixels[1 + i * 4] = this->_colors[tile[i]].g;
+		pixels[2 + i * 4] = this->_colors[tile[i]].b;
 		if (tile[i] == 0 && forground)
 			pixels[3 + i * 4] = 255;
 		else
-			pixels[3 + i * 4] = this->COLORS[tile[i]].a;
+			pixels[3 + i * 4] = this->_colors[tile[i]].a;
 	}
 	texture.update(pixels);
 	delete[] pixels;

@@ -32,13 +32,8 @@ namespace GBEmulator::Graphics
 
 	class ILCD {
 	public:
-		std::vector<sf::Color> COLORS = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
-
 		virtual void write(Sprite sprite) = 0;
 		virtual void display() = 0;
-
-	private:
-		virtual sf::Texture getTextureFromTile(std::vector<int> tile, bool forground) const = 0;
 	};
 }
 
