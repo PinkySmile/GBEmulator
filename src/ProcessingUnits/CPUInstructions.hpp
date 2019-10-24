@@ -39,6 +39,7 @@ namespace GBEmulator::Instructions
 	unsigned char XOR(CPU::Registers &reg, unsigned char value);
 	unsigned char LD8(unsigned char &value1, unsigned char value2);
 	unsigned char LD16(unsigned short &value1, unsigned short value2);
+	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
 	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
 	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);

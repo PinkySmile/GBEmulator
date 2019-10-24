@@ -801,6 +801,13 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
+	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	{
+		value1 &= value2;
+		setFlags(reg, value1 == 0 ? SET : UNSET, UNSET, SET, UNSET);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
 	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
 	{
 		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
