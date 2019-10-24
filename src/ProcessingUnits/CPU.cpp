@@ -27,19 +27,22 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, sf::RenderWindow &window) :
+	CPU::CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad) :
 		_gpu(window),
+		_rom(romPath, ROM_BANK_SIZE),
+		_buttonEnabled(false),
+		_directionEnabled(false),
 		_halted(false),
 		_sleeping(false),
-		_interruptRequest(0x00),
-		_interruptEnabled(0x00),
-		_divRegister(0),
-		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{0, 0, 0, 0, 0, 0},
 		_internalRomEnabled(true),
-		_interruptMasterEnableFlag(true)
+		_divRegister(0),
+		_joypad(joypad),
+		_interruptMasterEnableFlag(true),
+		_interruptRequest(0x00),
+		_interruptEnabled(0x00)
 	{
 		this->_rom.setBank(1);
 	}
@@ -192,9 +195,37 @@ namespace GBEmulator
 		this->_sleeping = false;
 	}
 
+	unsigned char CPU::_generateJoypadByte() const
+	{
+		return (
+			0b11000000U |
+			(this->_buttonEnabled << 5U) |
+			(this->_directionEnabled << 4U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_START) && this->_buttonEnabled)
+			) << 3U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_UP) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_SELECT) && this->_buttonEnabled)
+			) << 2U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_B) && this->_buttonEnabled)
+			) << 1U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_A) && this->_buttonEnabled)
+			) << 0U)
+		);
+	}
+
 	unsigned char CPU::_readIOPort(unsigned char address) const
 	{
 		switch (address) {
+		case JOYPAD_REGISTER:
+			return this->_generateJoypadByte();
+
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest;
 
@@ -209,6 +240,9 @@ namespace GBEmulator
 	void CPU::_writeIOPort(unsigned char address, unsigned char value)
 	{
 		switch (address) {
+		case JOYPAD_REGISTER:
+
+
 		case INTERRUPT_REQUESTS:
 			this->_interruptRequest = value;
 			break;

@@ -19,6 +19,9 @@ add_executable(
         src/ProcessingUnits/CPUInstructions.cpp
         src/ProcessingUnits/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
+	src/Joypad/JoypadEmulator.hpp
+	src/Joypad/SfmlKeyboardJoypadEmulator.cpp
+	src/Joypad/SfmlKeyboardJoypadEmulator.hpp
 )
 
 target_link_libraries(
