@@ -35,10 +35,12 @@ namespace GBEmulator
 		void update(int cycle);
 
 	private:
+		unsigned _cycles;
+
 		std::vector<int> getTile(std::size_t id);
 		std::vector<int> decToBin(int nbr);
 		sf::Texture getTextureFromTile(std::vector<int> tile);
-		std::vector<sf::Sprite> getSprites();
+		std::vector<sf::Sprite> _getSprites();
 		void loadTextures();
 	};
 }

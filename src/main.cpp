@@ -15,7 +15,9 @@ int main(int argc, char **argv)
 
 	sf::RenderWindow window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::CPU cpu(argv[1], window);
+	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
+	window.setView(view);
 	try {
 		size_t value = 0;
 

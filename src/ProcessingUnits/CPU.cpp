@@ -166,6 +166,13 @@ namespace GBEmulator
 
 		if (!this->_sleeping)
 			this->_executeNextInstruction();
+		else
+			this->_updateComponents(4);
+	}
+
+	void CPU::_updateComponents(unsigned int cycles)
+	{
+		this->_gpu.update(cycles);
 	}
 
 	bool CPU::_checkInterrupts()
@@ -212,7 +219,10 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			this->_totalCycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+
+			this->_totalCycles += cycles;
+			this->_updateComponents(cycles);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
