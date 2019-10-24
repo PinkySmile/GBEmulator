@@ -8,9 +8,10 @@
 #ifndef GBEMULATOR_GPU_HPP
 #define GBEMULATOR_GPU_HPP
 
-#include <SFML/Graphics.hpp>
 #include <memory>
+#include <SFML/Graphics/Texture.hpp>
 #include "../Memory/Memory.hpp"
+#include "../LCD/ILCD.hpp"
 
 namespace GBEmulator
 {
@@ -18,16 +19,14 @@ namespace GBEmulator
 	#define OAM_SIZE 159
 
 	class GPU {
-		std::vector<sf::Color> COLORS = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 
 	private:
 		Memory _vram;
 		Memory _oam;
-		sf::RenderWindow &_screen;
-		std::vector<sf::Texture> _textures;
+		Graphics::ILCD &_screen;
 
 	public:
-		GPU(sf::RenderWindow &screen);
+		GPU(Graphics::ILCD &screen);
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;
@@ -38,10 +37,6 @@ namespace GBEmulator
 		unsigned _cycles;
 
 		std::vector<int> getTile(std::size_t id);
-		std::vector<int> decToBin(int nbr);
-		sf::Texture getTextureFromTile(std::vector<int> tile);
-		std::vector<sf::Sprite> _getSprites();
-		void loadTextures();
 	};
 }
 

@@ -2,9 +2,7 @@
 #include <chrono>
 #include <thread>
 #include "ProcessingUnits/CPU.hpp"
-
-
-#include "ProcessingUnits/GPU.hpp"
+#include "LCD/LCDSFML.hpp"
 
 int main(int argc, char **argv)
 {
@@ -13,7 +11,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	sf::RenderWindow window{sf::VideoMode{640, 576}, "GBEmulator"};
+	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::CPU cpu(argv[1], window);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 

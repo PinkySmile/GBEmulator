@@ -27,7 +27,7 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, sf::RenderWindow &window) :
+	CPU::CPU(const std::string &romPath, Graphics::ILCD &window) :
 		_gpu(window),
 		_halted(false),
 		_sleeping(false),

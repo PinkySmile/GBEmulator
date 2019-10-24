@@ -147,7 +147,7 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(const std::string &romPath, sf::RenderWindow &window);
+		CPU(const std::string &romPath, Graphics::ILCD &window);
 
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();

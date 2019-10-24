@@ -11,7 +11,7 @@
 
 namespace GBEmulator
 {
-	GPU::GPU(sf::RenderWindow &screen) :
+	GPU::GPU(Graphics::ILCD &screen) :
 		_vram(VRAM_SIZE, ROM_BANK_SIZE),
 		_oam(OAM_SIZE, ROM_BANK_SIZE),
 		_screen(screen)
@@ -22,9 +22,7 @@ namespace GBEmulator
 		_oam.write(0, 80);
 		_oam.write(1, 72);
 		_oam.write(2, 0);
-		_oam.write(3, 0);
-
-		loadTextures();
+		_oam.write(3, 160);
 	}
 
 	std::vector<int> GPU::getTile(std::size_t id) {
@@ -37,22 +35,6 @@ namespace GBEmulator
 				tile[j + 4 * i] = (((1U << j & layer1) != 0) * 2) + ((1U << j & layer2) != 0);
 		}
 		return tile;
-	}
-
-	sf::Texture GPU::getTextureFromTile(std::vector<int> tile) {
-		sf::Texture texture;
-		auto *pixels = new sf::Uint8[8 * 8 * 4];
-
-		texture.create(8, 8);
-		for (int i = 0; i < 64; i++) {
-			pixels[0 + i * 4] = this->COLORS[tile[i]].r;
-			pixels[1 + i * 4] = this->COLORS[tile[i]].g;
-			pixels[2 + i * 4] = this->COLORS[tile[i]].b;
-			pixels[3 + i * 4] = this->COLORS[tile[i]].a;
-		}
-		texture.update(pixels);
-		delete[] pixels;
-		return texture;
 	}
 
 	unsigned char GPU::readVRAM(unsigned short address) const {
@@ -73,34 +55,20 @@ namespace GBEmulator
 		_oam.write(address, value);
 	}
 
-	void GPU::loadTextures() {
-		this->_textures.clear();
-		for (int i = 0; i < 256; i++)
-			this->_textures.push_back(getTextureFromTile(getTile(i)));
-	}
-
 	void GPU::update(int cycle) {
+
 		this->_cycles += cycle;
 		if (this->_cycles > 500) {
 			this->_cycles -= 500;
-			auto sprites = _getSprites();
-			for (auto &sprite : sprites)
-				_screen.draw(sprite);
+			for (int i = 0; i < 160; i += 4) {
+				Graphics::Sprite sprite;
+				sprite.x     = this->_oam.read(i);
+				sprite.y     = this->_oam.read(i + 1);
+				sprite.tile  = this->getTile(this->_oam.read(i + 2));
+				sprite.flags = this->_oam.read(i + 3);
+				this->_screen.write(sprite);
 			this->_screen.display();
+			}
 		}
-	}
-
-	std::vector<sf::Sprite> GPU::_getSprites() {
-		sf::Sprite sprite;
-		std::vector<sf::Sprite> sprites;
-
-		for (int i = 0; i < 160; i += 4) {
-			int flag = _oam.read(i + 3);
-
-			sprite.setTexture(this->_textures.at(this->_oam.read(i + 2)), true);
-			sprite.setPosition(this->_oam.read(i), this->_oam.read(i + 1));
-			sprites.push_back(sprite);
-		}
-		return sprites;
 	}
 }

@@ -19,7 +19,7 @@ add_executable(
         src/ProcessingUnits/CPUInstructions.cpp
         src/ProcessingUnits/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
-)
+        src/LCD/ILCD.hpp src/LCD/LCDSFML.cpp src/LCD/LCDSFML.hpp)
 
 target_link_libraries(
         GBEmulator
