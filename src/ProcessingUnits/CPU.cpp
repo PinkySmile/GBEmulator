@@ -249,7 +249,9 @@ namespace GBEmulator
 			break;
 
 		case JOYPAD_REGISTER:
-
+			this->_directionEnabled = (value & 0b10000U) != 0;
+			this->_buttonEnabled =    (value & 0b100000U)!= 0;
+			break;
 
 		case INTERRUPT_REQUESTS:
 			this->_interruptRequest = value;
