@@ -8,8 +8,15 @@
 #ifndef GBEMULATOR_APU_HPP
 #define GBEMULATOR_APU_HPP
 
+#define CHANSIZE_1 0x5
+#define CHANSIZE_2 0x4
+#define CHANSIZE_WAVE 0x5
+#define CHANSIZE_NOISE 0x5
+#define SOUND_CONTROLERS_SIZE 0x2
+#define CHANSIZE_WPRAM 0xF
 
 #include "../Memory/Memory.hpp"
+#include "../Sound/ISound.hpp"
 
 namespace GBEmulator
 {
@@ -35,18 +42,33 @@ namespace GBEmulator
 		FF24 = 0x14,
 		FF25 = 0x15,
 		FF26 = 0x16,
-		FF30 = 0x20
+		FF30 = 0x20,
+		FF3F = 0x2F
 	};
 	class APU {
 	public:
-		APU();
+		APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour);
         ~APU();
 		void write(unsigned short, unsigned char);
 		unsigned char read(unsigned short) const;
-        //cycle();
+		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
+        //cycle(); // effectue un cycle
+
+        //RegisterFunctions
+        unsigned char soundModeOneCorrectRead(unsigned short) const;
+        unsigned char soundModeTwoCorrectRead(unsigned short) const;
+        unsigned char soundWaveCorrectRead(unsigned short) const;
+		unsigned char soundNoiseCorrectRead(unsigned short) const;
+		unsigned char soundControlersCorrectRead(unsigned short) const;
 
 	private:
-		Memory _memory;
+		Memory _soundMode1; //tone and sweep
+		Memory _soundMode2; //only tone
+		Memory _soundWave; //wave output
+		Memory _soundNoise; //noise channel
+		Memory _soundControlers;
+		Memory _wpRAM; //wave pattern RAM
+		bool _soundChanged;
 	};
 }
 
