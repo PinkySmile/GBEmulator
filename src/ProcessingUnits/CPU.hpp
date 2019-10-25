@@ -182,7 +182,7 @@ namespace GBEmulator
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
-		Timing::Timer _timer;
+		//Timing::Timer _timer;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;

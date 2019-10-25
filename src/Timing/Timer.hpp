@@ -24,6 +24,9 @@ namespace GBEmulator::Timing
 
 	public:
 		Timer();
+		~Timer() = default;
+		Timer(const Timer &) = delete;
+		Timer &operator=(const Timer &) = delete;
 		unsigned char modulo = 0;
 
 		bool isActivated() const;
