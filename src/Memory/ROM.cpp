@@ -42,6 +42,7 @@ namespace GBEmulator
 		if (stream.fail())
 			throw InvalidRomException("Cannot open file " + path);
 		this->_memory = std::vector<unsigned char>(std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{});
+		stream.close();
 		this->_checkROM();
 	}
 }

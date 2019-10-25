@@ -177,7 +177,6 @@ namespace GBEmulator
 	private:
 		static const std::vector<unsigned char> _startupCode;
 
-		unsigned char t;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;

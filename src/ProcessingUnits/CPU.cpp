@@ -60,7 +60,7 @@ namespace GBEmulator
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
-				return CPU::_startupCode.at(address);
+				return CPU::_startupCode[address];
 			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
@@ -309,11 +309,11 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
 
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
-		} catch (std::out_of_range &) {
+		} catch (std::bad_function_call &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
 		}
