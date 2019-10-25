@@ -9,12 +9,23 @@
 
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
-	_texture(512)
+	_texture(512),
+	_title(title)
 {
 }
 
 void GBEmulator::Graphics::LCDSFML::display() {
+	if (this->_clock.getElapsedTime().asMilliseconds() > 1000) {
+		this->setTitle(this->_title + " (" + std::to_string(this->getFramerate()) + ") FPS");
+		this->_clock.restart();
+	}
+	this->_fpsClock.restart();
 	sf::RenderWindow::display();
+}
+
+double GBEmulator::Graphics::LCDSFML::getFramerate()
+{
+	return 1 / this->_fpsClock.getElapsedTime().asSeconds();
 }
 
 void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(unsigned char *tile, sf::Texture &texture) const {

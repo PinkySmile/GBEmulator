@@ -4,7 +4,7 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	add_compile_options(-W -Wall -Wextra -g -O0)
+	add_compile_options(-W -Wall -Wextra)
 endif()
 
 add_executable(
@@ -33,7 +33,10 @@ add_executable(
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
         src/LCD/ILCD.cpp
-	src/Network/CableInterface.cpp src/Timing/Timer.cpp src/Timing/Timer.hpp)
+	src/Network/CableInterface.cpp
+	src/Timing/Timer.cpp
+	src/Timing/Timer.hpp
+)
 
 target_link_libraries(
         GBEmulator

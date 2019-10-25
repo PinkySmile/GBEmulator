@@ -94,8 +94,8 @@ namespace GBEmulator
 	void GPU::update(int cycle) {
 
 		this->_cycles += cycle;
-		if (this->_cycles > 500) {
-			this->_cycles -= 500;
+		if (this->_cycles > 174763) {
+			this->_cycles -= 174763;
 			this->_updateTiles();
 			for (int i = 0; i < 160; i += 4) {
 				Graphics::Sprite sprite{};
