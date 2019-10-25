@@ -19,13 +19,17 @@ add_executable(
         src/ProcessingUnits/CPUInstructions.cpp
         src/ProcessingUnits/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
-	src/Joypad/JoypadEmulator.hpp
-	src/Joypad/SfmlKeyboardJoypadEmulator.cpp
-	src/Joypad/SfmlKeyboardJoypadEmulator.hpp
-	src/Network/CableInterface.hpp
-	src/Network/CableInterface.cpp
-	src/Network/GbgProtocolNetworkInterface.cpp
-	src/Network/GbgProtocolNetworkInterface.hpp
+        src/Joypad/JoypadEmulator.hpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.cpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+        src/Network/CableInterface.hpp
+        src/Network/CableInterface.cpp
+        src/Network/GbgProtocolNetworkInterface.cpp
+        src/Network/GbgProtocolNetworkInterface.hpp
+        src/LCD/ILCD.hpp
+        src/LCD/LCDSFML.cpp
+        src/LCD/LCDSFML.hpp
+        src/LCD/ILCD.cpp
 )
 
 target_link_libraries(

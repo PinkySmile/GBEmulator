@@ -6,62 +6,81 @@
 */
 
 #include <iostream>
+#include <cstring>
 #include "GPU.hpp"
 #include "CPU.hpp"
 
 namespace GBEmulator
 {
-	GPU::GPU(sf::RenderWindow &screen) :
-		_vram(VRAM_SIZE, ROM_BANK_SIZE),
-		_oam(OAM_SIZE, ROM_BANK_SIZE),
+	GPU::GPU(Graphics::ILCD &screen) :
+		//_vram(VRAM_SIZE, VRAM_SIZE),
+		_tiles(new unsigned char [VRAM_SIZE * 4]),
+		_oam(OAM_SIZE, OAM_SIZE),
 		_screen(screen)
 	{
+		std::memset(this->_tiles, 0xFF, VRAM_SIZE * 4 * sizeof(*this->_tiles));
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
 		for (int i = 0; i < 64; i++)
-			_vram.write(i, mushroom[i]);
+			this->writeVRAM(i, mushroom[i]);
 		_oam.write(0, 80);
 		_oam.write(1, 72);
 		_oam.write(2, 0);
 		_oam.write(3, 0);
 
-		loadTextures();
+		for (int i = 0; i < 256; i++)
+			this->_screen.updateTexture(this->_getTile(i), i);
 	}
 
-	std::vector<int> GPU::getTile(std::size_t id) {
-		std::vector<int> tile(64);
-
-		for (int i = 0; i < 16; i += 2) {
-			auto layer1 = this->_vram.read(i + id * 16);
-			auto layer2 = this->_vram.read(i + id * 16 + 1);
-			for (unsigned j = 0; j < 8; j++)
-				tile[j + 4 * i] = (((1U << j & layer1) != 0) * 2) + ((1U << j & layer2) != 0);
-		}
-		return tile;
+	GPU::~GPU() {
+		delete[] this->_tiles;
 	}
 
-	sf::Texture GPU::getTextureFromTile(std::vector<int> tile) {
-		sf::Texture texture;
-		auto *pixels = new sf::Uint8[8 * 8 * 4];
-
-		texture.create(8, 8);
-		for (int i = 0; i < 64; i++) {
-			pixels[0 + i * 4] = this->COLORS[tile[i]].r;
-			pixels[1 + i * 4] = this->COLORS[tile[i]].g;
-			pixels[2 + i * 4] = this->COLORS[tile[i]].b;
-			pixels[3 + i * 4] = this->COLORS[tile[i]].a;
-		}
-		texture.update(pixels);
-		delete[] pixels;
-		return texture;
+	unsigned char *GPU::_getTile(std::size_t id) {
+		return this->_tiles + id * 64;
 	}
 
 	unsigned char GPU::readVRAM(unsigned short address) const {
+		unsigned tile = (address / 2) * 8;
 
-		return _vram.read(address);
+		if (address % 2 == 0)
+			return (
+					(this->_tiles[tile    ] & 0b10U << 6U) |
+					(this->_tiles[tile + 1] & 0b10U << 5U) |
+					(this->_tiles[tile + 2] & 0b10U << 4U) |
+					(this->_tiles[tile + 3] & 0b10U << 3U) |
+					(this->_tiles[tile + 4] & 0b10U << 2U) |
+					(this->_tiles[tile + 5] & 0b10U << 1U) |
+					(this->_tiles[tile + 6] & 0b10U << 0U) |
+					(this->_tiles[tile + 7] & 0b10U >> 1U)
+			);
+
+		return (
+				(this->_tiles[tile    ] & 0b01U << 7U) |
+				(this->_tiles[tile + 1] & 0b01U << 6U) |
+				(this->_tiles[tile + 2] & 0b01U << 5U) |
+				(this->_tiles[tile + 3] & 0b01U << 4U) |
+				(this->_tiles[tile + 4] & 0b01U << 3U) |
+				(this->_tiles[tile + 5] & 0b01U << 2U) |
+				(this->_tiles[tile + 6] & 0b01U << 1U) |
+				(this->_tiles[tile + 7] & 0b01U << 0U)
+		);
 	}
 
 	void GPU::writeVRAM(unsigned short address, unsigned char value) {
-		_vram.write(address, value);
+		unsigned tile = (address / 2) * 8;
+
+		if (address % 2 == 0)
+			for (unsigned i = 0; i < 8; i++) {
+				this->_tiles[tile + i] &= 0b01U;
+				this->_tiles[tile + i] |= (value >> (7U - i) & 1U) << 1U;
+			}
+		else
+			for (unsigned i = 0; i < 8; i++) {
+				this->_tiles[tile + i] &= 0b10U;
+				this->_tiles[tile + i] |= value >> (7U - i) & 1U;
+			}
+		if (std::find(this->_tilesToUpdate.begin(), this->_tilesToUpdate.end(), address / 16) == this->_tilesToUpdate.end())
+			this->_tilesToUpdate.push_back(address / 16);
 	}
 
 	unsigned char GPU::readOAM(unsigned short address) const {
@@ -73,34 +92,38 @@ namespace GBEmulator
 		_oam.write(address, value);
 	}
 
-	void GPU::loadTextures() {
-		this->_textures.clear();
-		for (int i = 0; i < 256; i++)
-			this->_textures.push_back(getTextureFromTile(getTile(i)));
-	}
-
 	void GPU::update(int cycle) {
+
 		this->_cycles += cycle;
 		if (this->_cycles > 500) {
 			this->_cycles -= 500;
-			auto sprites = _getSprites();
-			for (auto &sprite : sprites)
-				_screen.draw(sprite);
+			this->_updateTiles();
+			for (int i = 0; i < 160; i += 4) {
+				Graphics::Sprite sprite{};
+				sprite.x     = this->_oam.read(i);
+				sprite.y     = this->_oam.read(i + 1);
+				sprite.texture_id = this->_oam.read(i + 2);
+				sprite.flags = this->_oam.read(i + 3);
+				this->_screen.drawSprite(sprite);
+			}
 			this->_screen.display();
 		}
 	}
 
-	std::vector<sf::Sprite> GPU::_getSprites() {
-		sf::Sprite sprite;
-		std::vector<sf::Sprite> sprites;
+	unsigned char GPU::readIOPorts(unsigned short address) const {
+		//return this->_screen.readIOPorts(address);
+		return 0xff;
+	}
 
-		for (int i = 0; i < 160; i += 4) {
-			int flag = _oam.read(i + 3);
+	void GPU::writeIOPorts(unsigned short address, unsigned char value) {
+		//if (address == LCD_BG_COLOR)
+		//	this->_screen.setColor(value);
+		//this->_screen.writeIOPorts(address, value);
+	}
 
-			sprite.setTexture(this->_textures.at(this->_oam.read(i + 2)), true);
-			sprite.setPosition(this->_oam.read(i), this->_oam.read(i + 1));
-			sprites.push_back(sprite);
-		}
-		return sprites;
+	void GPU::_updateTiles() {
+		for (auto &id : this->_tilesToUpdate)
+			this->_screen.updateTexture(this->_getTile(id), id);
+		this->_tilesToUpdate.clear();
 	}
 }

@@ -27,7 +27,7 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, sf::RenderWindow &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+	CPU::CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
 		_gpu(window),
 		_rom(romPath, ROM_BANK_SIZE),
 		_buttonEnabled(false),

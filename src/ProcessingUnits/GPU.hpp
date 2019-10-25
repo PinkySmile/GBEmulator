@@ -8,40 +8,40 @@
 #ifndef GBEMULATOR_GPU_HPP
 #define GBEMULATOR_GPU_HPP
 
-#include <SFML/Graphics.hpp>
 #include <memory>
+#include <SFML/Graphics/Texture.hpp>
 #include "../Memory/Memory.hpp"
+#include "../LCD/ILCD.hpp"
 
 namespace GBEmulator
 {
-	#define VRAM_SIZE 8 * 1024
+	#define VRAM_SIZE 0x2000
 	#define OAM_SIZE 159
 
 	class GPU {
-		std::vector<sf::Color> COLORS = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 
 	private:
-		Memory _vram;
 		Memory _oam;
-		sf::RenderWindow &_screen;
-		std::vector<sf::Texture> _textures;
+		Graphics::ILCD &_screen;
+		unsigned char *_tiles;
 
 	public:
-		GPU(sf::RenderWindow &screen);
+		GPU(Graphics::ILCD &screen);
+		~GPU();
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;
 		void writeOAM(unsigned short address, unsigned char value);
+		unsigned char readIOPorts(unsigned short address) const;
+		void writeIOPorts(unsigned short address, unsigned char value);
 		void update(int cycle);
 
 	private:
 		unsigned _cycles;
+		std::vector<unsigned> _tilesToUpdate;
 
-		std::vector<int> getTile(std::size_t id);
-		std::vector<int> decToBin(int nbr);
-		sf::Texture getTextureFromTile(std::vector<int> tile);
-		std::vector<sf::Sprite> _getSprites();
-		void loadTextures();
+		void _updateTiles();
+		unsigned char *_getTile(std::size_t id);
 	};
 }
 

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include "ProcessingUnits/CPU.hpp"
+#include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "Network/GbgProtocolNetworkInterface.hpp"
 
@@ -12,7 +13,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	sf::RenderWindow window{sf::VideoMode{640, 576}, "GBEmulator"};
+	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
 		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},
 		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::Z},
