@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <cstring>
 #include "Memory.hpp"
 
 namespace GBEmulator
@@ -21,12 +22,12 @@ namespace GBEmulator
 
 	unsigned char Memory::rawRead(unsigned short address) const
 	{
-		return this->_memory.at(address % this->_memory.size());
+		return this->_memory[address % this->_memory.size()];
 	}
 
 	unsigned char Memory::read(unsigned short address) const
 	{
-		return this->_memory.at((address + this->_currentBank * this->_bankSize) % this->_memory.size());
+		return this->_memory[(address + this->_currentBank * this->_bankSize) % this->_memory.size()];
 	}
 
 	void Memory::write(unsigned short address, unsigned char value)

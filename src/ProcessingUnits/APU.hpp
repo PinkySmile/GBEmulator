@@ -40,10 +40,12 @@ namespace GBEmulator
 	class APU {
 	public:
 		APU();
-        ~APU();
+		~APU();
+		APU(const APU &) = delete;
+		APU &operator=(const APU &) = delete;
+
 		void write(unsigned short, unsigned char);
 		unsigned char read(unsigned short) const;
-        //cycle();
 
 	private:
 		Memory _memory;

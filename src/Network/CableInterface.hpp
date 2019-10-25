@@ -12,7 +12,7 @@ namespace GBEmulator::Network
 {
 	class CableInterface {
 	private:
-		unsigned char _byte;
+		unsigned char _byte = 0;
 
 		virtual void _sync(unsigned cycles) = 0;
 		virtual unsigned char _receiveByte() = 0;

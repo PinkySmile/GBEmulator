@@ -19,6 +19,12 @@ namespace GBEmulator::Network
 		void _sync(unsigned cycles) override;
 		unsigned char _receiveByte() override;
 		void _sendByte(unsigned char byte) override;
+
+	public:
+		BGBProtocolCableInterface() = default;
+		BGBProtocolCableInterface(const BGBProtocolCableInterface &) = delete;
+		~BGBProtocolCableInterface() = default;
+		BGBProtocolCableInterface &operator=(const BGBProtocolCableInterface &) = delete;
 	};
 }
 

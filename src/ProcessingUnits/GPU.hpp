@@ -28,6 +28,9 @@ namespace GBEmulator
 	public:
 		GPU(Graphics::ILCD &screen);
 		~GPU();
+		GPU() = delete;
+		GPU(const GPU &) = delete;
+		GPU &operator=(const GPU &) = delete;
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;

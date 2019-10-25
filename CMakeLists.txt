@@ -4,7 +4,7 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	add_compile_options(-W -Wall -Wextra)
+	add_compile_options(-W -Wall -Wextra -g -O0)
 endif()
 
 add_executable(

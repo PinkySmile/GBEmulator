@@ -159,6 +159,11 @@ namespace GBEmulator
 
 		CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
 
+		CPU() = delete;
+		CPU(const CPU &) = delete;
+		~CPU() = default;
+		CPU &operator=(const CPU &) = delete;
+
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
@@ -172,6 +177,7 @@ namespace GBEmulator
 	private:
 		static const std::vector<unsigned char> _startupCode;
 
+		unsigned char t;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;
@@ -182,7 +188,7 @@ namespace GBEmulator
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
-		//Timing::Timer _timer;
+		Timing::Timer _timer;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;

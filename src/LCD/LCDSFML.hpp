@@ -19,6 +19,10 @@ namespace GBEmulator::Graphics
 		sf::Sprite _sprite;
 
 	public:
+		LCDSFML() = delete;
+		LCDSFML(const LCDSFML &) = delete;
+		~LCDSFML() = default;
+		LCDSFML &operator=(const LCDSFML &) = delete;
 		LCDSFML(sf::VideoMode mode, const std::string &title);
 		void updateTexture(unsigned char *tile, size_t id) override;
 		void drawSprite(Sprite sprite) override;
