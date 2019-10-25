@@ -95,10 +95,11 @@ namespace GBEmulator
 		};
 
 		enum IOPorts {
-			JOYPAD_REGISTER    = 0x00,
-			SERIAL_DATA        = 0x01,
-			DIVIDER            = 0x04,
-			INTERRUPT_REQUESTS = 0x0F,
+			JOYPAD_REGISTER         = 0x00,
+			SERIAL_DATA             = 0x01,
+			SERIAL_TRANSFER_CONTROL = 0x02,
+			DIVIDER_REGISTER        = 0x04,
+			INTERRUPT_REQUESTS      = 0x0F,
 		};
 
 		struct Registers {

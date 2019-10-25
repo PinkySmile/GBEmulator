@@ -4,7 +4,7 @@
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
-#include "Network/GbgProtocolNetworkInterface.hpp"
+#include "Network/BgbProtocolNetworkInterface.hpp"
 
 int main(int argc, char **argv)
 {
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::JOYPAD_START, sf::Keyboard::Return},
 		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
 	});
-	GBEmulator::Network::GBGProtocolCableInterface network;
+	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::CPU cpu(argv[1], window, joypad, network);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 

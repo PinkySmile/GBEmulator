@@ -177,14 +177,16 @@ namespace GBEmulator
 	void CPU::_updateComponents(unsigned int cycles)
 	{
 		this->_gpu.update(cycles);
+		if (this->_cable.isTransfering())
+			this->_interruptRequest |= (1U << 3U);
+		this->_cable.transfer(cycles);
 	}
 
 	bool CPU::_checkInterrupts()
 	{
-		unsigned char mask = this->_interruptEnabled & this->_interruptRequest;
-
+		this->_interruptRequest &= this->_interruptEnabled;
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
-			if (mask & (1U << i))
+			if (this->_interruptRequest & (1U << i))
 				return this->_executeInterrupt(i), true;
 		return false;
 	}
@@ -192,6 +194,7 @@ namespace GBEmulator
 	void CPU::_executeInterrupt(unsigned int id)
 	{
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptRequest &= ~(1U << id);
 		this->_interruptMasterEnableFlag = false;
 		this->_sleeping = false;
 	}
@@ -226,13 +229,16 @@ namespace GBEmulator
 		case SERIAL_DATA:
 			return this->_cable.byte;
 
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.getControlByte();
+
 		case JOYPAD_REGISTER:
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest;
 
-		case DIVIDER:
+		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
 
 		default:
@@ -247,6 +253,9 @@ namespace GBEmulator
 			this->_cable.byte = value;
 			break;
 
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.setControlByte(value);
+
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;
 			this->_buttonEnabled =    (value & 0b100000U)!= 0;
@@ -256,7 +265,7 @@ namespace GBEmulator
 			this->_interruptRequest = value;
 			break;
 
-		case DIVIDER:
+		case DIVIDER_REGISTER:
 			this->_divRegister = 0;
 			break;
 
