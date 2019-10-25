@@ -14,7 +14,7 @@ namespace GBEmulator::Graphics
 {
 	class LCDSFML : public ILCD, public sf::RenderWindow {
 	private:
-		std::vector<sf::Color> _colors = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
+		sf::Color _colors[4] = {sf::Color::Black, sf::Color::Magenta, sf::Color::Green, sf::Color::White};
 		std::vector<sf::Texture> _texture;
 		sf::Sprite _sprite;
 		std::string _title;

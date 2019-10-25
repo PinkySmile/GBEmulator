@@ -21,6 +21,7 @@ void GBEmulator::Graphics::LCDSFML::display() {
 	}
 	this->_fpsClock.restart();
 	sf::RenderWindow::display();
+	this->clear(this->_colors[0]);
 }
 
 double GBEmulator::Graphics::LCDSFML::getFramerate()
@@ -48,7 +49,7 @@ void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id
 
 void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite) {
 	this->_sprite.setTexture(this->_texture[sprite.texture_id]);
-	this->_sprite.setPosition(sprite.x, sprite.y);
+	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8, sprite.y + sprite.y_flip * 8);
 	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
 	this->draw(this->_sprite);
 }

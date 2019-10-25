@@ -13,11 +13,12 @@
 #include "../Memory/Memory.hpp"
 #include "../LCD/ILCD.hpp"
 
+#define VRAM_SIZE 0x2000
+#define OAM_SIZE 0x100
+#define GPU_FULL_CYCLE_DURATION 70224
+
 namespace GBEmulator
 {
-	#define VRAM_SIZE 0x2000
-	#define OAM_SIZE 159
-
 	class GPU {
 
 	private:
@@ -31,6 +32,8 @@ namespace GBEmulator
 		GPU() = delete;
 		GPU(const GPU &) = delete;
 		GPU &operator=(const GPU &) = delete;
+
+		unsigned char getCurrentLine() const;
 		unsigned char readVRAM(unsigned short address) const;
 		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;

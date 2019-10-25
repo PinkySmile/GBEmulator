@@ -246,6 +246,9 @@ namespace GBEmulator
 		case TIMER_COUNTER:
 			return this->_timer.getCounter();
 
+		case LCDC_Y_COORD:
+			return this->_gpu.getCurrentLine();
+
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 

@@ -39,10 +39,9 @@ int main(int argc, char **argv)
 					window.close();
 
 			cpu.update();
-			/*if (value++ % 1024 == 0) {
+			/*if (value++ % 60000 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}*/
 		}
 	} catch (std::exception &e) {

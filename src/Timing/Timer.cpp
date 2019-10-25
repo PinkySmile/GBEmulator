@@ -15,7 +15,7 @@ namespace GBEmulator::Timing
 
 	double getCyclesPerSecondsFromFrequency(unsigned char frequency)
 	{
-		return GB_CPU_FREQUENCY / frequency;
+		return static_cast<double>(GB_CPU_FREQUENCY) / frequency;
 	}
 
 	unsigned char Timer::getControlByte() const

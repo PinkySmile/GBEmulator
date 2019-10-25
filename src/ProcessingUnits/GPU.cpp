@@ -18,13 +18,6 @@ namespace GBEmulator
 		_tiles(new unsigned char [VRAM_SIZE * 4])
 	{
 		std::memset(this->_tiles, 0xFF, VRAM_SIZE * 4 * sizeof(*this->_tiles));
-		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
-		for (int i = 0; i < 64; i++)
-			this->writeVRAM(i, mushroom[i]);
-		_oam.write(0, 80);
-		_oam.write(1, 72);
-		_oam.write(2, 0);
-		_oam.write(3, 0);
 
 		for (int i = 0; i < 256; i++)
 			this->_screen.updateTexture(this->_getTile(i), i);
@@ -43,25 +36,25 @@ namespace GBEmulator
 
 		if (address % 2 == 0)
 			return (
-					(this->_tiles[tile    ] & 0b10U << 6U) |
-					(this->_tiles[tile + 1] & 0b10U << 5U) |
-					(this->_tiles[tile + 2] & 0b10U << 4U) |
-					(this->_tiles[tile + 3] & 0b10U << 3U) |
-					(this->_tiles[tile + 4] & 0b10U << 2U) |
-					(this->_tiles[tile + 5] & 0b10U << 1U) |
-					(this->_tiles[tile + 6] & 0b10U << 0U) |
-					(this->_tiles[tile + 7] & 0b10U >> 1U)
+				(this->_tiles[tile    ] & 0b10U << 6U) |
+				(this->_tiles[tile + 1] & 0b10U << 5U) |
+				(this->_tiles[tile + 2] & 0b10U << 4U) |
+				(this->_tiles[tile + 3] & 0b10U << 3U) |
+				(this->_tiles[tile + 4] & 0b10U << 2U) |
+				(this->_tiles[tile + 5] & 0b10U << 1U) |
+				(this->_tiles[tile + 6] & 0b10U << 0U) |
+				(this->_tiles[tile + 7] & 0b10U >> 1U)
 			);
 
 		return (
-				(this->_tiles[tile    ] & 0b01U << 7U) |
-				(this->_tiles[tile + 1] & 0b01U << 6U) |
-				(this->_tiles[tile + 2] & 0b01U << 5U) |
-				(this->_tiles[tile + 3] & 0b01U << 4U) |
-				(this->_tiles[tile + 4] & 0b01U << 3U) |
-				(this->_tiles[tile + 5] & 0b01U << 2U) |
-				(this->_tiles[tile + 6] & 0b01U << 1U) |
-				(this->_tiles[tile + 7] & 0b01U << 0U)
+			(this->_tiles[tile    ] & 0b01U << 7U) |
+			(this->_tiles[tile + 1] & 0b01U << 6U) |
+			(this->_tiles[tile + 2] & 0b01U << 5U) |
+			(this->_tiles[tile + 3] & 0b01U << 4U) |
+			(this->_tiles[tile + 4] & 0b01U << 3U) |
+			(this->_tiles[tile + 5] & 0b01U << 2U) |
+			(this->_tiles[tile + 6] & 0b01U << 1U) |
+			(this->_tiles[tile + 7] & 0b01U << 0U)
 		);
 	}
 
@@ -94,8 +87,8 @@ namespace GBEmulator
 	void GPU::update(int cycle) {
 
 		this->_cycles += cycle;
-		if (this->_cycles > 174763) {
-			this->_cycles -= 174763;
+		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
+			this->_cycles -= GPU_FULL_CYCLE_DURATION;
 			this->_updateTiles();
 			for (int i = 0; i < 160; i += 4) {
 				Graphics::Sprite sprite{};
@@ -107,6 +100,11 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
+	}
+
+	unsigned char GPU::getCurrentLine() const
+	{
+		return this->_cycles * 153 / GPU_FULL_CYCLE_DURATION;
 	}
 
 	unsigned char GPU::readIOPorts(unsigned short) const {
