@@ -47,8 +47,8 @@ namespace GBEmulator::Instructions
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);
 	unsigned char INC8(CPU::Registers &reg, unsigned char &value);
 	unsigned char DEC8(CPU::Registers &reg, unsigned char &value);
-	unsigned char INC16(CPU::Registers &reg, unsigned short &value);
-	unsigned char DEC16(CPU::Registers &reg, unsigned short &value);
+	unsigned char INC16(unsigned short &value);
+	unsigned char DEC16(unsigned short &value);
 	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
 	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
 	unsigned char LD8toPTR(CPU &cpu, unsigned short address, unsigned char value);

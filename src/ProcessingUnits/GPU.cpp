@@ -13,10 +13,9 @@
 namespace GBEmulator
 {
 	GPU::GPU(Graphics::ILCD &screen) :
-		//_vram(VRAM_SIZE, VRAM_SIZE),
-		_tiles(new unsigned char [VRAM_SIZE * 4]),
 		_oam(OAM_SIZE, OAM_SIZE),
-		_screen(screen)
+		_screen(screen),
+		_tiles(new unsigned char [VRAM_SIZE * 4])
 	{
 		std::memset(this->_tiles, 0xFF, VRAM_SIZE * 4 * sizeof(*this->_tiles));
 		unsigned char mushroom[] = {195, 195, 129, 189, 0, 126, 0, 126, 0, 0, 189, 189, 189, 189, 195, 195};
@@ -110,12 +109,11 @@ namespace GBEmulator
 		}
 	}
 
-	unsigned char GPU::readIOPorts(unsigned short address) const {
-		//return this->_screen.readIOPorts(address);
+	unsigned char GPU::readIOPorts(unsigned short) const {
 		return 0xff;
 	}
 
-	void GPU::writeIOPorts(unsigned short address, unsigned char value) {
+	void GPU::writeIOPorts(unsigned short, unsigned char) {
 		//if (address == LCD_BG_COLOR)
 		//	this->_screen.setColor(value);
 		//this->_screen.writeIOPorts(address, value);

@@ -36,13 +36,20 @@ namespace GBEmulator
 		_sleeping(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{0, 0, 0, 0, 0, 0},
+		_registers{
+			.af = 0,
+			.bc = 0,
+			.de = 0,
+			.hl = 0,
+			.pc = 0,
+			.sp = 0
+		},
 		_internalRomEnabled(true),
 		_divRegister(0),
 		_joypad(joypad),
-		_interruptMasterEnableFlag(true),
-		_interruptRequest(0x00),
 		_interruptEnabled(0x00),
+		_interruptRequest(0x00),
+		_interruptMasterEnableFlag(true),
 		_cable(cable)
 	{
 		this->_rom.setBank(1);
@@ -54,6 +61,7 @@ namespace GBEmulator
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
 				return CPU::_startupCode.at(address);
+			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
 			return this->_rom.rawRead(address);

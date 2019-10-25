@@ -29,10 +29,10 @@ namespace GBEmulator::Instructions
 		{0x02, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.bc, reg.a); }},
 
 		//! 03; INC bc: Adds one to bc.
-		{0x03, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.bc); }},
+		{0x03, [](CPU &, CPU::Registers &reg) { return INC16(reg.bc); }},
 
 		//! 04; INC b: Adds one to b.
-		{0x04, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.b); }},
+		{0x04, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.b); }},
 
 		//! 05; DEC b: Subtracts one from b.
 		{0x05,[](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.b); }},
@@ -46,19 +46,19 @@ namespace GBEmulator::Instructions
 		{0x08, [](CPU &cpu, CPU::Registers &reg) { return LD16toPTR(cpu, cpu.fetchArgument16(), reg.sp) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
 
 		//! 09; ADD hl,bc: The value of bc is added to hl.
-		{0x09, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.bc); }},
+		{0x09, [](CPU &, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.bc); }},
 
 		//! 0A; LD a,(bc): Loads the value pointed to by bc into a.
 		{0x0A, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, reg.bc); }},
 
 		//! 0B; DEC bc: Subtracts one from bc.
-		{0x0B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.bc); }},
+		{0x0B, [](CPU &, CPU::Registers &reg) { return DEC16(reg.bc); }},
 
 		//! 0C; INC c: Adds one to c.
-		{0x0C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.c); }},
+		{0x0C, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.c); }},
 
 		//! 0D; DEC c: Subtracts one from c.
-		{0x0D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.c); }},
+		{0x0D, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.c); }},
 
 		//! 0E; LD c,*: Loads * into c.
 		{0x0E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -74,13 +74,13 @@ namespace GBEmulator::Instructions
 		{0x12, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.de, reg.a); }},
 
 		//! 13; INC de: Adds one to de.
-		{0x13, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.de); }},
+		{0x13, [](CPU &, CPU::Registers &reg) { return INC16(reg.de); }},
 
 		//! 14; INC d: Adds one to d.
-		{0x14, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.d); }},
+		{0x14, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.d); }},
 
 		//! 15; DEC d: Subtracts one from d.
-		{0x14, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.d); }},
+		{0x14, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.d); }},
 
 		//! 16; LD d,*: Loads * into d.
 		{0x16, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -98,13 +98,13 @@ namespace GBEmulator::Instructions
 		{0x1A, [](CPU &cpu, CPU::Registers &reg){ return LD8fromPTR(cpu, reg.a, reg.de); }},
 
 		//! 1B; DEC de: Subtracts one from de.
-		{0x1B, [](CPU &cpu, CPU::Registers &reg){ return DEC16(reg, reg.de); }},
+		{0x1B, [](CPU &, CPU::Registers &reg){ return DEC16(reg.de); }},
 
 		//! 1C; INC e: Adds one to e.
-		{0x1C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.e); }},
+		{0x1C, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.e); }},
 
 		//! 1D; DEC e: Subtracts one from e.
-		{0x1D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.e); }},
+		{0x1D, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.e); }},
 
 		//! 1E; LD e,*: Loads * into e.
 		{0x1E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -121,13 +121,13 @@ namespace GBEmulator::Instructions
 		{0x22, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl++, reg.a); }},
 
 		//! 23; INC hl: Adds one to hl.
-		{0x23, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.hl); }},
+		{0x23, [](CPU &, CPU::Registers &reg) { return INC16(reg.hl); }},
 
 		//! 24; INC h: Adds one to h.
-		{0x24, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.h); }},
+		{0x24, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.h); }},
 
 		//! 25; DEC h: Subtracts one from h.
-		{0x25, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.h); }},
+		{0x25, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.h); }},
 
 		//! 26; LD h,*: Loads * into h.
 		{0x26, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -138,19 +138,19 @@ namespace GBEmulator::Instructions
 		{0x28, [](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
 
 		//! 29; ADD hl,hl: The value of hl is added to hl.
-		{0x29, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.hl); }},
+		{0x29, [](CPU &, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.hl); }},
 
 		//! 2A; LDI a,(hl): Loads the value pointed to by hl to a and increments hl
 		{0x2A, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 2B; DEC hl: Subtracts one from hl.
-		{0x2B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.hl); }},
+		{0x2B, [](CPU &, CPU::Registers &reg) { return DEC16(reg.hl); }},
 
 		//! 2C; INC l: Adds one to l.
-		{0x2C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.l); }},
+		{0x2C, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.l); }},
 
 		//! 2D; DEC l: Subtracts one from l.
-		{0x2D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.l); }},
+		{0x2D, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.l); }},
 
 		//! 2E; LD l,*: Loads * into l.
 		{0x2E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; }},
@@ -166,7 +166,7 @@ namespace GBEmulator::Instructions
 		{0x32, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl--, reg.a); }},
 
 		//! 33; INC sp: Adds one to sp.
-		{0x33, [](CPU &cpu, CPU::Registers &reg) { return INC16(reg, reg.sp); }},
+		{0x33, [](CPU &, CPU::Registers &reg) { return INC16(reg.sp); }},
 
 		//! 34; INC (hl): Adds one to (hl).
 		{0x34, [](CPU &cpu, CPU::Registers &reg) { return INCPTR(cpu, reg, reg.hl); }},
@@ -181,18 +181,18 @@ namespace GBEmulator::Instructions
 		//! 38; JR c,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 
 		//! 39; ADD hl,sp: The value of hl is added to hl.
-		{0x39, [](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.sp); }},
+		{0x39, [](CPU &, CPU::Registers &reg) { return ADD16(reg, reg.hl, reg.sp); }},
 
 		//! 3A; LDD a,(hl): Load the value pointed to by hl to a and decrements hl
 
 		//! 3B; DEC sp: Subtracts one from sp.
-		{0x3B, [](CPU &cpu, CPU::Registers &reg) { return DEC16(reg, reg.sp); }},
+		{0x3B, [](CPU &, CPU::Registers &reg) { return DEC16(reg.sp); }},
 
 		//! 3C; INC a: Adds one to a.
-		{0x3C, [](CPU &cpu, CPU::Registers &reg) { return INC8(reg, reg.a); }},
+		{0x3C, [](CPU &, CPU::Registers &reg) { return INC8(reg, reg.a); }},
 
 		//! 3D; DEC a: Subtracts one from a.
-		{0x3D, [](CPU &cpu, CPU::Registers &reg) { return DEC8(reg, reg.a); }},
+		{0x3D, [](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.a); }},
 
 		//! 3E; LD a,*: Loads * into a.
 		{0x3E, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
@@ -200,148 +200,148 @@ namespace GBEmulator::Instructions
 		//! 3F; CCF: Inverts the carry flag.
 
 		//! 40; LD b,b: The contents of b are loaded into b.
-		{0x40, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.b); }},
+		{0x40, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.b); }},
 
 		//! 41; LD b,c: The contents of c are loaded into b.
-		{0x41, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.c); }},
+		{0x41, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.c); }},
 
 		//! 42; LD b,d: The contents of d are loaded into b.
-		{0x42, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.d); }},
+		{0x42, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.d); }},
 
 		//! 43; LD b,e: The contents of e are loaded into b.
-		{0x43, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.e); }},
+		{0x43, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.e); }},
 
 		//! 44; LD b,h: The contents of h are loaded into b.
-		{0x44, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.h); }},
+		{0x44, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.h); }},
 
 		//! 45; LD b,l: The contents of l are loaded into b.
-		{0x45, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.l); }},
+		{0x45, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.l); }},
 
 		//! 46; LD b,(hl): The contents of (hl) are loaded into b.
 		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.b, reg.hl); }},
 
 		//! 47; LD b,a: The contents of a are loaded into b.
-		{0x47, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, reg.a); }},
+		{0x47, [](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.a); }},
 
 		//! 48; LD c,b: The contents of b are loaded into c.
-		{0x48, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.b); }},
+		{0x48, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.b); }},
 
 		//! 49; LD c,c: The contents of c are loaded into c.
-		{0x49, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.c); }},
+		{0x49, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.c); }},
 
 		//! 4A; LD c,d: The contents of d are loaded into c.
-		{0x4A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.d); }},
+		{0x4A, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.d); }},
 
 		//! 4B; LD c,e: The contents of e are loaded into c.
-		{0x4B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.e); }},
+		{0x4B, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.e); }},
 
 		//! 4C; LD c,h: The contents of h are loaded into c.
-		{0x4C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.h); }},
+		{0x4C, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.h); }},
 
 		//! 4D; LD c,l: The contents of l are loaded into c.
-		{0x4D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.l); }},
+		{0x4D, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.l); }},
 
 		//! 4E; LD c,(hl): The contents of (hl) are loaded into c.
 		{0x4E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.c, reg.hl); }},
 
 		//! 4F; LD c,a: The contents of a are loaded into c.
-		{0x4F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, reg.a); }},
+		{0x4F, [](CPU &, CPU::Registers &reg) { return LD8(reg.c, reg.a); }},
 
 		//! 50; LD d,b: The contents of b are loaded into d.
-		{0x50, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.b); }},
+		{0x50, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.b); }},
 
 		//! 51; LD d,c: The contents of c are loaded into d.
-		{0x51, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.c); }},
+		{0x51, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.c); }},
 
 		//! 52; LD d,d: The contents of d are loaded into d.
-		{0x52, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.d); }},
+		{0x52, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.d); }},
 
 		//! 53; LD d,e: The contents of e are loaded into d.
-		{0x53, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.e); }},
+		{0x53, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.e); }},
 
 		//! 54; LD d,h: The contents of h are loaded into d.
-		{0x54, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.h); }},
+		{0x54, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.h); }},
 
 		//! 55; LD d,l: The contents of l are loaded into d.
-		{0x55, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.l); }},
+		{0x55, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.l); }},
 
 		//! 56; LD d,(hl): The contents of (hl) are loaded into d.
 		{0x56, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.d, reg.hl); }},
 
 		//! 57; LD d,a: The contents of a are loaded into d.
-		{0x57, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, reg.a); }},
+		{0x57, [](CPU &, CPU::Registers &reg) { return LD8(reg.d, reg.a); }},
 
 		//! 58; LD e,b: The contents of b are loaded into e.
-		{0x58, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.b); }},
+		{0x58, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.b); }},
 
 		//! 59; LD e,c: The contents of c are loaded into e.
-		{0x59, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.c); }},
+		{0x59, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.c); }},
 
 		//! 5A; LD e,d: The contents of d are loaded into e.
-		{0x5A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.d); }},
+		{0x5A, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.d); }},
 
 		//! 5B; LD e,e: The contents of e are loaded into e.
-		{0x5B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.e); }},
+		{0x5B, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.e); }},
 
 		//! 5C; LD e,h: The contents of h are loaded into e.
-		{0x5C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.h); }},
+		{0x5C, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.h); }},
 
 		//! 5D; LD e,l: The contents of l are loaded into e.
-		{0x5D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.l); }},
+		{0x5D, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.l); }},
 
 		//! 5E; LD e,(hl): The contents of (hl) are loaded into e.
 		{0x5E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.e, reg.hl); }},
 
 		//! 5F; LD e,a: The contents of a are loaded into e.
-		{0x5F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, reg.a); }},
+		{0x5F, [](CPU &, CPU::Registers &reg) { return LD8(reg.e, reg.a); }},
 
 		//! 60; LD h,b: The contents of b are loaded into h.
-		{0x60, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.b); }},
+		{0x60, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.b); }},
 
 		//! 61; LD h,c: The contents of c are loaded into h.
-		{0x61, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.c); }},
+		{0x61, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.c); }},
 
 		//! 62; LD h,d: The contents of d are loaded into h.
-		{0x62, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.d); }},
+		{0x62, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.d); }},
 
 		//! 63; LD h,e: The contents of e are loaded into h.
-		{0x63, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.e); }},
+		{0x63, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.e); }},
 
 		//! 64; LD h,h: The contents of h are loaded into h.
-		{0x64, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.h); }},
+		{0x64, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.h); }},
 
 		//! 65; LD h,l: The contents of l are loaded into h.
-		{0x65, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.l); }},
+		{0x65, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.l); }},
 
 		//! 66; LD h,(hl): The contents of (hl) are loaded into h.
 		{0x66, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.h, reg.hl); }},
 
 		//! 67; LD h,a: The contents of a are loaded into h.
-		{0x67, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, reg.a); }},
+		{0x67, [](CPU &, CPU::Registers &reg) { return LD8(reg.h, reg.a); }},
 
 		//! 68; LD l,b: The contents of b are loaded into l.
-		{0x68, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.b); }},
+		{0x68, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.b); }},
 
 		//! 69; LD l,c: The contents of c are loaded into l.
-		{0x69, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.c); }},
+		{0x69, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.c); }},
 
 		//! 6A; LD l,d: The contents of d are loaded into l.
-		{0x6A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.d); }},
+		{0x6A, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.d); }},
 
 		//! 6B; LD l,e: The contents of e are loaded into l.
-		{0x6B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.e); }},
+		{0x6B, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.e); }},
 
 		//! 6C; LD l,h: The contents of h are loaded into l.
-		{0x6C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.h); }},
+		{0x6C, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.h); }},
 
 		//! 6D; LD l,l: The contents of l are loaded into l.
-		{0x6D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.l); }},
+		{0x6D, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.l); }},
 
 		//! 6E; LD l,(hl): The contents of (hl) are loaded into l.
 		{0x6E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.l, reg.hl); }},
 
 		//! 6F; LD l,a: The contents of a are loaded into l.
-		{0x6F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, reg.a); }},
+		{0x6F, [](CPU &, CPU::Registers &reg) { return LD8(reg.l, reg.a); }},
 
 		//! 70; LD (hl),b: The contents of b are loaded into (hl).
 		{0x70, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, reg.b); }},
@@ -367,52 +367,52 @@ namespace GBEmulator::Instructions
 		{0x77, [](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, reg.a); }},
 
 		//! 78; LD a,b: The contents of b are loaded into a.
-		{0x78, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.b); }},
+		{0x78, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.b); }},
 
 		//! 79; LD a,c: The contents of c are loaded into a.
-		{0x79, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.c); }},
+		{0x79, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.c); }},
 
 		//! 7A; LD a,d: The contents of d are loaded into a.
-		{0x7A, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.d); }},
+		{0x7A, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.d); }},
 
 		//! 7B; LD a,e: The contents of e are loaded into a.
-		{0x7B, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.e); }},
+		{0x7B, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.e); }},
 
 		//! 7C; LD a,h: The contents of h are loaded into a.
-		{0x7C, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.h); }},
+		{0x7C, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.h); }},
 
 		//! 7D; LD a,l: The contents of l are loaded into a.
-		{0x7D, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.l); }},
+		{0x7D, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.l); }},
 
 		//! 7E; LD a,(hl): The contents of (hl) are loaded into a.
 		{0x7E, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, reg.hl); }},
 
 		//! 7F; LD a,a: The contents of a are loaded into a.
-		{0x7F, [](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, reg.a); }},
+		{0x7F, [](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.a); }},
 
 		//! 80; ADD a,b: Adds b to a.
-		{0x80, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b); }},
+		{0x80, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b); }},
 
 		//! 81; ADD a,c: Adds c to a.
-		{0x81, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c); }},
+		{0x81, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c); }},
 
 		//! 82; ADD a,d: Adds d to a.
-		{0x82, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d); }},
+		{0x82, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d); }},
 
 		//! 83; ADD a,e: Adds e to a.
-		{0x83, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e); }},
+		{0x83, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e); }},
 
 		//! 84; ADD a,h: Adds h to a.
-		{0x84, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h); }},
+		{0x84, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h); }},
 
 		//! 85; ADD a,l: Adds l to a.
-		{0x85, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l); }},
+		{0x85, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l); }},
 
 		//! 86; ADD a,(hl): Adds (hl) to a.
 		{0x86, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! 87; ADD a,a: Adds a to a.
-		{0x87, [](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); }},
+		{0x87, [](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); }},
 
 		//! 88; ADC a,b: Adds b and the carry flag to a.
 
@@ -431,28 +431,28 @@ namespace GBEmulator::Instructions
 		//! 8F; ADC a,a: Adds a and the carry flag to a.
 
 		//! 90; SUB b: Subtracts b from a.
-		{0x90, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b); }},
+		{0x90, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b); }},
 
 		//! 91; SUB c: Subtracts c from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c); }},
 
 		//! 92; SUB d: Subtracts d from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d); }},
 
 		//! 93; SUB e: Subtracts e from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e); }},
 
 		//! 94; SUB h: Subtracts h from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h); }},
 
 		//! 95; SUB l: Subtracts l from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l); }},
 
 		//! 96; SUB (hl): Subtracts (hl) from a.
 		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! 97; SUB a: Subtracts a from a.
-		{0x91, [](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); }},
+		{0x91, [](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); }},
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
 
@@ -471,76 +471,76 @@ namespace GBEmulator::Instructions
 		//! 9F; SBC a,a: Subtracts a and the carry flag from a.
 
 		//! A0; AND b: Bitwise AND on a with b.
-		{0xA0, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.b); }},
+		{0xA0, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.b); }},
 
 		//! A1; AND c: Bitwise AND on a with c.
-		{0xA1, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.c); }},
+		{0xA1, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.c); }},
 
 		//! A2; AND d: Bitwise AND on a with d.
-		{0xA2, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.d); }},
+		{0xA2, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.d); }},
 
 		//! A3; AND e: Bitwise AND on a with e.
-		{0xA3, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.e); }},
+		{0xA3, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.e); }},
 
 		//! A4; AND h: Bitwise AND on a with h.
-		{0xA4, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.h); }},
+		{0xA4, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.h); }},
 
 		//! A5; AND l: Bitwise AND on a with l.
-		{0xA5, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.l); }},
+		{0xA5, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.l); }},
 
 		//! A6; AND (hl): Bitwise AND on a with (hl).
 		{0xA6, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! A7; AND a: Bitwise AND on a with a.
-		{0xA7, [](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, reg.a); }},
+		{0xA7, [](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.a); }},
 
 		//! A8; XOR b: Bitwise XOR on a with b.
-		{0xA8, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.b); }},
+		{0xA8, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.b); }},
 
 		//! A9; XOR c: Bitwise XOR on a with c.
-		{0xA9, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
+		{0xA9, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AA; XOR d: Bitwise XOR on a with d.
-		{0xAA, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.d); }},
+		{0xAA, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.d); }},
 
 		//! AB; XOR e: Bitwise XOR on a with e.
-		{0xAB, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.e); }},
+		{0xAB, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.e); }},
 
 		//! AC; XOR h: Bitwise XOR on a with h.
-		{0xAC, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.h); }},
+		{0xAC, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.h); }},
 
 		//! AD; XOR l: Bitwise XOR on a with l.
-		{0xAD, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.l); }},
+		{0xAD, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.l); }},
 
 		//! AE; XOR (hl): Bitwise XOR on a with (hl).
 		{0xAE, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! AF; XOR a: Bitwise XOR a with a
-		{0xAF, [](CPU &cpu, CPU::Registers &reg) { return XOR(reg, reg.a); }},
+		{0xAF, [](CPU &, CPU::Registers &reg) { return XOR(reg, reg.a); }},
 
 		//! B0; OR b: Bitwise OR on a with b.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.b); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.b); }},
 
 		//! B1; OR c: Bitwise OR on a with c.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.c); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.c); }},
 
 		//! B2; OR d: Bitwise OR on a with d.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.d); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.d); }},
 
 		//! B3; OR e: Bitwise OR on a with e.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.e); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.e); }},
 
 		//! B4; OR h: Bitwise OR on a with h.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.h); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.h); }},
 
 		//! B5; OR l: Bitwise OR on a with l.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.l); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.l); }},
 
 		//! B6; OR (hl): Bitwise OR on a with (hl).
 		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; }},
 
 		//! B7; OR a: Bitwise OR on a with a.
-		{0xB0, [](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, reg.a); }},
+		{0xB0, [](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.a); }},
 
 		//! B8; CP b: Subtracts b from a and affects flags according to the result. a is not modified.
 
@@ -692,7 +692,7 @@ namespace GBEmulator::Instructions
 		//! F8; LD hl,sp+**: Load sp+** to hl
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
-		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); }},
+		{0x46, [](CPU &, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); }},
 
 		//! FA; LD a,(**): Load the value pointed to by address ** to a
 		{0x46, [](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; }},
@@ -925,13 +925,13 @@ namespace GBEmulator::Instructions
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char INC16(CPU::Registers &reg, unsigned short &value)
+	unsigned char INC16(unsigned short &value)
 	{
 		value++;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 
-	unsigned char DEC16(CPU::Registers &reg, unsigned short &value)
+	unsigned char DEC16(unsigned short &value)
 	{
 		value--;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
