@@ -178,15 +178,18 @@ namespace GBEmulator
 	{
 		this->_gpu.update(cycles);
 		if (this->_cable.isTransfering())
-			this->_interruptRequest |= (1U << 3U);
+			this->_interruptRequest |= SERIAL;
 		this->_cable.transfer(cycles);
+		if (this->_timer.update(cycles))
+			this->_interruptRequest |= TIMER;
 	}
 
 	bool CPU::_checkInterrupts()
 	{
-		this->_interruptRequest &= this->_interruptEnabled;
+		unsigned char mask = this->_interruptRequest & this->_interruptEnabled;
+
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
-			if (this->_interruptRequest & (1U << i))
+			if (mask & (1U << i))
 				return this->_executeInterrupt(i), true;
 		return false;
 	}
@@ -232,6 +235,15 @@ namespace GBEmulator
 		case SERIAL_TRANSFER_CONTROL:
 			return this->_cable.getControlByte();
 
+		case TIMER_COUNTER:
+			return this->_timer.getCounter();
+
+		case TIMER_MODULO:
+			return this->_timer.modulo;
+
+		case TIMER_CONTROL:
+			return this->_timer.getControlByte();
+
 		case JOYPAD_REGISTER:
 			return this->_generateJoypadByte();
 
@@ -255,6 +267,16 @@ namespace GBEmulator
 
 		case SERIAL_TRANSFER_CONTROL:
 			return this->_cable.setControlByte(value);
+
+		case TIMER_COUNTER:
+			return this->_timer.setCounter(value);
+
+		case TIMER_MODULO:
+			this->_timer.modulo = value;
+			break;
+
+		case TIMER_CONTROL:
+			return this->_timer.setControlByte(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;

@@ -33,7 +33,7 @@ add_executable(
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
         src/LCD/ILCD.cpp
-	src/Network/CableInterface.cpp)
+	src/Network/CableInterface.cpp src/Timing/Timer.cpp src/Timing/Timer.hpp)
 
 target_link_libraries(
         GBEmulator

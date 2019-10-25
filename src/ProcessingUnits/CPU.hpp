@@ -16,6 +16,7 @@
 #include "../Memory/ROM.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../Network/CableInterface.hpp"
+#include "../Timing/Timer.hpp"
 
 //The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
@@ -99,6 +100,9 @@ namespace GBEmulator
 			SERIAL_DATA             = 0x01,
 			SERIAL_TRANSFER_CONTROL = 0x02,
 			DIVIDER_REGISTER        = 0x04,
+			TIMER_COUNTER           = 0x05,
+			TIMER_MODULO            = 0x06,
+			TIMER_CONTROL           = 0x07,
 			INTERRUPT_REQUESTS      = 0x0F,
 		};
 
@@ -178,6 +182,7 @@ namespace GBEmulator
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
+		Timing::Timer _timer;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;
