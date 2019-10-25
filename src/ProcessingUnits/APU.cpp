@@ -10,11 +10,11 @@
 namespace GBEmulator
 {
     APU::APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour) :
-    _soundMode1(CHANSIZE_1, CHANSIZE_1),
-    _soundMode2(CHANSIZE_2, CHANSIZE_2),
-    _soundWave(CHANSIZE_WAVE, CHANSIZE_WAVE),
-    _soundNoise(CHANSIZE_NOISE, CHANSIZE_NOISE),
-    _soundControlers(SOUND_CONTROLERS_SIZE, SOUND_CONTROLERS_SIZE),
+    _soundChannel1(channelOne),
+    _soundChannel2(channelTwo),
+    _soundChannelWave(channelThree),
+    _soundChannelNoise(channelFour),
+    _soundControllers(SOUND_CONTROLERS_SIZE, SOUND_CONTROLERS_SIZE),
     _wpRAM(CHANSIZE_WPRAM, CHANSIZE_WPRAM)
     {
 
@@ -24,22 +24,22 @@ namespace GBEmulator
 
     void APU::write(unsigned short address, unsigned char value)
     {
-        _soundChanged = true;
+        this->_soundChanged = true;
         switch (address) {
             case FF10 ... FF14 :
-                this->_soundMode1.write(address - FF10, value);
+                //this->_soundMode1.write(address - FF10, value);
                 break;
             case FF16 ... FF19 :
-                this->_soundMode2.write(address - FF16, value);
+                //this->_soundMode2.write(address - FF16, value);
                 break;
             case FF1A ... FF1E :
-                this->_soundWave.write(address - FF1A, value);
+                //this->_soundWave.write(address - FF1A, value);
                 break;
             case FF20 ... FF24 :
-                this->_soundNoise.write(address - FF20, value);
+                //this->_soundNoise.write(address - FF20, value);
                 break;
             case FF25 ... FF26 :
-                this->_soundNoise.write(address - FF25, value);
+                this->_soundControllers.write(address - FF25, value);
                 this->_soundChanged = false;
                 break;
             case FF30 ... FF3F :

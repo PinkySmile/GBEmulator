@@ -48,7 +48,9 @@ namespace GBEmulator
 	class APU {
 	public:
 		APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour);
-        ~APU();
+		~APU();
+		APU(const APU &) = delete;
+		APU &operator=(const APU &) = delete;
 		void write(unsigned short, unsigned char);
 		unsigned char read(unsigned short) const;
 		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
@@ -62,11 +64,11 @@ namespace GBEmulator
 		unsigned char soundControlersCorrectRead(unsigned short) const;
 
 	private:
-		Memory _soundMode1; //tone and sweep
-		Memory _soundMode2; //only tone
-		Memory _soundWave; //wave output
-		Memory _soundNoise; //noise channel
-		Memory _soundControlers;
+        ISound &_soundChannel1;    //tone and sweep
+        ISound &_soundChannel2;    //only tone
+        ISound &_soundChannelWave; //wave output
+        ISound &_soundChannelNoise;//noise channel
+		Memory _soundControllers;
 		Memory _wpRAM; //wave pattern RAM
 		bool _soundChanged;
 	};

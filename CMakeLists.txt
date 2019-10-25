@@ -1,9 +1,14 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(GBEmulator
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	add_compile_options(-W -Wall -Wextra -g -O0)
+endif()
+
+add_executable(
+        GBEmulator
         src/main.cpp
         src/ProcessingUnits/CPU.cpp
         src/ProcessingUnits/CPU.hpp
@@ -19,4 +24,25 @@ add_executable(GBEmulator
 		src/ProcessingUnits/CPUInstructions.hpp
 		src/ProcessingUnits/StartupCode.cpp
 		src/Sound/ISound.hpp
-		)
+        src/ProcessingUnits/StartupCode.cpp
+        src/Joypad/JoypadEmulator.hpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.cpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+        src/Network/CableInterface.hpp
+        src/Network/BgbProtocolNetworkInterface.cpp
+        src/Network/BgbProtocolNetworkInterface.hpp
+        src/LCD/ILCD.hpp
+        src/LCD/LCDSFML.cpp
+        src/LCD/LCDSFML.hpp
+        src/LCD/ILCD.cpp
+        src/Network/CableInterface.cpp
+        src/Timing/Timer.cpp
+        src/Timing/Timer.hpp
+)
+
+target_link_libraries(
+        GBEmulator
+        sfml-graphics
+        sfml-window
+        sfml-system
+)

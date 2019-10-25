@@ -23,6 +23,10 @@ namespace GBEmulator
 		std::vector<unsigned char> _memory;
 
 	public:
+		Memory() = delete;
+		Memory(const Memory &) = delete;
+		~Memory() = default;
+		Memory &operator=(const Memory &) = delete;
 		Memory(unsigned size, unsigned short bankSize, bool readOnly = false);
 
 		void setBank(unsigned char bank);

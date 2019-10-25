@@ -14,6 +14,9 @@
 #include "APU.hpp"
 #include "GPU.hpp"
 #include "../Memory/ROM.hpp"
+#include "../Joypad/JoypadEmulator.hpp"
+#include "../Network/CableInterface.hpp"
+#include "../Timing/Timer.hpp"
 
 //The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
@@ -93,7 +96,14 @@ namespace GBEmulator
 		};
 
 		enum IOPorts {
-			INTERRUPT_REQUESTS = 0x0F,
+			JOYPAD_REGISTER         = 0x00,
+			SERIAL_DATA             = 0x01,
+			SERIAL_TRANSFER_CONTROL = 0x02,
+			DIVIDER_REGISTER        = 0x04,
+			TIMER_COUNTER           = 0x05,
+			TIMER_MODULO            = 0x06,
+			TIMER_CONTROL           = 0x07,
+			INTERRUPT_REQUESTS      = 0x0F,
 		};
 
 		struct Registers {
@@ -147,7 +157,12 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(const std::string &romPath);
+		CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
+
+		CPU() = delete;
+		CPU(const CPU &) = delete;
+		~CPU() = default;
+		CPU &operator=(const CPU &) = delete;
 
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
@@ -162,23 +177,31 @@ namespace GBEmulator
 	private:
 		static const std::vector<unsigned char> _startupCode;
 
+		unsigned char t;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;
+		bool _buttonEnabled;
+		bool _directionEnabled;
 		bool _halted;
 		bool _sleeping;
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
+		Timing::Timer _timer;
 		bool _internalRomEnabled;
-		unsigned long _totalCycles;
+		unsigned short _divRegister;
+		Input::JoypadEmulator &_joypad;
 		unsigned char _interruptEnabled;
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;
+		Network::CableInterface &_cable;
 
-		void _checkInterrupts();
+		void _updateComponents(unsigned int cycles);
+		bool _checkInterrupts();
 		void _executeNextInstruction();
 		void _executeInterrupt(unsigned int id);
+		unsigned char _generateJoypadByte() const;
 		unsigned char _readIOPort(unsigned char address) const;
 		void _writeIOPort(unsigned char address, unsigned char value);
 	};

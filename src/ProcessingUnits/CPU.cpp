@@ -27,18 +27,30 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath) :
+	CPU::CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+		_gpu(window),
+		_rom(romPath, ROM_BANK_SIZE),
+		_buttonEnabled(false),
+		_directionEnabled(false),
 		_halted(false),
 		_sleeping(false),
-		_interruptRequest(0x00),
-		_interruptEnabled(0x00),
-		_totalCycles(0),
-		_rom(romPath, ROM_BANK_SIZE),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{0, 0, 0, 0, 0, 0},
+		_registers{
+			.af = 0,
+			.bc = 0,
+			.de = 0,
+			.hl = 0,
+			.pc = 0,
+			.sp = 0
+		},
 		_internalRomEnabled(true),
-		_interruptMasterEnableFlag(true)
+		_divRegister(0),
+		_joypad(joypad),
+		_interruptEnabled(0x00),
+		_interruptRequest(0x00),
+		_interruptMasterEnableFlag(true),
+		_cable(cable)
 	{
 		this->_rom.setBank(1);
 	}
@@ -49,6 +61,7 @@ namespace GBEmulator
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
 				return CPU::_startupCode.at(address);
+			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
 			return this->_rom.rawRead(address);
@@ -57,7 +70,7 @@ namespace GBEmulator
 			return this->_rom.read(address - ROM1_STARTING_ADDRESS);
 
 		case VRAM_RANGE:
-			return 0xFF;
+			return this->_gpu.readVRAM(address - 0x8000);
 
 		case SRAM_RANGE:
 			return 0xFF;
@@ -69,7 +82,7 @@ namespace GBEmulator
 			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
 
 		case OAM_RANGE:
-			return 0xFF;
+			return this->_gpu.readOAM(address - 0xFE00);
 
 		case IO_PORT1_RANGE:
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
@@ -111,7 +124,7 @@ namespace GBEmulator
 	{
 		switch (address) {
 		case VRAM_RANGE:
-			break;
+			return this->_gpu.writeVRAM(address - 0x8000, value);
 
 		case SRAM_RANGE:
 			break;
@@ -135,7 +148,7 @@ namespace GBEmulator
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
 
 		case OAM_RANGE:
-			break;
+			return this->_gpu.writeOAM(address - 0xFE00, value);
 
 		case HRAM_RANGE:
 			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
@@ -160,32 +173,93 @@ namespace GBEmulator
 		if (this->_halted)
 			return;
 
+		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
+			return;
+
 		if (!this->_sleeping)
 			this->_executeNextInstruction();
-
-		if (this->_interruptMasterEnableFlag)
-			this->_checkInterrupts();
+		else
+			this->_updateComponents(4);
 	}
 
-	void CPU::_checkInterrupts()
+	void CPU::_updateComponents(unsigned int cycles)
 	{
-		unsigned char mask = this->_interruptEnabled & this->_interruptRequest;
+		this->_gpu.update(cycles);
+		if (this->_cable.isTransfering())
+			this->_interruptRequest |= SERIAL;
+		this->_cable.transfer(cycles);
+		if (this->_timer.update(cycles))
+			this->_interruptRequest |= TIMER;
+	}
+
+	bool CPU::_checkInterrupts()
+	{
+		unsigned char mask = this->_interruptRequest & this->_interruptEnabled;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if (mask & (1U << i))
-				return this->_executeInterrupt(i);
+				return this->_executeInterrupt(i), true;
+		return false;
 	}
 
 	void CPU::_executeInterrupt(unsigned int id)
 	{
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptRequest &= ~(1U << id);
+		this->_interruptMasterEnableFlag = false;
+		this->_sleeping = false;
+	}
+
+	unsigned char CPU::_generateJoypadByte() const
+	{
+		return (
+			(this->_buttonEnabled << 5U) |
+			(this->_directionEnabled << 4U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_START) && this->_buttonEnabled)
+			) << 3U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_UP) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_SELECT) && this->_buttonEnabled)
+			) << 2U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_B) && this->_buttonEnabled)
+			) << 1U) |
+			((
+				(this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT) && this->_directionEnabled) ||
+				(this->_joypad.isButtonPressed(Input::JOYPAD_A) && this->_buttonEnabled)
+			) << 0U)
+		);
 	}
 
 	unsigned char CPU::_readIOPort(unsigned char address) const
 	{
 		switch (address) {
+		case SERIAL_DATA:
+			return this->_cable.byte;
+
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.getControlByte();
+
+		case TIMER_COUNTER:
+			return this->_timer.getCounter();
+
+		case TIMER_MODULO:
+			return this->_timer.modulo;
+
+		case TIMER_CONTROL:
+			return this->_timer.getControlByte();
+
+		case JOYPAD_REGISTER:
+			return this->_generateJoypadByte();
+
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest;
+
+		case DIVIDER_REGISTER:
+			return this->_divRegister >> 8U;
 
 		default:
 			return 0xFF;
@@ -195,9 +269,36 @@ namespace GBEmulator
 	void CPU::_writeIOPort(unsigned char address, unsigned char value)
 	{
 		switch (address) {
+		case SERIAL_DATA:
+			this->_cable.byte = value;
+			break;
+
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.setControlByte(value);
+
+		case TIMER_COUNTER:
+			return this->_timer.setCounter(value);
+
+		case TIMER_MODULO:
+			this->_timer.modulo = value;
+			break;
+
+		case TIMER_CONTROL:
+			return this->_timer.setControlByte(value);
+
+		case JOYPAD_REGISTER:
+			this->_directionEnabled = (value & 0b10000U) != 0;
+			this->_buttonEnabled =    (value & 0b100000U)!= 0;
+			break;
+
 		case INTERRUPT_REQUESTS:
 			this->_interruptRequest = value;
 			break;
+
+		case DIVIDER_REGISTER:
+			this->_divRegister = 0;
+			break;
+
 		default:
 			break;
 		}
@@ -208,7 +309,10 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			this->_totalCycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+
+			this->_divRegister += cycles;
+			this->_updateComponents(cycles);
 		} catch (std::out_of_range &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
@@ -218,10 +322,22 @@ namespace GBEmulator
 	void CPU::dumpRegisters() const
 	{
 		std::cout << std::hex << std::uppercase;
-		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a) << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
-		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b) << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
-		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d) << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
-		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h) << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af;
+		std::cout << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a);
+		std::cout << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
+
+		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc;
+		std::cout << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b);
+		std::cout << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
+
+		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de;
+		std::cout << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d);
+		std::cout << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
+
+		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl;
+		std::cout << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h);
+		std::cout << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
+
 		std::cout << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
 		std::cout << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
 		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
