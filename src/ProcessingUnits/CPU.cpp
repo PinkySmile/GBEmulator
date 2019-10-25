@@ -199,7 +199,6 @@ namespace GBEmulator
 	unsigned char CPU::_generateJoypadByte() const
 	{
 		return (
-			0b11000000U |
 			(this->_buttonEnabled << 5U) |
 			(this->_directionEnabled << 4U) |
 			((
