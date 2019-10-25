@@ -20,7 +20,8 @@ namespace GBEmulator
 		unsigned short _bankSize;
 
 	protected:
-		std::vector<unsigned char> _memory;
+		size_t _size;
+		unsigned char *_memory;
 
 	public:
 		Memory() = delete;
