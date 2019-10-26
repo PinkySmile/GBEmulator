@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 	GBEmulator::CPU cpu(argv[1], window, joypad, network);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
+	window.setFramerateLimit(24);
 	window.setView(view);
 	try {
 		size_t value = 0;
