@@ -36,13 +36,20 @@ namespace GBEmulator
 		_sleeping(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{0, 0, 0, 0, 0, 0},
+		_registers{
+			.af = 0,
+			.bc = 0,
+			.de = 0,
+			.hl = 0,
+			.pc = 0,
+			.sp = 0
+		},
 		_internalRomEnabled(true),
 		_divRegister(0),
 		_joypad(joypad),
-		_interruptMasterEnableFlag(true),
-		_interruptRequest(0x00),
 		_interruptEnabled(0x00),
+		_interruptRequest(0x00),
+		_interruptMasterEnableFlag(true),
 		_cable(cable)
 	{
 		this->_rom.setBank(1);
@@ -53,7 +60,8 @@ namespace GBEmulator
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
-				return CPU::_startupCode.at(address);
+				return CPU::_startupCode[address];
+			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
 			return this->_rom.rawRead(address);
@@ -177,11 +185,16 @@ namespace GBEmulator
 	void CPU::_updateComponents(unsigned int cycles)
 	{
 		this->_gpu.update(cycles);
+		if (this->_cable.isTransfering())
+			this->_interruptRequest |= SERIAL;
+		this->_cable.transfer(cycles);
+		if (this->_timer.update(cycles))
+			this->_interruptRequest |= TIMER;
 	}
 
 	bool CPU::_checkInterrupts()
 	{
-		unsigned char mask = this->_interruptEnabled & this->_interruptRequest;
+		unsigned char mask = this->_interruptRequest & this->_interruptEnabled;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if (mask & (1U << i))
@@ -192,6 +205,7 @@ namespace GBEmulator
 	void CPU::_executeInterrupt(unsigned int id)
 	{
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptRequest &= ~(1U << id);
 		this->_interruptMasterEnableFlag = false;
 		this->_sleeping = false;
 	}
@@ -199,7 +213,6 @@ namespace GBEmulator
 	unsigned char CPU::_generateJoypadByte() const
 	{
 		return (
-			0b11000000U |
 			(this->_buttonEnabled << 5U) |
 			(this->_directionEnabled << 4U) |
 			((
@@ -227,13 +240,28 @@ namespace GBEmulator
 		case SERIAL_DATA:
 			return this->_cable.byte;
 
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.getControlByte();
+
+		case TIMER_COUNTER:
+			return this->_timer.getCounter();
+
+		case LCDC_Y_COORD:
+			return this->_gpu.getCurrentLine();
+
+		case TIMER_MODULO:
+			return this->_timer.modulo;
+
+		case TIMER_CONTROL:
+			return this->_timer.getControlByte();
+
 		case JOYPAD_REGISTER:
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest;
 
-		case DIVIDER:
+		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
 
 		default:
@@ -248,6 +276,19 @@ namespace GBEmulator
 			this->_cable.byte = value;
 			break;
 
+		case SERIAL_TRANSFER_CONTROL:
+			return this->_cable.setControlByte(value);
+
+		case TIMER_COUNTER:
+			return this->_timer.setCounter(value);
+
+		case TIMER_MODULO:
+			this->_timer.modulo = value;
+			break;
+
+		case TIMER_CONTROL:
+			return this->_timer.setControlByte(value);
+
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;
 			this->_buttonEnabled =    (value & 0b100000U)!= 0;
@@ -257,7 +298,7 @@ namespace GBEmulator
 			this->_interruptRequest = value;
 			break;
 
-		case DIVIDER:
+		case DIVIDER_REGISTER:
 			this->_divRegister = 0;
 			break;
 
@@ -271,11 +312,11 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
 
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
-		} catch (std::out_of_range &) {
+		} catch (std::bad_function_call &) {
 			this->_halted = true;
 			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
 		}

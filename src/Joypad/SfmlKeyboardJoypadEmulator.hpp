@@ -20,6 +20,10 @@ namespace GBEmulator::Input
 		std::map<Keys, sf::Keyboard::Key> _keys;
 
 	public:
+		SFMLKeyboardJoypadEmulator() = delete;
+		SFMLKeyboardJoypadEmulator(const SFMLKeyboardJoypadEmulator &) = delete;
+		~SFMLKeyboardJoypadEmulator() = default;
+		SFMLKeyboardJoypadEmulator &operator=(const SFMLKeyboardJoypadEmulator &) = delete;
 		explicit SFMLKeyboardJoypadEmulator(const std::map<Keys, sf::Keyboard::Key> &&keys);
 
 		void setKey(Keys button, sf::Keyboard::Key key);

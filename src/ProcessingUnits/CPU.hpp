@@ -16,6 +16,7 @@
 #include "../Memory/ROM.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../Network/CableInterface.hpp"
+#include "../Timing/Timer.hpp"
 
 //The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
@@ -87,7 +88,7 @@ namespace GBEmulator
 	class CPU {
 	public:
 		enum InterruptsKind {
-			VBLANK =   0,
+			VBLANK =   1U << 0U,
 			LCD_STAT = 1U << 1U,
 			TIMER =    1U << 2U,
 			SERIAL =   1U << 3U,
@@ -95,10 +96,15 @@ namespace GBEmulator
 		};
 
 		enum IOPorts {
-			JOYPAD_REGISTER    = 0x00,
-			SERIAL_DATA        = 0x01,
-			DIVIDER            = 0x04,
-			INTERRUPT_REQUESTS = 0x0F,
+			JOYPAD_REGISTER         = 0x00,
+			SERIAL_DATA             = 0x01,
+			SERIAL_TRANSFER_CONTROL = 0x02,
+			DIVIDER_REGISTER        = 0x04,
+			TIMER_COUNTER           = 0x05,
+			TIMER_MODULO            = 0x06,
+			TIMER_CONTROL           = 0x07,
+			INTERRUPT_REQUESTS      = 0x0F,
+			LCDC_Y_COORD            = 0x44,
 		};
 
 		struct Registers {
@@ -154,6 +160,11 @@ namespace GBEmulator
 
 		CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
 
+		CPU() = delete;
+		CPU(const CPU &) = delete;
+		~CPU() = default;
+		CPU &operator=(const CPU &) = delete;
+
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
@@ -177,6 +188,7 @@ namespace GBEmulator
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;
+		Timing::Timer _timer;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;

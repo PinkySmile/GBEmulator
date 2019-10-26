@@ -12,16 +12,20 @@ namespace GBEmulator::Network
 {
 	class CableInterface {
 	private:
-		bool _activated = false;
+		unsigned char _byte = 0;
+
+		virtual void _sync(unsigned cycles) = 0;
+		virtual unsigned char _receiveByte() = 0;
+		virtual void _sendByte(unsigned char byte) = 0;
 
 	public:
 		unsigned char byte = 0xFF;
 
-		bool isActivated();
-		virtual void setActivated(bool activated);
-
-		virtual void read() = 0;
-		virtual void write() = 0;
+		void setControlByte(unsigned char byte);
+		unsigned char getControlByte() const;
+		bool isExternal() const;
+		bool isTransfering() const;
+		void transfer(unsigned int cycles);
 	};
 }
 

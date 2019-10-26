@@ -3,6 +3,10 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	add_compile_options(-W -Wall -Wextra)
+endif()
+
 add_executable(
         GBEmulator
         src/main.cpp
@@ -23,13 +27,15 @@ add_executable(
         src/Joypad/SfmlKeyboardJoypadEmulator.cpp
         src/Joypad/SfmlKeyboardJoypadEmulator.hpp
         src/Network/CableInterface.hpp
-        src/Network/CableInterface.cpp
-        src/Network/GbgProtocolNetworkInterface.cpp
-        src/Network/GbgProtocolNetworkInterface.hpp
+	src/Network/BgbProtocolNetworkInterface.cpp
+	src/Network/BgbProtocolNetworkInterface.hpp
         src/LCD/ILCD.hpp
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
         src/LCD/ILCD.cpp
+	src/Network/CableInterface.cpp
+	src/Timing/Timer.cpp
+	src/Timing/Timer.hpp
 )
 
 target_link_libraries(

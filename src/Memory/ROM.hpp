@@ -78,7 +78,13 @@ namespace GBEmulator
 		void _checkROM();
 
 	public:
+		ROM() = delete;
+		ROM(const ROM &) = delete;
+		~ROM() = default;
+		ROM &operator=(const ROM &) = delete;
 		ROM(const std::string &path, unsigned short bankSize);
+
+		static size_t getBestSizeForFile(const std::string &path);
 	};
 }
 

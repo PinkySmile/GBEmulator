@@ -35,6 +35,7 @@ sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool s
 	if (signedMode)
 		return this->_texture[static_cast<char>(id) + 0x100];
 	return this->_texture[id];
+	this->clear(this->_colors[0]);
 }
 
 void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *tile, sf::Texture &texture) const
@@ -73,4 +74,3 @@ void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite spri
 	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
 	this->draw(this->_sprite);
 }
-
