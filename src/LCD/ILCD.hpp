@@ -30,17 +30,36 @@ namespace GBEmulator::Graphics
 		};
 	};
 
+	struct RGBColor {
+		static const struct GBEmulator::Graphics::RGBColor White;
+		static const struct GBEmulator::Graphics::RGBColor LGray;
+		static const struct GBEmulator::Graphics::RGBColor DGray;
+		static const struct GBEmulator::Graphics::RGBColor Black;
+
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+	};
+
 	class ILCD {
-	private:
-		unsigned char _screenColor = 0;
+	protected:
+		 std::vector<RGBColor> _colorPalette = {
+			RGBColor::White,
+			RGBColor::LGray,
+			RGBColor::DGray,
+			RGBColor::Black
+		 };
 
 	public:
-		virtual void setColor(unsigned char color);
 		virtual void updateTexture(unsigned char *tile, size_t id) = 0;
-		virtual void drawSprite(Sprite sprite, bool signedMode) = 0;
+		virtual void drawSprite(Sprite sprite, bool signedMode, bool doubleSize) = 0;
 		virtual void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
 		virtual void drawWindow(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
 		virtual void display() = 0;
+		virtual void clear() = 0;
+
+		void setPalette(const std::vector<RGBColor> &colors);
+		void setPalette(unsigned char colors);
 	};
 }
 

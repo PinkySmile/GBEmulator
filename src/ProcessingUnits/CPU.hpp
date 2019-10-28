@@ -104,7 +104,9 @@ namespace GBEmulator
 			TIMER_MODULO            = 0x06,
 			TIMER_CONTROL           = 0x07,
 			INTERRUPT_REQUESTS      = 0x0F,
+			LCD_CONTROL             = 0x40,
 			LCDC_Y_COORD            = 0x44,
+			LCD_BG_COLOR            = 0x47,
 		};
 
 		struct Registers {

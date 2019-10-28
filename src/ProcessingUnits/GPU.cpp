@@ -30,9 +30,14 @@ namespace GBEmulator
 		delete[] this->_backgroundMap;
 	}
 
-	unsigned char *GPU::_getTile(std::size_t id)
+	unsigned char GPU::getBGPalette() const
 	{
-		return this->_tiles + id * 64;
+		return this->_bgPalette;
+	}
+
+	void GPU::setBGPalette(unsigned char value)
+	{
+		this->_bgPalette = value;
 	}
 
 	unsigned char GPU::readVRAM(unsigned short address) const
@@ -104,16 +109,26 @@ namespace GBEmulator
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
-			this->_updateTiles();
-			this->_screen.drawBackground(this->_backgroundMap, 0, 0, false);
-			this->_screen.drawWindow(this->_backgroundMap, 0, 0, false);
-			for (int i = 0; i < OAM_SIZE; i += 4) {
-				Graphics::Sprite sprite{};
-				sprite.x     = this->_oam.read(i);
-				sprite.y     = this->_oam.read(i + 1);
-				sprite.texture_id = this->_oam.read(i + 2);
-				sprite.flags = this->_oam.read(i + 3);
-				this->_screen.drawSprite(sprite, false);
+			this->_screen.clear();
+
+			if (this->_control & 0x80U) {
+				this->_screen.setPalette(this->_bgPalette);
+				this->_updateTiles();
+
+				if (this->_control & 0b00000001U)
+					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), 0, 0, !(this->_control & 0b00010000U));
+
+				if (this->_control & 0b00100000U)
+					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), 0, 0, !(this->_control & 0b00010000U));
+
+				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
+					this->_screen.drawSprite({
+						.x = this->_oam.read(i),
+						.y = this->_oam.read(i + 1),
+						.texture_id = this->_oam.read(i + 2),
+						.flags = this->_oam.read(i + 3)
+					}, false, this->_control & 0b00000100U);
+				}
 			}
 			this->_screen.display();
 		}
@@ -124,21 +139,31 @@ namespace GBEmulator
 		return this->_cycles * 153 / GPU_FULL_CYCLE_DURATION;
 	}
 
-	unsigned char GPU::readIOPorts(unsigned short) const
+	void GPU::setControlByte(unsigned char value)
 	{
-		return 0xff;
+		this->_control = value;
 	}
 
-	void GPU::writeIOPorts(unsigned short, unsigned char)
+	unsigned char GPU::getControlByte() const
 	{
-		//if (address == LCD_BG_COLOR)
-		//	this->_screen.setColor(value);
-		//this->_screen.writeIOPorts(address, value);
+		return this->_control;
 	}
 
 	void GPU::_updateTiles() {
 		for (auto &id : this->_tilesToUpdate)
 			this->_screen.updateTexture(this->_getTile(id), id);
 		this->_tilesToUpdate.clear();
+	}
+
+	unsigned char *GPU::_getTileMap(bool alt)
+	{
+		if (alt)
+			return this->_backgroundMap + 0x400;
+		return this->_backgroundMap;
+	}
+
+	unsigned char *GPU::_getTile(std::size_t id)
+	{
+		return this->_tiles + id * 64;
 	}
 }

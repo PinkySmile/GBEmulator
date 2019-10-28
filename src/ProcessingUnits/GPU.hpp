@@ -26,6 +26,8 @@ namespace GBEmulator
 	private:
 		Memory _oam;
 		Graphics::ILCD &_screen;
+		unsigned char _bgPalette;
+		unsigned char _control;
 		unsigned char *_tiles;
 		unsigned char *_backgroundMap;
 		unsigned _cycles = 0;
@@ -41,16 +43,19 @@ namespace GBEmulator
 		unsigned char getCurrentLine() const;
 		unsigned char readVRAM(unsigned short address) const;
 		unsigned char readOAM(unsigned short address) const;
-		unsigned char readIOPorts(unsigned short address) const;
+		unsigned char getControlByte() const;
+		unsigned char getBGPalette() const;
 
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
-		void writeIOPorts(unsigned short address, unsigned char value);
+		void setControlByte(unsigned char value);
+		void setBGPalette(unsigned char value);
 		void update(int cycle);
 
 	private:
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
+		unsigned char *_getTileMap(bool alt);
 	};
 }
 

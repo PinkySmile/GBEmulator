@@ -246,8 +246,14 @@ namespace GBEmulator
 		case TIMER_COUNTER:
 			return this->_timer.getCounter();
 
+		case LCD_CONTROL:
+			return this->_gpu.getControlByte();
+
 		case LCDC_Y_COORD:
 			return this->_gpu.getCurrentLine();
+
+		case LCD_BG_COLOR:
+			return this->_gpu.getBGPalette();
 
 		case TIMER_MODULO:
 			return this->_timer.modulo;
@@ -288,6 +294,12 @@ namespace GBEmulator
 
 		case TIMER_CONTROL:
 			return this->_timer.setControlByte(value);
+
+		case LCD_CONTROL:
+			return this->_gpu.setControlByte(value);
+
+		case LCD_BG_COLOR:
+			return this->_gpu.setBGPalette(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;

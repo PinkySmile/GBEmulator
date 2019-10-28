@@ -22,7 +22,6 @@ void GBEmulator::Graphics::LCDSFML::display()
 	}
 	this->_fpsClock.restart();
 	sf::RenderWindow::display();
-	this->clear(this->_colors[0]);
 }
 
 double GBEmulator::Graphics::LCDSFML::getFramerate()
@@ -30,12 +29,23 @@ double GBEmulator::Graphics::LCDSFML::getFramerate()
 	return 1 / this->_fpsClock.getElapsedTime().asSeconds();
 }
 
+void GBEmulator::Graphics::LCDSFML::clear()
+{
+	sf::RenderWindow::clear(
+		sf::Color{
+			RGBColor::White.r,
+			RGBColor::White.g,
+			RGBColor::White.b,
+			255
+		}
+	);
+}
+
 sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool signedMode)
 {
 	if (signedMode)
 		return this->_texture[static_cast<char>(id) + 0x100];
 	return this->_texture[id];
-	this->clear(this->_colors[0]);
 }
 
 void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *tile, sf::Texture &texture) const
@@ -44,7 +54,12 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 
 	texture.create(8, 8);
 	for (int i = 0; i < 64; i++)
-		colors[i] = this->_colors[tile[i]];
+		colors[i] = sf::Color{
+			this->_colorPalette[tile[i]].r,
+			this->_colorPalette[tile[i]].g,
+			this->_colorPalette[tile[i]].b,
+			255
+		};
 	texture.update(reinterpret_cast<sf::Uint8 *>(&colors));
 }
 
@@ -67,10 +82,22 @@ void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id
 	this->_getTextureFromTile(tile, this->_texture[id]);
 }
 
-void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode)
+void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize)
 {
+	if (doubleSize) {
+		sprite.texture_id *= 4;
+		sprite.x = (sprite.x + !sprite.x_flip) * 4;
+		sprite.y = (sprite.y + !sprite.y_flip) * 4;
+		for (int i = 0; i < 4; i++) {
+			this->drawSprite(sprite, signedMode, false);
+			sprite.x += ((sprite.x_flip * 2) - 1) * 8;
+			sprite.y += ((sprite.x_flip * 2) - 1) * 8;
+			sprite.texture_id++;
+		}
+		return;
+	}
 	this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode));
-	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8, sprite.y + sprite.y_flip * 8);
-	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
+	this->_sprite.setPosition(sprite.x + !sprite.x_flip * 8, sprite.y + !sprite.y_flip * 8);
+	this->_sprite.setScale((sprite.x_flip * 2) - 1, (sprite.y_flip * 2) - 1);
 	this->draw(this->_sprite);
 }
