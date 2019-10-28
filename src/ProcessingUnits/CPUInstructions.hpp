@@ -61,6 +61,7 @@ namespace GBEmulator::Instructions
 	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value);
 	unsigned char RL(CPU::Registers &reg, unsigned char &value);
 	unsigned char CP(CPU::Registers &reg, unsigned char value);
+	unsigned char RES(unsigned char &val, unsigned char bit);
 
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256];

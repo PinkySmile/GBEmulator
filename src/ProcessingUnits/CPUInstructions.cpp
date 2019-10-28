@@ -11,263 +11,773 @@
 namespace GBEmulator::Instructions
 {
 	const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256] = {
+		//! 0
 		{},
+
+		//! 1
 		{},
+
+		//! 2
 		{},
+
+		//! 3
 		{},
+
+		//! 4
 		{},
+
+		//! 5
 		{},
+
+		//! 6
 		{},
+
+		//! 7
 		{},
+
+		//! 8
 		{},
+
+		//! 9
 		{},
+
+		//! A
 		{},
+
+		//! B
 		{},
+
+		//! C
 		{},
+
+		//! D
 		{},
+
+		//! E
 		{},
+
+		//! F
 		{},
+
+		//! 10
 		{},
+
 		//! 11; RL c
 		[](CPU &, CPU::Registers &reg){ return RL(reg, reg.c); },
+
+		//! 12
 		{},
+
+		//! 13
 		{},
+
+		//! 14
 		{},
+
+		//! 15
 		{},
+
+		//! 16
 		{},
+
+		//! 17
 		{},
+
+		//! 18
 		{},
+
+		//! 19
 		{},
+
+		//! 1A
 		{},
+
+		//! 1B
 		{},
+
+		//! 1C
 		{},
+
+		//! 1D
 		{},
+
+		//! 1E
 		{},
+
+		//! 1F
 		{},
+
+		//! 20
 		{},
+
+		//! 21
 		{},
+
+		//! 22
 		{},
+
+		//! 23
 		{},
+
+		//! 24
 		{},
+
+		//! 25
 		{},
+
+		//! 26
 		{},
+
+		//! 27
 		{},
+
+		//! 28
 		{},
+
+		//! 29
 		{},
+
+		//! 2A
 		{},
+
+		//! 2B
 		{},
+
+		//! 2C
 		{},
+
+		//! 2D
 		{},
+
+		//! 2E
 		{},
+
+		//! 2F
 		{},
+
+		//! 30
 		{},
+
+		//! 31
 		{},
+
+		//! 32
 		{},
+
+		//! 33
 		{},
+
+		//! 34
 		{},
+
+		//! 35
 		{},
+
+		//! 36
 		{},
+
+		//! 37
 		{},
+
+		//! 38
 		{},
+
+		//! 39
 		{},
+
+		//! 3A
 		{},
+
+		//! 3B
 		{},
+
+		//! 3C
 		{},
+
+		//! 3D
 		{},
+
+		//! 3E
 		{},
+
+		//! 3F
 		{},
+
+		//! 40
 		{},
+
+		//! 41
 		{},
+
+		//! 42
 		{},
+
+		//! 43
 		{},
+
+		//! 44
 		{},
+
+		//! 45
 		{},
+
+		//! 46
 		{},
+
+		//! 47
 		{},
+
+		//! 48
 		{},
+
+		//! 49
 		{},
+
+		//! 4A
 		{},
+
+		//! 4B
 		{},
+
+		//! 4C
 		{},
+
+		//! 4D
 		{},
+
+		//! 4E
 		{},
+
+		//! 4F
 		{},
+
+		//! 50
 		{},
+
+		//! 51
 		{},
+
+		//! 52
 		{},
+
+		//! 53
 		{},
+
+		//! 54
 		{},
+
+		//! 55
 		{},
+
+		//! 56
 		{},
+
+		//! 57
 		{},
+
+		//! 58
 		{},
+
+		//! 59
 		{},
+
+		//! 5A
 		{},
+
+		//! 5B
 		{},
+
+		//! 5C
 		{},
+
+		//! 5D
 		{},
+
+		//! 5E
 		{},
+
+		//! 5F
 		{},
+
+		//! 60
 		{},
+
+		//! 61
 		{},
+
+		//! 62
 		{},
+
+		//! 63
 		{},
+
+		//! 64
 		{},
+
+		//! 65
 		{},
+
+		//! 66
 		{},
+
+		//! 67
 		{},
+
+		//! 68
 		{},
+
+		//! 69
 		{},
+
+		//! 6A
 		{},
+
+		//! 6B
 		{},
+
+		//! 6C
 		{},
+
+		//! 6D
 		{},
+
+		//! 6E
 		{},
+
+		//! 6F
 		{},
+
+		//! 70
 		{},
+
+		//! 71
 		{},
+
+		//! 72
 		{},
+
+		//! 73
 		{},
+
+		//! 74
 		{},
+
+		//! 75
 		{},
+
+		//! 76
 		{},
+
+		//! 77; BIT 6,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 6); },
+
+		//! 78
 		{},
+
+		//! 79
 		{},
+
+		//! 7A
 		{},
+
+		//! 7B
 		{},
-		{},
+
 		//! 7C; BIT 7,h
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 7); },
+
+		//! 7D
 		{},
+
+		//! 7E
 		{},
+
+		//! 7F
 		{},
+
+		//! 80
 		{},
+
+		//! 81
 		{},
+
+		//! 82
 		{},
+
+		//! 83
 		{},
+
+		//! 84
 		{},
+
+		//! 85
 		{},
+
+		//! 86
 		{},
+
+		//! 87
+		[](CPU &, CPU::Registers &reg) { return RES(reg.a, 0); },
+
+		//! 88
 		{},
+
+		//! 89
 		{},
+
+		//! 8A
 		{},
+
+		//! 8B
 		{},
+
+		//! 8C
 		{},
+
+		//! 8D
 		{},
+
+		//! 8E
 		{},
+
+		//! 8F
 		{},
+
+		//! 90
 		{},
+
+		//! 91
 		{},
+
+		//! 92
 		{},
+
+		//! 93
 		{},
+
+		//! 94
 		{},
+
+		//! 95
 		{},
+
+		//! 96
 		{},
+
+		//! 97
 		{},
+
+		//! 98
 		{},
+
+		//! 99
 		{},
+
+		//! 9A
 		{},
+
+		//! 9B
 		{},
+
+		//! 9C
 		{},
+
+		//! 9D
 		{},
+
+		//! 9E
 		{},
+
+		//! 9F
 		{},
+
+		//! A0
 		{},
+
+		//! A1
 		{},
+
+		//! A2
 		{},
+
+		//! A3
 		{},
+
+		//! A4
 		{},
+
+		//! A5
 		{},
+
+		//! A6
 		{},
+
+		//! A7
 		{},
+
+		//! A8
 		{},
+
+		//! A9
 		{},
+
+		//! AA
 		{},
+
+		//! AB
 		{},
+
+		//! AC
 		{},
+
+		//! AD
 		{},
+
+		//! AE
 		{},
+
+		//! AF
 		{},
+
+		//! B0
 		{},
+
+		//! B1
 		{},
+
+		//! B2
 		{},
+
+		//! B3
 		{},
+
+		//! B4
 		{},
+
+		//! B5
 		{},
+
+		//! B6
 		{},
+
+		//! B7
 		{},
+
+		//! B8
 		{},
+
+		//! B9
 		{},
+
+		//! BA
 		{},
+
+		//! BB
 		{},
+
+		//! BC
 		{},
+
+		//! BD
 		{},
+
+		//! BE
 		{},
+
+		//! BF
 		{},
+
+		//! C0
 		{},
+
+		//! C1
 		{},
+
+		//! C2
 		{},
+
+		//! C3
 		{},
+
+		//! C4
 		{},
+
+		//! C5
 		{},
+
+		//! C6
 		{},
+
+		//! C7
 		{},
+
+		//! C8
 		{},
+
+		//! C9
 		{},
+
+		//! CA
 		{},
+
+		//! CB
 		{},
+
+		//! CC
 		{},
+
+		//! CD
 		{},
+
+		//! CE
 		{},
+
+		//! CF
 		{},
+
+		//! D0
 		{},
+
+		//! D1
 		{},
+
+		//! D2
 		{},
+
+		//! D3
 		{},
+
+		//! D4
 		{},
+
+		//! D5
 		{},
+
+		//! D6
 		{},
+
+		//! D7
 		{},
+
+		//! D8
 		{},
+
+		//! D9
 		{},
+
+		//! DA
 		{},
+
+		//! DB
 		{},
+
+		//! DC
 		{},
+
+		//! DD
 		{},
+
+		//! DE
 		{},
+
+		//! DF
 		{},
+
+		//! E0
 		{},
+
+		//! E1
 		{},
+
+		//! E2
 		{},
+
+		//! E3
 		{},
+
+		//! E4
 		{},
+
+		//! E5
 		{},
+
+		//! E6
 		{},
+
+		//! E7
 		{},
+
+		//! E8
 		{},
+
+		//! E9
 		{},
+
+		//! EA
 		{},
+
+		//! EB
 		{},
+
+		//! EC
 		{},
+
+		//! ED
 		{},
+
+		//! EE
 		{},
+
+		//! EF
 		{},
+
+		//! F0
 		{},
+
+		//! F1
 		{},
+
+		//! F2
 		{},
+
+		//! F3
 		{},
+
+		//! F4
 		{},
+
+		//! F5
 		{},
+
+		//! F6
 		{},
+
+		//! F7
 		{},
+
+		//! F8
 		{},
+
+		//! F9
 		{},
+
+		//! FA
 		{},
+
+		//! FB
 		{},
+
+		//! FC
 		{},
+
+		//! FD
 		{},
+
+		//! FE
 		{},
-		{},
+
+		//! FF
+		{}
 	};
 
 	const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256] = {
@@ -434,7 +944,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return DECPTR(cpu, reg, reg.hl); },
 
 		//! 36; LD (hl),*: Loads * into (hl).
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 37; SCF: Sets the carry flag.
 		{},
@@ -878,7 +1388,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.pc); },
 
 		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CB; Prefix for bit level instructions
 		[](CPU &cpu, CPU::Registers &reg) {
@@ -907,7 +1417,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! D1; POP de: The memory location pointed to by sp is stored into e and sp is incremented. The memory location pointed to by sp is stored into d and sp is incremented again.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.de); },
 
 		//! D2; JP nc,**: If condition cc is true, ** is copied to pc.
 		{},
@@ -919,7 +1429,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! D5; PUSH de: sp is decremented and d is stored into the memory location pointed to by sp. sp is decremented again and e is stored into the memory location pointed to by sp.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.de); },
 
 		//! D6; SUB *: Subtracts * from a.
 		{},
@@ -955,7 +1465,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg){ return LD8toPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a); },
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.hl); },
 
 		//! E2; LD (FF00+c),a: Load a to the address $FF00+c
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.c + 0xFF00, reg.a); },
@@ -967,10 +1477,10 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! E5; PUSH hl: sp is decremented and h is stored into the memory location pointed to by sp. sp is decremented again and l is stored into the memory location pointed to by sp.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.hl); },
 
 		//! E6; AND *: Bitwise AND on a with *.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
 		{},
@@ -1003,7 +1513,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, cpu.fetchArgument() + 0xFF00) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! F1; POP af: The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.af); },
 
 		//! F2; LD a,(FF00+c): Load the value at address $FF00+c to a.
 		{},
@@ -1015,7 +1525,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! F5; PUSH af: sp is decremented and a is stored into the memory location pointed to by sp. sp is decremented again and f is stored into the memory location pointed to by sp.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.af); },
 
 		//! F6; OR *: Bitwise OR on a with *.
 		{},
@@ -1299,5 +1809,11 @@ namespace GBEmulator::Instructions
 		unsigned char buf = reg.a;
 
 		return SUB8(reg, buf, value);
+	}
+
+	unsigned char RES(unsigned char &val, unsigned char bit)
+	{
+		val &= ~(1U << bit);
+		return 4;
 	}
 }
