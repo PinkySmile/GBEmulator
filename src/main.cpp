@@ -36,19 +36,22 @@ int main(int argc, char **argv)
 		sf::Event event;
 
 		while (!cpu.isHalted() && window.isOpen()) {
-			while (window.pollEvent(event))
+			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed)
 					window.close();
+				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::V)
+					dbg = true;
+			}
 
 			cpu.update();
-			/*if (cpu.getRegisters().pc == 0x51)
-				dbg = true;
 			if (dbg) {
 				std::string line;
 
 				cpu.dump();
 				std::getline(std::cin, line);
-			}*/
+				if (!line.empty())
+					dbg = false;
+			}
 			/*if (value++ % 60000 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;

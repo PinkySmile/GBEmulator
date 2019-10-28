@@ -842,7 +842,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! BE; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CP(reg, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; },
 
 		//! BF; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
 		{},
@@ -857,7 +857,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! C3; JP **: ** is copied to pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, true, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! C4; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 		{},
@@ -1009,7 +1009,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! F3; DI: Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
-		{},
+		[](CPU &cpu, CPU::Registers &) { return cpu.setInterruptMaster(false), LD_CYCLE_DURATION; },
 
 		//! F4; UNUSED
 		{},

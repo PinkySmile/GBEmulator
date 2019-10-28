@@ -109,6 +109,7 @@ namespace GBEmulator
 			LCD_SCROLL_X            = 0x42,
 			LCDC_Y_COORD            = 0x44,
 			LCD_BG_COLOR            = 0x47,
+			INTERNAL_ROM_ENABLE     = 0x50,
 		};
 
 		struct Registers {
@@ -172,6 +173,7 @@ namespace GBEmulator
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
+		void setInterruptMaster(bool val);
 		void write(unsigned short address, unsigned char value);
 		void dump() const;
 		bool isHalted() const;

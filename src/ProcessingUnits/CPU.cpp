@@ -167,6 +167,11 @@ namespace GBEmulator
 		}
 	}
 
+	void CPU::setInterruptMaster(bool val)
+	{
+		this->_interruptMasterEnableFlag = val;
+	}
+
 	bool CPU::isHalted() const
 	{
 		return this->_halted;
@@ -300,6 +305,10 @@ namespace GBEmulator
 
 		case TIMER_MODULO:
 			this->_timer.modulo = value;
+			break;
+
+		case INTERNAL_ROM_ENABLE:
+			this->_internalRomEnabled = false;
 			break;
 
 		case TIMER_CONTROL:
