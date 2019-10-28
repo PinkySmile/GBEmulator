@@ -44,25 +44,25 @@ namespace GBEmulator
 
 		if (address % 2 == 0)
 			return (
-				(this->_tiles[tile    ] & 0b10U << 6U) |
-				(this->_tiles[tile + 1] & 0b10U << 5U) |
-				(this->_tiles[tile + 2] & 0b10U << 4U) |
-				(this->_tiles[tile + 3] & 0b10U << 3U) |
-				(this->_tiles[tile + 4] & 0b10U << 2U) |
-				(this->_tiles[tile + 5] & 0b10U << 1U) |
-				(this->_tiles[tile + 6] & 0b10U << 0U) |
-				(this->_tiles[tile + 7] & 0b10U >> 1U)
+			       ((this->_tiles[tile    ] & 0b10U) << 6U) |
+			       ((this->_tiles[tile + 1] & 0b10U) << 5U) |
+			       ((this->_tiles[tile + 2] & 0b10U) << 4U) |
+			       ((this->_tiles[tile + 3] & 0b10U) << 3U) |
+			       ((this->_tiles[tile + 4] & 0b10U) << 2U) |
+			       ((this->_tiles[tile + 5] & 0b10U) << 1U) |
+			       ((this->_tiles[tile + 6] & 0b10U) << 0U) |
+			       ((this->_tiles[tile + 7] & 0b10U) >> 1U)
 			);
 
 		return (
-			(this->_tiles[tile    ] & 0b01U << 7U) |
-			(this->_tiles[tile + 1] & 0b01U << 6U) |
-			(this->_tiles[tile + 2] & 0b01U << 5U) |
-			(this->_tiles[tile + 3] & 0b01U << 4U) |
-			(this->_tiles[tile + 4] & 0b01U << 3U) |
-			(this->_tiles[tile + 5] & 0b01U << 2U) |
-			(this->_tiles[tile + 6] & 0b01U << 1U) |
-			(this->_tiles[tile + 7] & 0b01U << 0U)
+		       ((this->_tiles[tile    ] & 0b01U) << 7U) |
+		       ((this->_tiles[tile + 1] & 0b01U) << 6U) |
+		       ((this->_tiles[tile + 2] & 0b01U) << 5U) |
+		       ((this->_tiles[tile + 3] & 0b01U) << 4U) |
+		       ((this->_tiles[tile + 4] & 0b01U) << 3U) |
+		       ((this->_tiles[tile + 5] & 0b01U) << 2U) |
+		       ((this->_tiles[tile + 6] & 0b01U) << 1U) |
+		       ((this->_tiles[tile + 7] & 0b01U) << 0U)
 		);
 	}
 
