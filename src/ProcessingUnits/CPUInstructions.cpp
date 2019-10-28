@@ -410,7 +410,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return DEC8(reg, reg.l); },
 
 		//! 2E; LD l,*: Loads * into l.
-		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 2F; CPL: The contents of a are inverted (one's complement).
 		{},
@@ -982,7 +982,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
-		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, cpu.fetchArgument16(), reg.a) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! EB; UNUSED
 		{},

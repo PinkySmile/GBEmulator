@@ -27,6 +27,7 @@ int main(int argc, char **argv)
 	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::CPU cpu(argv[1], window, joypad, network);
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
+	bool dbg = false;
 
 	window.setFramerateLimit(24);
 	window.setView(view);
@@ -40,6 +41,14 @@ int main(int argc, char **argv)
 					window.close();
 
 			cpu.update();
+			if (cpu.getRegisters().pc == 0x51)
+				dbg = true;
+			/*if (dbg) {
+				std::string line;
+
+				cpu.dump();
+				std::getline(std::cin, line);
+			}*/
 			/*if (value++ % 60000 == 0) {
 				cpu.dumpRegisters();
 				std::cout << std::endl;

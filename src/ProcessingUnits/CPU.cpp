@@ -119,6 +119,10 @@ namespace GBEmulator
 		return this->fetchArgument() | (this->fetchArgument() << 8U);
 	}
 
+	CPU::Registers CPU::getRegisters() const
+	{
+		return this->_registers;
+	}
 
 	void CPU::write(unsigned short address, unsigned char value)
 	{

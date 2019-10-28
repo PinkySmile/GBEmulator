@@ -175,6 +175,7 @@ namespace GBEmulator
 		bool isHalted() const;
 		void dumpMemory() const;
 		void dumpRegisters() const;
+		Registers getRegisters() const;
 		void update();
 
 	private:
