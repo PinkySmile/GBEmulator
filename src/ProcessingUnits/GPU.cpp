@@ -116,10 +116,10 @@ namespace GBEmulator
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
-					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), 0, 0, !(this->_control & 0b00010000U));
+					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollY, -this->_scrollX, !(this->_control & 0b00010000U));
 
 				if (this->_control & 0b00100000U)
-					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), 0, 0, !(this->_control & 0b00010000U));
+					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), !(this->_control & 0b00010000U));
 
 				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
 					this->_screen.drawSprite({
@@ -147,6 +147,26 @@ namespace GBEmulator
 	unsigned char GPU::getControlByte() const
 	{
 		return this->_control;
+	}
+
+	unsigned char GPU::getXScroll() const
+	{
+		return this->_scrollX;
+	}
+
+	unsigned char GPU::getYScroll() const
+	{
+		return this->_scrollY;
+	}
+
+	void GPU::setXScroll(unsigned char value)
+	{
+		this->_scrollX = value;
+	}
+
+	void GPU::setYScroll(unsigned char value)
+	{
+		this->_scrollY = value;
 	}
 
 	void GPU::_updateTiles() {

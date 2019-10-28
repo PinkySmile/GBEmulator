@@ -26,6 +26,8 @@ namespace GBEmulator
 	private:
 		Memory _oam;
 		Graphics::ILCD &_screen;
+		unsigned char _scrollX;
+		unsigned char _scrollY;
 		unsigned char _bgPalette;
 		unsigned char _control;
 		unsigned char *_tiles;
@@ -45,11 +47,15 @@ namespace GBEmulator
 		unsigned char readOAM(unsigned short address) const;
 		unsigned char getControlByte() const;
 		unsigned char getBGPalette() const;
+		unsigned char getXScroll() const;
+		unsigned char getYScroll() const;
 
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
 		void setControlByte(unsigned char value);
 		void setBGPalette(unsigned char value);
+		void setXScroll(unsigned char value);
+		void setYScroll(unsigned char value);
 		void update(int cycle);
 
 	private:

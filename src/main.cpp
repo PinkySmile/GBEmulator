@@ -41,9 +41,9 @@ int main(int argc, char **argv)
 					window.close();
 
 			cpu.update();
-			if (cpu.getRegisters().pc == 0x51)
+			/*if (cpu.getRegisters().pc == 0x51)
 				dbg = true;
-			/*if (dbg) {
+			if (dbg) {
 				std::string line;
 
 				cpu.dump();

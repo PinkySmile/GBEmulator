@@ -259,6 +259,12 @@ namespace GBEmulator
 		case LCD_BG_COLOR:
 			return this->_gpu.getBGPalette();
 
+		case LCD_SCROLL_X:
+			return this->_gpu.getXScroll();
+
+		case LCD_SCROLL_Y:
+			return this->_gpu.getYScroll();
+
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 
@@ -304,6 +310,12 @@ namespace GBEmulator
 
 		case LCD_BG_COLOR:
 			return this->_gpu.setBGPalette(value);
+
+		case LCD_SCROLL_X:
+			return this->_gpu.setXScroll(value);
+
+		case LCD_SCROLL_Y:
+			return this->_gpu.setYScroll(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;
