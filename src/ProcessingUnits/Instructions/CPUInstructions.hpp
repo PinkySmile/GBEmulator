@@ -11,7 +11,7 @@
 
 #include <map>
 #include <functional>
-#include "CPU.hpp"
+#include "../CPU.hpp"
 
 #define LD_CYCLE_DURATION 4
 #define NOP_CYCLE_DURATION 4
@@ -49,8 +49,8 @@ namespace GBEmulator::Instructions
 	unsigned char DEC8(CPU::Registers &reg, unsigned char &value);
 	unsigned char INC16(unsigned short &value);
 	unsigned char DEC16(unsigned short &value);
-	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
-	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
+	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short address);
+	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short address);
 	unsigned char LD8toPTR(CPU &cpu, unsigned short address, unsigned char value);
 	unsigned char LD8fromPTR(CPU &cpu, unsigned char &value, unsigned short address);
 	unsigned char LD16toPTR(CPU &cpu, unsigned short address, unsigned short value);

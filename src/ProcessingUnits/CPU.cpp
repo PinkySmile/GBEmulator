@@ -10,7 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include "CPU.hpp"
-#include "CPUInstructions.hpp"
+#include "Instructions/CPUInstructions.hpp"
 
 namespace GBEmulator
 {

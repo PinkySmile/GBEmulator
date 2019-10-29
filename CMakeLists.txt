@@ -20,8 +20,8 @@ add_executable(
         src/Memory/ROM.hpp
         src/Memory/Memory.cpp
         src/Memory/Memory.hpp
-        src/ProcessingUnits/CPUInstructions.cpp
-        src/ProcessingUnits/CPUInstructions.hpp
+	src/ProcessingUnits/Instructions/CPUInstructions.cpp
+	src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
         src/Joypad/JoypadEmulator.hpp
         src/Joypad/SfmlKeyboardJoypadEmulator.cpp
@@ -36,6 +36,8 @@ add_executable(
 	src/Network/CableInterface.cpp
 	src/Timing/Timer.cpp
 	src/Timing/Timer.hpp
+	src/ProcessingUnits/Instructions/BasicInstructions.cpp
+	src/ProcessingUnits/Instructions/BitInstructions.cpp
 )
 
 target_link_libraries(
