@@ -124,12 +124,13 @@ namespace GBEmulator
 					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), !(this->_control & 0b00010000U));
 
 				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
-					this->_screen.drawSprite({
-						.x = this->_oam.read(i),
-						.y = this->_oam.read(i + 1),
-						.texture_id = this->_oam.read(i + 2),
-						.flags = this->_oam.read(i + 3)
-					}, false, this->_control & 0b00000100U);
+					Graphics::Sprite sprite;
+
+					sprite.x = this->_oam.read(i);
+					sprite.y = this->_oam.read(i + 1);
+					sprite.texture_id = this->_oam.read(i + 2);
+					sprite.flags = this->_oam.read(i + 3);
+					this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
 				}
 			}
 			this->_screen.display();
