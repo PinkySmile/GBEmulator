@@ -202,197 +202,197 @@ namespace GBEmulator::Instructions
 		//! 3F
 		{},
 
-		//! 40
-		{},
+		//! 40; BIT 0,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 0); },
 
-		//! 41
-		{},
+		//! 41; BIT 0,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 0); },
 
-		//! 42
-		{},
+		//! 42; BIT 0,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 0); },
 
-		//! 43
-		{},
+		//! 43; BIT 0,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 0); },
 
-		//! 44
-		{},
+		//! 44; BIT 0,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 0); },
 
-		//! 45
-		{},
+		//! 45; BIT 0,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 0); },
 
-		//! 46
-		{},
+		//! 46; BIT 0,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 0) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 47
-		{},
+		//! 47; BIT 0,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 0); },
 
-		//! 48
-		{},
+		//! 48; BIT 1,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 1); },
 
-		//! 49
-		{},
+		//! 49; BIT 1,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 1); },
 
-		//! 4A
-		{},
+		//! 4A; BIT 1,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 1); },
 
-		//! 4B
-		{},
+		//! 4B; BIT 1,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 1); },
 
-		//! 4C
-		{},
+		//! 4C; BIT 1,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 1); },
 
-		//! 4D
-		{},
+		//! 4D; BIT 1,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 1); },
 
-		//! 4E
-		{},
+		//! 4E; BIT 1,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 1) + INDIRECTION_CYLCE_DURATION; },
 
 		//! 4F; BIT 1,a
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 1); },
 
-		//! 50
-		{},
+		//! 50; BIT 2,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 2); },
 
-		//! 51
-		{},
+		//! 51; BIT 2,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 2); },
 
-		//! 52
-		{},
+		//! 52; BIT 2,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 2); },
 
-		//! 53
-		{},
+		//! 53; BIT 2,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 2); },
 
-		//! 54
-		{},
+		//! 54; BIT 2,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 2); },
 
-		//! 55
-		{},
+		//! 55; BIT 2,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 2); },
 
-		//! 56
-		{},
+		//! 56; BIT 2,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 2) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 57
-		{},
+		//! 57; BIT 2,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 2); },
 
-		//! 58
-		{},
+		//! 58; BIT 3,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 3); },
 
-		//! 59
-		{},
+		//! 59; BIT 3,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 3); },
 
-		//! 5A
-		{},
+		//! 5A; BIT 3,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 3); },
 
-		//! 5B
-		{},
+		//! 5B; BIT 3,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 3); },
 
-		//! 5C
-		{},
+		//! 5C; BIT 3,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 3); },
 
-		//! 5D
-		{},
+		//! 5D; BIT 3,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 3); },
 
-		//! 5E
-		{},
+		//! 5E; BIT 3,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 3) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 5F
-		{},
+		//! 5F; BIT 3,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 3); },
 
-		//! 60
-		{},
+		//! 60; BIT 4,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 4); },
 
-		//! 61
-		{},
+		//! 61; BIT 4,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 4); },
 
-		//! 62
-		{},
+		//! 62; BIT 4,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 4); },
 
-		//! 63
-		{},
+		//! 63; BIT 4,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 4); },
 
-		//! 64
-		{},
+		//! 64; BIT 4,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 4); },
 
-		//! 65
-		{},
+		//! 65; BIT 4,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 4); },
 
-		//! 66
-		{},
+		//! 66; BIT 4,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 4) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 67
-		{},
+		//! 67; BIT 4,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 4); },
 
-		//! 68
-		{},
+		//! 68; BIT 5,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 5); },
 
-		//! 69
-		{},
+		//! 69; BIT 5,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 5); },
 
-		//! 6A
-		{},
+		//! 6A; BIT 5,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 5); },
 
-		//! 6B
-		{},
+		//! 6B; BIT 5,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 5); },
 
-		//! 6C
-		{},
+		//! 6C; BIT 5,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 5); },
 
-		//! 6D
-		{},
+		//! 6D; BIT 5,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 5); },
 
-		//! 6E
-		{},
+		//! 6E; BIT 5,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 5) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 6F
-		{},
+		//! 6F; BIT 5,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 5); },
 
-		//! 70
-		{},
+		//! 70; BIT 6,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 6); },
 
-		//! 71
-		{},
+		//! 71; BIT 6,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 6); },
 
-		//! 72
-		{},
+		//! 72; BIT 6,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 6); },
 
-		//! 73
-		{},
+		//! 73; BIT 6,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 6); },
 
-		//! 74
-		{},
+		//! 74; BIT 6,h
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 6); },
 
-		//! 75
-		{},
+		//! 75; BIT 6,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 6); },
 
-		//! 76
-		{},
+		//! 76; BIT 6,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 6) + INDIRECTION_CYLCE_DURATION; },
 
 		//! 77; BIT 6,a
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 6); },
 
-		//! 78
-		{},
+		//! 78; BIT 7,b
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 7); },
 
-		//! 79
-		{},
+		//! 79; BIT 7,c
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.c, 7); },
 
-		//! 7A
-		{},
+		//! 7A; BIT 7,d
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.d, 7); },
 
-		//! 7B
-		{},
+		//! 7B; BIT 7,e
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.e, 7); },
 
 		//! 7C; BIT 7,h
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.h, 7); },
 
-		//! 7D
-		{},
+		//! 7D; BIT 7,l
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 7); },
 
-		//! 7E
-		{},
+		//! 7E; BIT 7,(hl)
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 7) + INDIRECTION_CYLCE_DURATION; },
 
-		//! 7F
-		{},
+		//! 7F; BIT 7,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 7); },
 
 		//! 80
 		{},
