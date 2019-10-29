@@ -56,7 +56,7 @@ namespace GBEmulator
 		void setBGPalette(unsigned char value);
 		void setXScroll(unsigned char value);
 		void setYScroll(unsigned char value);
-		void update(int cycle);
+		unsigned char update(int cycle);
 
 	private:
 		void _updateTiles();

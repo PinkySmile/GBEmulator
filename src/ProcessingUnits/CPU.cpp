@@ -198,12 +198,12 @@ namespace GBEmulator
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		this->_gpu.update(cycles);
+		this->_interruptRequest |= this->_gpu.update(cycles);
 		if (this->_cable.isTransfering())
-			this->_interruptRequest |= SERIAL;
+			this->_interruptRequest |= SERIAL_INTERRUPT;
 		this->_cable.transfer(cycles);
 		if (this->_timer.update(cycles))
-			this->_interruptRequest |= TIMER;
+			this->_interruptRequest |= TIMER_INTERRUPT;
 	}
 
 	bool CPU::_checkInterrupts()

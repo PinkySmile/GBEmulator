@@ -104,8 +104,10 @@ namespace GBEmulator
 		this->_oam.write(address, value);
 	}
 
-	void GPU::update(int cycle)
+	unsigned char GPU::update(int cycle)
 	{
+		unsigned char line = this->getCurrentLine();
+
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
@@ -132,6 +134,7 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
+		return CPU::VBLANK_INTERRUPT * (line == 143 && this->getCurrentLine() == 144);
 	}
 
 	unsigned char GPU::getCurrentLine() const

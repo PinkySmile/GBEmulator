@@ -88,11 +88,11 @@ namespace GBEmulator
 	class CPU {
 	public:
 		enum InterruptsKind {
-			VBLANK =   1U << 0U,
-			LCD_STAT = 1U << 1U,
-			TIMER =    1U << 2U,
-			SERIAL =   1U << 3U,
-			JOYPAD =   1U << 4U,
+			VBLANK_INTERRUPT =   1U << 0U,
+			LCD_STAT_INTERRUPT = 1U << 1U,
+			TIMER_INTERRUPT =    1U << 2U,
+			SERIAL_INTERRUPT =   1U << 3U,
+			JOYPAD_INTERRUPT =   1U << 4U,
 		};
 
 		enum IOPorts {
