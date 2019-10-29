@@ -248,8 +248,8 @@ namespace GBEmulator::Instructions
 		//! 4E
 		{},
 
-		//! 4F
-		{},
+		//! 4F; BIT 1,a
+		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 1); },
 
 		//! 50
 		{},
@@ -1136,7 +1136,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, reg.l); },
 
 		//! 76; HALT: Suspends CPU operation until an interrupt or reset occurs.
-		{},
+		[](CPU &cpu, CPU::Registers &) { return cpu.halt(), LD_CYCLE_DURATION; },
 
 		//! 77; LD (hl),a: The contents of a are loaded into (hl).
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, reg.a); },
@@ -1358,7 +1358,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! C0; RET nz: If condition cc is true, the top stack entry is popped into pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, !reg.fz); },
 
 		//! C1; POP bc: The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again.
 		[](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.bc); },
@@ -1382,7 +1382,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! C8; RET z: If condition cc is true, the top stack entry is popped into pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fz); },
 
 		//! C9; RET: The top stack entry is popped into pc.
 		[](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.pc); },
@@ -1543,7 +1543,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! FB; EI: Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction.
-		{},
+		[](CPU &cpu, CPU::Registers &) { return cpu.setInterruptMaster(true), LD_CYCLE_DURATION; },
 
 		//! FC; UNUSED
 		{},
@@ -1592,6 +1592,13 @@ namespace GBEmulator::Instructions
 
 		value = (cpu.read(reg.sp++) << 8U) | temp;
 		return PUSH_CYCLE_DURATION;
+	}
+
+	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond)
+	{
+		if (cond)
+			return POP(cpu, reg, reg.pc) + COMPLEX_BIT_OPERATION_CYCLE_DURATION;
+		return COMPLEX_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char JR(CPU::Registers &reg, bool cond, char off)

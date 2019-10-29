@@ -49,7 +49,7 @@ namespace GBEmulator
 		_joypad(joypad),
 		_interruptEnabled(0x00),
 		_interruptRequest(0x00),
-		_interruptMasterEnableFlag(true),
+		_interruptMasterEnableFlag(false),
 		_cable(cable)
 	{
 		this->_rom.setBank(1);
@@ -100,7 +100,7 @@ namespace GBEmulator
 			return this->_hram.read(address - HRAM_STARTING_ADDRESS);
 
 		case INTERRUPT_ENABLE_ADDRESS:
-			return this->_interruptRequest;
+			return this->_interruptEnabled;
 
 		default:
 			return 0xFF;
@@ -122,6 +122,11 @@ namespace GBEmulator
 	CPU::Registers CPU::getRegisters() const
 	{
 		return this->_registers;
+	}
+
+	void CPU::halt()
+	{
+		this->_sleeping = true;
 	}
 
 	void CPU::write(unsigned short address, unsigned char value)
@@ -158,7 +163,7 @@ namespace GBEmulator
 			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
 
 		case INTERRUPT_ENABLE_ADDRESS:
-			this->_interruptRequest = value;
+			this->_interruptEnabled = value;
 			break;
 
 		//Read only address
@@ -188,7 +193,7 @@ namespace GBEmulator
 		if (!this->_sleeping)
 			this->_executeNextInstruction();
 		else
-			this->_updateComponents(4);
+			this->_updateComponents(16);
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
@@ -213,6 +218,7 @@ namespace GBEmulator
 
 	void CPU::_executeInterrupt(unsigned int id)
 	{
+		std::cout << "Execute interrupt "<< id << std::endl;
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
 		this->_interruptRequest &= ~(1U << id);
 		this->_interruptMasterEnableFlag = false;

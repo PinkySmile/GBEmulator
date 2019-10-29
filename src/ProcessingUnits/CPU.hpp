@@ -170,6 +170,7 @@ namespace GBEmulator
 		~CPU() = default;
 		CPU &operator=(const CPU &) = delete;
 
+		void halt();
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
