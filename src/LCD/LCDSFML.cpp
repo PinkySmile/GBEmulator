@@ -16,12 +16,18 @@ GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &ti
 
 void GBEmulator::Graphics::LCDSFML::display()
 {
+	sf::Event event;
+
 	if (this->_clock.getElapsedTime().asMilliseconds() > 1000) {
 		this->setTitle(this->_title + " (" + std::to_string(this->getFramerate()) + ") FPS");
 		this->_clock.restart();
 	}
 	this->_fpsClock.restart();
 	sf::RenderWindow::display();
+	while (this->pollEvent(event)) {
+		if (event.type == sf::Event::Closed)
+			this->close();
+	}
 }
 
 double GBEmulator::Graphics::LCDSFML::getFramerate()
@@ -70,6 +76,16 @@ void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, f
 		this->_sprite.setPosition(x + i % 32 * 8, y + i / 32 * 8);
 		this->draw(this->_sprite);
 	}
+}
+
+bool GBEmulator::Graphics::LCDSFML::isClosed() const
+{
+	return !this->isOpen();
+}
+
+void GBEmulator::Graphics::LCDSFML::close()
+{
+	sf::RenderWindow::close();
 }
 
 void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, bool signedMode)

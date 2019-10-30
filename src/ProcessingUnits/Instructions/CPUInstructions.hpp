@@ -32,6 +32,7 @@ namespace GBEmulator::Instructions
 		UNCHANGED
 	};
 
+	std::string intToHex(unsigned i, unsigned size = 2);
 	void setFlags(CPU::Registers &reg, FlagValue z, FlagValue n, FlagValue h, FlagValue c);
 	unsigned char JR(CPU::Registers &reg, bool cond, char off);
 	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address);
@@ -66,6 +67,8 @@ namespace GBEmulator::Instructions
 
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _instructionsString[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _bitLevelInstructionsString[256];
 }
 
 

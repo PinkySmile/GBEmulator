@@ -5,11 +5,20 @@
 ** CPU_Instructions.c
 */
 
+#include <sstream>
+#include <iomanip>
 #include "CPUInstructions.hpp"
 #include "../CPU.hpp"
 
 namespace GBEmulator::Instructions
 {
+	std::string intToHex(unsigned i, unsigned size)
+	{
+		std::stringstream stream;
+		stream << std::setfill ('0') << std::setw(size) << std::hex << std::uppercase << static_cast<int>(i);
+		return stream.str();
+	}
+
 	void setFlags(CPU::Registers &reg, FlagValue z, FlagValue n, FlagValue h, FlagValue c)
 	{
 		reg._ = 0;

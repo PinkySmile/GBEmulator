@@ -57,6 +57,8 @@ namespace GBEmulator::Graphics
 		virtual void drawWindow(const unsigned char *tiles, bool signedMode) = 0;
 		virtual void display() = 0;
 		virtual void clear() = 0;
+		virtual bool isClosed() const = 0;
+		virtual void close() = 0;
 
 		void setPalette(const std::vector<RGBColor> &colors);
 		void setPalette(unsigned char colors);

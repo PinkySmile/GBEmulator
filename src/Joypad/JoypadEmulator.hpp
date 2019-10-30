@@ -19,7 +19,8 @@ namespace GBEmulator::Input
 		JOYPAD_A,
 		JOYPAD_B,
 		JOYPAD_SELECT,
-		JOYPAD_START
+		JOYPAD_START,
+		ENABLE_DEBUGGING,
 	};
 
 	class JoypadEmulator {
