@@ -157,7 +157,7 @@ namespace GBEmulator::Debugger
 				}
 			} catch (CPU::InvalidOpcodeException &e) {
 				dbg = true;
-				std::cout << "Invalid opcode at address  at $" << Instructions::intToHex(this->_cpu.getRegisters().pc, 4) << std::endl;
+				std::cout << e.what() << std::endl;
 				std::cout << "$" << Instructions::intToHex(this->_cpu.getRegisters().pc, 4) << ": ";
 				std::cout << Instructions::_instructionsString[this->_cpu.read(this->_cpu.getRegisters().pc)](this->_cpu, this->_cpu.getRegisters().pc + 1) << std::endl;
 			}
