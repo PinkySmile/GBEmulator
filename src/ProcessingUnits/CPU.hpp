@@ -192,7 +192,6 @@ namespace GBEmulator
 		bool _buttonEnabled;
 		bool _directionEnabled;
 		bool _halted;
-		bool _sleeping;
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;

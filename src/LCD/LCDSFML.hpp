@@ -32,6 +32,8 @@ namespace GBEmulator::Graphics
 		void drawWindow(const unsigned char *tiles, bool signedMode) override;
 		void display() override;
 		void clear() override;
+		bool isClosed() const override;
+		void close() override;
 		double getFramerate();
 
 	private:

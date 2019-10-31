@@ -135,7 +135,9 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		return CPU::VBLANK_INTERRUPT * (line == 143 && this->getCurrentLine() == 144);
+		if (line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine()))
+			return CPU::VBLANK_INTERRUPT;
+		return 0;
 	}
 
 	unsigned char GPU::getCurrentLine() const

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include "CPU.hpp"
-#include "CPUInstructions.hpp"
+#include "Instructions/CPUInstructions.hpp"
 
 namespace GBEmulator
 {
@@ -33,7 +33,6 @@ namespace GBEmulator
 		_buttonEnabled(false),
 		_directionEnabled(false),
 		_halted(false),
-		_sleeping(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{
@@ -126,7 +125,7 @@ namespace GBEmulator
 
 	void CPU::halt()
 	{
-		this->_sleeping = true;
+		this->_halted = true;
 	}
 
 	void CPU::write(unsigned short address, unsigned char value)
@@ -184,13 +183,10 @@ namespace GBEmulator
 
 	void CPU::update()
 	{
-		if (this->_halted)
-			return;
-
 		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
 			return;
 
-		if (!this->_sleeping)
+		if (!this->_halted)
 			this->_executeNextInstruction();
 		else
 			this->_updateComponents(16);
@@ -218,11 +214,10 @@ namespace GBEmulator
 
 	void CPU::_executeInterrupt(unsigned int id)
 	{
-		std::cout << "Execute interrupt "<< id << std::endl;
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
 		this->_interruptRequest &= ~(1U << id);
 		this->_interruptMasterEnableFlag = false;
-		this->_sleeping = false;
+		this->_halted = false;
 	}
 
 	unsigned char CPU::_generateJoypadByte() const
@@ -360,8 +355,7 @@ namespace GBEmulator
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
 		} catch (std::bad_function_call &) {
-			this->_halted = true;
-			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
+			throw InvalidOpcodeException(opcode, --this->_registers.pc);
 		}
 	}
 
@@ -390,6 +384,11 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+		if (this->_halted)
+			std::cout << "Waiting for interrupt..." << std::endl;
+		std::cout << "Interrupts " << (this->_interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
+		std::cout << "Next instruction: " << Instructions::_instructionsString[this->read(this->_registers.pc)](*this, this->_registers.pc + 1);
+		std::cout << " (" << static_cast<int>(this->read(this->_registers.pc)) << ")" << std::endl;
 	}
 
 	void CPU::dumpMemory() const
