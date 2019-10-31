@@ -271,6 +271,12 @@ namespace GBEmulator
 		case LCD_BG_COLOR:
 			return this->_gpu.getBGPalette();
 
+		case OBJECT_PALETTE_0:
+			return this->_gpu.getObjectPalette0();
+
+		case OBJECT_PALETTE_1:
+			return this->_gpu.getObjectPalette1();
+
 		case LCD_SCROLL_X:
 			return this->_gpu.getXScroll();
 
@@ -335,6 +341,12 @@ namespace GBEmulator
 
 		case LCD_BG_COLOR:
 			return this->_gpu.setBGPalette(value);
+
+		case OBJECT_PALETTE_0:
+			return this->_gpu.setObjectPalette0(value);
+
+		case OBJECT_PALETTE_1:
+			return this->_gpu.setObjectPalette1(value);
 
 		case LCD_SCROLL_X:
 			return this->_gpu.setXScroll(value);

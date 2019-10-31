@@ -255,4 +255,22 @@ namespace GBEmulator
 
 		return this->_windowY;
 	}
+
+	unsigned char GPU::getObjectPalette0() const {
+
+		return this->_objectPalette0;
+	}
+
+	unsigned char GPU::getObjectPalette1() const {
+
+		return this->_objectPalette1;
+	}
+
+	void GPU::setObjectPalette0(unsigned char value) {
+		this->_objectPalette0 = value;
+	}
+
+	void GPU::setObjectPalette1(unsigned char value) {
+		this->_objectPalette1 = value;
+	}
 }

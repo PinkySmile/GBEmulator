@@ -111,6 +111,8 @@ namespace GBEmulator
 			LCDC_Y_COORD            = 0x44,
 			LCD_LYC					= 0x45,
 			LCD_BG_COLOR            = 0x47,
+			OBJECT_PALETTE_0		= 0x48,
+			OBJECT_PALETTE_1		= 0x49,
 			LCD_WINDOW_Y			= 0x4A,
 			LCD_WINDOW_X			= 0x4B,
 			INTERNAL_ROM_ENABLE     = 0x50,

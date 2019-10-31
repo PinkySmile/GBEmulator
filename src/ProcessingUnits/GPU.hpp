@@ -31,6 +31,8 @@ namespace GBEmulator
 		unsigned char _windowX;
 		unsigned char _windowY;
 		unsigned char _bgPalette;
+		unsigned char _objectPalette0;
+		unsigned char _objectPalette1;
 		unsigned char _stat;
 		unsigned char _lyc;
 		unsigned char _control;
@@ -57,6 +59,8 @@ namespace GBEmulator
 		unsigned char getLycByte() const;
 		unsigned char getWindowX() const;
 		unsigned char getWindowY() const;
+		unsigned char getObjectPalette0() const;
+		unsigned char getObjectPalette1() const;
 
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
@@ -68,6 +72,8 @@ namespace GBEmulator
 		void setLycByte(unsigned char value);
 		void setWindowX(unsigned char value);
 		void setWindowY(unsigned char value);
+		void setObjectPalette0(unsigned char value);
+		void setObjectPalette1(unsigned char value);
 
 		unsigned char update(int cycle);
 
