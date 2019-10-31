@@ -13,13 +13,10 @@
 #include <functional>
 #include "APU.hpp"
 #include "GPU.hpp"
-#include "../Memory/ROM.hpp"
+#include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../Network/CableInterface.hpp"
 #include "../Timing/Timer.hpp"
-
-//The default size of a ROM bank
-#define ROM_BANK_SIZE 0x4000
 
 //The total size of the working RAM
 #define RAM_SIZE 0x8000
@@ -85,6 +82,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	class CPU {
 	public:
 		enum InterruptsKind {
@@ -169,7 +170,7 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
+		CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
 
 		CPU() = delete;
 		CPU(const CPU &) = delete;
@@ -177,6 +178,7 @@ namespace GBEmulator
 		CPU &operator=(const CPU &) = delete;
 
 		void halt();
+		void stop();
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
@@ -184,24 +186,30 @@ namespace GBEmulator
 		void write(unsigned short address, unsigned char value);
 		void dump() const;
 		bool isHalted() const;
+		bool isStopped() const;
 		void dumpMemory() const;
 		void dumpRegisters() const;
 		Registers getRegisters() const;
+		Memory::Cartridge &getCartridgeEmulator();
+		const Memory::Cartridge &getCartridgeEmulator() const;
 		void update();
 
 	private:
+		friend Debugger::Debugger;
 		static const std::vector<unsigned char> _startupCode;
 
 		APU _apu;
 		GPU _gpu;
-		ROM _rom;
 		bool _buttonEnabled;
 		bool _directionEnabled;
 		bool _halted;
-		Memory _ram;
-		Memory _hram;
+		bool _stopped;
+		Memory::Memory _ram;
+		Memory::Memory _hram;
 		Registers _registers;
 		Timing::Timer _timer;
+		Graphics::ILCD &_window;
+		Memory::Cartridge _rom;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;

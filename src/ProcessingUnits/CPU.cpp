@@ -27,9 +27,8 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+	CPU::CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
 		_gpu(window),
-		_rom(romPath, ROM_BANK_SIZE),
 		_buttonEnabled(false),
 		_directionEnabled(false),
 		_halted(false),
@@ -43,6 +42,7 @@ namespace GBEmulator
 			.pc = 0,
 			.sp = 0
 		},
+		_window(window),
 		_internalRomEnabled(true),
 		_divRegister(0),
 		_joypad(joypad),
@@ -51,7 +51,16 @@ namespace GBEmulator
 		_interruptMasterEnableFlag(false),
 		_cable(cable)
 	{
-		this->_rom.setBank(1);
+	}
+
+	Memory::Cartridge& CPU::getCartridgeEmulator()
+	{
+		return this->_rom;
+	}
+
+	const Memory::Cartridge& CPU::getCartridgeEmulator() const
+	{
+		return this->_rom;
 	}
 
 	unsigned char CPU::read(unsigned short address) const
@@ -63,16 +72,14 @@ namespace GBEmulator
 			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
-			return this->_rom.rawRead(address);
-
 		case ROM1_RANGE:
-			return this->_rom.read(address - ROM1_STARTING_ADDRESS);
+			return this->_rom.read(address);
 
 		case VRAM_RANGE:
 			return this->_gpu.readVRAM(address - 0x8000);
 
 		case SRAM_RANGE:
-			return 0xFF;
+			return this->_rom.read(address);
 
 		case WRAM_RANGE:
 			return this->_ram.read(address - WRAM_STARTING_ADDRESS);
@@ -128,14 +135,28 @@ namespace GBEmulator
 		this->_halted = true;
 	}
 
+	void CPU::stop()
+	{
+		this->_stopped = true;
+	}
+
+	bool CPU::isStopped() const
+	{
+		return this->_stopped;
+	}
+
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
+		case ROM0_RANGE:
+		case ROM1_RANGE:
+			return this->_rom.write(address, value);
+
 		case VRAM_RANGE:
 			return this->_gpu.writeVRAM(address - 0x8000, value);
 
 		case SRAM_RANGE:
-			break;
+			return this->_rom.write(address, value);
 
 		case WRAM_RANGE:
 			return this->_ram.write(address - WRAM_STARTING_ADDRESS, value);
@@ -183,6 +204,14 @@ namespace GBEmulator
 
 	void CPU::update()
 	{
+		if (this->_stopped) {
+			for (unsigned i = 0; i < Input::ENABLE_DEBUGGING; i++)
+				if (this->_joypad.isButtonPressed(static_cast<Input::Keys>(i)))
+					this->_stopped = false;
+			this->_window.display();
+			return;
+		}
+
 		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
 			return;
 

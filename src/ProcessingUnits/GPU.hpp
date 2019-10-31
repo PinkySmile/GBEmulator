@@ -24,7 +24,7 @@ namespace GBEmulator
 	class GPU {
 
 	private:
-		Memory _oam;
+		Memory::Memory _oam;
 		Graphics::ILCD &_screen;
 		unsigned char _scrollX;
 		unsigned char _scrollY;

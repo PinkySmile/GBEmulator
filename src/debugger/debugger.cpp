@@ -82,7 +82,9 @@ namespace GBEmulator::Debugger
 		} else if (args.at(0) == "ram") {
 			this->_cpu.dumpMemory();
 		} else if (args.at(0) == "jump") {
-
+			this->_cpu._registers.pc = std::stoul(args.at(1), nullptr, 16);
+			std::cout << "$" << Instructions::intToHex(this->_cpu.getRegisters().pc, 4) << ": ";
+			std::cout << Instructions::_instructionsString[this->_cpu.read(this->_cpu.getRegisters().pc)](this->_cpu, this->_cpu.getRegisters().pc + 1) << std::endl;
 		} else if (args.at(0) == "next") {
 			unsigned short address = this->_cpu.getRegisters().pc;
 
@@ -155,7 +157,7 @@ namespace GBEmulator::Debugger
 				}
 			} catch (CPU::InvalidOpcodeException &e) {
 				dbg = true;
-				std::cout << "Invalid opcode at address  at $" << Instructions::intToHex(this->_cpu.getRegisters().pc, 4) << std::endl;
+				std::cout << e.what() << std::endl;
 				std::cout << "$" << Instructions::intToHex(this->_cpu.getRegisters().pc, 4) << ": ";
 				std::cout << Instructions::_instructionsString[this->_cpu.read(this->_cpu.getRegisters().pc)](this->_cpu, this->_cpu.getRegisters().pc + 1) << std::endl;
 			}
