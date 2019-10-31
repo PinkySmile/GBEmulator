@@ -28,8 +28,10 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
 	GBEmulator::Network::BGBProtocolCableInterface network;
-	GBEmulator::CPU cpu(argv[1], window, joypad, network);
+	GBEmulator::CPU cpu(window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{cpu, window, joypad};
+
+	cpu.getCartridgeEmulator().loadROM(argv[1]);
 
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 

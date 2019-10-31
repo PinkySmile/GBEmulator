@@ -13,13 +13,10 @@
 #include <functional>
 #include "APU.hpp"
 #include "GPU.hpp"
-#include "../Memory/ROM.hpp"
+#include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../Network/CableInterface.hpp"
 #include "../Timing/Timer.hpp"
-
-//The default size of a ROM bank
-#define ROM_BANK_SIZE 0x4000
 
 //The total size of the working RAM
 #define RAM_SIZE 0x8000
@@ -167,7 +164,7 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(const std::string &romPath, Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
+		CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
 
 		CPU() = delete;
 		CPU(const CPU &) = delete;
@@ -185,6 +182,8 @@ namespace GBEmulator
 		void dumpMemory() const;
 		void dumpRegisters() const;
 		Registers getRegisters() const;
+		Memory::Cartridge &getCartridgeEmulator();
+		const Memory::Cartridge &getCartridgeEmulator() const;
 		void update();
 
 	private:
@@ -193,14 +192,14 @@ namespace GBEmulator
 
 		APU _apu;
 		GPU _gpu;
-		ROM _rom;
 		bool _buttonEnabled;
 		bool _directionEnabled;
 		bool _halted;
-		Memory _ram;
-		Memory _hram;
+		Memory::Memory _ram;
+		Memory::Memory _hram;
 		Registers _registers;
 		Timing::Timer _timer;
+		Memory::Cartridge _rom;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;
 		Input::JoypadEmulator &_joypad;
