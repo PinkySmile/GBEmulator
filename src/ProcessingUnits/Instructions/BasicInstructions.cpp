@@ -620,15 +620,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CB; Prefix for bit level instructions
-		[](CPU &cpu, CPU::Registers &reg) {
-			unsigned char opcode = cpu.read(reg.pc++);
-
-			try {
-				return Instructions::_bitLevelInstructions[opcode](cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION;
-			} catch (std::bad_function_call &) {
-				throw CPU::InvalidOpcodeException(0xCB00U | opcode, reg.pc -= 2);
-			}
-		},
+		[](CPU &cpu, CPU::Registers &reg) { return Instructions::_bitLevelInstructions[cpu.fetchArgument()](cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, !reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },

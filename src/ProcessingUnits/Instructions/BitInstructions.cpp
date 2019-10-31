@@ -11,52 +11,52 @@ namespace GBEmulator::Instructions
 {
 	const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256] = {
 		//! 00; RLC b: The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.b); },
 
 		//! 01; RLC c: The contents of c are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.c); },
 
 		//! 02; RLC d: The contents of d are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.d); },
 
 		//! 03; RLC e: The contents of e are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.e); },
 
 		//! 04; RLC h: The contents of h are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.h); },
 
 		//! 05; RLC l: The contents of l are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.l); },
 
 		//! 06; RLC (hl): The contents of (hl) are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, RLC, reg); },
 
 		//! 07; RLC a: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RLC(reg, reg.a); },
 
 		//! 08; RRC b: The contents of b are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.b); },
 
 		//! 09; RRC c: The contents of c are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.c); },
 
 		//! 0A; RRC d: The contents of d are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.d); },
 
 		//! 0B; RRC e: The contents of e are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.e); },
 
 		//! 0C; RRC h: The contents of h are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.h); },
 
 		//! 0D; RRC l: The contents of l are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.l); },
 
 		//! 0E; RRC (hl): The contents of (hl) are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, RRC, reg); },
 
 		//! 0F; RRC a: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return RRC(reg, reg.a); },
 
 		//! 10; RL b: The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
 		[](CPU &, CPU::Registers &reg){ return RL(reg, reg.b); },
@@ -107,100 +107,100 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return RR(reg, reg.a); },
 
 		//! 20; SLA b: The contents of b are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.b); },
 
 		//! 21; SLA c: The contents of c are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.c); },
 
 		//! 22; SLA d: The contents of d are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.b); },
 
 		//! 23; SLA e: The contents of e are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.e); },
 
 		//! 24; SLA h: The contents of h are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.h); },
 
 		//! 25; SLA l: The contents of l are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.l); },
 
 		//! 26; SLA (hl): The contents of (hl) are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SLA, reg); },
 
 		//! 27; SLA a: The contents of a are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.a); },
 
 		//! 28; SRA b: The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.b); },
 
 		//! 29; SRA c: The contents of c are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.c); },
 
 		//! 2A; SRA d: The contents of d are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.d); },
 
 		//! 2B; SRA e: The contents of e are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.e); },
 
 		//! 2C; SRA h: The contents of h are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.h); },
 
 		//! 2D; SRA l: The contents of l are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.l); },
 
 		//! 2E; SRA (hl): The contents of (hl) are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SRA, reg); },
 
 		//! 2F; SRA a: The contents of a are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.a); },
 
 		//! 30; SLL b: The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.b); },
 
 		//! 31; SLL c: The contents of c are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.c); },
 
 		//! 32; SLL d: The contents of d are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.d); },
 
 		//! 33; SLL e: The contents of e are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.e); },
 
 		//! 34; SLL h: The contents of h are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.h); },
 
 		//! 35; SLL l: The contents of l are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.l); },
 
 		//! 36; SLL (hl): The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SLL, reg); },
 
 		//! 37; SLL a: The contents of a are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.a); },
 
 		//! 38; SRL b: The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.b); },
 
 		//! 39; SRL c: The contents of c are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.c); },
 
 		//! 3A; SRL d: The contents of d are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.d); },
 
 		//! 3B; SRL e: The contents of e are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.e); },
 
 		//! 3C; SRL h: The contents of h are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.h); },
 
 		//! 3D; SRL l: The contents of l are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.l); },
 
 		//! 3E; SRL (hl): The contents of (hl) are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SRL, reg); },
 
 		//! 3F; SRL a: The contents of a are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.a); },
 
 		//! 40; BIT 0,b: Tests bit 0 of b.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.b, 0); },
