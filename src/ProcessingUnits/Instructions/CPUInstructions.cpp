@@ -39,6 +39,13 @@ namespace GBEmulator::Instructions
 		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
 	}
 
+	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address)
+	{
+		if (!cond)
+			return NOP_CYCLE_DURATION;
+		return CALL(cpu ,reg, address);
+	}
+
 	unsigned char PUSH(CPU &cpu, CPU::Registers &reg, unsigned short value)
 	{
 		cpu.write(--reg.sp, value >> 8U);
@@ -126,15 +133,6 @@ namespace GBEmulator::Instructions
 		value = cpu.read(address);
 		value += cpu.read(address + 1) << 8U;
 		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
-	}
-
-	unsigned char RL(CPU::Registers &reg, unsigned char &value)
-	{
-		unsigned char newValue = (value << 1U) | reg.fc;
-
-		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
-		value = newValue;
-		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
@@ -282,5 +280,109 @@ namespace GBEmulator::Instructions
 	{
 		val &= ~(1U << bit);
 		return 4;
+	}
+
+	unsigned char RLCA(CPU::Registers &re)
+	{
+		unsigned val = RLC(re, re.a);
+
+		setFlags(re, UNSET, UNCHANGED, UNCHANGED, UNCHANGED);
+		return val;
+	}
+
+	unsigned char RRCA(CPU::Registers &re)
+	{
+		unsigned val = RRC(re, re.a);
+
+		setFlags(re, UNSET, UNCHANGED, UNCHANGED, UNCHANGED);
+		return val;
+	}
+
+	unsigned char RLA(CPU::Registers &re)
+	{
+		unsigned val = RL(re, re.a);
+
+		setFlags(re, UNSET, UNCHANGED, UNCHANGED, UNCHANGED);
+		return val;
+	}
+
+	unsigned char RRA(CPU::Registers &re)
+	{
+		unsigned val = RR(re, re.a);
+
+		setFlags(re, UNSET, UNCHANGED, UNCHANGED, UNCHANGED);
+		return val;
+	}
+
+	unsigned char RLC(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value << 1U) | ((value & (1U << 7U)) != 0);
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char RRC(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value >> 1U) | ((value & 1U) << 7U);
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, (value & 1U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char RL(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value << 1U) | reg.fc;
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, value & (1U << 7U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char RR(CPU::Registers &reg, unsigned char &value)
+	{
+		unsigned char newValue = (value >> 1U) | (reg.fc << 7U);
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, (value & 1U) ? SET : UNSET);
+		value = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char STOP(CPU &cpu)
+	{
+		unsigned char arg = cpu.read(cpu.getRegisters().pc);
+
+		if (arg)
+			throw InvalidSTOPException("Malformed STOP instruction", cpu.getRegisters().pc - 1, arg);
+		cpu.fetchArgument();
+		cpu.stop();
+		return NOP_CYCLE_DURATION;
+	}
+
+	unsigned char DAA(CPU::Registers &reg, unsigned char &val)
+	{
+		unsigned char oldVal = val;
+		bool cf = false;
+
+		if (((reg.fh & 0x0FU) > 9) || reg.fh) {
+			val += 6;
+			reg.fc = reg.fc || val >= 0xA0;
+		}
+
+		if ((oldVal > 0x99) || reg.fc) {
+			val += 0x60;
+			cf = true;
+		}
+		setFlags(reg, val == 0 ? SET : UNSET, UNCHANGED, UNSET, cf ? SET : UNSET);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char CPL(CPU::Registers &reg)
+	{
+		reg.a = ~reg.a;
+		setFlags(reg, UNCHANGED, SET, SET, UNCHANGED);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 }

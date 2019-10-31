@@ -172,6 +172,7 @@ namespace GBEmulator
 		CPU &operator=(const CPU &) = delete;
 
 		void halt();
+		void stop();
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
@@ -179,6 +180,7 @@ namespace GBEmulator
 		void write(unsigned short address, unsigned char value);
 		void dump() const;
 		bool isHalted() const;
+		bool isStopped() const;
 		void dumpMemory() const;
 		void dumpRegisters() const;
 		Registers getRegisters() const;
@@ -195,10 +197,12 @@ namespace GBEmulator
 		bool _buttonEnabled;
 		bool _directionEnabled;
 		bool _halted;
+		bool _stopped;
 		Memory::Memory _ram;
 		Memory::Memory _hram;
 		Registers _registers;
 		Timing::Timer _timer;
+		Graphics::ILCD &_window;
 		Memory::Cartridge _rom;
 		bool _internalRomEnabled;
 		unsigned short _divRegister;

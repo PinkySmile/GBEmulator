@@ -42,6 +42,7 @@ namespace GBEmulator
 			.pc = 0,
 			.sp = 0
 		},
+		_window(window),
 		_internalRomEnabled(true),
 		_divRegister(0),
 		_joypad(joypad),
@@ -134,6 +135,16 @@ namespace GBEmulator
 		this->_halted = true;
 	}
 
+	void CPU::stop()
+	{
+		this->_stopped = true;
+	}
+
+	bool CPU::isStopped() const
+	{
+		return this->_stopped;
+	}
+
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
@@ -193,6 +204,14 @@ namespace GBEmulator
 
 	void CPU::update()
 	{
+		if (this->_stopped) {
+			for (unsigned i = 0; i < Input::ENABLE_DEBUGGING; i++)
+				if (this->_joypad.isButtonPressed(static_cast<Input::Keys>(i)))
+					this->_stopped = false;
+			this->_window.display();
+			return;
+		}
+
 		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
 			return;
 
