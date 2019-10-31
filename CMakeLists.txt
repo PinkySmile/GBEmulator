@@ -4,38 +4,40 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	add_compile_options(-W -Wall -Wextra -g -O0)
+	add_compile_options(-W -Wall -Wextra)
 endif()
 
 add_executable(
         GBEmulator
-        src/main.cpp
-        src/ProcessingUnits/CPU.cpp
-        src/ProcessingUnits/CPU.hpp
-		src/ProcessingUnits/CPUInstructions.cpp
-        src/ProcessingUnits/APU.cpp
-		src/ProcessingUnits/APU.hpp
-		src/ProcessingUnits/GPU.cpp
-		src/ProcessingUnits/GPU.hpp
-		src/Memory/ROM.cpp
-		src/Memory/ROM.hpp
-		src/Memory/Memory.cpp
-		src/Memory/Memory.hpp
-		src/ProcessingUnits/CPUInstructions.hpp
-		src/ProcessingUnits/StartupCode.cpp
-		src/Sound/ISound.hpp
-        src/ProcessingUnits/StartupCode.cpp
+		src/debugger/debugger.cpp
+		src/debugger/debugger.hpp
         src/Joypad/JoypadEmulator.hpp
         src/Joypad/SfmlKeyboardJoypadEmulator.cpp
         src/Joypad/SfmlKeyboardJoypadEmulator.hpp
-        src/Network/CableInterface.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
         src/LCD/ILCD.hpp
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
         src/LCD/ILCD.cpp
+        src/main.cpp
+        src/Memory/ROM.cpp
+        src/Memory/ROM.hpp
+        src/Memory/Memory.cpp
+        src/Memory/Memory.hpp
         src/Network/CableInterface.cpp
+        src/Network/CableInterface.hpp
+        src/Network/BgbProtocolNetworkInterface.cpp
+        src/Network/BgbProtocolNetworkInterface.hpp
+        src/ProcessingUnits/APU.cpp
+        src/ProcessingUnits/APU.hpp
+        src/ProcessingUnits/CPU.cpp
+        src/ProcessingUnits/CPU.hpp
+		src/ProcessingUnits/Instructions/CPUInstructions.cpp
+		src/ProcessingUnits/Instructions/CPUInstructions.hpp
+		src/ProcessingUnits/Instructions/BasicInstructions.cpp
+        src/ProcessingUnits/GPU.cpp
+        src/ProcessingUnits/GPU.hpp
+        src/ProcessingUnits/StartupCode.cpp
+		src/Sound/ISound.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
 )

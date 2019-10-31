@@ -9,7 +9,7 @@
 #define GBEMULATOR_TIMER_HPP
 
 
-#define GB_CPU_FREQUENCY 4194304.
+#define GB_CPU_FREQUENCY 4194304
 
 namespace GBEmulator::Timing
 {

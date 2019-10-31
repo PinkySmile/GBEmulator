@@ -11,7 +11,7 @@
 
 #include <map>
 #include <functional>
-#include "CPU.hpp"
+#include "../CPU.hpp"
 
 #define LD_CYCLE_DURATION 4
 #define NOP_CYCLE_DURATION 4
@@ -32,6 +32,7 @@ namespace GBEmulator::Instructions
 		UNCHANGED
 	};
 
+	std::string intToHex(unsigned i, unsigned size = 2);
 	void setFlags(CPU::Registers &reg, FlagValue z, FlagValue n, FlagValue h, FlagValue c);
 	unsigned char JR(CPU::Registers &reg, bool cond, char off);
 	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address);
@@ -49,8 +50,8 @@ namespace GBEmulator::Instructions
 	unsigned char DEC8(CPU::Registers &reg, unsigned char &value);
 	unsigned char INC16(unsigned short &value);
 	unsigned char DEC16(unsigned short &value);
-	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
-	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short &address);
+	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short address);
+	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short address);
 	unsigned char LD8toPTR(CPU &cpu, unsigned short address, unsigned char value);
 	unsigned char LD8fromPTR(CPU &cpu, unsigned char &value, unsigned short address);
 	unsigned char LD16toPTR(CPU &cpu, unsigned short address, unsigned short value);
@@ -61,9 +62,13 @@ namespace GBEmulator::Instructions
 	unsigned char POP(CPU &cpu, CPU::Registers &reg, unsigned short &value);
 	unsigned char RL(CPU::Registers &reg, unsigned char &value);
 	unsigned char CP(CPU::Registers &reg, unsigned char value);
+	unsigned char RES(unsigned char &val, unsigned char bit);
+	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond);
 
-	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _instructions;
-	extern const std::map<unsigned char, std::function<unsigned char (CPU &, CPU::Registers &)>> _bitLevelInstructions;
+	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];
+	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _instructionsString[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _bitLevelInstructionsString[256];
 }
 
 

@@ -88,11 +88,11 @@ namespace GBEmulator
 	class CPU {
 	public:
 		enum InterruptsKind {
-			VBLANK =   0,
-			LCD_STAT = 1U << 1U,
-			TIMER =    1U << 2U,
-			SERIAL =   1U << 3U,
-			JOYPAD =   1U << 4U,
+			VBLANK_INTERRUPT =   1U << 0U,
+			LCD_STAT_INTERRUPT = 1U << 1U,
+			TIMER_INTERRUPT =    1U << 2U,
+			SERIAL_INTERRUPT =   1U << 3U,
+			JOYPAD_INTERRUPT =   1U << 4U,
 		};
 
 		enum IOPorts {
@@ -104,6 +104,12 @@ namespace GBEmulator
 			TIMER_MODULO            = 0x06,
 			TIMER_CONTROL           = 0x07,
 			INTERRUPT_REQUESTS      = 0x0F,
+			LCD_CONTROL             = 0x40,
+			LCD_SCROLL_Y            = 0x41,
+			LCD_SCROLL_X            = 0x42,
+			LCDC_Y_COORD            = 0x44,
+			LCD_BG_COLOR            = 0x47,
+			INTERNAL_ROM_ENABLE     = 0x50,
 		};
 
 		struct Registers {
@@ -164,27 +170,28 @@ namespace GBEmulator
 		~CPU() = default;
 		CPU &operator=(const CPU &) = delete;
 
+		void halt();
 		unsigned char read(unsigned short address) const;
 		unsigned char fetchArgument();
 		unsigned short fetchArgument16();
+		void setInterruptMaster(bool val);
 		void write(unsigned short address, unsigned char value);
 		void dump() const;
 		bool isHalted() const;
 		void dumpMemory() const;
 		void dumpRegisters() const;
+		Registers getRegisters() const;
 		void update();
 
 	private:
 		static const std::vector<unsigned char> _startupCode;
 
-		unsigned char t;
 		APU _apu;
 		GPU _gpu;
 		ROM _rom;
 		bool _buttonEnabled;
 		bool _directionEnabled;
 		bool _halted;
-		bool _sleeping;
 		Memory _ram;
 		Memory _hram;
 		Registers _registers;

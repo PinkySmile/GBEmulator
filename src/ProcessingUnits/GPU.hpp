@@ -13,17 +13,27 @@
 #include "../Memory/Memory.hpp"
 #include "../LCD/ILCD.hpp"
 
+#define TILE_DATA_SIZE 0x1800
+#define NB_TILES TILE_DATA_SIZE * 4
+#define BG_MAP_SIZE 0x800
+#define OAM_SIZE 0x100
+#define GPU_FULL_CYCLE_DURATION 70224
+
 namespace GBEmulator
 {
-	#define VRAM_SIZE 0x2000
-	#define OAM_SIZE 159
-
 	class GPU {
 
 	private:
 		Memory _oam;
 		Graphics::ILCD &_screen;
+		unsigned char _scrollX;
+		unsigned char _scrollY;
+		unsigned char _bgPalette;
+		unsigned char _control;
 		unsigned char *_tiles;
+		unsigned char *_backgroundMap;
+		unsigned _cycles = 0;
+		std::vector<unsigned> _tilesToUpdate;
 
 	public:
 		GPU(Graphics::ILCD &screen);
@@ -31,20 +41,27 @@ namespace GBEmulator
 		GPU() = delete;
 		GPU(const GPU &) = delete;
 		GPU &operator=(const GPU &) = delete;
+
+		unsigned char getCurrentLine() const;
 		unsigned char readVRAM(unsigned short address) const;
-		void writeVRAM(unsigned short address, unsigned char value);
 		unsigned char readOAM(unsigned short address) const;
+		unsigned char getControlByte() const;
+		unsigned char getBGPalette() const;
+		unsigned char getXScroll() const;
+		unsigned char getYScroll() const;
+
+		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
-		unsigned char readIOPorts(unsigned short address) const;
-		void writeIOPorts(unsigned short address, unsigned char value);
-		void update(int cycle);
+		void setControlByte(unsigned char value);
+		void setBGPalette(unsigned char value);
+		void setXScroll(unsigned char value);
+		void setYScroll(unsigned char value);
+		unsigned char update(int cycle);
 
 	private:
-		unsigned _cycles;
-		std::vector<unsigned> _tilesToUpdate;
-
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
+		unsigned char *_getTileMap(bool alt);
 	};
 }
 

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include "CPU.hpp"
-#include "CPUInstructions.hpp"
+#include "Instructions/CPUInstructions.hpp"
 
 namespace GBEmulator
 {
@@ -33,7 +33,6 @@ namespace GBEmulator
 		_buttonEnabled(false),
 		_directionEnabled(false),
 		_halted(false),
-		_sleeping(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{
@@ -49,7 +48,7 @@ namespace GBEmulator
 		_joypad(joypad),
 		_interruptEnabled(0x00),
 		_interruptRequest(0x00),
-		_interruptMasterEnableFlag(true),
+		_interruptMasterEnableFlag(false),
 		_cable(cable)
 	{
 		this->_rom.setBank(1);
@@ -60,7 +59,7 @@ namespace GBEmulator
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
-				return CPU::_startupCode.at(address);
+				return CPU::_startupCode[address];
 			__attribute__((fallthrough));
 
 		case ROM0_RANGE:
@@ -100,7 +99,7 @@ namespace GBEmulator
 			return this->_hram.read(address - HRAM_STARTING_ADDRESS);
 
 		case INTERRUPT_ENABLE_ADDRESS:
-			return this->_interruptRequest;
+			return this->_interruptEnabled;
 
 		default:
 			return 0xFF;
@@ -119,6 +118,15 @@ namespace GBEmulator
 		return this->fetchArgument() | (this->fetchArgument() << 8U);
 	}
 
+	CPU::Registers CPU::getRegisters() const
+	{
+		return this->_registers;
+	}
+
+	void CPU::halt()
+	{
+		this->_halted = true;
+	}
 
 	void CPU::write(unsigned short address, unsigned char value)
 	{
@@ -154,13 +162,18 @@ namespace GBEmulator
 			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
 
 		case INTERRUPT_ENABLE_ADDRESS:
-			this->_interruptRequest = value;
+			this->_interruptEnabled = value;
 			break;
 
 		//Read only address
 		default:
 			break;
 		}
+	}
+
+	void CPU::setInterruptMaster(bool val)
+	{
+		this->_interruptMasterEnableFlag = val;
 	}
 
 	bool CPU::isHalted() const
@@ -170,26 +183,23 @@ namespace GBEmulator
 
 	void CPU::update()
 	{
-		if (this->_halted)
-			return;
-
 		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
 			return;
 
-		if (!this->_sleeping)
+		if (!this->_halted)
 			this->_executeNextInstruction();
 		else
-			this->_updateComponents(4);
+			this->_updateComponents(16);
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		this->_gpu.update(cycles);
+		this->_interruptRequest |= this->_gpu.update(cycles);
 		if (this->_cable.isTransfering())
-			this->_interruptRequest |= SERIAL;
+			this->_interruptRequest |= SERIAL_INTERRUPT;
 		this->_cable.transfer(cycles);
 		if (this->_timer.update(cycles))
-			this->_interruptRequest |= TIMER;
+			this->_interruptRequest |= TIMER_INTERRUPT;
 	}
 
 	bool CPU::_checkInterrupts()
@@ -207,7 +217,7 @@ namespace GBEmulator
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
 		this->_interruptRequest &= ~(1U << id);
 		this->_interruptMasterEnableFlag = false;
-		this->_sleeping = false;
+		this->_halted = false;
 	}
 
 	unsigned char CPU::_generateJoypadByte() const
@@ -246,6 +256,21 @@ namespace GBEmulator
 		case TIMER_COUNTER:
 			return this->_timer.getCounter();
 
+		case LCD_CONTROL:
+			return this->_gpu.getControlByte();
+
+		case LCDC_Y_COORD:
+			return this->_gpu.getCurrentLine();
+
+		case LCD_BG_COLOR:
+			return this->_gpu.getBGPalette();
+
+		case LCD_SCROLL_X:
+			return this->_gpu.getXScroll();
+
+		case LCD_SCROLL_Y:
+			return this->_gpu.getYScroll();
+
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 
@@ -283,8 +308,24 @@ namespace GBEmulator
 			this->_timer.modulo = value;
 			break;
 
+		case INTERNAL_ROM_ENABLE:
+			this->_internalRomEnabled = false;
+			break;
+
 		case TIMER_CONTROL:
 			return this->_timer.setControlByte(value);
+
+		case LCD_CONTROL:
+			return this->_gpu.setControlByte(value);
+
+		case LCD_BG_COLOR:
+			return this->_gpu.setBGPalette(value);
+
+		case LCD_SCROLL_X:
+			return this->_gpu.setXScroll(value);
+
+		case LCD_SCROLL_Y:
+			return this->_gpu.setYScroll(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;
@@ -309,13 +350,12 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		try {
-			unsigned cycles = Instructions::_instructions.at(opcode)(*this, this->_registers);
+			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
 
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
-		} catch (std::out_of_range &) {
-			this->_halted = true;
-			throw InvalidOpcodeException(opcode, this->_registers.pc - 1);
+		} catch (std::bad_function_call &) {
+			throw InvalidOpcodeException(opcode, --this->_registers.pc);
 		}
 	}
 
@@ -344,6 +384,11 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+		if (this->_halted)
+			std::cout << "Waiting for interrupt..." << std::endl;
+		std::cout << "Interrupts " << (this->_interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
+		std::cout << "Next instruction: " << Instructions::_instructionsString[this->read(this->_registers.pc)](*this, this->_registers.pc + 1);
+		std::cout << " (" << static_cast<int>(this->read(this->_registers.pc)) << ")" << std::endl;
 	}
 
 	void CPU::dumpMemory() const
