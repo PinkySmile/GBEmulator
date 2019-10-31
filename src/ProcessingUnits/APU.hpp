@@ -48,7 +48,7 @@ namespace GBEmulator
 		unsigned char read(unsigned short) const;
 
 	private:
-		Memory _memory;
+		Memory::Memory _memory;
 	};
 }
 

@@ -38,7 +38,7 @@ add_executable(
 	src/Timing/Timer.hpp
 	src/ProcessingUnits/Instructions/BasicInstructions.cpp
 	src/ProcessingUnits/Instructions/BitInstructions.cpp
-	src/debugger/debugger.cpp src/debugger/debugger.hpp)
+	src/debugger/debugger.cpp src/debugger/debugger.hpp src/Memory/Cartridge.cpp src/Memory/Cartridge.hpp)
 
 target_link_libraries(
         GBEmulator

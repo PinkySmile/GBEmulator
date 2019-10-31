@@ -11,7 +11,7 @@
 
 #include <vector>
 
-namespace GBEmulator
+namespace GBEmulator::Memory
 {
 	class Memory {
 	private:
@@ -30,10 +30,15 @@ namespace GBEmulator
 		Memory &operator=(const Memory &) = delete;
 		Memory(unsigned size, unsigned short bankSize, bool readOnly = false);
 
+		void resize(size_t size, unsigned char fill = 0xFF);
 		void setBank(unsigned char bank);
+		void setBankSize(size_t size);
 		unsigned char read(unsigned short address) const;
 		unsigned char rawRead(unsigned short address) const;
+		size_t getSize() const;
+		void setMemory(unsigned char *memory, size_t size);
 		void write(unsigned short address,unsigned char value);
+		void forceWrite(unsigned short address,unsigned char value);
 		void dump(unsigned short offset = 0) const;
 	};
 }
