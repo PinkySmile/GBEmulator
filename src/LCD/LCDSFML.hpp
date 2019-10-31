@@ -29,7 +29,7 @@ namespace GBEmulator::Graphics
 		void updateTexture(unsigned char *tile, size_t id) override;
 		void drawSprite(Sprite sprite, bool signedMode, bool doubleSize) override;
 		void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) override;
-		void drawWindow(const unsigned char *tiles, bool signedMode) override;
+		void drawWindow(const unsigned char *tiles, float x, float y, bool signedMode) override;
 		void display() override;
 		void clear() override;
 		bool isClosed() const override;

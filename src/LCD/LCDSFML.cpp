@@ -88,9 +88,9 @@ void GBEmulator::Graphics::LCDSFML::close()
 	sf::RenderWindow::close();
 }
 
-void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, bool signedMode)
+void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float x, float y, bool signedMode)
 {
-	this->drawBackground(tiles, 0, 0, signedMode);
+	this->drawBackground(tiles, x, y, signedMode);
 }
 
 void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)

@@ -54,7 +54,7 @@ namespace GBEmulator::Graphics
 		virtual void updateTexture(unsigned char *tile, size_t id) = 0;
 		virtual void drawSprite(Sprite sprite, bool signedMode, bool doubleSize) = 0;
 		virtual void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
-		virtual void drawWindow(const unsigned char *tiles, bool signedMode) = 0;
+		virtual void drawWindow(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
 		virtual void display() = 0;
 		virtual void clear() = 0;
 		virtual bool isClosed() const = 0;

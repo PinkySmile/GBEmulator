@@ -277,6 +277,12 @@ namespace GBEmulator
 		case LCD_SCROLL_Y:
 			return this->_gpu.getYScroll();
 
+		case LCD_WINDOW_X:
+			return this->_gpu.getWindowX();
+
+		case LCD_WINDOW_Y:
+			return this->_gpu.getWindowY();
+
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 
@@ -337,7 +343,13 @@ namespace GBEmulator
 			return this->_gpu.setYScroll(value);
 
 		case LCD_LYC:
-			return this->_gpu.setLycByte();
+			return this->_gpu.setLycByte(value);
+
+		case LCD_WINDOW_X:
+			return this->_gpu.setWindowX(value);
+
+		case LCD_WINDOW_Y:
+			return this->_gpu.setWindowY(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;

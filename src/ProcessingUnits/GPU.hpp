@@ -28,6 +28,8 @@ namespace GBEmulator
 		Graphics::ILCD &_screen;
 		unsigned char _scrollX;
 		unsigned char _scrollY;
+		unsigned char _windowX;
+		unsigned char _windowY;
 		unsigned char _bgPalette;
 		unsigned char _stat;
 		unsigned char _lyc;
@@ -53,6 +55,8 @@ namespace GBEmulator
 		unsigned char getYScroll() const;
 		unsigned char getStatByte() const;
 		unsigned char getLycByte() const;
+		unsigned char getWindowX() const;
+		unsigned char getWindowY() const;
 
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
@@ -62,6 +66,8 @@ namespace GBEmulator
 		void setXScroll(unsigned char value);
 		void setYScroll(unsigned char value);
 		void setLycByte(unsigned char value);
+		void setWindowX(unsigned char value);
+		void setWindowY(unsigned char value);
 
 		unsigned char update(int cycle);
 
