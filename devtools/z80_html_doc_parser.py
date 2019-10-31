@@ -5,7 +5,7 @@ f = lambda x: x.split(' ')[0].upper() + (' ' in x and f" {x.split(' ', 1)[1]}" o
 with open('raw_html_bits') as fd:
     raw_html = fd.read()
 
-al = re.findall(r"^<td c?l?a?s?s?=?\"?u?n?\"? ?axis=\".{6}\|\d+\|\d+/?\d*\|([^\"]+)\">([^<].+)</td>$", raw_html, re.MULTILINE)
+al = re.findall(r"^<td axis=\".{6}\|\d+\|\d+/?\d*\|([^\"]+)\">([^<].+)</td>$", raw_html, re.MULTILINE)
 
 #al.insert(0xCB, ("BITS", "BITS"))
 #al.insert(0xDD, ("IX", "IX"))
