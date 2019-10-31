@@ -79,6 +79,7 @@ namespace GBEmulator::Instructions
 	unsigned char RL(CPU::Registers &reg, unsigned char &value);
 	unsigned char CP(CPU::Registers &reg, unsigned char value);
 	unsigned char RES(unsigned char &val, unsigned char bit);
+	unsigned char SETB(unsigned char &val, unsigned char bit);
 	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond);
 	unsigned char RLCA(CPU::Registers &re);
 	unsigned char RRCA(CPU::Registers &re);
@@ -91,6 +92,17 @@ namespace GBEmulator::Instructions
 	unsigned char STOP(CPU &cpu);
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val);
 	unsigned char CPL(CPU::Registers &reg);
+	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(CPU::Registers &, unsigned char &), CPU::Registers &reg);
+
+	template <typename ...args>
+	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(unsigned char &, args...), args... arguments)
+	{
+		unsigned char value = cpu.read(address);
+		unsigned char time = fct(value, arguments...);
+
+		cpu.write(address, value);
+		return time + INDIRECTION_CYLCE_DURATION;
+	}
 
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _bitLevelInstructions[256];

@@ -279,7 +279,13 @@ namespace GBEmulator::Instructions
 	unsigned char RES(unsigned char &val, unsigned char bit)
 	{
 		val &= ~(1U << bit);
-		return 4;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SETB(unsigned char &val, unsigned char bit)
+	{
+		val |= (1U << bit);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char RLCA(CPU::Registers &re)
@@ -384,5 +390,14 @@ namespace GBEmulator::Instructions
 		reg.a = ~reg.a;
 		setFlags(reg, UNCHANGED, SET, SET, UNCHANGED);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(CPU::Registers &, unsigned char &), CPU::Registers &reg)
+	{
+		unsigned char value = cpu.read(address);
+		unsigned char time = fct(reg, value);
+
+		cpu.write(address, value);
+		return time + INDIRECTION_CYLCE_DURATION;
 	}
 }
