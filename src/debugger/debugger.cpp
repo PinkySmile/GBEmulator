@@ -52,6 +52,12 @@ namespace GBEmulator::Debugger
 			args = {this->_lastCmd};
 		this->_lastCmd = args.at(0);
 		if (args.at(0) == "break") {
+			if (args.size() == 1) {
+				std::cout << "There are " << this->_breakPoints.size() << " breakpoint(s)" << std::endl;
+				for (unsigned i = 0; i < this->_breakPoints.size(); i++)
+					std::cout << "Breakpoint #" << i << " at $" << Instructions::intToHex(this->_breakPoints[i], 4) << std::endl;
+				return false;
+			}
 			auto add = std::stoul(args.at(1), nullptr, 16);
 			auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), add);
 
