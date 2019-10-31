@@ -115,3 +115,94 @@ Test(LD_BC_d16, wram_C000_256) {
 	unsigned short ex_result = 0xC942;
 	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
 }
+
+//! INSTRUCTION 2
+
+Test(LD_unrefBC_A, value_1) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.a = 0xD8;
+	gb.cpu._registers.bc = 0xC000;
+	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned char result = gb.cpu.read(0xC000);
+	unsigned char ex_result = 0xD8;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+Test(LD_unrefBC_A, value_2) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.a = 0xFD;
+	gb.cpu._registers.bc = 0xD83E;
+	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned char result = gb.cpu.read(0xD83E);
+	unsigned char ex_result = 0xFD;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+Test(LD_unrefBC_A, value_3) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.a = 0x01;
+	gb.cpu._registers.bc = 0xF0D0;
+	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned char result = gb.cpu.read(0xF0D0);
+	unsigned char ex_result = 0x01;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+//! INSTRUCTION 03
+
+Test(INC_BC, value_1) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.bc = 0x0000;
+	unsigned char time = instructions[0x3](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned short result = gb.cpu._registers.bc;
+	unsigned short ex_result = 0x0001;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+Test(INC_BC, value_2) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.bc = 0x1234;
+	unsigned char time = instructions[0x3](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned short result = gb.cpu._registers.bc;
+	unsigned short ex_result = 0x1235;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+Test(INC_BC, value_3) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.bc = 0x7FFF;
+	unsigned char time = instructions[0x3](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned short result = gb.cpu._registers.bc;
+	unsigned short ex_result = 0x8000;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
+
+Test(INC_BC, value_4) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 8;
+
+	gb.cpu._registers.bc = 0xFFFF;
+	unsigned char time = instructions[0x3](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned short result = gb.cpu._registers.bc;
+	unsigned short ex_result = 0x0000;
+	cr_assert_eq(result, ex_result, "Regiser bc must be 0x%X but it was 0x%X", ex_result, result);
+}
