@@ -114,7 +114,9 @@ namespace GBEmulator
 			this->_setCompareLycLy();
 
 			if (this->_control & 0x80U) {
-				this->_screen.setPalette(this->_bgPalette);
+				this->_screen.setBGPalette(this->_bgPalette);
+				this->_screen.setObjectPalette0(this->_objectPalette0);
+				this->_screen.setObjectPalette1(this->_objectPalette1);
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
@@ -207,9 +209,7 @@ namespace GBEmulator
 
 	bool GPU::_isVblankInterrupt() const {
 		unsigned char line = this->getCurrentLine();
-		if (line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine()))
-			return true;
-		return false;
+		return line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine());
 	}
 
 	bool GPU::_isStatInterrupt() const {
