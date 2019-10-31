@@ -85,6 +85,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	class CPU {
 	public:
 		enum InterruptsKind {
@@ -184,6 +188,7 @@ namespace GBEmulator
 		void update();
 
 	private:
+		friend Debugger::Debugger;
 		static const std::vector<unsigned char> _startupCode;
 
 		APU _apu;
