@@ -10,7 +10,7 @@
 #include <cstring>
 #include "Memory.hpp"
 
-namespace GBEmulator
+namespace GBEmulator::Memory
 {
 	Memory::Memory(unsigned size, unsigned short bankSize, bool readOnly) :
 		_readOnly(readOnly),
@@ -32,10 +32,51 @@ namespace GBEmulator
 		return this->_memory[(address + this->_currentBank * this->_bankSize) % this->_size];
 	}
 
+	size_t Memory::getSize() const
+	{
+		return this->_size;
+	}
+
+	void Memory::setBankSize(size_t size)
+	{
+		this->_bankSize = size;
+	}
+
+	unsigned char Memory::getCurrentBank() const
+	{
+		return this->_currentBank;
+	}
+
+	void Memory::setMemory(unsigned char *memory, size_t size)
+	{
+		delete[] this->_memory;
+		this->_memory = memory;
+		this->_size = size;
+	}
+
+	void Memory::resize(size_t size, unsigned char fill)
+	{
+		auto *tab = new unsigned char [size];
+
+		std::memset(tab, fill, size);
+		if (size > this->_size)
+			std::memcpy(tab, this->_memory, this->_size);
+		else
+			std::memcpy(tab, this->_memory, size);
+		delete[] this->_memory;
+		this->_memory = tab;
+		this->_size = size;
+	}
+
 	void Memory::write(unsigned short address, unsigned char value)
 	{
 		if (this->_readOnly)
 			return;
+		this->forceWrite(address, value);
+	}
+
+	void Memory::forceWrite(unsigned short address,unsigned char value)
+	{
 		this->_memory[(address + this->_currentBank * this->_bankSize) % this->_size] = value;
 	}
 

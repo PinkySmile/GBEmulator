@@ -32,7 +32,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.b, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 07; RLCA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
-		{},
+		[](CPU &, CPU::Registers &reg) { return RLCA(reg); },
 
 		//! 08; LD (**), SP: Load the value pointed to by ** to sp
 		[](CPU &cpu, CPU::Registers &reg) { return LD16toPTR(cpu, cpu.fetchArgument16(), reg.sp) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -56,10 +56,10 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.c, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 0F; RRCA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg) { return RRCA(reg); },
 
-		//! 10; STOP: --
-		{},
+		//! 10; STOP: Halts the CPU until a key is pressed
+		[](CPU &cpu, CPU::Registers &) { return STOP(cpu); },
 
 		//! 11; LD de,**: Loads ** into de.
 		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.de, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -104,7 +104,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.e, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 1F; RRA: The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7.
-		{},
+		[](CPU &, CPU::Registers &reg) { return RRA(reg); },
 
 		//! 20; JR nz,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -128,7 +128,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.h, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 27; DAA: Adjusts a for BCD addition and subtraction operations.
-		{},
+		[](CPU &, CPU::Registers &reg) { return DAA(reg, reg.a); },
 
 		//! 28; JR z,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fz, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -152,10 +152,10 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.l, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 2F; CPL: The contents of a are inverted (one's complement).
-		{},
+		[](CPU &, CPU::Registers &reg) { return CPL(reg); },
 
 		//! 30; JR nc,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fc, cpu.fetchArgument()); },
 
 		//! 31; LD sp, **: Loads ** into sp register
 		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -176,7 +176,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 37; SCF: Sets the carry flag.
-		{},
+		[](CPU &, CPU::Registers &reg) { return (reg.fc = true), BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! 38; JR c,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fc, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -200,7 +200,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! 3F; CCF: Inverts the carry flag.
-		{},
+		[](CPU &, CPU::Registers &reg) { return (reg.fc = !reg.fc), BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! 40; LD b,b: The contents of b are loaded into b.
 		[](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.b); },
@@ -419,28 +419,28 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); },
 
 		//! 88; ADC a,b: Adds b and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b + reg.fc); },
 
 		//! 89; ADC a,c: Adds c and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c + reg.fc); },
 
 		//! 8A; ADC a,d: Adds d and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d + reg.fc); },
 
 		//! 8B; ADC a,e: Adds e and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e + reg.fc); },
 
 		//! 8C; ADC a,h: Adds h and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h + reg.fc); },
 
 		//! 8D; ADC a,l: Adds l and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l + reg.fc); },
 
 		//! 8E; ADC a,(hl): Adds (hl) and the carry flag to a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl) + reg.fc) + INDIRECTION_CYLCE_DURATION; },
 
 		//! 8F; ADC a,a: Adds a and the carry flag to a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a + reg.fc); },
 
 		//! 90; SUB b: Subtracts b from a.
 		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b); },
@@ -464,31 +464,31 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; },
 
 		//! 97; SUB a: Subtracts a from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a + reg.fc); },
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b + reg.fc); },
 
 		//! 99; SBC a,c: Subtracts c and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c + reg.fc); },
 
 		//! 9A; SBC a,d: Subtracts d and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d + reg.fc); },
 
 		//! 9B; SBC a,e: Subtracts e and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e + reg.fc); },
 
 		//! 9C; SBC a,h: Subtracts h and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h + reg.fc); },
 
 		//! 9D; SBC a,l: Subtracts l and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l + reg.fc); },
 
 		//! 9E; SBC a,(hl): Subtracts (hl) and the carry flag from a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl) + reg.fc) + INDIRECTION_CYLCE_DURATION; },
 
 		//! 9F; SBC a,a: Subtracts a and the carry flag from a.
-		{},
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a + reg.fc); },
 
 		//! A0; AND b: Bitwise AND on a with b.
 		[](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.b); },
@@ -563,28 +563,28 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return OR8(reg, reg.a, reg.a); },
 
 		//! B8; CP b: Subtracts b from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.b); },
 
 		//! B9; CP c: Subtracts c from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.c); },
 
 		//! BA; CP d: Subtracts d from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.d); },
 
 		//! BB; CP e: Subtracts e from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.e); },
 
 		//! BC; CP h: Subtracts h from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.h); },
 
 		//! BD; CP l: Subtracts l from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.l); },
 
 		//! BE; CP (hl): Subtracts (hl) from a and affects flags according to the result. a is not modified.
 		[](CPU &cpu, CPU::Registers &reg) { return CP(reg, cpu.read(reg.hl)) + INDIRECTION_CYLCE_DURATION; },
 
 		//! BF; CP a: Subtracts a from a and affects flags according to the result. a is not modified.
-		{},
+		[](CPU &, CPU::Registers &reg) { return CP(reg, reg.a); },
 
 		//! C0; RET nz: If condition cc is true, the top stack entry is popped into pc.
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, !reg.fz); },
@@ -593,13 +593,13 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg){ return POP(cpu, reg, reg.bc); },
 
 		//! C2; JP nz,**: If condition cc is true, ** is copied to pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, !reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! C3; JP **: ** is copied to pc.
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, true, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! C4; CALL nz,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, !reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! C5; PUSH bc: sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp.
 		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.bc); },
@@ -608,7 +608,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! C7; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x00); },
 
 		//! C8; RET z: If condition cc is true, the top stack entry is popped into pc.
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fz); },
@@ -631,64 +631,64 @@ namespace GBEmulator::Instructions
 		},
 
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, !reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CD; CALL **: The current pc value plus three is pushed onto the stack, then is loaded with **.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CE; ADC a,*: Adds * and the carry flag to a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument() + reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! CF; RST 08h: The current pc value plus one is pushed onto the stack, then is loaded with 08h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x08); },
 
 		//! D0; RET nc: If condition cc is true, the top stack entry is popped into pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, !reg.fc); },
 
 		//! D1; POP de: The memory location pointed to by sp is stored into e and sp is incremented. The memory location pointed to by sp is stored into d and sp is incremented again.
 		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.de); },
 
 		//! D2; JP nc,**: If condition cc is true, ** is copied to pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, !reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! D3; UNUSED
 		{},
 
 		//! D4; CALL nc,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, !reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! D5; PUSH de: sp is decremented and d is stored into the memory location pointed to by sp. sp is decremented again and e is stored into the memory location pointed to by sp.
 		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.de); },
 
 		//! D6; SUB *: Subtracts * from a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! D7; RST 10h: The current pc value plus one is pushed onto the stack, then is loaded with 10h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x10); },
 
 		//! D8; RET c: If condition cc is true, the top stack entry is popped into pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fc); },
 
 		//! D9; RETI
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return cpu.setInterruptMaster(true), RET(cpu, reg, true); },
 
 		//! DA; JP c,**: If condition cc is true, ** is copied to pc.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! DB; UNUSED
 		{},
 
 		//! DC; CALL c,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! DD; UNUSED
 		{},
 
 		//! DE; SBC a,*: Subtracts * and the carry flag from a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument() + reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x18); },
 
 		//! E0; LD (FF00+*),a: Load a to the address $FF00+*
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a); },
@@ -712,10 +712,10 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return AND8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x20); },
 
 		//! E8; ADD SP,**: Add ** to sp.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! E9; JP (hl): Loads the value of hl into pc.
 		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl); },
@@ -736,7 +736,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return XOR(reg, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! EF; RST 28h: The current pc value plus one is pushed onto the stack, then is loaded with 28h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x28); },
 
 		//! F0; LD a,(FF00+*): Load the value at address $FF00+* to a
 		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, cpu.fetchArgument() + 0xFF00) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -745,7 +745,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.af); },
 
 		//! F2; LD a,(FF00+c): Load the value at address $FF00+c to a.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return LD8fromPTR(cpu, reg.a, 0xFF00 + reg.c); },
 
 		//! F3; DI: Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering.
 		[](CPU &cpu, CPU::Registers &) { return cpu.setInterruptMaster(false), LD_CYCLE_DURATION; },
@@ -757,13 +757,13 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.af); },
 
 		//! F6; OR *: Bitwise OR on a with *.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return OR8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! F7; RST 30h: The current pc value plus one is pushed onto the stack, then is loaded with 30h.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x30); },
 
 		//! F8; LD hl,sp+**: Load sp+** to hl.
-		{},
+		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, reg.sp + cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 		[](CPU &, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); },

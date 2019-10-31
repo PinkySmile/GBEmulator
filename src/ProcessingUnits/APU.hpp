@@ -164,8 +164,9 @@ namespace GBEmulator
         Sound _managerChannelNoise;//noise channel
 
         Controller _controller;
-		Memory _wpRAM; //wave pattern RAM
+		Memory::Memory _wpRAM; //wave pattern RAM
 		bool _soundChanged;
+		Memory::Memory _memory;
 	};
 }
 

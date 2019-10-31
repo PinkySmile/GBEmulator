@@ -14,19 +14,21 @@ add_executable(
         src/Joypad/JoypadEmulator.hpp
         src/Joypad/SfmlKeyboardJoypadEmulator.cpp
         src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+        src/LCD/ILCD.cpp
         src/LCD/ILCD.hpp
         src/LCD/LCDSFML.cpp
         src/LCD/LCDSFML.hpp
-        src/LCD/ILCD.cpp
         src/main.cpp
-        src/Memory/ROM.cpp
-        src/Memory/ROM.hpp
+		src/Memory/Cartridge.cpp
+		src/Memory/Cartridge.hpp
         src/Memory/Memory.cpp
         src/Memory/Memory.hpp
-        src/Network/CableInterface.cpp
-        src/Network/CableInterface.hpp
+        src/Memory/ROM.cpp
+        src/Memory/ROM.hpp
         src/Network/BgbProtocolNetworkInterface.cpp
         src/Network/BgbProtocolNetworkInterface.hpp
+        src/Network/CableInterface.cpp
+        src/Network/CableInterface.hpp
         src/ProcessingUnits/APU.cpp
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
@@ -34,6 +36,7 @@ add_executable(
 		src/ProcessingUnits/Instructions/CPUInstructions.cpp
 		src/ProcessingUnits/Instructions/CPUInstructions.hpp
 		src/ProcessingUnits/Instructions/BasicInstructions.cpp
+		src/ProcessingUnits/Instructions/BitInstructions.cpp
         src/ProcessingUnits/GPU.cpp
         src/ProcessingUnits/GPU.hpp
         src/ProcessingUnits/StartupCode.cpp
@@ -47,4 +50,42 @@ target_link_libraries(
         sfml-graphics
         sfml-window
         sfml-system
+)
+
+add_executable(
+		tests
+		src/ProcessingUnits/CPU.cpp
+		src/ProcessingUnits/CPU.hpp
+		src/ProcessingUnits/APU.cpp
+		src/ProcessingUnits/APU.hpp
+		src/ProcessingUnits/GPU.cpp
+		src/ProcessingUnits/GPU.hpp
+		src/Memory/ROM.cpp
+		src/Memory/ROM.hpp
+		src/Memory/Memory.cpp
+		src/Memory/Memory.hpp
+		src/ProcessingUnits/Instructions/CPUInstructions.cpp
+		src/ProcessingUnits/Instructions/CPUInstructions.hpp
+		src/ProcessingUnits/StartupCode.cpp
+		src/Joypad/JoypadEmulator.hpp
+		src/Network/CableInterface.hpp
+		src/Network/BgbProtocolNetworkInterface.cpp
+		src/Network/BgbProtocolNetworkInterface.hpp
+		src/LCD/ILCD.hpp
+		src/LCD/ILCD.cpp
+		src/Network/CableInterface.cpp
+		src/Timing/Timer.cpp
+		src/Timing/Timer.hpp
+		src/ProcessingUnits/Instructions/BasicInstructions.cpp
+		src/ProcessingUnits/Instructions/BitInstructions.cpp
+		src/debugger/debugger.cpp src/debugger/debugger.hpp
+		tests/TestComponents.cpp
+		tests/TestComponents.hpp
+		tests/TestCpuInstruction.cpp
+		src/Memory/Cartridge.cpp
+		src/Memory/Cartridge.hpp tests/communism.hpp)
+
+target_link_libraries(
+		tests
+		criterion
 )

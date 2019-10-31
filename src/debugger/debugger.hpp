@@ -28,8 +28,6 @@ namespace GBEmulator::Debugger
 
 	class Debugger {
 	private:
-		friend CPU;
-
 		CPU &_cpu;
 		unsigned _timer;
 		Graphics::ILCD &_window;
