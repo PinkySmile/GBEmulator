@@ -15,6 +15,9 @@
 //The default size of a ROM bank
 #define ROM_BANK_SIZE 0x4000
 
+//The size of a RAM bank in the cartridges
+#define RAM_BANKING_SIZE 0x2000
+
 namespace GBEmulator::Memory
 {
 	class Cartridge {
@@ -31,6 +34,11 @@ namespace GBEmulator::Memory
 		class InvalidRomSizeException : public InvalidRomException {
 		public:
 			InvalidRomSizeException(const std::string &msg) : InvalidRomException(msg) {};
+		};
+
+		class InvalidRomRamSizeException : public InvalidRomException {
+		public:
+			InvalidRomRamSizeException(const std::string &msg) : InvalidRomException(msg) {};
 		};
 
 		enum CartridgeType {
@@ -50,9 +58,6 @@ namespace GBEmulator::Memory
 			MBC3                    = 0x11,
 			MBC3_RAM                = 0x12,
 			MBC3_RAM_BATTERY        = 0x13,
-			MBC4                    = 0x15,
-			MBC4_RAM                = 0x16,
-			MBC4_RAM_BATTERY        = 0x17,
 			MBC5                    = 0x19,
 			MBC5_RAM                = 0x1A,
 			MBC5_RAM_BATTERY        = 0x1B,
@@ -83,9 +88,20 @@ namespace GBEmulator::Memory
 		static const std::map<size_t, ROMSize> _sizeBytes;
 
 		ROM _rom;
+		bool _ramEnabled = false;
+		bool _ramExtended = false;
+		Memory _ram{0, RAM_BANKING_SIZE};
+		CartridgeType _type;
 
 		void _checkROM();
 		static size_t _getBestSizeForFile(const std::string &path);
+
+		void _handleHuCWrite(unsigned short address, unsigned char value);
+		void _handleMBC1Write(unsigned short address, unsigned char value);
+		void _handleMBC2Write(unsigned short address, unsigned char value);
+		void _handleMBC3Write(unsigned short address, unsigned char value);
+		void _handleMBC5Write(unsigned short address, unsigned char value);
+		void _handleRumbleWrite(unsigned short address, unsigned char value);
 
 	public:
 		Cartridge() = default;

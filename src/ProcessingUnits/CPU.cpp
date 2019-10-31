@@ -137,11 +137,15 @@ namespace GBEmulator
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
+		case ROM0_RANGE:
+		case ROM1_RANGE:
+			return this->_rom.write(address, value);
+
 		case VRAM_RANGE:
 			return this->_gpu.writeVRAM(address - 0x8000, value);
 
 		case SRAM_RANGE:
-			break;
+			return this->_rom.write(address, value);
 
 		case WRAM_RANGE:
 			return this->_ram.write(address - WRAM_STARTING_ADDRESS, value);

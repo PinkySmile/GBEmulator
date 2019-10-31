@@ -33,6 +33,7 @@ namespace GBEmulator::Memory
 		void resize(size_t size, unsigned char fill = 0xFF);
 		void setBank(unsigned char bank);
 		void setBankSize(size_t size);
+		unsigned char getCurrentBank() const;
 		unsigned char read(unsigned short address) const;
 		unsigned char rawRead(unsigned short address) const;
 		size_t getSize() const;

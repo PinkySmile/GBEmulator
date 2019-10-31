@@ -42,6 +42,11 @@ namespace GBEmulator::Memory
 		this->_bankSize = size;
 	}
 
+	unsigned char Memory::getCurrentBank() const
+	{
+		return this->_currentBank;
+	}
+
 	void Memory::setMemory(unsigned char *memory, size_t size)
 	{
 		delete[] this->_memory;

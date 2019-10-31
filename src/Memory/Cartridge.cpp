@@ -7,7 +7,9 @@
 
 #include <sys/stat.h>
 #include <cstring>
+#include <cmath>
 #include "Cartridge.hpp"
+#include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
 namespace GBEmulator::Memory
 {
@@ -28,12 +30,14 @@ namespace GBEmulator::Memory
 	void Cartridge::_checkROM()
 	{
 		try {
-			if (Cartridge::_sizeBytes.at(this->_rom.getSize()) != this->_rom.read(0x148))
+			if (Cartridge::_sizeBytes.at(this->_rom.getSize()) != this->_rom.rawRead(0x148))
 				throw InvalidRomException(
 					"The ROM size and size byte doesn't match (Expected byte " +
 					std::to_string(Cartridge::_sizeBytes.at(this->_rom.getSize())) +
-					" but found " + std::to_string(this->_rom.read(0x148)) + ")"
+					" but found " + std::to_string(this->_rom.rawRead(0x148)) + ")"
 				);
+			if (this->_rom.rawRead(0x149) > 0x04)
+				throw InvalidRomRamSizeException("The RAM size specified in the ROM file is not in range 0-3");
 		} catch (std::out_of_range &) {
 			throw InvalidRomSizeException("The ROM size isn't valid");
 		}
@@ -78,9 +82,20 @@ namespace GBEmulator::Memory
 			fread(mem, 1, size, stream);
 			fclose(stream);
 			this->_rom.setMemory(mem, size);
+			this->_rom.setBank(1);
 			this->_rom.setBankSize(ROM_BANK_SIZE);
-			this->_checkROM();
+			this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
+			try {
+				this->_checkROM();
+			} catch (std::exception &) {
+				delete[] mem;
+				throw;
+			}
+			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)));
 		} catch (InvalidRomSizeException &) {
+			this->resetROM();
+			throw;
+		} catch (InvalidRomRamSizeException &) {
 			this->resetROM();
 			throw;
 		}
@@ -88,11 +103,172 @@ namespace GBEmulator::Memory
 
 	unsigned char Cartridge::read(unsigned short address) const
 	{
-		return this->_rom.read(address);
+		if (address < 0x4000)
+			return this->_rom.rawRead(address);
+
+		switch (this->_type) {
+		case ROM_ONLY:
+		case ROM_RAM:
+		case ROM_RAM_BATTERY:
+		case MMM01:
+		case MMM01_RAM:
+		case MMM01_RAM_BATTERY:
+		case MBC1:
+		case MBC1_RAM:
+		case MBC1_RAM_BATTERY:
+		case MBC2:
+		case MBC2_BATTERY:
+		case MBC3:
+		case MBC3_RAM:
+		case MBC3_RAM_BATTERY:
+		case MBC3_TIMER_BATTERY:
+		case MBC3_TIMER_RAM_BATTERY:
+		case MBC5:
+		case MBC5_RAM:
+		case MBC5_RAM_BATTERY:
+		case MBC5_RUMBLE:
+		case MBC5_RUMBLE_RAM:
+		case MBC5_RUMBLE_RAM_BATTERY:
+		case HuC1_RAM_BATTERY:
+		case HuC3:
+			if (address > 0xA000 && this->_ram.getSize())
+				return this->_ram.read(address - 0xA000);
+			else if (address < 0x7FFF)
+				return this->_rom.read(address - 0x4000);
+			return 0xFF;
+		default:
+			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
+		}
 	}
 
 	void Cartridge::write(unsigned short address, unsigned char value)
 	{
-		this->_rom.write(address, value);
+		switch (this->_type) {
+		case ROM_ONLY:
+			return;
+
+		case ROM_RAM:
+		case ROM_RAM_BATTERY:
+		case MMM01:
+		case MMM01_RAM:
+		case MMM01_RAM_BATTERY:
+			if (address > 0xA000 && this->_ram.getSize())
+				return this->_ram.write(address - 0xA000, value);
+			break;
+
+		case MBC1:
+		case MBC1_RAM:
+		case MBC1_RAM_BATTERY:
+			return this->_handleMBC1Write(address, value);
+
+		case MBC2:
+		case MBC2_BATTERY:
+			return this->_handleMBC2Write(address, value);
+
+		case MBC3_RAM_BATTERY:
+		case MBC3_RAM:
+		case MBC3:
+			return this->_handleMBC3Write(address, value);
+
+		case MBC5:
+		case MBC5_RAM:
+		case MBC5_RAM_BATTERY:
+			return this->_handleMBC5Write(address, value);
+
+		case MBC5_RUMBLE:
+		case MBC5_RUMBLE_RAM:
+		case MBC5_RUMBLE_RAM_BATTERY:
+			return this->_handleRumbleWrite(address, value);
+
+		case HuC1_RAM_BATTERY:
+		case HuC3:
+			return this->_handleHuCWrite(address, value);
+
+		default:
+			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
+		}
+	}
+
+	void Cartridge::_handleHuCWrite(unsigned short address, unsigned char value)
+	{
+		return this->_handleMBC1Write(address, value);
+	}
+
+	void Cartridge::_handleMBC1Write(unsigned short address, unsigned char value)
+	{
+		if (address > 0xA000 && this->_ramEnabled && this->_ram.getSize())
+			return this->_ram.write(address - 0xA000, value);
+		else if (address < 0x2000)
+			this->_ramEnabled = value & 0b1010U;
+		else if (address < 0x4000) {
+			value &= 0b11111U;
+			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+
+		} else if (address < 0x6000) {
+			if (this->_ramExtended)
+				this->_ram.setBank(value & 0b11U);
+			else
+				this->_rom.setBank(this->_rom.getCurrentBank() + ((value & 0b11U) << 5U));
+
+		} else if (address < 0x8000) {
+			this->_ramExtended = value & 0b1U;
+			if (!this->_ramExtended)
+				this->_ram.setBank(0);
+			else
+				this->_rom.setBank(this->_rom.getCurrentBank() & 0b11111U);
+		}
+	}
+
+	void Cartridge::_handleMBC2Write(unsigned short address, unsigned char value)
+	{
+		if (address > 0xA000 && this->_ramEnabled && this->_ram.getSize())
+			return this->_ram.write(address - 0xA000, value);
+		else if ((address >> 8) % 0x2 == 0 && address < 0x2000)
+			this->_ramEnabled = value & 0b1010U;
+		else if ((address >> 8) % 0x2 == 1 && address < 0x4000) {
+			value &= 0b11111U;
+			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+		}
+	}
+
+	void Cartridge::_handleMBC3Write(unsigned short address, unsigned char value)
+	{
+		if (address > 0xA000 && this->_ramEnabled && this->_ram.getSize())
+			this->_ram.write(address - 0xA000, value);
+		else if (address < 0x2000)
+			this->_ramEnabled = value & 0b1010U;
+		else if (address < 0x4000) {
+			value &= 0b1111111U;
+			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+		} else if (address < 0x6000)
+			this->_ram.setBank(value & 0b11U);
+	}
+
+	void Cartridge::_handleMBC5Write(unsigned short address, unsigned char value)
+	{
+		if (address > 0xA000 && this->_ramEnabled && this->_ram.getSize())
+			this->_ram.write(address - 0xA000, value);
+		else if (address < 0x2000)
+			this->_ramEnabled = value & 0b1010U;
+		else if (address < 0x3000)
+			this->_rom.setBank((this->_rom.getCurrentBank() & 0x100U) + value);
+		else if (address < 0x4000) {
+			this->_rom.setBank((this->_rom.getCurrentBank() & 0xFFU) + ((value & 0x1U) << 8U));
+		} else if (address < 0x6000)
+			this->_ram.setBank(value & 0b1111U);
+	}
+
+	void Cartridge::_handleRumbleWrite(unsigned short address, unsigned char value)
+	{
+		if (address > 0xA000 && this->_ramEnabled && this->_ram.getSize())
+			this->_ram.write(address - 0xA000, value);
+		else if (address < 0x2000)
+			this->_ramEnabled = value & 0b1010U;
+		else if (address < 0x3000)
+			this->_rom.setBank((this->_rom.getCurrentBank() & 0x100U) + value);
+		else if (address < 0x4000) {
+			this->_rom.setBank((this->_rom.getCurrentBank() & 0xFFU) + ((value & 0x1U) << 8U));
+		} else if (address < 0x6000)
+			this->_ram.setBank(value & 0b111U);
 	}
 }
