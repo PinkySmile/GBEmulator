@@ -106,12 +106,12 @@ namespace GBEmulator
 
 	unsigned char GPU::update(int cycle)
 	{
-		unsigned char line = this->getCurrentLine();
-
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
 			this->_screen.clear();
+
+			this->_setCompareLycLy();
 
 			if (this->_control & 0x80U) {
 				this->_screen.setPalette(this->_bgPalette);
@@ -135,8 +135,12 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		if (line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine()))
+		if (this->_isVblankInterrupt() && this->_isStatInterrupt())
+			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
+		else if (this->_isVblankInterrupt())
 			return CPU::VBLANK_INTERRUPT;
+		else if (this->_isStatInterrupt())
+			return CPU::LCD_STAT_INTERRUPT;
 		return 0;
 	}
 
@@ -191,5 +195,46 @@ namespace GBEmulator
 	unsigned char *GPU::_getTile(std::size_t id)
 	{
 		return this->_tiles + id * 64;
+	}
+
+	unsigned char GPU::getStatByte() const {
+		return this->_stat;
+	}
+
+	void GPU::setStatByte(unsigned char value) {
+		this->_stat = value;
+	}
+
+	bool GPU::_isVblankInterrupt() const {
+		unsigned char line = this->getCurrentLine();
+		if (line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine()))
+			return true;
+		return false;
+	}
+
+	bool GPU::_isStatInterrupt() const {
+		if (this->_stat & 0b01000000U)
+			return true;
+		if (this->_stat & 0b00100000U)
+			return true;
+		if (this->_stat & 0b00010000U)
+			return true;
+		if (this->_stat & 0b00001000U)
+			return true;
+		return false;
+	}
+
+	unsigned char GPU::getLycByte() const {
+
+		return this->_lyc;
+	}
+
+	void GPU::setLycByte(unsigned char value) {
+		this->_lyc = value;
+	}
+
+	void GPU::_setCompareLycLy() {
+		if (this->getCurrentLine() == this->_lyc)
+			this->_stat |= 0b01000000U;
 	}
 }

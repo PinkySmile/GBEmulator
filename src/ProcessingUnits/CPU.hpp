@@ -105,9 +105,11 @@ namespace GBEmulator
 			TIMER_CONTROL           = 0x07,
 			INTERRUPT_REQUESTS      = 0x0F,
 			LCD_CONTROL             = 0x40,
-			LCD_SCROLL_Y            = 0x41,
-			LCD_SCROLL_X            = 0x42,
+			LCDC_STAT				= 0x41,
+			LCD_SCROLL_Y            = 0x42,
+			LCD_SCROLL_X            = 0x43,
 			LCDC_Y_COORD            = 0x44,
+			LCD_LYC					= 0x45,
 			LCD_BG_COLOR            = 0x47,
 			INTERNAL_ROM_ENABLE     = 0x50,
 		};

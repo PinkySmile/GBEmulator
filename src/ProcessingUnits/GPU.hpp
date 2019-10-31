@@ -29,6 +29,8 @@ namespace GBEmulator
 		unsigned char _scrollX;
 		unsigned char _scrollY;
 		unsigned char _bgPalette;
+		unsigned char _stat;
+		unsigned char _lyc;
 		unsigned char _control;
 		unsigned char *_tiles;
 		unsigned char *_backgroundMap;
@@ -49,19 +51,29 @@ namespace GBEmulator
 		unsigned char getBGPalette() const;
 		unsigned char getXScroll() const;
 		unsigned char getYScroll() const;
+		unsigned char getStatByte() const;
+		unsigned char getLycByte() const;
 
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
 		void setControlByte(unsigned char value);
+		void setStatByte(unsigned char value);
 		void setBGPalette(unsigned char value);
 		void setXScroll(unsigned char value);
 		void setYScroll(unsigned char value);
+		void setLycByte(unsigned char value);
+
 		unsigned char update(int cycle);
 
 	private:
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);
+		void _setCompareLycLy();
+
+		//  Interruptions
+		bool _isVblankInterrupt() const;
+		bool _isStatInterrupt() const;
 	};
 }
 

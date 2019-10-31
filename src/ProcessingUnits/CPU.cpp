@@ -259,8 +259,14 @@ namespace GBEmulator
 		case LCD_CONTROL:
 			return this->_gpu.getControlByte();
 
+		case LCDC_STAT:
+			return this->_gpu.getStatByte();
+
 		case LCDC_Y_COORD:
 			return this->_gpu.getCurrentLine();
+
+		case LCD_LYC:
+			return this->_gpu.getLycByte();
 
 		case LCD_BG_COLOR:
 			return this->_gpu.getBGPalette();
@@ -318,6 +324,9 @@ namespace GBEmulator
 		case LCD_CONTROL:
 			return this->_gpu.setControlByte(value);
 
+		case LCDC_STAT:
+			return this->_gpu.setStatByte(value);
+
 		case LCD_BG_COLOR:
 			return this->_gpu.setBGPalette(value);
 
@@ -326,6 +335,9 @@ namespace GBEmulator
 
 		case LCD_SCROLL_Y:
 			return this->_gpu.setYScroll(value);
+
+		case LCD_LYC:
+			return this->_gpu.setLycByte();
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;
