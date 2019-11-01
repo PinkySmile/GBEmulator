@@ -279,7 +279,13 @@ namespace GBEmulator::Instructions
 	unsigned char RES(unsigned char &val, unsigned char bit)
 	{
 		val &= ~(1U << bit);
-		return 4;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SETB(unsigned char &val, unsigned char bit)
+	{
+		val |= (1U << bit);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char RLCA(CPU::Registers &re)
@@ -384,5 +390,52 @@ namespace GBEmulator::Instructions
 		reg.a = ~reg.a;
 		setFlags(reg, UNCHANGED, SET, SET, UNCHANGED);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SL(CPU::Registers &reg, unsigned char &val, bool value)
+	{
+		unsigned char newValue = (val << 1U) | value;
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, val & (1U << 7U) ? SET : UNSET);
+		val = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SR(CPU::Registers &reg, unsigned char &val, bool value)
+	{
+		unsigned char newValue = (val >> 1U) | (value * (val & 0x80U));
+
+		setFlags(reg, newValue == 0 ? SET : UNSET, UNSET, UNSET, val & 0x1 ? SET : UNSET);
+		val = newValue;
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SLA(CPU::Registers &re, unsigned char &val)
+	{
+		return SL(re, val, false);
+	}
+
+	unsigned char SRA(CPU::Registers &re, unsigned char &val)
+	{
+		return SR(re, val, true);
+	}
+
+	unsigned char SLL(CPU::Registers &re, unsigned char &val)
+	{
+		return SL(re, val, true);
+	}
+
+	unsigned char SRL(CPU::Registers &re, unsigned char &val)
+	{
+		return SR(re, val, false);
+	}
+
+	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(CPU::Registers &, unsigned char &), CPU::Registers &reg)
+	{
+		unsigned char value = cpu.read(address);
+		unsigned char time = fct(reg, value);
+
+		cpu.write(address, value);
+		return time + INDIRECTION_CYLCE_DURATION;
 	}
 }

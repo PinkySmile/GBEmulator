@@ -22,6 +22,11 @@ namespace GBEmulator::Memory
 		std::memset(this->_memory, 0xFF, size);
 	}
 
+	Memory::~Memory()
+	{
+		delete[] this->_memory;
+	}
+
 	unsigned char Memory::rawRead(unsigned short address) const
 	{
 		return this->_memory[address % this->_size];

@@ -26,7 +26,7 @@ namespace GBEmulator::Memory
 	public:
 		Memory() = delete;
 		Memory(const Memory &) = delete;
-		~Memory() = default;
+		~Memory();
 		Memory &operator=(const Memory &) = delete;
 		Memory(unsigned size, unsigned short bankSize, bool readOnly = false);
 
