@@ -73,35 +73,34 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 	sf::Color colors[64];
 
 	texture.create(8, 8);
-
 	switch (type) {
-		case Background:
-			for (int i = 0; i < 64; i++)
-				colors[i] = sf::Color {
-					this->_BGColorPalette[tile[i]].r,
-					this->_BGColorPalette[tile[i]].g,
-					this->_BGColorPalette[tile[i]].b,
-					255
-				};
-			break;
-		case Palette0:
-			for (int i = 0; i < 64; i++)
-				colors[i] = sf::Color {
-					this->_objectColorPalette0[tile[i]].r,
-					this->_objectColorPalette0[tile[i]].g,
-					this->_objectColorPalette0[tile[i]].b,
-					(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
-				};
-			break;
-		case Palette1:
-			for (int i = 0; i < 64; i++)
-				colors[i] = sf::Color {
-					this->_objectColorPalette1[tile[i]].r,
-					this->_objectColorPalette1[tile[i]].g,
-					this->_objectColorPalette1[tile[i]].b,
-					(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
-				};
-			break;
+	case Background:
+		for (int i = 0; i < 64; i++)
+			colors[i] = sf::Color {
+				this->_BGColorPalette[tile[i]].r,
+				this->_BGColorPalette[tile[i]].g,
+				this->_BGColorPalette[tile[i]].b,
+				255
+			};
+		break;
+	case Palette0:
+		for (int i = 0; i < 64; i++)
+			colors[i] = sf::Color {
+				this->_objectColorPalette0[tile[i]].r,
+				this->_objectColorPalette0[tile[i]].g,
+				this->_objectColorPalette0[tile[i]].b,
+				(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
+			};
+		break;
+	case Palette1:
+		for (int i = 0; i < 64; i++)
+			colors[i] = sf::Color {
+				this->_objectColorPalette1[tile[i]].r,
+				this->_objectColorPalette1[tile[i]].g,
+				this->_objectColorPalette1[tile[i]].b,
+				(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
+			};
+		break;
 	}
 	texture.update(reinterpret_cast<sf::Uint8 *>(&colors));
 }
@@ -142,12 +141,12 @@ void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite spri
 {
 	if (doubleSize) {
 		sprite.texture_id *= 4;
-		sprite.x = (sprite.x + !sprite.x_flip) * 4;
-		sprite.y = (sprite.y + !sprite.y_flip) * 4;
+		sprite.x = (sprite.x + sprite.x_flip) * 4;
+		sprite.y = (sprite.y + sprite.y_flip) * 4;
 		for (int i = 0; i < 4; i++) {
 			this->drawSprite(sprite, signedMode, false);
-			sprite.x += ((sprite.x_flip * 2) - 1) * 8;
-			sprite.y += ((sprite.x_flip * 2) - 1) * 8;
+			sprite.x += ((!sprite.x_flip * 2) - 1) * 8;
+			sprite.y += ((!sprite.x_flip * 2) - 1) * 8;
 			sprite.texture_id++;
 		}
 		return;
@@ -156,7 +155,7 @@ void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite spri
 		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette1));
 	else
 		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette0));
-	this->_sprite.setPosition(sprite.x + !sprite.x_flip * 8, sprite.y + !sprite.y_flip * 8);
-	this->_sprite.setScale((sprite.x_flip * 2) - 1, (sprite.y_flip * 2) - 1);
+	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8, sprite.y + sprite.y_flip * 8);
+	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
 	this->draw(this->_sprite);
 }

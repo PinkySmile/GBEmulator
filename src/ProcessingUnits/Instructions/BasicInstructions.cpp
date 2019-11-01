@@ -155,7 +155,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return CPL(reg); },
 
 		//! 30; JR nc,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
-		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fc, cpu.fetchArgument()); },
+		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fc, cpu.fetchArgument()); },
 
 		//! 31; LD sp, **: Loads ** into sp register
 		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
