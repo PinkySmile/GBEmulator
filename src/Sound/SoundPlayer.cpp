@@ -7,40 +7,34 @@
 
 #include "SoundPlayer.hpp"
 
-namespace GBEmulator {
+namespace GBEmulator
+{
+	GBEmulator::SoundPlayer::SoundPlayer()
+	{
+		this->_sound.setBuffer(this->_soundBuffer);
+		this->_sound.setVolume(0);
+		this->_sound.play();
+	}
 
-    GBEmulator::SoundPlayer::SoundPlayer() :
-    _sound()
-    {
-        this->_sound.play();
-    }
+	void GBEmulator::SoundPlayer::setPitch(float pitch)
+	{
+		this->_sound.setPitch(pitch);
+	}
 
-    void GBEmulator::SoundPlayer::setFrequency(float frequency)
-    {
-        this->_sound.setPitch(131072 / (2048 - frequency));
-    }
+	void GBEmulator::SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
+	{
+		auto buff = new sf::Int16[wave.size()];
 
-    void GBEmulator::SoundPlayer::setWave(std::vector<unsigned char> wave)
-    {
-        if (wave.size() == 1) {
-            switch (wave[0]) {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+		for (size_t i = 0; i < wave.size(); i++)
+			buff[i] = static_cast<char>(wave[i]) * 256;
+		if (!this->_soundBuffer.loadFromSamples(buff, wave.size(), 1, sampleRate))
+			throw std::invalid_argument("Cannot load sound buffer");
+		delete[] buff;
+	}
 
-    void GBEmulator::SoundPlayer::setVolume(float volume)
-    {
-        this->_sound.setVolume(100 / 16 * volume);
-    }
+	void GBEmulator::SoundPlayer::setVolume(float volume)
+	{
+		this->_sound.setVolume(volume);
+	}
 
 }

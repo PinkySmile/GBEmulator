@@ -22,7 +22,7 @@ namespace GBEmulator
 
     APU::~APU() = default;
 
-    void APU::update(unsigned cycleNB)
+    void APU::update(unsigned)
     {
         if (read(FF26) >> 7) {
 
@@ -286,7 +286,7 @@ namespace GBEmulator
         this->_wavePattern = value >> 6;
         this->_soundLength = value & 0b00111111;
         wave.push_back(value >> 6);
-        this->_soundChannel.setWave(wave);
+        this->_soundChannel.setWave(wave, 256);
     }
 
     unsigned char APU::Sound::getWave() const
@@ -321,7 +321,7 @@ namespace GBEmulator
     void APU::Sound::setLowFrequency(unsigned char value)
     {
         this->_frequency = (this->_frequency & 0b11100000000) | value;
-        this->_soundChannel.setFrequency(this->_frequency);
+	    this->_soundChannel.setPitch(this->_frequency);
     }
 
     void APU::Sound::setRestartOptions(unsigned char value)
@@ -333,7 +333,7 @@ namespace GBEmulator
         this->_restartType = (value & 0b01000000) >> 6;
 
         this->_frequency = (this->_frequency & 0b00011111111) | val;
-        this->_soundChannel.setFrequency(this->_frequency);
+	    this->_soundChannel.setPitch(this->_frequency);
     }
 
     unsigned char APU::Sound::getRestartOptions() const
