@@ -42,7 +42,7 @@ void Tests::Screen::drawBackground(const unsigned char *, float, float, bool)
 void Tests::Screen::drawSprite(GBEmulator::Graphics::Sprite, bool, bool)
 {}
 
-void Tests::Screen::drawWindow(const unsigned char *, bool)
+void Tests::Screen::drawWindow(const unsigned char *, float, float, bool)
 {}
 
 void Tests::Screen::setPalette(unsigned char)
