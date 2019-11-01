@@ -26,18 +26,18 @@ namespace GBEmulator
 	private:
 		Memory::Memory _oam;
 		Graphics::ILCD &_screen;
-		unsigned char _scrollX;
-		unsigned char _scrollY;
-		unsigned char _windowX;
-		unsigned char _windowY;
-		unsigned char _bgPalette;
-		unsigned char _objectPalette0;
-		unsigned char _objectPalette1;
-		unsigned char _stat;
-		unsigned char _lyc;
-		unsigned char _control;
-		unsigned char *_tiles;
-		unsigned char *_backgroundMap;
+		unsigned char _scrollX = 0;
+		unsigned char _scrollY = 0;
+		unsigned char _windowX = 0;
+		unsigned char _windowY = 0;
+		unsigned char _bgPalette = 0;
+		unsigned char _objectPalette0 = 0;
+		unsigned char _objectPalette1 = 0;
+		unsigned char _stat = 0;
+		unsigned char _lyc = 0;
+		unsigned char _control = 0;
+		unsigned char *_tiles = nullptr;
+		unsigned char *_backgroundMap = nullptr;
 		unsigned _cycles = 0;
 		std::vector<unsigned> _tilesToUpdate;
 

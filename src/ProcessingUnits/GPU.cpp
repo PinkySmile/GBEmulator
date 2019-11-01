@@ -121,7 +121,7 @@ namespace GBEmulator
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
-					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollY, -this->_scrollX, !(this->_control & 0b00010000U));
+					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollX, -this->_scrollY, !(this->_control & 0b00010000U));
 
 				if (this->_control & 0b00100000U)
 					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), this->_windowX, this->_windowY, !(this->_control & 0b00010000U));
