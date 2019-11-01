@@ -107,6 +107,8 @@ namespace GBEmulator
 
 	unsigned char GPU::update(int cycle)
 	{
+		unsigned char line = this->getCurrentLine();
+
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
@@ -138,9 +140,9 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		if (this->_isVblankInterrupt() && this->_isStatInterrupt())
+		if (this->_isVblankInterrupt(line) && this->_isStatInterrupt())
 			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
-		else if (this->_isVblankInterrupt())
+		else if (this->_isVblankInterrupt(line))
 			return CPU::VBLANK_INTERRUPT;
 		else if (this->_isStatInterrupt())
 			return CPU::LCD_STAT_INTERRUPT;
@@ -182,7 +184,8 @@ namespace GBEmulator
 		this->_scrollY = value;
 	}
 
-	void GPU::_updateTiles() {
+	void GPU::_updateTiles()
+	{
 		for (auto &id : this->_tilesToUpdate)
 			this->_screen.updateTexture(this->_getTile(id), id);
 		this->_tilesToUpdate.clear();
@@ -204,25 +207,17 @@ namespace GBEmulator
 		return this->_stat;
 	}
 
-	void GPU::setStatByte(unsigned char value) {
+	void GPU::setStatByte(unsigned char value)
+	{
 		this->_stat = value;
 	}
 
-	bool GPU::_isVblankInterrupt() const {
-		unsigned char line = this->getCurrentLine();
+	bool GPU::_isVblankInterrupt(unsigned char line) const {
 		return line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine());
 	}
 
 	bool GPU::_isStatInterrupt() const {
-		if (this->_stat & 0b01000000U)
-			return true;
-		if (this->_stat & 0b00100000U)
-			return true;
-		if (this->_stat & 0b00010000U)
-			return true;
-		if (this->_stat & 0b00001000U)
-			return true;
-		return false;
+		return this->_stat & 0b01111000U;
 	}
 
 	unsigned char GPU::getLycByte() const {
@@ -230,16 +225,19 @@ namespace GBEmulator
 		return this->_lyc;
 	}
 
-	void GPU::setLycByte(unsigned char value) {
+	void GPU::setLycByte(unsigned char value)
+	{
 		this->_lyc = value;
 	}
 
-	void GPU::_setCompareLycLy() {
+	void GPU::_setCompareLycLy()
+	{
 		if (this->getCurrentLine() == this->_lyc)
 			this->_stat |= 0b01000000U;
 	}
 
-	void GPU::setWindowX(unsigned char value) {
+	void GPU::setWindowX(unsigned char value)
+	{
 		this->_windowX = value - 7;
 	}
 
@@ -248,7 +246,8 @@ namespace GBEmulator
 		return this->_windowX;
 	}
 
-	void GPU::setWindowY(unsigned char value) {
+	void GPU::setWindowY(unsigned char value)
+	{
 		this->_windowY = value;
 	}
 
@@ -267,11 +266,13 @@ namespace GBEmulator
 		return this->_objectPalette1;
 	}
 
-	void GPU::setObjectPalette0(unsigned char value) {
+	void GPU::setObjectPalette0(unsigned char value)
+	{
 		this->_objectPalette0 = value;
 	}
 
-	void GPU::setObjectPalette1(unsigned char value) {
+	void GPU::setObjectPalette1(unsigned char value)
+	{
 		this->_objectPalette1 = value;
 	}
 }

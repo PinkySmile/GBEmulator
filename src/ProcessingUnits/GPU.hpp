@@ -83,8 +83,8 @@ namespace GBEmulator
 		unsigned char *_getTileMap(bool alt);
 		void _setCompareLycLy();
 
-		//  Interruptions
-		bool _isVblankInterrupt() const;
+		//Interrupts
+		bool _isVblankInterrupt(unsigned char line) const;
 		bool _isStatInterrupt() const;
 	};
 }
