@@ -146,7 +146,7 @@ void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite spri
 		for (int i = 0; i < 4; i++) {
 			this->drawSprite(sprite, signedMode, false);
 			sprite.x += ((!sprite.x_flip * 2) - 1) * 8;
-			sprite.y += ((!sprite.x_flip * 2) - 1) * 8;
+			sprite.y += ((!sprite.y_flip * 2) - 1) * 8;
 			sprite.texture_id++;
 		}
 		return;

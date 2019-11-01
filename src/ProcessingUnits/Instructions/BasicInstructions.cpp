@@ -80,7 +80,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.d, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 17; RLA: The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0.
-		[](CPU &, CPU::Registers &reg){ return RL(reg, reg.a); },
+		[](CPU &, CPU::Registers &reg){ return RLA(reg); },
 
 		//! 18; JR *: The signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		[](CPU &cpu, CPU::Registers &reg){ return JR(reg, true, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -623,7 +623,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return Instructions::_bitLevelInstructions[cpu.fetchArgument()](cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
-		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, !reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return CALLC(cpu, reg, reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CD; CALL **: The current pc value plus three is pushed onto the stack, then is loaded with **.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
