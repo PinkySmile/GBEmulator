@@ -52,6 +52,7 @@ target_link_libraries(
         sfml-graphics
         sfml-window
         sfml-system
+        sfml-audio
 )
 
 add_executable(

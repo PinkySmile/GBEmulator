@@ -114,13 +114,12 @@ namespace GBEmulator
             unsigned char _volumeShiftNumber;
 
             //frequency
-            unsigned char _lowFrequency;
-            unsigned char _highFrenquency;
+            unsigned short _frequency;
 
             //options
             bool _restart;
             bool _restartType;
-            bool _soundOn; //WAVE
+            bool _soundOn = true; //WAVE
 
             //WaveOutputLevel //WAVE
             unsigned char _waveOutputLevel;

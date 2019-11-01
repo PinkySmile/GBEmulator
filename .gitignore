@@ -37,3 +37,9 @@ vgcore*
 # Clion
 .idea
 cmake-build-*
+
+# Others
+Pokemon_Yellow_Version.gb
+cmake_install.cmake
+CMakeFiles/
+CMakeCache.txt

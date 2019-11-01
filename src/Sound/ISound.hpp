@@ -13,6 +13,7 @@
 
 namespace GBEmulator {
     class ISound {
+    public:
         virtual void setFrequency(float frequency) = 0;
         virtual void setWave(std::vector<unsigned char>) = 0;
         virtual void setVolume(float volume) = 0;

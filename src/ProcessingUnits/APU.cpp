@@ -25,10 +25,7 @@ namespace GBEmulator
     void APU::update(unsigned cycleNB)
     {
         if (read(FF26) >> 7) {
-            //soundModeOne
-            //soundModeTwo
-            //soundModeThree
-            //soundModeFour
+
         } else {
             //StopAllSounds
         }
@@ -284,8 +281,12 @@ namespace GBEmulator
 
     void APU::Sound::setWave(unsigned char value)
     {
+        std::vector<unsigned char> wave;
+
         this->_wavePattern = value >> 6;
         this->_soundLength = value & 0b00111111;
+        wave.push_back(value >> 6);
+        this->_soundChannel.setWave(wave);
     }
 
     unsigned char APU::Sound::getWave() const
@@ -301,6 +302,10 @@ namespace GBEmulator
         this->_initialVolume = value >> 4;
         this->_volumeDirection = (value & 0b00001000) >> 3;
         this->_volumeShiftNumber = value & 0b00000111;
+        if (this->_soundOn)
+            this->_soundChannel.setVolume(this->_initialVolume);
+        else
+            this->_soundChannel.setVolume(0);
     }
 
     unsigned char APU::Sound::getVolume() const
@@ -315,14 +320,20 @@ namespace GBEmulator
 
     void APU::Sound::setLowFrequency(unsigned char value)
     {
-        this->_lowFrequency = value;
+        this->_frequency = (this->_frequency & 0b11100000000) | value;
+        this->_soundChannel.setFrequency(this->_frequency);
     }
 
     void APU::Sound::setRestartOptions(unsigned char value)
     {
+        unsigned short val = value & 0b00000111;
+
+        val <<= 8;
         this->_restart = value >> 7;
         this->_restartType = (value & 0b01000000) >> 6;
-        this->_highFrenquency = value & 0b00000111;
+
+        this->_frequency = (this->_frequency & 0b00011111111) | val;
+        this->_soundChannel.setFrequency(this->_frequency);
     }
 
     unsigned char APU::Sound::getRestartOptions() const
@@ -342,6 +353,8 @@ namespace GBEmulator
     void APU::Sound::setSoundONOFF(unsigned char value)
     {
         this->_soundOn = value >> 7;
+        if (!this->_soundOn)
+            this->_soundChannel.setVolume(0);
     }
 
     unsigned char APU::Sound::getSoundONOFF() const
