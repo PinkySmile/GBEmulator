@@ -109,8 +109,6 @@ namespace GBEmulator
 
 	unsigned char GPU::update(int cycle)
 	{
-		unsigned char line = this->getCurrentLine();
-
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
@@ -142,9 +140,9 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		if (this->_isVblankInterrupt(line) && this->_isStatInterrupt())
+		if (this->_isVBlankInterrupt() && this->_isStatInterrupt())
 			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
-		else if (this->_isVblankInterrupt(line))
+		else if (this->_isVBlankInterrupt())
 			return CPU::VBLANK_INTERRUPT;
 		else if (this->_isStatInterrupt())
 			return CPU::LCD_STAT_INTERRUPT;
@@ -214,8 +212,8 @@ namespace GBEmulator
 		this->_stat = value;
 	}
 
-	bool GPU::_isVblankInterrupt(unsigned char line) const {
-		return line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine());
+	bool GPU::_isVBlankInterrupt() const {
+		return this->getCurrentLine() >= 144;
 	}
 
 	bool GPU::_isStatInterrupt() const {

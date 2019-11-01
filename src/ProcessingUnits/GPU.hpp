@@ -84,7 +84,7 @@ namespace GBEmulator
 		void _setCompareLycLy();
 
 		//Interrupts
-		bool _isVblankInterrupt(unsigned char line) const;
+		bool _isVBlankInterrupt() const;
 		bool _isStatInterrupt() const;
 	};
 }
