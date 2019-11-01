@@ -17,10 +17,10 @@ namespace GBEmulator::Timing
 
 	class Timer {
 	private:
-		double _expected;
-		double _cycles = 0;
 		unsigned char _byte = 0;
 		unsigned char _counter = 0;
+		double _cycles = 0;
+		double _expected;
 
 	public:
 		Timer();

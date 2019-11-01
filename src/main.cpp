@@ -15,6 +15,8 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
+	srand(time(nullptr));
+
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
 		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},

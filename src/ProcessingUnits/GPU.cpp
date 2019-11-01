@@ -18,8 +18,10 @@ namespace GBEmulator
 		_tiles(new unsigned char [NB_TILES]),
 		_backgroundMap(new unsigned char [BG_MAP_SIZE])
 	{
-		std::memset(this->_tiles, 0xFF, NB_TILES * sizeof(*this->_tiles));
-		std::memset(this->_backgroundMap, 0xFF, BG_MAP_SIZE * sizeof(*this->_backgroundMap));
+		for (int i = 0; i < NB_TILES; i++)
+			this->_tiles[i] = rand() % 4;
+		for (int i = 0; i < BG_MAP_SIZE; i++)
+			this->_backgroundMap[i] = rand() % 4;
 
 		for (int i = 0; i < 256; i++)
 			this->_screen.updateTexture(this->_getTile(i), i);
@@ -107,22 +109,24 @@ namespace GBEmulator
 
 	unsigned char GPU::update(int cycle)
 	{
-		unsigned char line = this->getCurrentLine();
-
 		this->_cycles += cycle;
 		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
 			this->_screen.clear();
 
+			this->_setCompareLycLy();
+
 			if (this->_control & 0x80U) {
-				this->_screen.setPalette(this->_bgPalette);
+				this->_screen.setBGPalette(this->_bgPalette);
+				this->_screen.setObjectPalette0(this->_objectPalette0);
+				this->_screen.setObjectPalette1(this->_objectPalette1);
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
-					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollY, -this->_scrollX, !(this->_control & 0b00010000U));
+					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollX, -this->_scrollY, !(this->_control & 0b00010000U));
 
 				if (this->_control & 0b00100000U)
-					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), !(this->_control & 0b00010000U));
+					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), this->_windowX, this->_windowY, !(this->_control & 0b00010000U));
 
 				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
 					Graphics::Sprite sprite;
@@ -136,8 +140,12 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		if (line <= 143 && (this->getCurrentLine() >= 144 || line < this->getCurrentLine()))
+		if (this->_isVBlankInterrupt() && this->_isStatInterrupt())
+			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
+		else if (this->_isVBlankInterrupt())
 			return CPU::VBLANK_INTERRUPT;
+		else if (this->_isStatInterrupt())
+			return CPU::LCD_STAT_INTERRUPT;
 		return 0;
 	}
 
@@ -176,7 +184,8 @@ namespace GBEmulator
 		this->_scrollY = value;
 	}
 
-	void GPU::_updateTiles() {
+	void GPU::_updateTiles()
+	{
 		for (auto &id : this->_tilesToUpdate)
 			this->_screen.updateTexture(this->_getTile(id), id);
 		this->_tilesToUpdate.clear();
@@ -192,5 +201,78 @@ namespace GBEmulator
 	unsigned char *GPU::_getTile(std::size_t id)
 	{
 		return this->_tiles + id * 64;
+	}
+
+	unsigned char GPU::getStatByte() const {
+		return this->_stat;
+	}
+
+	void GPU::setStatByte(unsigned char value)
+	{
+		this->_stat = value;
+	}
+
+	bool GPU::_isVBlankInterrupt() const {
+		return this->getCurrentLine() >= 144;
+	}
+
+	bool GPU::_isStatInterrupt() const {
+		return this->_stat & 0b01111000U;
+	}
+
+	unsigned char GPU::getLycByte() const {
+
+		return this->_lyc;
+	}
+
+	void GPU::setLycByte(unsigned char value)
+	{
+		this->_lyc = value;
+	}
+
+	void GPU::_setCompareLycLy()
+	{
+		if (this->getCurrentLine() == this->_lyc)
+			this->_stat |= 0b01000000U;
+	}
+
+	void GPU::setWindowX(unsigned char value)
+	{
+		this->_windowX = value - 7;
+	}
+
+	unsigned char GPU::getWindowX() const {
+
+		return this->_windowX;
+	}
+
+	void GPU::setWindowY(unsigned char value)
+	{
+		this->_windowY = value;
+	}
+
+	unsigned char GPU::getWindowY() const {
+
+		return this->_windowY;
+	}
+
+	unsigned char GPU::getObjectPalette0() const {
+
+		return this->_objectPalette0;
+	}
+
+	unsigned char GPU::getObjectPalette1() const {
+
+		return this->_objectPalette1;
+	}
+
+	void GPU::setObjectPalette0(unsigned char value)
+	{
+		this->_objectPalette0 = value;
+	}
+
+	void GPU::setObjectPalette1(unsigned char value)
+	{
+		this->_objectPalette1 = value;
 	}
 }

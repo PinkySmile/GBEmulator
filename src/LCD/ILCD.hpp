@@ -43,25 +43,41 @@ namespace GBEmulator::Graphics
 
 	class ILCD {
 	protected:
-		 std::vector<RGBColor> _colorPalette = {
+		 std::vector<RGBColor> _BGColorPalette = {
 			RGBColor::White,
 			RGBColor::LGray,
 			RGBColor::DGray,
 			RGBColor::Black
 		 };
+		std::vector<RGBColor> _objectColorPalette0 = {
+				RGBColor::White,
+				RGBColor::LGray,
+				RGBColor::DGray,
+				RGBColor::Black
+		};
+		std::vector<RGBColor> _objectColorPalette1 = {
+				RGBColor::White,
+				RGBColor::LGray,
+				RGBColor::DGray,
+				RGBColor::Black
+		};
 
 	public:
 		virtual void updateTexture(unsigned char *tile, size_t id) = 0;
 		virtual void drawSprite(Sprite sprite, bool signedMode, bool doubleSize) = 0;
 		virtual void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
-		virtual void drawWindow(const unsigned char *tiles, bool signedMode) = 0;
+		virtual void drawWindow(const unsigned char *tiles, float x, float y, bool signedMode) = 0;
 		virtual void display() = 0;
 		virtual void clear() = 0;
 		virtual bool isClosed() const = 0;
 		virtual void close() = 0;
 
-		void setPalette(const std::vector<RGBColor> &colors);
-		void setPalette(unsigned char colors);
+		void setBGPalette(const std::vector<RGBColor> &colors);
+		void setBGPalette(unsigned char colors);
+		void setObjectPalette0(const std::vector<RGBColor> &colors);
+		void setObjectPalette0(unsigned char colors);
+		void setObjectPalette1(const std::vector<RGBColor> &colors);
+		void setObjectPalette1(unsigned char colors);
 	};
 }
 

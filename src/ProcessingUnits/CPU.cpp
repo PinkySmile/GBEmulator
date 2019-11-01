@@ -33,6 +33,7 @@ namespace GBEmulator
 		_buttonEnabled(false),
 		_directionEnabled(false),
 		_halted(false),
+		_stopped(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{
@@ -95,10 +96,10 @@ namespace GBEmulator
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
 		case APU_RANGE:
-			return 0xFF;
+			return 0x00;
 
 		case WPRAM_RANGE:
-			return 0xFF;
+			return 0x00;
 
 		case IO_PORT2_RANGE:
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
@@ -110,15 +111,13 @@ namespace GBEmulator
 			return this->_interruptEnabled;
 
 		default:
-			return 0xFF;
+			return 0x00;
 		}
 	}
 
 	unsigned char CPU::fetchArgument()
 	{
-		unsigned char r = this->read(this->_registers.pc);
-		this->_registers.pc++;
-		return r;
+		return this->read(this->_registers.pc++);
 	}
 
 	unsigned short CPU::fetchArgument16()
@@ -224,12 +223,21 @@ namespace GBEmulator
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		this->_interruptRequest |= this->_gpu.update(cycles);
+		unsigned gpuInts = this->_gpu.update(cycles);
+
+		this->_interruptRequest |= gpuInts;
+		this->_interruptRequest &= (0b11111100U | gpuInts);
+
 		if (this->_cable.isTransfering())
 			this->_interruptRequest |= SERIAL_INTERRUPT;
+		else
+			this->_interruptRequest &= ~SERIAL_INTERRUPT;
 		this->_cable.transfer(cycles);
+
 		if (this->_timer.update(cycles))
 			this->_interruptRequest |= TIMER_INTERRUPT;
+		else
+			this->_interruptRequest &= ~TIMER_INTERRUPT;
 	}
 
 	bool CPU::_checkInterrupts()
@@ -289,17 +297,35 @@ namespace GBEmulator
 		case LCD_CONTROL:
 			return this->_gpu.getControlByte();
 
+		case LCDC_STAT:
+			return this->_gpu.getStatByte();
+
 		case LCDC_Y_COORD:
 			return this->_gpu.getCurrentLine();
 
+		case LCD_LYC:
+			return this->_gpu.getLycByte();
+
 		case LCD_BG_COLOR:
 			return this->_gpu.getBGPalette();
+
+		case OBJECT_PALETTE_0:
+			return this->_gpu.getObjectPalette0();
+
+		case OBJECT_PALETTE_1:
+			return this->_gpu.getObjectPalette1();
 
 		case LCD_SCROLL_X:
 			return this->_gpu.getXScroll();
 
 		case LCD_SCROLL_Y:
 			return this->_gpu.getYScroll();
+
+		case LCD_WINDOW_X:
+			return this->_gpu.getWindowX();
+
+		case LCD_WINDOW_Y:
+			return this->_gpu.getWindowY();
 
 		case TIMER_MODULO:
 			return this->_timer.modulo;
@@ -317,7 +343,7 @@ namespace GBEmulator
 			return this->_divRegister >> 8U;
 
 		default:
-			return 0xFF;
+			return 0x00;
 		}
 	}
 
@@ -348,14 +374,32 @@ namespace GBEmulator
 		case LCD_CONTROL:
 			return this->_gpu.setControlByte(value);
 
+		case LCDC_STAT:
+			return this->_gpu.setStatByte(value);
+
 		case LCD_BG_COLOR:
 			return this->_gpu.setBGPalette(value);
+
+		case OBJECT_PALETTE_0:
+			return this->_gpu.setObjectPalette0(value);
+
+		case OBJECT_PALETTE_1:
+			return this->_gpu.setObjectPalette1(value);
 
 		case LCD_SCROLL_X:
 			return this->_gpu.setXScroll(value);
 
 		case LCD_SCROLL_Y:
 			return this->_gpu.setYScroll(value);
+
+		case LCD_LYC:
+			return this->_gpu.setLycByte(value);
+
+		case LCD_WINDOW_X:
+			return this->_gpu.setWindowX(value);
+
+		case LCD_WINDOW_Y:
+			return this->_gpu.setWindowY(value);
 
 		case JOYPAD_REGISTER:
 			this->_directionEnabled = (value & 0b10000U) != 0;

@@ -19,7 +19,13 @@ namespace GBEmulator::Memory
 		_size(size),
 		_memory(new unsigned char [size])
 	{
-		std::memset(this->_memory, 0xFF, size);
+		for (unsigned i = 0; i < size; i++)
+			this->_memory[i] = rand() % 0x100;
+	}
+
+	Memory::~Memory()
+	{
+		delete[] this->_memory;
 	}
 
 	unsigned char Memory::rawRead(unsigned short address) const
@@ -54,11 +60,12 @@ namespace GBEmulator::Memory
 		this->_size = size;
 	}
 
-	void Memory::resize(size_t size, unsigned char fill)
+	void Memory::resize(size_t size)
 	{
 		auto *tab = new unsigned char [size];
 
-		std::memset(tab, fill, size);
+		for (size_t i = 0; i < size; i++)
+			tab[i] = rand() % 0x100;
 		if (size > this->_size)
 			std::memcpy(tab, this->_memory, this->_size);
 		else

@@ -91,7 +91,7 @@ namespace GBEmulator::Memory
 				delete[] mem;
 				throw;
 			}
-			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)));
+			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024);
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
 			throw;
@@ -135,7 +135,7 @@ namespace GBEmulator::Memory
 				return this->_ram.read(address - 0xA000);
 			else if (address < 0x7FFF)
 				return this->_rom.read(address - 0x4000);
-			return 0xFF;
+			return 0x00;
 		default:
 			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
 		}
