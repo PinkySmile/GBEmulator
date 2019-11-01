@@ -284,6 +284,21 @@ Test(INC_B, value_5) {
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
 }
 
+Test(INC_B, value_6) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 4;
+
+	gb.cpu._registers.b = 0xD7;
+	unsigned char time = instructions[0x4](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned char result = gb.cpu._registers.b;
+	unsigned char ex_result = 0xD8;
+	cr_assert_eq(result, ex_result, "Register b must be 0x%X but it was 0x%X", ex_result, result);
+	cr_assert_eq(gb.cpu._registers.fz, 0, "fz must be 1 but it was %d", gb.cpu._registers.fz);
+	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+}
+
 //! INSTRUCTION 05
 
 Test(DEC_B, value_1) {
@@ -374,6 +389,21 @@ Test(DEC_B, value_6)
 	unsigned char ex_result = 0x00;
 	cr_assert_eq(result, ex_result, "Register b must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fz, 1, "fz must be 1 but it was %d", gb.cpu._registers.fz);
+	cr_assert_eq(gb.cpu._registers.fn, 1, "fn must be 1 but it was %d", gb.cpu._registers.fn);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+}
+
+Test(DEC_B, value_7) {
+	Tests::GBTest gb;
+	unsigned char excepted_time = 4;
+
+	gb.cpu._registers.b = 0xD7;
+	unsigned char time = instructions[0x5](gb.cpu, gb.cpu._registers);
+	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
+	unsigned char result = gb.cpu._registers.b;
+	unsigned char ex_result = 0xD6;
+	cr_assert_eq(result, ex_result, "Register b must be 0x%X but it was 0x%X", ex_result, result);
+	cr_assert_eq(gb.cpu._registers.fz, 0, "fz must be 1 but it was %d", gb.cpu._registers.fz);
 	cr_assert_eq(gb.cpu._registers.fn, 1, "fn must be 1 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
 }
