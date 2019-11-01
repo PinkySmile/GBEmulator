@@ -18,8 +18,10 @@ namespace GBEmulator
 		_tiles(new unsigned char [NB_TILES]),
 		_backgroundMap(new unsigned char [BG_MAP_SIZE])
 	{
-		std::memset(this->_tiles, 0xFF, NB_TILES * sizeof(*this->_tiles));
-		std::memset(this->_backgroundMap, 0xFF, BG_MAP_SIZE * sizeof(*this->_backgroundMap));
+		for (int i = 0; i < NB_TILES; i++)
+			this->_tiles[i] = rand() % 4;
+		for (int i = 0; i < BG_MAP_SIZE; i++)
+			this->_backgroundMap[i] = rand() % 4;
 
 		for (int i = 0; i < 256; i++)
 			this->_screen.updateTexture(this->_getTile(i), i);

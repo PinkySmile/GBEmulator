@@ -159,7 +159,7 @@ namespace GBEmulator::Instructions
 			value1 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFF ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -174,7 +174,7 @@ namespace GBEmulator::Instructions
 			value1 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 > value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
@@ -189,7 +189,7 @@ namespace GBEmulator::Instructions
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFFFF ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
@@ -204,7 +204,7 @@ namespace GBEmulator::Instructions
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 > value2 ? SET : UNSET
 		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}

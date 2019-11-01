@@ -95,10 +95,10 @@ namespace GBEmulator
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
 		case APU_RANGE:
-			return 0xFF;
+			return 0x00;
 
 		case WPRAM_RANGE:
-			return 0xFF;
+			return 0x00;
 
 		case IO_PORT2_RANGE:
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
@@ -110,15 +110,13 @@ namespace GBEmulator
 			return this->_interruptEnabled;
 
 		default:
-			return 0xFF;
+			return 0x00;
 		}
 	}
 
 	unsigned char CPU::fetchArgument()
 	{
-		unsigned char r = this->read(this->_registers.pc);
-		this->_registers.pc++;
-		return r;
+		return this->read(this->_registers.pc++);
 	}
 
 	unsigned short CPU::fetchArgument16()
@@ -335,7 +333,7 @@ namespace GBEmulator
 			return this->_divRegister >> 8U;
 
 		default:
-			return 0xFF;
+			return 0x00;
 		}
 	}
 

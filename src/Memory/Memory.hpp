@@ -30,7 +30,7 @@ namespace GBEmulator::Memory
 		Memory &operator=(const Memory &) = delete;
 		Memory(unsigned size, unsigned short bankSize, bool readOnly = false);
 
-		void resize(size_t size, unsigned char fill = 0xFF);
+		void resize(size_t size);
 		void setBank(unsigned char bank);
 		void setBankSize(size_t size);
 		unsigned char getCurrentBank() const;
