@@ -112,16 +112,21 @@ namespace GBEmulator
         switch (address) {
             case 0x0 :
                 this->_managerChannel1.setSweep(value);
+                break;
             case 0x1 :
                 this->_managerChannel1.setWave(value);
+                break;
             case 0x2 :
                 this->_managerChannel1.setVolume(value);
+                break;
             case 0x3 :
-                this->_managerChannel1.setHighFrequency(value);
+                this->_managerChannel1.setLowFrequency(value);
+                break;
             case 0x4 :
                 this->_managerChannel1.setRestartOptions(value);
+                break;
             default :
-                0xFF;
+                break;
 
         }
     }
@@ -152,14 +157,15 @@ namespace GBEmulator
         switch (address) {
             case 0x0 :
                 this->_managerChannel2.setWave(value);
+                break;
             case 0x1 :
                 this->_managerChannel2.setVolume(value);
-            case 0x2 :
-                0xFF;
+                break;
             case 0x3 :
                 this->_managerChannel2.setRestartOptions(value);
+                break;
             default :
-                0xFF;
+                break;
 
         }
     }
@@ -171,16 +177,16 @@ namespace GBEmulator
     unsigned char APU::channelWaveReading(unsigned short address) const
     {
         switch (address) {
-            case FF1A :
-                return this->_soundWave.read(address - FF1A) | 0b01111111;
-            case FF1B :
-                return this->_soundWave.read(address - FF1A);
-            case FF1C :
-                return this->_soundWave.read(address - FF1A) | 0b10011111;
-            case FF1D :
+            case 0x0 :
+                return this->_managerChannelWave.getSoundONOFF();
+            case 0x1 :
+                return this->_managerChannelWave.getSoundLength(false);
+            case 0x2 :
+                return this->_managerChannelWave.getOutputLevel();
+            case 0x3 :
                 return 0xFF;
-            case FF1E :
-                return this->_soundWave.read(address - FF1A) | 0b10111111;
+            case 0x4 :
+                return this->_managerChannelWave.getRestartOptions();
             default :
                 return 0xFF;
         }
@@ -189,18 +195,20 @@ namespace GBEmulator
     void APU::channelWaveWriting(unsigned short address, unsigned char value)
     {
         switch (address) {
-            case FF1A :
-                this->_soundWave.read(address - FF1A) | 0b01111111;
-            case FF1B :
-                this->_soundWave.read(address - FF1A);
-            case FF1C :
-                this->_soundWave.read(address - FF1A) | 0b10011111;
-            case FF1D :
-                0xFF;
-            case FF1E :
-                this->_soundWave.read(address - FF1A) | 0b10111111;
+            case 0x0 :
+                this->_managerChannelWave.setSoundONOFF(value);
+                break;
+            case 0x1 :
+                this->_managerChannelWave.setSoundLength(value, false);
+                break;
+            case 0x2 :
+                this->_managerChannelWave.setOutputLevel(value);
+                break;
+            case 0x4 :
+                this->_managerChannelWave.setRestartOptions(value);
+                break;
             default :
-                0xFF;
+                break;
         }
     }
 
@@ -212,14 +220,14 @@ namespace GBEmulator
     unsigned char APU::channelNoiseReading(unsigned short address) const
     {
         switch (address) {
-            case FF20 :
-                return this->_soundNoise.read(address - FF20) | 0b00011111;
-            case FF21 :
-                return this->_soundNoise.read(address - FF20);
-            case FF22 :
-                return this->_soundNoise.read(address - FF20);
-            case FF23 :
-                return this->_soundNoise.read(address - FF20) | 0b10111111;
+            case 0x0 :
+                return this->_managerChannelNoise.getSoundLength(true);
+            case 0x1 :
+                return this->_managerChannelNoise.getVolume();
+            case 0x2 :
+                return this->_managerChannelNoise.getPolynomialCounters();
+            case 0x3 :
+                return this->_managerChannelNoise.getRestartOptions();
             default :
                 return 0xFF;
         }
@@ -228,22 +236,32 @@ namespace GBEmulator
     void APU::channelNoiseWriting(unsigned short address, unsigned char value)
     {
         switch (address) {
-            case FF20 :
-                this->_soundNoise.read(address - FF20) | 0b00011111;
-            case FF21 :
-                this->_soundNoise.read(address - FF20);
-            case FF22 :
-                this->_soundNoise.read(address - FF20);
-            case FF23 :
-                this->_soundNoise.read(address - FF20) | 0b10111111;
+            case 0x0 :
+                this->_managerChannelNoise.setSoundLength(value, true);
+                break;
+            case 0x1 :
+                this->_managerChannelNoise.setVolume(value);
+                break;
+            case 0x2 :
+                this->_managerChannelNoise.setPolynomialCounters(value);
+                break;
+            case 0x3 :
+                this->_managerChannelNoise.setRestartOptions(value);
+                break;
             default :
-                0xFF;
+                break;
         }
     }
 
     //
     // General getter/Setters from SOUND
     //
+
+    APU::Sound::Sound(ISound &sound) :
+    _soundChannel(sound)
+    {
+
+    }
 
     void APU::Sound::setSweep(unsigned char value)
     {
@@ -295,28 +313,95 @@ namespace GBEmulator
         return (value | this->_volumeShiftNumber);
     }
 
-    void APU::Sound::setHighFrequency(unsigned char value)
+    void APU::Sound::setLowFrequency(unsigned char value)
     {
-        this->_highFrequency = value;
+        this->_lowFrequency = value;
     }
 
     void APU::Sound::setRestartOptions(unsigned char value)
     {
         this->_restart = value >> 7;
         this->_restartType = (value & 0b01000000) >> 6;
-        this->_lowFrenquency = value & 0b00000111;
+        this->_highFrenquency = value & 0b00000111;
     }
 
     unsigned char APU::Sound::getRestartOptions() const
     {
-        unsigned char value = this->_restart;
+        unsigned char value = 0b00000001;
 
         value <<= 1;
         value |= this->_restartType;
+        value <<= 6;
+        return (value | 0b00111111);
+    }
+
+    //
+    // Wave Functions Implementation
+    //
+
+    void APU::Sound::setSoundONOFF(unsigned char value)
+    {
+        this->_soundOn = value >> 7;
+    }
+
+    unsigned char APU::Sound::getSoundONOFF() const
+    {
+        unsigned char value = this->_soundOn;
+
+        value <<= 7;
+        return (value | 0b01111111);
+    }
+
+    void APU::Sound::setSoundLength(unsigned char value, bool sixBitsLength)
+    {
+        if (!sixBitsLength)
+            this->_soundLength = value;
+        else
+            this->_soundLength = value & 0b00111111;
+    }
+
+    unsigned char APU::Sound::getSoundLength(bool sixBitsLength) const
+    {
+        if (!sixBitsLength)
+            return (this->_soundLength);
+        else
+            return (0b11000000 | this->_soundLength);
+    }
+
+    void APU::Sound::setOutputLevel(unsigned char value)
+    {
+        this->_waveOutputLevel = (value & 0b10011111) >> 5;
+    }
+
+    unsigned char APU::Sound::getOutputLevel() const
+    {
+        unsigned char value = 0b00000001;
+
+        value <<= 2;
+        value |= this->_waveOutputLevel;
+        value <<= 5;
+        return (value | 0b00011111);
+    }
+
+    //
+    // Noise Functions Implementation
+    //
+
+    void APU::Sound::setPolynomialCounters(unsigned char value)
+    {
+        this->_shiftClockFrequency = value >> 4;
+        this->_polynomialCounterStep = (value & 0b00001000) >> 3;
+        this->_dividingRatio = value & 0b00000111;
+    }
+
+    unsigned char APU::Sound::getPolynomialCounters() const
+    {
+        unsigned char value = this->_shiftClockFrequency;
+
+        value <<= 1;
+        value |= this->_polynomialCounterStep;
         value <<= 3;
-        value |= 0b00000111;
-        value <<= 3;
-        return (value | this->_lowFrenquency);
+        return (value | this->_dividingRatio);
     }
 
     //

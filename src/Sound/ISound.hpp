@@ -1,6 +1,10 @@
-//
-// Created by jmartin on 10/24/19.
-//
+/*
+** EPITECH PROJECT, 2019
+** GBEmulator
+** File description:
+** ISound.hpp
+*/
+
 
 #ifndef GBEMULATOR_ISOUND_HPP
 #define GBEMULATOR_ISOUND_HPP
@@ -9,8 +13,7 @@
 
 namespace GBEmulator {
     class ISound {
-        virtual void play(float frequency) = 0;
-        virtual void stop() = 0;
+        virtual void setFrequency(float frequency) = 0;
         virtual void setWave(std::vector<unsigned char>) = 0;
         virtual void setVolume(float volume) = 0;
     };

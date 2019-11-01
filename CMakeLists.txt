@@ -41,6 +41,8 @@ add_executable(
         src/ProcessingUnits/GPU.hpp
         src/ProcessingUnits/StartupCode.cpp
 		src/Sound/ISound.hpp
+        src/Sound/SoundPlayer.cpp
+		src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
 )

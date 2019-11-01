@@ -72,15 +72,29 @@ namespace GBEmulator
             ~Sound() = default;
             Sound(const Sound &) = delete;
             Sound &operator=(const Sound &) = delete;
+
+            //Common functions
 		    void setSweep(unsigned char);
             unsigned char getSweep() const;
 		    void setWave(unsigned char);
 		    unsigned char getWave() const;
 		    void setVolume(unsigned char);
 		    unsigned char getVolume() const;
-		    void setHighFrequency(unsigned char);
+		    void setLowFrequency(unsigned char);
 		    void setRestartOptions(unsigned char);
 		    unsigned char getRestartOptions() const;
+
+		    //Wave Functions
+            void setSoundONOFF(unsigned char);
+            unsigned char getSoundONOFF() const;
+            void setSoundLength(unsigned char, bool);
+            unsigned char getSoundLength(bool) const;
+            void setOutputLevel(unsigned char);
+            unsigned char getOutputLevel() const;
+
+            //Noise Functions
+            void setPolynomialCounters(unsigned char);
+            unsigned char getPolynomialCounters() const;
 
 		private:
             ISound &_soundChannel;    //tone and sweep
@@ -100,8 +114,8 @@ namespace GBEmulator
             unsigned char _volumeShiftNumber;
 
             //frequency
-            unsigned char _highFrequency;
-            unsigned char _lowFrenquency
+            unsigned char _lowFrequency;
+            unsigned char _highFrenquency;
 
             //options
             bool _restart;
@@ -166,7 +180,7 @@ namespace GBEmulator
         Controller _controller;
 		Memory::Memory _wpRAM; //wave pattern RAM
 		bool _soundChanged;
-		Memory::Memory _memory;
+		//Memory::Memory _memory;
 	};
 }
 

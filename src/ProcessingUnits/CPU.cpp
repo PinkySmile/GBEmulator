@@ -28,6 +28,7 @@ namespace GBEmulator
 	}
 
 	CPU::CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+		_apu(_channelOne, _channelTwo, _channelThree, _channelFour),
 		_gpu(window),
 		_buttonEnabled(false),
 		_directionEnabled(false),

@@ -12,6 +12,7 @@
 #include <string>
 #include <functional>
 #include "APU.hpp"
+#include "../Sound/SoundPlayer.hpp"
 #include "GPU.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
@@ -193,6 +194,10 @@ namespace GBEmulator
 		static const std::vector<unsigned char> _startupCode;
 
 		APU _apu;
+		SoundPlayer _channelOne;
+		SoundPlayer _channelTwo;
+		SoundPlayer _channelThree;
+		SoundPlayer _channelFour;
 		GPU _gpu;
 		bool _buttonEnabled;
 		bool _directionEnabled;
