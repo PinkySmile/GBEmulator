@@ -29,7 +29,7 @@ namespace GBEmulator
 		unsigned char _scrollX;
 		unsigned char _scrollY;
 		unsigned char _bgPalette;
-		unsigned char _control;
+		unsigned char _control = 0;
 		unsigned char *_tiles;
 		unsigned char *_backgroundMap;
 		unsigned _cycles = 0;

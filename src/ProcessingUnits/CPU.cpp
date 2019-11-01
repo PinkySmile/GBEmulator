@@ -32,6 +32,7 @@ namespace GBEmulator
 		_buttonEnabled(false),
 		_directionEnabled(false),
 		_halted(false),
+		_stopped(false),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{

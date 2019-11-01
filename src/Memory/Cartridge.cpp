@@ -91,7 +91,7 @@ namespace GBEmulator::Memory
 				delete[] mem;
 				throw;
 			}
-			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)));
+			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024);
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
 			throw;
