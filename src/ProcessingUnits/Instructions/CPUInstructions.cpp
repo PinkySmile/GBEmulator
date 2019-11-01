@@ -226,13 +226,13 @@ namespace GBEmulator::Instructions
 
 	unsigned char DEC8(CPU::Registers &reg, unsigned char &value)
 	{
-		bool halfCarry = (((value & 0xf) - 1) & 0x8) == 0x8;
+		bool halfCarry = (((value & 0xf) - 1) & 0x10) == 0x10;
 
 		value--;
 		setFlags(
 			reg,
 			value == 0 ? SET : UNSET,
-			UNSET,
+			SET,
 			halfCarry ? SET : UNSET,
 			UNCHANGED
 		);
