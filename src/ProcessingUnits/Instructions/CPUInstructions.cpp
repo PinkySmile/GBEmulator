@@ -153,14 +153,14 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
 
-		value1 += value2;
 		setFlags(
 			reg,
-			value1 == 0 ? SET : UNSET,
+			(value1 + value2) == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 + value2 > 0xFF ? SET : UNSET
 		);
+		value1 += value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
@@ -168,14 +168,14 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x8U) == 0x8U;
 
-		value1 -= value2;
 		setFlags(
 			reg,
-			value1 == 0 ? SET : UNSET,
+			value1 == value2 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 > value2 ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
+		value1 -= value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
@@ -183,14 +183,14 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFFU) + (value2 & 0xFFU)) & 0x100U) == 0x100U;
 
-		value1 += value2;
 		setFlags(
 			reg,
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 + value2 > 0xFFFF ? SET : UNSET
 		);
+		value1 += value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 
@@ -198,14 +198,14 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x80U) == 0x80U;
 
-		value1 -= value2;
 		setFlags(
 			reg,
 			UNCHANGED,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 > value2 ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
+		value1 -= value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 
