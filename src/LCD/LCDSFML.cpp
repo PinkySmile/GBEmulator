@@ -107,6 +107,7 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 
 void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, float x, float y, bool signedMode)
 {
+	this->_sprite.setScale(1, 1);
 	for (unsigned i = 0; i < 1024; i++) {
 		this->_sprite.setTexture(this->_getTexture(tiles[i], signedMode, Background));
 		this->_sprite.setPosition(x + i % 32 * 8, y + i / 32 * 8);
