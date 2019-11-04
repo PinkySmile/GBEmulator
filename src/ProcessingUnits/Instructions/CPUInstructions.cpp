@@ -166,7 +166,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
 	{
-		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x8U) == 0x8U;
+		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x10U) == 0x10U;
 
 		setFlags(
 			reg,
@@ -196,7 +196,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
-		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x80U) == 0x80U;
+		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x100U) == 0x100U;
 
 		setFlags(
 			reg,
