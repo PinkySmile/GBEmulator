@@ -221,7 +221,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 0); },
 
 		//! 46; BIT 0,(hl): Tests bit 0 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 0) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 0) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 47; BIT 0,a: Tests bit 0 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 0); },
@@ -245,7 +245,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 1); },
 
 		//! 4E; BIT 1,(hl): Tests bit 1 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 1) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 1) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 4F; BIT 1,a: Tests bit 1 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 1); },
@@ -269,7 +269,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 2); },
 
 		//! 56; BIT 2,(hl): Tests bit 2 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 2) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 2) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 57; BIT 2,a: Tests bit 2 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 2); },
@@ -293,7 +293,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 3); },
 
 		//! 5E; BIT 3,(hl): Tests bit 3 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 3) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 3) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 5F; BIT 3,a: Tests bit 3 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 3); },
@@ -317,7 +317,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 4); },
 
 		//! 66; BIT 4,(hl): Tests bit 4 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 4) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 4) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 67; BIT 4,a: Tests bit 4 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 4); },
@@ -341,7 +341,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 5); },
 
 		//! 6E; BIT 5,(hl): Tests bit 5 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 5) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 5) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 6F; BIT 5,a: Tests bit 5 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 5); },
@@ -365,7 +365,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 6); },
 
 		//! 76; BIT 6,(hl): Tests bit 6 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 6) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 6) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 77; BIT 6,a: Tests bit 6 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 6); },
@@ -389,7 +389,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.l, 7); },
 
 		//! 7E; BIT 7,(hl): Tests bit 7 of (hl).
-		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 7) + INDIRECTION_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg){ return BIT(reg, cpu.read(reg.hl), 7) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 7F; BIT 7,a: Tests bit 7 of a.
 		[](CPU &, CPU::Registers &reg){ return BIT(reg, reg.a, 7); },

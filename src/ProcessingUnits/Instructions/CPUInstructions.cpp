@@ -112,27 +112,27 @@ namespace GBEmulator::Instructions
 	unsigned char LD8toPTR(CPU &cpu, unsigned short address, unsigned char value)
 	{
 		cpu.write(address, value);
-		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD8fromPTR(CPU &cpu, unsigned char &value, unsigned short address)
 	{
 		value = cpu.read(address);
-		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD16toPTR(CPU &cpu, unsigned short address, unsigned short value)
 	{
 		cpu.write(address, value & 0x00FFU);
 		cpu.write(address + 1, value >> 8U);
-		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD16fromPTR(CPU &cpu, unsigned short &value, unsigned short address)
 	{
 		value = cpu.read(address);
 		value += cpu.read(address + 1) << 8U;
-		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
@@ -254,7 +254,7 @@ namespace GBEmulator::Instructions
 	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short address)
 	{
 		auto tmp = cpu.read(address);
-		auto rt_value = INC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+		auto rt_value = INC8(reg, tmp) + INDIRECTION_CYCLE_DURATION * 2;
 
 		cpu.write(address, tmp);
 		return rt_value;
@@ -263,7 +263,7 @@ namespace GBEmulator::Instructions
 	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short address)
 	{
 		auto tmp = cpu.read(address);
-		auto rt_value = DEC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+		auto rt_value = DEC8(reg, tmp) + INDIRECTION_CYCLE_DURATION * 2;
 
 		cpu.write(address, tmp);
 		return rt_value;
@@ -436,6 +436,6 @@ namespace GBEmulator::Instructions
 		unsigned char time = fct(reg, value);
 
 		cpu.write(address, value);
-		return time + INDIRECTION_CYLCE_DURATION;
+		return time + INDIRECTION_CYCLE_DURATION;
 	}
 }

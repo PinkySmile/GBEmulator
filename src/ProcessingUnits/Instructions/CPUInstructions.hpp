@@ -17,7 +17,7 @@
 #define NOP_CYCLE_DURATION 4
 #define JUMP_CYCLE_DURATION 4
 #define PUSH_CYCLE_DURATION 12
-#define INDIRECTION_CYLCE_DURATION 4
+#define INDIRECTION_CYCLE_DURATION 4
 #define FETCH_ARGUMENT8_CYLCE_DURATION 4
 #define FETCH_ARGUMENT16_CYLCE_DURATION 8
 #define BASIC_BIT_OPERATION_CYCLE_DURATION 4
@@ -107,7 +107,7 @@ namespace GBEmulator::Instructions
 		unsigned char time = fct(value, arguments...);
 
 		cpu.write(address, value);
-		return time + INDIRECTION_CYLCE_DURATION;
+		return time + INDIRECTION_CYCLE_DURATION;
 	}
 
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];
