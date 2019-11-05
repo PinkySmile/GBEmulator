@@ -52,18 +52,18 @@ void GBEmulator::Graphics::LCDSFML::clear()
 sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool signedMode, TextureType type)
 {
 	switch (type) {
-		case Background:
-			if (signedMode)
-				return this->_BGTexture[static_cast<char>(id) + 0x100];
-			return this->_BGTexture[id];
-		case Palette0:
-			if (signedMode)
-				return this->_palette0Texture[static_cast<char>(id) + 0x100];
-			return this->_palette0Texture[id];
-		case Palette1:
-			if (signedMode)
-				return this->_palette1Texture[static_cast<char>(id) + 0x100];
-			return this->_palette1Texture[id];
+	case Background:
+		if (signedMode)
+			return this->_BGTexture[static_cast<char>(id) + 0x100];
+		return this->_BGTexture[id];
+	case Palette0:
+		if (signedMode)
+			return this->_palette0Texture[static_cast<char>(id) + 0x100];
+		return this->_palette0Texture[id];
+	case Palette1:
+		if (signedMode)
+			return this->_palette1Texture[static_cast<char>(id) + 0x100];
+		return this->_palette1Texture[id];
 	}
 	return this->_BGTexture[id];
 }

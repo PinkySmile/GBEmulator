@@ -40,6 +40,7 @@ namespace GBEmulator
 
 	void GPU::setBGPalette(unsigned char value)
 	{
+		this->_paletteChanged = this->_paletteChanged || this->_bgPalette != value;
 		this->_bgPalette = value;
 	}
 
@@ -117,9 +118,12 @@ namespace GBEmulator
 			this->_setCompareLycLy();
 
 			if (this->_control & 0x80U) {
-				this->_screen.setBGPalette(this->_bgPalette);
-				this->_screen.setObjectPalette0(this->_objectPalette0);
-				this->_screen.setObjectPalette1(this->_objectPalette1);
+				if (this->_paletteChanged) {
+					this->_screen.setBGPalette(this->_bgPalette);
+					this->_screen.setObjectPalette0(this->_objectPalette0);
+					this->_screen.setObjectPalette1(this->_objectPalette1);
+					this->_paletteChanged = false;
+				}
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
@@ -186,8 +190,12 @@ namespace GBEmulator
 
 	void GPU::_updateTiles()
 	{
-		for (auto &id : this->_tilesToUpdate)
-			this->_screen.updateTexture(this->_getTile(id), id);
+		if (this->_paletteChanged) {
+			for (int i = 0; i < 384; i++)
+				this->_screen.updateTexture(this->_getTile(i), i);
+		} else
+			for (auto &id : this->_tilesToUpdate)
+				this->_screen.updateTexture(this->_getTile(id), id);
 		this->_tilesToUpdate.clear();
 	}
 
@@ -268,11 +276,13 @@ namespace GBEmulator
 
 	void GPU::setObjectPalette0(unsigned char value)
 	{
+		this->_paletteChanged = this->_paletteChanged || this->_objectPalette0 != value;
 		this->_objectPalette0 = value;
 	}
 
 	void GPU::setObjectPalette1(unsigned char value)
 	{
+		this->_paletteChanged = this->_paletteChanged || this->_objectPalette0 != value;
 		this->_objectPalette1 = value;
 	}
 }
