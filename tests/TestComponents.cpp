@@ -16,7 +16,7 @@ bool Tests::Joypad::isButtonPressed(GBEmulator::Input::Keys) const noexcept
 }
 
 Tests::GBTest::GBTest() :
-	cpu{this->screen, this->joypad, this->cableInterface}
+	cpu{this->sound1, this->sound2, this->sound3, this->sound4, this->screen, this->joypad, this->cableInterface}
 {
 }
 
@@ -47,3 +47,15 @@ void Tests::Screen::drawWindow(const unsigned char *, float, float, bool)
 
 void Tests::Screen::setPalette(unsigned char)
 {}
+
+void Tests::Sound::setPitch(float frequency)
+{
+}
+
+void Tests::Sound::setWave(std::vector<unsigned char> samples, unsigned int sampleRate)
+{
+}
+
+void Tests::Sound::setVolume(float volume)
+{
+}

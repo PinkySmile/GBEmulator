@@ -38,10 +38,21 @@ namespace Tests {
 		void setPalette(unsigned char colors);
 	};
 
+	class Sound : public GBEmulator::ISound {
+	public:
+		void setPitch(float frequency) override;
+		void setWave(std::vector<unsigned char> samples, unsigned int sampleRate) override;
+		void setVolume(float volume) override;
+	};
+
 	class GBTest {
 	public:
 		Joypad joypad;
 		Screen screen;
+		Sound sound1;
+		Sound sound2;
+		Sound sound3;
+		Sound sound4;
 		GBEmulator::Network::BGBProtocolCableInterface cableInterface;
 		GBEmulator::CPU cpu;
 
