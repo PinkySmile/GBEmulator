@@ -17,6 +17,10 @@ int main(int argc, char **argv)
 
 	srand(time(nullptr));
 
+	GBEmulator::SoundPlayer channel1;
+	GBEmulator::SoundPlayer channel2;
+	GBEmulator::SoundPlayer channel3;
+	GBEmulator::SoundPlayer channel4;
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
 		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},
@@ -30,7 +34,7 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
 	GBEmulator::Network::BGBProtocolCableInterface network;
-	GBEmulator::CPU cpu(window, joypad, network);
+	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{cpu, window, joypad};
 
 	cpu.getCartridgeEmulator().loadROM(argv[1]);

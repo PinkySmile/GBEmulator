@@ -67,6 +67,7 @@
 
 //The APU
 #define APU_RANGE 0xFF10 ... 0xFF2F
+#define APU_STARTING_ADDRESS 0xFF10
 
 //The wave pattern RAM
 #define WPRAM_RANGE 0xFF30 ... 0xFF3F
@@ -171,8 +172,15 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
-
+		CPU(
+				SoundPlayer &channelOne,
+				SoundPlayer &channelTwo,
+				SoundPlayer &channelThree,
+				SoundPlayer &channelFour,
+				Graphics::ILCD &window,
+				Input::JoypadEmulator &joypad,
+				Network::CableInterface &cable
+		);
 		CPU() = delete;
 		CPU(const CPU &) = delete;
 		~CPU() = default;
@@ -200,10 +208,6 @@ namespace GBEmulator
 		static const std::vector<unsigned char> _startupCode;
 
 		APU _apu;
-		SoundPlayer _channelOne;
-		SoundPlayer _channelTwo;
-		SoundPlayer _channelThree;
-		SoundPlayer _channelFour;
 		GPU _gpu;
 		bool _buttonEnabled;
 		bool _directionEnabled;

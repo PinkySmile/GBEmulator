@@ -28,9 +28,7 @@ namespace GBEmulator {
 	private:
 		sf::Sound _sound;
 		sf::SoundBuffer _soundBuffer;
-		float _frequency = 0;
 		float _volume = 0;
-
 	};
 }
 

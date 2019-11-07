@@ -42,7 +42,7 @@ namespace GBEmulator
 	};
 	class APU {
 	public:
-	    APU() = delete;
+		APU() = delete;
 		APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour);
 		~APU();
 		APU(const APU &) = delete;
@@ -50,12 +50,12 @@ namespace GBEmulator
 		void write(unsigned short, unsigned char);
 		unsigned char read(unsigned short) const;
 		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
-        //cycle(); // effectue un cycle
+		//cycle(); // effectue un cycle
 
-        //RegisterFunctions
-        unsigned char channelOneReading(unsigned short) const;
-        unsigned char channelTwoReading(unsigned short) const;
-        unsigned char channelWaveReading(unsigned short) const;
+		//RegisterFunctions
+		unsigned char channelOneReading(unsigned short) const;
+		unsigned char channelTwoReading(unsigned short) const;
+		unsigned char channelWaveReading(unsigned short) const;
 		unsigned char channelNoiseReading(unsigned short) const;
 		unsigned char controllerReading(unsigned short) const;
 
@@ -67,76 +67,76 @@ namespace GBEmulator
 
 		class Sound {
 		public:
-		    Sound() = delete;
-		    Sound(ISound &sound);
-            ~Sound() = default;
-            Sound(const Sound &) = delete;
-            Sound &operator=(const Sound &) = delete;
+			Sound() = delete;
+			Sound(ISound &sound);
+			~Sound() = default;
+			Sound(const Sound &) = delete;
+			Sound &operator=(const Sound &) = delete;
 
-            //Common functions
-		    void setSweep(unsigned char);
-            unsigned char getSweep() const;
-		    void setWave(unsigned char);
-		    unsigned char getWave() const;
-		    void setVolume(unsigned char);
-		    unsigned char getVolume() const;
-		    void setLowFrequency(unsigned char);
-		    void setRestartOptions(unsigned char);
-		    unsigned char getRestartOptions() const;
+			//Common functions
+			void setSweep(unsigned char);
+			unsigned char getSweep() const;
+			void setWave(unsigned char);
+			unsigned char getWave() const;
+			void setVolume(unsigned char);
+			unsigned char getVolume() const;
+			void setLowFrequency(unsigned char);
+			void setRestartOptions(unsigned char);
+			unsigned char getRestartOptions() const;
 
-		    //Wave Functions
-            void setSoundONOFF(unsigned char);
-            unsigned char getSoundONOFF() const;
-            void setSoundLength(unsigned char, bool);
-            unsigned char getSoundLength(bool) const;
-            void setOutputLevel(unsigned char);
-            unsigned char getOutputLevel() const;
+			//Wave Functions
+			void setSoundONOFF(unsigned char);
+			unsigned char getSoundONOFF() const;
+			void setSoundLength(unsigned char, bool);
+			unsigned char getSoundLength(bool) const;
+			void setOutputLevel(unsigned char);
+			unsigned char getOutputLevel() const;
 
-            //Noise Functions
-            void setPolynomialCounters(unsigned char);
-            unsigned char getPolynomialCounters() const;
+			//Noise Functions
+			void setPolynomialCounters(unsigned char);
+			unsigned char getPolynomialCounters() const;
 
 		private:
-            ISound &_soundChannel;    //tone and sweep
+			ISound &_soundChannel;    //tone and sweep
 
-            //sweep
-		    unsigned char _sweepTime;
-		    bool _sweepDirection;
-		    unsigned char _sweepShiftNumber;
+			//sweep
+			unsigned char _sweepTime;
+			bool _sweepDirection;
+			unsigned char _sweepShiftNumber;
 
-		    //wave pattern and sound duration
-            unsigned char _wavePattern; //chan1-2
-            unsigned char _soundLength;
+			//wave pattern and sound duration
+			unsigned char _wavePattern; //chan1-2
+			unsigned char _soundLength;
 
-            //volume
-            unsigned char _initialVolume;
-            bool _volumeDirection;
-            unsigned char _volumeShiftNumber;
+			//volume
+			unsigned char _initialVolume = 0;
+			bool _volumeDirection;
+			unsigned char _volumeShiftNumber;
 
-            //frequency
-            unsigned short _frequency;
+			//frequency
+			unsigned short _frequency;
 
-            //options
-            bool _restart;
-            bool _restartType;
-            bool _soundOn = true; //WAVE
+			//options
+			bool _restart;
+			bool _restartType;
+			bool _soundOn = true; //WAVE
 
-            //WaveOutputLevel //WAVE
-            unsigned char _waveOutputLevel;
+			//WaveOutputLevel //WAVE
+			unsigned char _waveOutputLevel;
 
-            //PolynomialCounter //NOISE
-            unsigned char _shiftClockFrequency;
-            bool _polynomialCounterStep;
-            unsigned char _dividingRatio;
+			//PolynomialCounter //NOISE
+			unsigned char _shiftClockFrequency;
+			bool _polynomialCounterStep;
+			unsigned char _dividingRatio;
 
 		};
 
 		class Controller {
 		public:
-            Controller() = default;
-            ~Controller() = default;
-            Controller(const Controller &) = delete;
-            Controller &operator=(const Controller &) = delete;
+			Controller() = default;
+			~Controller() = default;
+			Controller(const Controller &) = delete;
+			Controller &operator=(const Controller &) = delete;
 
 			void setVin(unsigned char value);
 			unsigned char getVin() const;
@@ -146,37 +146,37 @@ namespace GBEmulator
 			unsigned char getSoundOnOff() const;
 
 		private:
-		    //ChannelControl / ON/OFF / Volume
-		    bool _VinToSo2 = false;
-		    unsigned char _SO2OutputLevel = 0;
-		    bool _VinToSo1 = false;
-            unsigned char _SO1OutputLevel = 0;
+			//ChannelControl / ON/OFF / Volume
+			bool _VinToSo2 = false;
+			unsigned char _SO2OutputLevel = 0;
+			bool _VinToSo1 = false;
+			unsigned char _SO1OutputLevel = 0;
 
-            //Sound Output Terminal Selection
-            unsigned char _soundOutputTerminalSelection = 0;
+			//Sound Output Terminal Selection
+			unsigned char _soundOutputTerminalSelection = 0;
 
-            //Sound ON/OFF Flags and Power Button
-            bool _allSoundsOn = true;
-            bool _soundOnOff1 = false;
-            bool _soundOnOff2 = false;
-            bool _soundOnOffWave = false;
-            bool _soundOnOffSound = false;
+			//Sound ON/OFF Flags and Power Button
+			bool _allSoundsOn = true;
+			bool _soundOnOff1 = true;
+			bool _soundOnOff2 = true;
+			bool _soundOnOffWave = true;
+			bool _soundOnOffSound = true;
 		};
 
 	private:
-        //soundChannel1
-        Sound _managerChannel1;
+		//soundChannel1
+		Sound _managerChannel1;
 
-        //soundChannel2
-        Sound _managerChannel2;    //only tone
+		//soundChannel2
+		Sound _managerChannel2;    //only tone
 
-        //soundChannelWave
-        Sound _managerChannelWave; //wave output
+		//soundChannelWave
+		Sound _managerChannelWave; //wave output
 
-        //soundChannelNoise
-        Sound _managerChannelNoise;//noise channel
+		//soundChannelNoise
+		Sound _managerChannelNoise;//noise channel
 
-        Controller _controller;
+		Controller _controller;
 		Memory::Memory _wpRAM; //wave pattern RAM
 		bool _soundChanged;
 		//Memory::Memory _memory;
