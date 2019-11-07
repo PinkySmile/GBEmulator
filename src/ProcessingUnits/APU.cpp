@@ -5,7 +5,6 @@
 ** Apu.cpp
 */
 
-#include <iostream>
 #include <cmath>
 #include "APU.hpp"
 
@@ -46,7 +45,6 @@ namespace GBEmulator
 
 	void APU::write(unsigned short address, unsigned char value)
 	{
-		std::cout << "Writing " << static_cast<int>(value) << " to " << address << std::endl;
 		this->_soundChanged = true;
 		switch (address) {
 			case FF10 ... FF14 :
