@@ -115,8 +115,6 @@ namespace GBEmulator
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
 			this->_screen.clear();
 
-			this->_setCompareLycLy();
-
 			if (this->_control & 0x80U) {
 				if (this->_paletteChanged) {
 					this->_screen.setBGPalette(this->_bgPalette);
@@ -211,24 +209,42 @@ namespace GBEmulator
 		return this->_tiles + id * 64;
 	}
 
-	unsigned char GPU::getStatByte() const {
-		return this->_stat;
+	unsigned char GPU::getStatByte() const
+	{
+		return (this->_stat & 0b01111000U) | 0x80U | (this->getCurrentLine() == this->_lyc) << 2U | this->getMode();
 	}
 
 	void GPU::setStatByte(unsigned char value)
 	{
+		//TODO: Implement the quirk that sometimes triggers interrupts when writing
 		this->_stat = value;
 	}
 
-	bool GPU::_isVBlankInterrupt() const {
-		return this->getCurrentLine() >= 144;
+	bool GPU::_isVBlankInterrupt() const
+	{
+		return this->getMode() == 1 && (this->_control & 0x80U);
 	}
 
-	bool GPU::_isStatInterrupt() const {
-		return this->_stat & 0b01111000U;
+	unsigned char GPU::getMode() const
+	{
+		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
+			return 1;
+		if (this->_cycles % 456 < 83)
+			return 2;
+		if (this->_cycles % 456 < 258)
+			return 3;
+		return 0;
 	}
 
-	unsigned char GPU::getLycByte() const {
+	bool GPU::_isStatInterrupt() const
+	{
+		return ((this->_stat & 0b01000000U) && this->getMode() <= 1) ||
+		       ((this->_stat & 0b00100000U) && this->_isVBlankInterrupt()) ||
+		       ((this->_stat & 0b00010000U) && !this->getMode());
+	}
+
+	unsigned char GPU::getLycByte() const
+	{
 
 		return this->_lyc;
 	}
@@ -236,12 +252,6 @@ namespace GBEmulator
 	void GPU::setLycByte(unsigned char value)
 	{
 		this->_lyc = value;
-	}
-
-	void GPU::_setCompareLycLy()
-	{
-		if (this->getCurrentLine() == this->_lyc)
-			this->_stat |= 0b01000000U;
 	}
 
 	void GPU::setWindowX(unsigned char value)

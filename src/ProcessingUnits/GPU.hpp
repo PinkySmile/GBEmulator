@@ -48,6 +48,7 @@ namespace GBEmulator
 		GPU(const GPU &) = delete;
 		GPU &operator=(const GPU &) = delete;
 
+		unsigned char getMode() const;
 		unsigned char getCurrentLine() const;
 		unsigned char readVRAM(unsigned short address) const;
 		unsigned char readOAM(unsigned short address) const;
@@ -82,7 +83,6 @@ namespace GBEmulator
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);
-		void _setCompareLycLy();
 
 		//Interrupts
 		bool _isVBlankInterrupt() const;
