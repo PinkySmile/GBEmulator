@@ -22,8 +22,8 @@
 namespace GBEmulator
 {
 	class GPU {
-
 	private:
+		bool _paletteChanged = false;
 		Memory::Memory _oam;
 		Graphics::ILCD &_screen;
 		unsigned char _scrollX = 0;
@@ -81,10 +81,9 @@ namespace GBEmulator
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);
-		void _setCompareLycLy();
 
 		//  Interruptions
-		bool _isVblankInterrupt() const;
+		bool _isVBlankInterrupt() const;
 		bool _isStatInterrupt() const;
 	};
 }
