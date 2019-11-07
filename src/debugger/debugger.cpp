@@ -167,7 +167,7 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
 				return this->_cpu.dumpMemory(), false;
-			for (size_t i = std::stoul(args.at(1), nullptr, 16), end = std::stoul(args.at(2), nullptr, 16); i < end; i++)
+			for (size_t i = std::stoul(args.at(1), nullptr, 16), end = std::stoul(args.at(2), nullptr, 16); i <= end; i++)
 				std::cout << "$" << Instructions::intToHex(i, 4) << ": " << Instructions::intToHex(this->_cpu.read(i)) << std::endl;
 		} else if (args[0] == "jump") {
 			this->_cpu._registers.pc = std::stoul(args.at(1), nullptr, 16);
