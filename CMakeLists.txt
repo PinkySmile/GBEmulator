@@ -90,9 +90,9 @@ add_executable(
 		tests/communism.hpp
 		tests/TestCPUInstruction/LD.cpp
 		tests/TestCPUInstruction/INC.cpp
-		tests/TestGpu/TestreadVRAM.cpp
+		tests/TestGpu/Test_readVRAM.cpp
 		src/Sound/ISound.hpp
-)
+        tests/TestGpu/Test_writeVRAM.cpp)
 
 target_link_libraries(
 		tests
