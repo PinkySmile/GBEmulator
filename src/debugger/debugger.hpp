@@ -35,6 +35,11 @@ namespace GBEmulator::Debugger
 		std::string _lastCmd;
 		std::vector<unsigned short> _breakPoints;
 
+		void _dispVar(const std::string &name);
+		void _setVar(const std::string &name, unsigned short value);
+		void _checkCommands(bool &dbg, std::istream &stream = std::cin);
+		void _displayCurrentLine(std::ostream &stream = std::cout);
+		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
 		static std::vector<std::string> _splitCommand(const std::string& line);
 
 	public:

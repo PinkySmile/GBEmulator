@@ -27,7 +27,16 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+	CPU::CPU(
+		SoundPlayer &channelOne,
+		SoundPlayer &channelTwo,
+		SoundPlayer &channelThree,
+		SoundPlayer &channelFour,
+		Graphics::ILCD &window,
+		Input::JoypadEmulator &joypad,
+		Network::CableInterface &cable
+	) :
+		_apu(channelOne, channelTwo, channelThree, channelFour),
 		_gpu(window),
 		_buttonEnabled(false),
 		_directionEnabled(false),
@@ -95,7 +104,7 @@ namespace GBEmulator
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
 		case APU_RANGE:
-			return 0x00;
+			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
 		case WPRAM_RANGE:
 			return 0x00;
@@ -167,7 +176,7 @@ namespace GBEmulator
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
 
 		case APU_RANGE:
-			return;
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
 
 		case WPRAM_RANGE:
 			return;
