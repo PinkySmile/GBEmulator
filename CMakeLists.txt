@@ -92,7 +92,7 @@ add_executable(
 		tests/TestCPUInstruction/INC.cpp
 		tests/TestGpu/Test_readVRAM.cpp
 		src/Sound/ISound.hpp
-        tests/TestGpu/Test_writeVRAM.cpp)
+        tests/TestGpu/Test_writeVRAM.cpp tests/TestGpu/Test_isStatInterrupt.cpp)
 
 target_link_libraries(
 		tests
