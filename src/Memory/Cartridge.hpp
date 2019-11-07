@@ -91,7 +91,7 @@ namespace GBEmulator::Memory
 		bool _ramEnabled = false;
 		bool _ramExtended = false;
 		Memory _ram{0, RAM_BANKING_SIZE};
-		CartridgeType _type;
+		CartridgeType _type = ROM_ONLY;
 
 		void _checkROM();
 		static size_t _getBestSizeForFile(const std::string &path);

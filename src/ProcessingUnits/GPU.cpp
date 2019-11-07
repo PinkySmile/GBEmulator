@@ -115,6 +115,8 @@ namespace GBEmulator
 			this->_cycles -= GPU_FULL_CYCLE_DURATION;
 			this->_screen.clear();
 
+			this->_setCompareLycLy();
+
 			if (this->_control & 0x80U) {
 				if (this->_paletteChanged) {
 					this->_screen.setBGPalette(this->_bgPalette);
@@ -209,9 +211,8 @@ namespace GBEmulator
 		return this->_tiles + id * 64;
 	}
 
-	unsigned char GPU::getStatByte() const
-	{
-		return (this->_stat & 0b01111000) | 0b10000000;
+	unsigned char GPU::getStatByte() const {
+		return this->_stat;
 	}
 
 	void GPU::setStatByte(unsigned char value)
@@ -235,6 +236,12 @@ namespace GBEmulator
 	void GPU::setLycByte(unsigned char value)
 	{
 		this->_lyc = value;
+	}
+
+	void GPU::_setCompareLycLy()
+	{
+		if (this->getCurrentLine() == this->_lyc)
+			this->_stat |= 0b01000000U;
 	}
 
 	void GPU::setWindowX(unsigned char value)
