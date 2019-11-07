@@ -78,6 +78,7 @@ namespace GBEmulator
 		unsigned char update(int cycle);
 
 	private:
+		bool _paletteChanged = false;
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);

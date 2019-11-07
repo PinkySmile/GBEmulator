@@ -52,18 +52,18 @@ void GBEmulator::Graphics::LCDSFML::clear()
 sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool signedMode, TextureType type)
 {
 	switch (type) {
-		case Background:
-			if (signedMode)
-				return this->_BGTexture[static_cast<char>(id) + 0x100];
-			return this->_BGTexture[id];
-		case Palette0:
-			if (signedMode)
-				return this->_palette0Texture[static_cast<char>(id) + 0x100];
-			return this->_palette0Texture[id];
-		case Palette1:
-			if (signedMode)
-				return this->_palette1Texture[static_cast<char>(id) + 0x100];
-			return this->_palette1Texture[id];
+	case Background:
+		if (signedMode)
+			return this->_BGTexture[static_cast<char>(id) + 0x100];
+		return this->_BGTexture[id];
+	case Palette0:
+		if (signedMode)
+			return this->_palette0Texture[static_cast<char>(id) + 0x100];
+		return this->_palette0Texture[id];
+	case Palette1:
+		if (signedMode)
+			return this->_palette1Texture[static_cast<char>(id) + 0x100];
+		return this->_palette1Texture[id];
 	}
 	return this->_BGTexture[id];
 }
@@ -107,6 +107,7 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 
 void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, float x, float y, bool signedMode)
 {
+	this->_sprite.setScale(1, 1);
 	for (unsigned i = 0; i < 1024; i++) {
 		this->_sprite.setTexture(this->_getTexture(tiles[i], signedMode, Background));
 		this->_sprite.setPosition(x + i % 32 * 8, y + i / 32 * 8);
