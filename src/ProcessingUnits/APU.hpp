@@ -47,6 +47,7 @@ namespace GBEmulator
 		~APU();
 		APU(const APU &) = delete;
 		APU &operator=(const APU &) = delete;
+
 		void write(unsigned short, unsigned char);
 		unsigned char read(unsigned short) const;
 		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
@@ -64,6 +65,13 @@ namespace GBEmulator
 		void channelWaveWriting(unsigned short, unsigned char);
 		void channelNoiseWriting(unsigned short, unsigned char);
 		void controllerWriting(unsigned short, unsigned char);
+
+		void setVin(unsigned char value);
+		unsigned char getVin() const;
+		void setSOTS(unsigned char value); // setting SoundOutputTerminalSelection;
+		unsigned char getSOTS() const; // getting it
+		void setSoundOnOff(unsigned char value);
+		unsigned char getSoundOnOff() const;
 
 		class Sound {
 		public:
@@ -96,6 +104,9 @@ namespace GBEmulator
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 
+			void update(unsigned cycle);
+			void disable(bool state);
+
 		private:
 			ISound &_soundChannel;    //tone and sweep
 
@@ -106,7 +117,8 @@ namespace GBEmulator
 
 			//wave pattern and sound duration
 			unsigned char _wavePattern; //chan1-2
-			unsigned char _soundLength;
+			unsigned char _soundLength = 0;
+			unsigned _cycles = 0;
 
 			//volume
 			unsigned char _initialVolume = 0;
@@ -114,12 +126,12 @@ namespace GBEmulator
 			unsigned char _volumeShiftNumber;
 
 			//frequency
-			unsigned short _frequency;
+			unsigned short _frequency = 0;
 
 			//options
-			bool _restart;
-			bool _restartType;
-			bool _soundOn = true; //WAVE
+			bool _restart = false;
+			bool _restartType = false;
+			bool _soundOn = false; //WAVE
 
 			//WaveOutputLevel //WAVE
 			unsigned char _waveOutputLevel;
@@ -129,38 +141,6 @@ namespace GBEmulator
 			bool _polynomialCounterStep;
 			unsigned char _dividingRatio;
 
-		};
-
-		class Controller {
-		public:
-			Controller() = default;
-			~Controller() = default;
-			Controller(const Controller &) = delete;
-			Controller &operator=(const Controller &) = delete;
-
-			void setVin(unsigned char value);
-			unsigned char getVin() const;
-			void setSOTS(unsigned char value); // setting SoundOutputTerminalSelection;
-			unsigned char getSOTS() const; // getting it
-			void setSoundOnOff(unsigned char value);
-			unsigned char getSoundOnOff() const;
-
-		private:
-			//ChannelControl / ON/OFF / Volume
-			bool _VinToSo2 = false;
-			unsigned char _SO2OutputLevel = 0;
-			bool _VinToSo1 = false;
-			unsigned char _SO1OutputLevel = 0;
-
-			//Sound Output Terminal Selection
-			unsigned char _soundOutputTerminalSelection = 0;
-
-			//Sound ON/OFF Flags and Power Button
-			bool _allSoundsOn = true;
-			bool _soundOnOff1 = true;
-			bool _soundOnOff2 = true;
-			bool _soundOnOffWave = true;
-			bool _soundOnOffSound = true;
 		};
 
 	private:
@@ -176,9 +156,23 @@ namespace GBEmulator
 		//soundChannelNoise
 		Sound _managerChannelNoise;//noise channel
 
-		Controller _controller;
 		Memory::Memory _wpRAM; //wave pattern RAM
-		bool _soundChanged;
+
+		//ChannelControl / ON/OFF / Volume
+		bool _VinToSo2 = false;
+		unsigned char _SO2OutputLevel = 0;
+		bool _VinToSo1 = false;
+		unsigned char _SO1OutputLevel = 0;
+
+		//Sound Output Terminal Selection
+		unsigned char _soundOutputTerminalSelection = 0;
+
+		//Sound ON/OFF Flags and Power Button
+		bool _allSoundsOn = false;
+		bool _soundOnOff1 = false;
+		bool _soundOnOff2 = false;
+		bool _soundOnOffWave = false;
+		bool _soundOnOffSound = false;
 		//Memory::Memory _memory;
 	};
 }
