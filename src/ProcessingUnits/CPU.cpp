@@ -27,7 +27,16 @@ namespace GBEmulator
 		return this->_buffer;
 	}
 
-	CPU::CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable) :
+	CPU::CPU(
+		ISound &channelOne,
+		ISound &channelTwo,
+		ISound &channelThree,
+		ISound &channelFour,
+		Graphics::ILCD &window,
+		Input::JoypadEmulator &joypad,
+		Network::CableInterface &cable
+	) :
+		_apu(channelOne, channelTwo, channelThree, channelFour),
 		_gpu(window),
 		_buttonEnabled(false),
 		_directionEnabled(false),
@@ -95,7 +104,7 @@ namespace GBEmulator
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
 		case APU_RANGE:
-			return 0x00;
+			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
 		case WPRAM_RANGE:
 			return 0x00;
@@ -167,7 +176,7 @@ namespace GBEmulator
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
 
 		case APU_RANGE:
-			return;
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
 
 		case WPRAM_RANGE:
 			return;
@@ -457,6 +466,14 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+
+		std::cout << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCD_CONTROL)) << std::endl;
+		std::cout << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_STAT)) << std::endl;
+		std::cout << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_Y_COORD)) << std::endl;
+		std::cout << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(INTERRUPT_ENABLE_ADDRESS)) << std::endl;
+		std::cout << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_REQUESTS)) << std::endl;
+		std::cout << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_rom.getRomBank()) << std::endl;
+
 		if (this->_halted)
 			std::cout << "Waiting for interrupt..." << std::endl;
 		std::cout << "Interrupts " << (this->_interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;

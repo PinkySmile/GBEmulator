@@ -112,27 +112,27 @@ namespace GBEmulator::Instructions
 	unsigned char LD8toPTR(CPU &cpu, unsigned short address, unsigned char value)
 	{
 		cpu.write(address, value);
-		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD8fromPTR(CPU &cpu, unsigned char &value, unsigned short address)
 	{
 		value = cpu.read(address);
-		return LD_CYCLE_DURATION + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD16toPTR(CPU &cpu, unsigned short address, unsigned short value)
 	{
 		cpu.write(address, value & 0x00FFU);
 		cpu.write(address + 1, value >> 8U);
-		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char LD16fromPTR(CPU &cpu, unsigned short &value, unsigned short address)
 	{
 		value = cpu.read(address);
 		value += cpu.read(address + 1) << 8U;
-		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYLCE_DURATION;
+		return LD_CYCLE_DURATION * 2 + INDIRECTION_CYCLE_DURATION;
 	}
 
 	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
@@ -153,29 +153,29 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
 
-		value1 += value2;
 		setFlags(
 			reg,
-			value1 == 0 ? SET : UNSET,
+			(value1 + value2) == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 + value2 > 0xFF ? SET : UNSET
 		);
+		value1 += value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
 	{
-		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x8U) == 0x8U;
+		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x10U) == 0x10U;
 
-		value1 -= value2;
 		setFlags(
 			reg,
-			value1 == 0 ? SET : UNSET,
+			value1 == value2 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 > value2 ? SET : UNSET
+			value1 < value2 ? SET : UNSET
 		);
+		value1 -= value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
@@ -183,7 +183,21 @@ namespace GBEmulator::Instructions
 	{
 		bool halfCarry = (((value1 & 0xFFU) + (value2 & 0xFFU)) & 0x100U) == 0x100U;
 
+		setFlags(
+			reg,
+			UNCHANGED,
+			UNSET,
+			halfCarry ? SET : UNSET,
+			value1 + value2 > 0xFFFF ? SET : UNSET
+		);
 		value1 += value2;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
+	}
+
+	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
+	{
+		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x100U) == 0x100U;
+
 		setFlags(
 			reg,
 			UNCHANGED,
@@ -191,21 +205,7 @@ namespace GBEmulator::Instructions
 			halfCarry ? SET : UNSET,
 			value1 < value2 ? SET : UNSET
 		);
-		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
-	}
-
-	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
-	{
-		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x80U) == 0x80U;
-
 		value1 -= value2;
-		setFlags(
-			reg,
-			UNCHANGED,
-			UNSET,
-			halfCarry ? SET : UNSET,
-			value1 > value2 ? SET : UNSET
-		);
 		return ARITHMETIC_OPERATION_CYCLE_DURATION * 2;
 	}
 
@@ -254,7 +254,7 @@ namespace GBEmulator::Instructions
 	unsigned char INCPTR(CPU &cpu, CPU::Registers &reg, unsigned short address)
 	{
 		auto tmp = cpu.read(address);
-		auto rt_value = INC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+		auto rt_value = INC8(reg, tmp) + INDIRECTION_CYCLE_DURATION * 2;
 
 		cpu.write(address, tmp);
 		return rt_value;
@@ -263,7 +263,7 @@ namespace GBEmulator::Instructions
 	unsigned char DECPTR(CPU &cpu, CPU::Registers &reg, unsigned short address)
 	{
 		auto tmp = cpu.read(address);
-		auto rt_value = DEC8(reg, tmp) + INDIRECTION_CYLCE_DURATION;
+		auto rt_value = DEC8(reg, tmp) + INDIRECTION_CYCLE_DURATION * 2;
 
 		cpu.write(address, tmp);
 		return rt_value;
@@ -436,6 +436,6 @@ namespace GBEmulator::Instructions
 		unsigned char time = fct(reg, value);
 
 		cpu.write(address, value);
-		return time + INDIRECTION_CYLCE_DURATION;
+		return time + INDIRECTION_CYCLE_DURATION;
 	}
 }

@@ -12,6 +12,7 @@
 #include <string>
 #include <functional>
 #include "APU.hpp"
+#include "../Sound/SoundPlayer.hpp"
 #include "GPU.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
@@ -66,6 +67,7 @@
 
 //The APU
 #define APU_RANGE 0xFF10 ... 0xFF2F
+#define APU_STARTING_ADDRESS 0xFF10
 
 //The wave pattern RAM
 #define WPRAM_RANGE 0xFF30 ... 0xFF3F
@@ -170,8 +172,15 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
-		CPU(Graphics::ILCD &window, Input::JoypadEmulator &joypad, Network::CableInterface &cable);
-
+		CPU(
+				ISound &channelOne,
+				ISound &channelTwo,
+				ISound &channelThree,
+				ISound &channelFour,
+				Graphics::ILCD &window,
+				Input::JoypadEmulator &joypad,
+				Network::CableInterface &cable
+		);
 		CPU() = delete;
 		CPU(const CPU &) = delete;
 		~CPU() = default;

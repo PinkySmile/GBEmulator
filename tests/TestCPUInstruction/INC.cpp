@@ -854,7 +854,7 @@ Test(INC_unrefHL, value_6) {
 	gb.cpu.write(0xC159, 0xD7);
 	unsigned char time = instructions[0x34](gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
-	unsigned char result = gb.cpu._registers.hl;
+	unsigned char result = gb.cpu.read(gb.cpu._registers.hl);
 	unsigned char ex_result = 0xD8;
 	cr_assert_eq(result, ex_result, "Value at addr 0xC159 (pointed by hl) must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fz, 0, "fz must be 0 but it was %d", gb.cpu._registers.fz);
