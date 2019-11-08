@@ -86,13 +86,14 @@ add_executable(
 		tests/TestComponents.hpp
         tests/TestCPUInstruction/TestCpuInstruction.cpp
 		src/Memory/Cartridge.cpp
+		tests/TestCPUInstruction/DEC.cpp
 		src/Memory/Cartridge.hpp
 		tests/communism.hpp
 		tests/TestCPUInstruction/LD.cpp
 		tests/TestCPUInstruction/INC.cpp
-		tests/TestGpu/TestreadVRAM.cpp
+		tests/TestGpu/Test_readVRAM.cpp
 		src/Sound/ISound.hpp
-)
+        tests/TestGpu/Test_writeVRAM.cpp tests/TestGpu/Test_isStatInterrupt.cpp tests/TestGpu/Test_isVBlankInterrupt.cpp tests/TestCPUInstruction/ADD16.cpp)
 
 target_link_libraries(
 		tests

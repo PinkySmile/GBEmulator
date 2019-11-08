@@ -157,11 +157,12 @@ namespace GBEmulator
 			}
 		} else
 			this->_cycles = 0;
-		if (this->_isVBlankInterrupt() && this->_isStatInterrupt())
-			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
-		else if (this->_isVBlankInterrupt())
+
+		if (this->_isVBlankInterrupt()) {
+			if (this->_isStatInterrupt())
+				return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
 			return CPU::VBLANK_INTERRUPT;
-		else if (this->_isStatInterrupt())
+		} else if (this->_isStatInterrupt())
 			return CPU::LCD_STAT_INTERRUPT;
 		return 0;
 	}
@@ -250,11 +251,11 @@ namespace GBEmulator
 	{
 		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
 			return 1;
-		if (this->_cycles % 456 < 198)
-			return 0;
-		if (this->_cycles % 456 < 281)
+		if (this->_cycles % 456 < 83)
 			return 2;
-		return 3;
+		if (this->_cycles % 456 < 258)
+			return 3;
+		return 0;
 	}
 
 	bool GPU::_isStatInterrupt()
