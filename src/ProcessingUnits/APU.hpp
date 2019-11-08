@@ -122,8 +122,8 @@ namespace GBEmulator
 
 			//volume
 			unsigned char _initialVolume = 0;
-			bool _volumeDirection;
-			unsigned char _volumeShiftNumber;
+			bool _volumeDirection = 0;
+			unsigned char _volumeShiftNumber = 0;
 
 			//frequency
 			unsigned short _frequency = 0;

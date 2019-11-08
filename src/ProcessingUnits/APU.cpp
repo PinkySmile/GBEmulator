@@ -39,7 +39,7 @@ namespace GBEmulator
 	void APU::Sound::disable(bool state)
 	{
 		this->_soundOn = !state && this->_restart;
-		this->_soundChannel.setVolume(this->_soundOn * this->_initialVolume * 100.f / 16);
+		this->_soundChannel.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
 		this->_cycles = 0;
 	}
 
@@ -47,7 +47,7 @@ namespace GBEmulator
 	{
 		if (!this->_soundOn && this->_restart) {
 			this->_soundOn = true;
-			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 16);
+			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 		}
 		if (!this->_soundOn)
 			return;
@@ -58,14 +58,18 @@ namespace GBEmulator
 			this->_cycles = 0;
 			this->disable(true);
 		}
-
+		if (this->_volumeShiftNumber == 0) {
+			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
+			return;
+		}
 		int volume = (
 			this->_cycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
 			(this->_volumeDirection * 2 - 1) +
 			this->_initialVolume
 		);
-
-		this->_soundChannel.setVolume((volume > 0 ? (volume > 16 ? 16 : volume) : 0) * 100.f / 16);
+		//if ((volume > 0 ? (volume > 16 ? 16 : volume) : 0) * 100.f / 16 > 0)
+			//printf("volume : %f\nthis->_cycles : %i\n", (volume > 0 ? (volume > 16 ? 16 : volume) : 0) * 100.f / 16, this->_cycles);
+		this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
 	}
 
 	void APU::update(unsigned cycle)
@@ -76,7 +80,7 @@ namespace GBEmulator
 
 	void APU::write(unsigned short address, unsigned char value)
 	{
-		printf("Writing %02x at %04x\n", value, address);
+		printf("Writing %02x at %04x\n", value, address + 0xFF10);
 		switch (address) {
 			case FF10 ... FF14 :
 				channelOneWriting(address, value);
@@ -361,7 +365,7 @@ namespace GBEmulator
 		this->_volumeShiftNumber = value & 0b00000111;
 		this->_cycles = 0;
 		if (this->_soundOn)
-			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 16);
+			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 	}
 
 	unsigned char APU::Sound::getVolume() const
@@ -414,7 +418,7 @@ namespace GBEmulator
 		if (!this->_soundOn)
 			this->_soundChannel.setVolume(0);
 		else
-			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 16);
+			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 	}
 
 	unsigned char APU::Sound::getSoundONOFF() const
