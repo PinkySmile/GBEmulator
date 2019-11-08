@@ -158,6 +158,8 @@ namespace GBEmulator
 
 	void GPU::setControlByte(unsigned char value)
 	{
+		if ((this->_control & 0x80U) == 0 && (value & 0x80U))
+			this->_cycles = 0;
 		this->_control = value;
 	}
 
@@ -220,9 +222,13 @@ namespace GBEmulator
 		this->_stat = value;
 	}
 
-	bool GPU::_isVBlankInterrupt() const
+	bool GPU::_isVBlankInterrupt()
 	{
-		return this->getMode() == 1 && (this->_control & 0x80U);
+		bool needInterrupt = this->getMode() == 1 && (this->_control & 0x80U);
+		bool trigger = !this->_triggeredVBlankInterrupt && needInterrupt;
+
+		this->_triggeredVBlankInterrupt = needInterrupt;
+		return trigger;
 	}
 
 	unsigned char GPU::getMode() const
@@ -236,16 +242,22 @@ namespace GBEmulator
 		return 0;
 	}
 
-	bool GPU::_isStatInterrupt() const
+	bool GPU::_isStatInterrupt()
 	{
-		return ((this->_stat & 0b01000000U) && this->getMode() <= 1) ||
-		       ((this->_stat & 0b00100000U) && this->_isVBlankInterrupt()) ||
-		       ((this->_stat & 0b00010000U) && !this->getMode());
+		bool needInterrupt = (this->_control & 0x80U) && (
+			((this->_stat & 0b01000000U) && this->_lyc == this->getCurrentLine()) ||
+			((this->_stat & 0b00100000U) && this->getMode() == 2) ||
+			((this->_stat & 0b00010000U) && this->getMode() == 1) ||
+			((this->_stat & 0b00001000U) && !this->getMode())
+		);
+		bool trigger = !this->_triggeredStatInterrupt && needInterrupt;
+
+		this->_triggeredStatInterrupt = needInterrupt;
+		return trigger;
 	}
 
 	unsigned char GPU::getLycByte() const
 	{
-
 		return this->_lyc;
 	}
 

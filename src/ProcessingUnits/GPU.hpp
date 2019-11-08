@@ -22,8 +22,10 @@
 namespace GBEmulator
 {
 	class GPU {
-
 	private:
+		bool _paletteChanged = false;
+		bool _triggeredStatInterrupt = false;
+		bool _triggeredVBlankInterrupt = false;
 		Memory::Memory _oam;
 		Graphics::ILCD &_screen;
 		unsigned char _scrollX = 0;
@@ -79,14 +81,13 @@ namespace GBEmulator
 		unsigned char update(int cycle);
 
 	private:
-		bool _paletteChanged = false;
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);
 
 		//Interrupts
-		bool _isVBlankInterrupt() const;
-		bool _isStatInterrupt() const;
+		bool _isVBlankInterrupt();
+		bool _isStatInterrupt();
 	};
 }
 

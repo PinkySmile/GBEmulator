@@ -173,10 +173,10 @@ namespace GBEmulator
 		};
 
 		CPU(
-				SoundPlayer &channelOne,
-				SoundPlayer &channelTwo,
-				SoundPlayer &channelThree,
-				SoundPlayer &channelFour,
+				ISound &channelOne,
+				ISound &channelTwo,
+				ISound &channelThree,
+				ISound &channelFour,
 				Graphics::ILCD &window,
 				Input::JoypadEmulator &joypad,
 				Network::CableInterface &cable
