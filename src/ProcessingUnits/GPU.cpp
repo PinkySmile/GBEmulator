@@ -18,10 +18,12 @@ namespace GBEmulator
 		_tiles(new unsigned char [NB_TILES]),
 		_backgroundMap(new unsigned char [BG_MAP_SIZE])
 	{
+		screen.clear();
+		screen.display();
 		for (int i = 0; i < NB_TILES; i++)
-			this->_tiles[i] = rand() % 4;
+			this->_tiles[i] = rand() & 0b11;
 		for (int i = 0; i < BG_MAP_SIZE; i++)
-			this->_backgroundMap[i] = rand() % 4;
+			this->_backgroundMap[i] = rand() & 0xFF;
 
 		for (int i = 0; i < 256; i++)
 			this->_screen.updateTexture(this->_getTile(i), i);
@@ -46,6 +48,9 @@ namespace GBEmulator
 
 	unsigned char GPU::readVRAM(unsigned short address) const
 	{
+		if (this->getMode() == 3)
+			return 0xFF;
+
 		if (address >= TILE_DATA_SIZE)
 			return this->_backgroundMap[address - TILE_DATA_SIZE];
 
@@ -77,6 +82,9 @@ namespace GBEmulator
 
 	void GPU::writeVRAM(unsigned short address, unsigned char value)
 	{
+		if (this->getMode() == 3)
+			return;
+
 		if (address >= TILE_DATA_SIZE) {
 			this->_backgroundMap[address - TILE_DATA_SIZE] = value;
 			return;
@@ -100,22 +108,28 @@ namespace GBEmulator
 
 	unsigned char GPU::readOAM(unsigned short address) const
 	{
+		if (this->getMode() >= 2)
+			return 0xFF;
+
 		return _oam.read(address);
 	}
 
 	void GPU::writeOAM(unsigned short address, unsigned char value)
 	{
+		if (this->getMode() >= 2)
+			return;
+
 		this->_oam.write(address, value);
 	}
 
 	unsigned char GPU::update(int cycle)
 	{
 		this->_cycles += cycle;
-		if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
-			this->_cycles -= GPU_FULL_CYCLE_DURATION;
-			this->_screen.clear();
+		if (this->_control & 0x80U) {
+			if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
+				this->_cycles -= GPU_FULL_CYCLE_DURATION;
+				this->_screen.clear();
 
-			if (this->_control & 0x80U) {
 				if (this->_paletteChanged) {
 					this->_screen.setBGPalette(this->_bgPalette);
 					this->_screen.setObjectPalette0(this->_objectPalette0);
@@ -139,9 +153,10 @@ namespace GBEmulator
 					sprite.flags = this->_oam.read(i + 3);
 					this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
 				}
+				this->_screen.display();
 			}
-			this->_screen.display();
-		}
+		} else
+			this->_cycles = 0;
 		if (this->_isVBlankInterrupt() && this->_isStatInterrupt())
 			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
 		else if (this->_isVBlankInterrupt())
@@ -224,7 +239,7 @@ namespace GBEmulator
 
 	bool GPU::_isVBlankInterrupt()
 	{
-		bool needInterrupt = this->getMode() == 1 && (this->_control & 0x80U);
+		bool needInterrupt = this->getMode() == 1;
 		bool trigger = !this->_triggeredVBlankInterrupt && needInterrupt;
 
 		this->_triggeredVBlankInterrupt = needInterrupt;
@@ -235,11 +250,11 @@ namespace GBEmulator
 	{
 		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
 			return 1;
-		if (this->_cycles % 456 < 83)
+		if (this->_cycles % 456 < 198)
+			return 0;
+		if (this->_cycles % 456 < 281)
 			return 2;
-		if (this->_cycles % 456 < 258)
-			return 3;
-		return 0;
+		return 3;
 	}
 
 	bool GPU::_isStatInterrupt()
