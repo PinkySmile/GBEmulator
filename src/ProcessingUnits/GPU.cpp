@@ -142,11 +142,11 @@ namespace GBEmulator
 			}
 			this->_screen.display();
 		}
-		if (this->_isVBlankInterrupt() && this->_isStatInterrupt())
-			return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
-		else if (this->_isVBlankInterrupt())
+		if (this->_isVBlankInterrupt()) {
+			if (this->_isStatInterrupt())
+				return CPU::VBLANK_INTERRUPT | CPU::LCD_STAT_INTERRUPT;
 			return CPU::VBLANK_INTERRUPT;
-		else if (this->_isStatInterrupt())
+		} else if (this->_isStatInterrupt())
 			return CPU::LCD_STAT_INTERRUPT;
 		return 0;
 	}

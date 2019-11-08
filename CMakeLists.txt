@@ -97,6 +97,7 @@ add_executable(
 		tests/TestGpu/Test_isStatInterrupt.cpp
 		tests/TestGpu/Test_isVBlankInterrupt.cpp
 		tests/TestCpu/Test_write.cpp
+        tests/TestCPUInstruction/ADD16.cpp
 )
 
 target_link_libraries(
