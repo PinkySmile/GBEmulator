@@ -111,19 +111,21 @@ namespace GBEmulator
 			ISound &_soundChannel;    //tone and sweep
 
 			//sweep
-			unsigned char _sweepTime;
-			bool _sweepDirection;
-			unsigned char _sweepShiftNumber;
+			unsigned char _sweepTime = 0;
+			bool _sweepDirection = 0;
+			unsigned char _sweepShiftNumber = 0;
+			unsigned _sweepCycles = 0;
+
 
 			//wave pattern and sound duration
 			unsigned char _wavePattern; //chan1-2
 			unsigned char _soundLength = 0;
-			unsigned _cycles = 0;
 
 			//volume
 			unsigned char _initialVolume = 0;
 			bool _volumeDirection = 0;
 			unsigned char _volumeShiftNumber = 0;
+			unsigned _volumeCycles = 0;
 
 			//frequency
 			unsigned short _frequency = 0;

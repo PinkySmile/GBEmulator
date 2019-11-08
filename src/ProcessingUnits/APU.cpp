@@ -40,7 +40,7 @@ namespace GBEmulator
 	{
 		this->_soundOn = !state && this->_restart;
 		this->_soundChannel.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 	}
 
 	void APU::Sound::update(unsigned cycle)
@@ -51,25 +51,32 @@ namespace GBEmulator
 		}
 		if (!this->_soundOn)
 			return;
-		this->_cycles += cycle;
-		if (this->_restartType && this->_cycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
+		this->_volumeCycles += cycle;
+		this->_sweepCycles += cycle;
+		if (this->_restartType && this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
 			this->_soundOn = false;
 			this->_restart = false;
-			this->_cycles = 0;
+			this->_volumeCycles = 0;
 			this->disable(true);
 		}
-		if (this->_volumeShiftNumber == 0) {
-			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
-			return;
+		if (this->_volumeShiftNumber) {
+			int volume = (
+					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
+					(this->_volumeDirection * 2 - 1) +
+					this->_initialVolume
+			);
+			this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
 		}
-		int volume = (
-			this->_cycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
-			(this->_volumeDirection * 2 - 1) +
-			this->_initialVolume
-		);
-		//if ((volume > 0 ? (volume > 16 ? 16 : volume) : 0) * 100.f / 16 > 0)
-			//printf("volume : %f\nthis->_cycles : %i\n", (volume > 0 ? (volume > 16 ? 16 : volume) : 0) * 100.f / 16, this->_cycles);
-		this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
+		if (this->_sweepTime) {
+			double newFrequency = (
+					this->_frequency +
+					(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
+					(this->_frequency / pow(2, this->_sweepShiftNumber)) *
+					((this->_sweepDirection - 1) * 2 + 1)
+				);
+			this->_soundChannel.setPitch(newFrequency / 440);
+		}
+		//pitch
 	}
 
 	void APU::update(unsigned cycle)
@@ -309,7 +316,7 @@ namespace GBEmulator
 
 	void APU::Sound::setSweep(unsigned char value)
 	{
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		this->_sweepTime = (value & 0b01110000) >> 4;
 		this->_sweepDirection = (value & 0b00001000) >> 3;
 		this->_sweepShiftNumber = (value & 0b00000111);
@@ -331,7 +338,7 @@ namespace GBEmulator
 	{
 		this->_wavePattern = value >> 6;
 		this->_soundLength = value & 0b00111111;
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		switch (this->_wavePattern) {
 			case 0:
 				this->_soundChannel.setWave(getSquareWave(440, 12.5), 44100);
@@ -363,7 +370,7 @@ namespace GBEmulator
 		this->_initialVolume = value >> 4;
 		this->_volumeDirection = (value & 0b00001000) >> 3;
 		this->_volumeShiftNumber = value & 0b00000111;
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		if (this->_soundOn)
 			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 	}
@@ -381,7 +388,7 @@ namespace GBEmulator
 	void APU::Sound::setLowFrequency(unsigned char value)
 	{
 		this->_frequency = (this->_frequency & 0b11100000000) | value;
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
 	}
 
@@ -392,7 +399,7 @@ namespace GBEmulator
 		val <<= 8;
 		this->_restart = value >> 7;
 		this->_restartType = (value & 0b01000000) >> 6;
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		this->_frequency = (this->_frequency & 0b00011111111) | val;
 		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
 	}
@@ -414,7 +421,7 @@ namespace GBEmulator
 	void APU::Sound::setSoundONOFF(unsigned char value)
 	{
 		this->_soundOn = value >> 7;
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		if (!this->_soundOn)
 			this->_soundChannel.setVolume(0);
 		else
@@ -431,7 +438,7 @@ namespace GBEmulator
 
 	void APU::Sound::setSoundLength(unsigned char value, bool sixBitsLength)
 	{
-		this->_cycles = 0;
+		this->_volumeCycles = 0;
 		if (!sixBitsLength)
 			this->_soundLength = value;
 		else
