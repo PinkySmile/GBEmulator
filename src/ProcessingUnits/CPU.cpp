@@ -466,6 +466,14 @@ namespace GBEmulator
 		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
 		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
 		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
+
+		std::cout << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCD_CONTROL)) << std::endl;
+		std::cout << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_STAT)) << std::endl;
+		std::cout << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_Y_COORD)) << std::endl;
+		std::cout << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(INTERRUPT_ENABLE_ADDRESS)) << std::endl;
+		std::cout << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_REQUESTS)) << std::endl;
+		std::cout << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_rom.getRomBank()) << std::endl;
+
 		if (this->_halted)
 			std::cout << "Waiting for interrupt..." << std::endl;
 		std::cout << "Interrupts " << (this->_interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;

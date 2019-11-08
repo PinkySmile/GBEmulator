@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
@@ -167,23 +168,48 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
 				return this->_cpu.dumpMemory(), false;
-			for (size_t i = std::stoul(args.at(1), nullptr, 16), end = std::stoul(args.at(2), nullptr, 16); i <= end; i++)
-				std::cout << "$" << Instructions::intToHex(i, 4) << ": " << Instructions::intToHex(this->_cpu.read(i)) << std::endl;
+
+			size_t i = std::stoul(args.at(1), nullptr, 16);
+			size_t end = std::stoul(args.at(2), nullptr, 16);
+
+			i -= i % 0x10;
+			end += 0x10 - end % 0x10;
+			for (; i < end; i += 0x10) {
+				std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << i << ":  ";
+				for (unsigned j = 0; j < 0x10 && j + i < end; j++)
+					std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + i)) << " ";
+				for (int j = 0; j < static_cast<int>(i - end + 0x10); j++)
+					std::cout << "   ";
+				std::cout << " ";
+				for (unsigned j = 0; j < 0x10 && j + i < end; j++)
+					std::cout << static_cast<char>(std::isprint(this->_cpu.read(j + i)) ? this->_cpu.read(j + i) : '.');
+				for (int j = 0; j < static_cast<int>(i - end + 0x10); j++)
+					std::cout << " ";
+				std::cout << std::endl;
+			}
 		} else if (args[0] == "jump") {
 			this->_cpu._registers.pc = std::stoul(args.at(1), nullptr, 16);
 			this->_displayCurrentLine();
 		} else if (args[0] == "next") {
 			unsigned short address = this->_cpu._registers.pc;
 
-			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints())
+			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints()) {
 				this->_cpu.update();
+				if (this->_timer++ == 30)
+					this->_timer = 0;
+				if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+					this->_displayCurrentLine();
+					break;
+				}
+			}
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
 			this->_cpu.update();
 			this->_displayCurrentLine();
-		} else if (args[0] == "continue")
+		} else if (args[0] == "continue") {
+			this->_cpu.update();
 			return true;
-		else
+		} else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
 		return false;
 	}
@@ -234,7 +260,7 @@ namespace GBEmulator::Debugger
 				if (dbg)
 					this->_checkCommands(dbg);
 
-				if (this->checkBreakPoints()) {
+				if (!dbg && this->checkBreakPoints()) {
 					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 
 					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;

@@ -113,6 +113,8 @@ namespace GBEmulator::Memory
 		void loadROM(const std::string &rom);
 		void write(unsigned short address, unsigned char value);
 		unsigned char read(unsigned short address) const;
+		unsigned char getRomBank() const;
+		unsigned char getRamBank() const;
 	};
 }
 

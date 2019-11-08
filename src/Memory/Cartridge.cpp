@@ -141,6 +141,16 @@ namespace GBEmulator::Memory
 		}
 	}
 
+	unsigned char Cartridge::getRamBank() const
+	{
+		return this->_ram.getCurrentBank();
+	}
+
+	unsigned char Cartridge::getRomBank() const
+	{
+		return this->_rom.getCurrentBank();
+	}
+
 	void Cartridge::write(unsigned short address, unsigned char value)
 	{
 		switch (this->_type) {
