@@ -78,7 +78,7 @@ add_executable(
 		tests/TestComponents.hpp
         tests/TestCPUInstruction/TestCpuInstruction.cpp
 		src/Memory/Cartridge.cpp
-		src/Memory/Cartridge.hpp tests/communism.hpp tests/TestCPUInstruction/LD.cpp tests/TestCPUInstruction/INC.cpp)
+		src/Memory/Cartridge.hpp tests/communism.hpp tests/TestCPUInstruction/LD.cpp tests/TestCPUInstruction/INC.cpp tests/TestCPUInstruction/DEC.cpp)
 
 target_link_libraries(
 		tests
