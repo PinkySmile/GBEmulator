@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
-	window.setFramerateLimit(24);
+	window.setFramerateLimit(48);
 	window.setView(view);
 
 	if (argc == 3)
