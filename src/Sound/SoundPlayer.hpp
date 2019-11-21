@@ -26,6 +26,7 @@ namespace GBEmulator {
 		void setWave(std::vector<unsigned char> samples, unsigned int sampleRate) override;
 		void setVolume(float volume) override;
 	private:
+		bool _loop = false;
 		sf::Sound _sound;
 		sf::SoundBuffer _soundBuffer;
 		float _volume = 0;

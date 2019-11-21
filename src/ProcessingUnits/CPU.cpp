@@ -246,6 +246,8 @@ namespace GBEmulator
 			this->_interruptRequest |= TIMER_INTERRUPT;
 		else
 			this->_interruptRequest &= ~TIMER_INTERRUPT;
+
+		this->_apu.update(cycles);
 	}
 
 	bool CPU::_checkInterrupts()
@@ -345,13 +347,13 @@ namespace GBEmulator
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
-			return this->_interruptRequest;
+			return this->_interruptRequest | 0b11100000U;
 
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
 
 		default:
-			return 0x00;
+			return 0xFF;
 		}
 	}
 

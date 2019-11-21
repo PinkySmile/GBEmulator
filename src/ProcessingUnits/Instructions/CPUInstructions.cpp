@@ -155,7 +155,7 @@ namespace GBEmulator::Instructions
 
 		setFlags(
 			reg,
-			(value1 + value2) == 0 ? SET : UNSET,
+			(value1 + value2) == 0x100 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
 			value1 + value2 > 0xFF ? SET : UNSET
@@ -171,7 +171,7 @@ namespace GBEmulator::Instructions
 		setFlags(
 			reg,
 			value1 == value2 ? SET : UNSET,
-			UNSET,
+			SET,
 			halfCarry ? SET : UNSET,
 			value1 < value2 ? SET : UNSET
 		);
@@ -201,7 +201,7 @@ namespace GBEmulator::Instructions
 		setFlags(
 			reg,
 			UNCHANGED,
-			UNSET,
+			SET,
 			halfCarry ? SET : UNSET,
 			value1 < value2 ? SET : UNSET
 		);
