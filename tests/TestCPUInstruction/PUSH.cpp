@@ -13,7 +13,7 @@
 
 //! INSTRUCTION C5
 
-Test(PUSH_bc, forward_jump) {
+Test(PUSH_bc, basic_push) {
 	Tests::GBTest gb;
 
 	gb.cpu._registers.sp = 0x9000;
@@ -32,7 +32,7 @@ Test(PUSH_bc, forward_jump) {
 
 //! INSTRUCTION D5
 
-Test(PUSH_de, forward_jump) {
+Test(PUSH_de, basic_push) {
 	Tests::GBTest gb;
 
 	gb.cpu._registers.sp = 0x9000;
@@ -51,7 +51,7 @@ Test(PUSH_de, forward_jump) {
 
 //! INSTRUCTION E5
 
-Test(PUSH_hl, forward_jump) {
+Test(PUSH_hl, basic_push) {
 	Tests::GBTest gb;
 
 	gb.cpu._registers.sp = 0x9000;
@@ -70,7 +70,7 @@ Test(PUSH_hl, forward_jump) {
 
 //! INSTRUCTION F5
 
-Test(PUSH_af, forward_jump) {
+Test(PUSH_af, basic_push) {
 	Tests::GBTest gb;
 
 	gb.cpu._registers.sp = 0x9000;
