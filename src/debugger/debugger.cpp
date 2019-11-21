@@ -17,8 +17,12 @@ namespace GBEmulator::Debugger
 	Debugger::Debugger(GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
 		_cpu(cpu),
 		_window(window),
-		_input(input)
+		_input(input),
+		_instructionsWindow(sf::VideoMode{600, 900}, "Instructions", sf::Style::Titlebar),
+		_memoryWindow(sf::VideoMode{600, 600}, "Memory", sf::Style::Titlebar)
 	{
+		if (!_font.loadFromFile("../arial.ttf"))
+			throw std::exception();
 	}
 
 	std::vector<std::string> Debugger::_splitCommand(const std::string &line)
@@ -256,6 +260,8 @@ namespace GBEmulator::Debugger
 
 		this->_displayCurrentLine();
 		while (!this->_window.isClosed()) {
+			this->_instructionsWindow.clear(sf::Color::Blue);
+			this->_memoryWindow.clear(sf::Color::Blue);
 			try {
 				if (dbg)
 					this->_checkCommands(dbg);
@@ -267,6 +273,8 @@ namespace GBEmulator::Debugger
 					this->_displayCurrentLine();
 					dbg = true;
 				}
+
+				this->_drawInstruction();
 
 				if (!dbg) {
 					this->_cpu.update();
@@ -282,7 +290,39 @@ namespace GBEmulator::Debugger
 				std::cout << e.what() << std::endl;
 				this->_displayCurrentLine();
 			}
+			this->_instructionsWindow.display();
+			this->_memoryWindow.display();
 		}
 		return 0;
+	}
+
+	void Debugger::_drawInstruction()
+	{
+		sf::Text text;
+		std::stringstream ss;
+
+		text.setFont(this->_font);
+		text.setCharacterSize(24);
+		text.setFillColor(sf::Color::White);
+		text.setPosition(10, 10);
+
+		this->_displayCurrentLine(ss);
+		text.setString(ss.str());
+
+		this->_texts.push_back(text);
+
+		if (this->_texts.size() >= 36) {
+			this->_texts.erase(this->_texts.begin());
+		}
+
+		for (int i = 0; i < this->_texts.size(); i++) {
+			this->_texts[i].setPosition(10, 10 + i * 25);
+			this->_instructionsWindow.draw(this->_texts[i]);
+		}
+	}
+
+	void Debugger::_drawMemory()
+	{
+		this->_cpu.dumpMemory();
 	}
 }

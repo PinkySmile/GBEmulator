@@ -34,6 +34,11 @@ namespace GBEmulator::Debugger
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
 		std::vector<unsigned short> _breakPoints;
+		sf::RenderWindow _instructionsWindow;
+		sf::RenderWindow _memoryWindow;
+		sf::Font _font;
+		std::vector<sf::Text> _texts;
+		sf::Text _memory;
 
 		void _dispVar(const std::string &name);
 		void _setVar(const std::string &name, unsigned short value);
@@ -41,6 +46,8 @@ namespace GBEmulator::Debugger
 		void _displayCurrentLine(std::ostream &stream = std::cout);
 		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
 		static std::vector<std::string> _splitCommand(const std::string& line);
+		void _drawInstruction();
+		void _drawMemory();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
