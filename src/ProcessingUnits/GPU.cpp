@@ -124,8 +124,12 @@ namespace GBEmulator
 
 	unsigned char GPU::update(int cycle)
 	{
+		static int buf = 0;
+
 		this->_cycles += cycle;
+		buf += cycle;
 		if (this->_control & 0x80U) {
+			buf = 0;
 			if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
 				this->_cycles -= GPU_FULL_CYCLE_DURATION;
 				this->_screen.clear();
@@ -157,6 +161,12 @@ namespace GBEmulator
 			}
 		} else
 			this->_cycles = 0;
+
+		if (buf > 30000) {
+			this->_screen.clear();
+			this->_screen.display();
+			buf = 0;
+		}
 
 		if (this->_isVBlankInterrupt()) {
 			if (this->_isStatInterrupt())
