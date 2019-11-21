@@ -34,12 +34,12 @@ namespace GBEmulator::Debugger
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
 		std::vector<unsigned short> _breakPoints;
-		sf::RenderWindow _instructionsWindow;
-		sf::RenderWindow _memoryWindow;
-		sf::RenderWindow _registersWindow;
+		sf::RenderWindow _debugWindow;
 		sf::Font _font;
 		std::vector<sf::Text> _texts;
 		sf::Text _memory;
+		unsigned short _memBeg;
+		unsigned short _memEnd;
 		sf::Text _registers;
 
 		void _dispVar(const std::string &name);

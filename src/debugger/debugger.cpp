@@ -18,17 +18,18 @@ namespace GBEmulator::Debugger
 		_cpu(cpu),
 		_window(window),
 		_input(input),
-		_instructionsWindow(sf::VideoMode{600, 900}, "Instructions", sf::Style::Titlebar),
-		_memoryWindow(sf::VideoMode{1000, 1000}, "Memory", sf::Style::Titlebar),
-		_registersWindow(sf::VideoMode{600, 500}, "Registers", sf::Style::Titlebar)
+		_debugWindow(sf::VideoMode{1400, 1000}, "Debug", sf::Style::Titlebar)
 	{
-		if (!_font.loadFromFile("../courier.ttf"))
-			throw std::exception();
+
+		this->_memBeg = 0x0000;
+		this->_memEnd = 0x660;
+
+		this->_font.loadFromFile("../courier.ttf");
 
 		this->_memory.setFont(this->_font);
 		this->_memory.setCharacterSize(14);
 		this->_memory.setFillColor(sf::Color::White);
-		this->_memory.setPosition(10, 10);
+		this->_memory.setPosition(500, 10);
 
 		this->_registers.setFont(this->_font);
 		this->_registers.setCharacterSize(24);
@@ -272,9 +273,7 @@ namespace GBEmulator::Debugger
 
 		this->_displayCurrentLine();
 		while (!this->_window.isClosed()) {
-			this->_instructionsWindow.clear(sf::Color::Blue);
-			this->_memoryWindow.clear(sf::Color::Blue);
-			this->_registersWindow.clear(sf::Color::Blue);
+			this->_debugWindow.clear(sf::Color::Blue);
 			try {
 				if (dbg)
 					this->_checkCommands(dbg);
@@ -305,9 +304,7 @@ namespace GBEmulator::Debugger
 				std::cout << e.what() << std::endl;
 				this->_displayCurrentLine();
 			}
-			this->_instructionsWindow.display();
-			this->_memoryWindow.display();
-			this->_registersWindow.display();
+			this->_debugWindow.display();
 		}
 		return 0;
 	}
@@ -320,41 +317,42 @@ namespace GBEmulator::Debugger
 		text.setFont(this->_font);
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::White);
-		text.setPosition(10, 10);
+		text.setPosition(10, 400);
 
 		this->_displayCurrentLine(ss);
 		text.setString(ss.str());
 
 		this->_texts.push_back(text);
 
-		if (this->_texts.size() >= 36) {
+		if (this->_texts.size() >= 23) {
 			this->_texts.erase(this->_texts.begin());
 		}
 
 		for (int i = 0; i < this->_texts.size(); i++) {
-			this->_texts[i].setPosition(10, 10 + i * 25);
-			this->_instructionsWindow.draw(this->_texts[i]);
+			this->_texts[i].setPosition(10, 400 + i * 25);
+			this->_debugWindow.draw(this->_texts[i]);
 		}
 	}
 
 	void Debugger::_drawMemory()
 	{
 		std::stringstream ss;
-		size_t i = 0x0000;
-		size_t end = 0xFFFF;
 
-		i -= i % 0x20;
+		size_t beg = this->_memBeg;
+		size_t end = this->_memEnd;
+
+		beg -= beg % 0x20;
 		end += 0x20 - end % 0x20;
-		for (; i < end; i += 0x20) {
-			ss << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << i << ":  ";
-			for (unsigned j = 0; j < 0x20 && j + i < end; j++)
-				ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + i)) << " ";
-			for (int j = 0; j < static_cast<int>(i - end + 0x20); j++)
+		for (; beg < end; beg += 0x20) {
+			ss << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << beg << ":  ";
+			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
+				ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + beg)) << " ";
+			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
 				ss << "   ";
 			ss << " ";
-			for (unsigned j = 0; j < 0x20 && j + i < end; j++)
-				ss << static_cast<char>(std::isprint(this->_cpu.read(j + i)) ? this->_cpu.read(j + i) : '.');
-			for (int j = 0; j < static_cast<int>(i - end + 0x20); j++)
+			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
+				ss << static_cast<char>(std::isprint(this->_cpu.read(j + beg)) ? this->_cpu.read(j + beg) : '.');
+			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
 				ss << " ";
 			ss << std::endl;
 		}
@@ -362,69 +360,103 @@ namespace GBEmulator::Debugger
 		this->_memory.setString(ss.str());
 
 		sf::Event event;
-		while (this->_memoryWindow.pollEvent(event))
+		while (this->_debugWindow.pollEvent(event))
 		{
 			if (event.type == sf::Event::KeyPressed)
 				switch (event.key.code) {
 				case sf::Keyboard::Up:
-					this->_memory.move(0, 12);
+					if (this->_memBeg > 0x0000) {
+						this->_memBeg -= 0x20;
+						this->_memEnd -= 0x20;
+					}
 					break;
 				case sf::Keyboard::Down:
-					this->_memory.move(0, -12);
+					if (this->_memEnd + 0x20 <= 0xFFFF) {
+						this->_memBeg += 0x20;
+						this->_memEnd += 0x20;
+					}
+					break;
+				case sf::Keyboard::PageUp:
+					if (this->_memBeg > 0x0000) {
+						this->_memBeg -= 0x0660;
+						this->_memEnd -= 0x0660;
+					}
+					break;
+				case sf::Keyboard::PageDown:
+					if (this->_memEnd + 0x0660 <= 0xFFFF) {
+						this->_memBeg += 0x0660;
+						this->_memEnd += 0x0660;
+					}
 					break;
 				case sf::Keyboard::Num0:
-					this->_memory.setPosition(10, 0);
+					this->_memBeg = 0x0000;
+					this->_memEnd = 0x0660;
 					break;
 				case sf::Keyboard::Num1:
-					this->_memory.setPosition(10, -(0x1000 / 0x20) * 19);
+					this->_memBeg = 0x1000;
+					this->_memEnd = 0x1660;
 					break;
 				case sf::Keyboard::Num2:
-					this->_memory.setPosition(10, -(0x2000 / 0x20) * 19);
+					this->_memBeg = 0x2000;
+					this->_memEnd = 0x2660;
 					break;
 				case sf::Keyboard::Num3:
-					this->_memory.setPosition(10, -(0x3000 / 0x20) * 19);
+					this->_memBeg = 0x3000;
+					this->_memEnd = 0x3660;
 					break;
-				case sf::Keyboard::Num4:
-					this->_memory.setPosition(10, -(0x4000 / 0x20) * 19);
+				case sf::Keyboard::Quote:
+					this->_memBeg = 0x4000;
+					this->_memEnd = 0x4660;
 					break;
 				case sf::Keyboard::Num5:
-					this->_memory.setPosition(10, -(0x5000 / 0x20) * 19);
+					this->_memBeg = 0x5000;
+					this->_memEnd = 0x5660;
 					break;
-				case sf::Keyboard::Num6:
-					this->_memory.setPosition(10, -(0x6000 / 0x20) * 19);
+				case sf::Keyboard::Dash:
+					this->_memBeg = 0x6000;
+					this->_memEnd = 0x6660;
 					break;
 				case sf::Keyboard::Num7:
-					this->_memory.setPosition(10, -(0x7000 / 0x20) * 19);
+					this->_memBeg = 0x7000;
+					this->_memEnd = 0x7660;
 					break;
 				case sf::Keyboard::Num8:
-					this->_memory.setPosition(10, -(0x8000 / 0x20) * 19);
+					this->_memBeg = 0x8000;
+					this->_memEnd = 0x8660;
 					break;
 				case sf::Keyboard::Num9:
-					this->_memory.setPosition(10, -(0x9000 / 0x20) * 19);
+					this->_memBeg = 0x9000;
+					this->_memEnd = 0x9660;
 					break;
 				case sf::Keyboard::A:
-					this->_memory.setPosition(10, -(0xA000 / 0x20) * 19);
+					this->_memBeg = 0xA000;
+					this->_memEnd = 0xA660;
 					break;
 				case sf::Keyboard::B:
-					this->_memory.setPosition(10, -(0xB000 / 0x20) * 19);
+					this->_memBeg = 0xB000;
+					this->_memEnd = 0xB660;
 					break;
 				case sf::Keyboard::C:
-					this->_memory.setPosition(10, -(0xC000 / 0x20) * 19);
+					this->_memBeg = 0xC000;
+					this->_memEnd = 0xC660;
 					break;
 				case sf::Keyboard::D:
-					this->_memory.setPosition(10, -(0xD000 / 0x20) * 19);
+					this->_memBeg = 0xD000;
+					this->_memEnd = 0xD660;
 					break;
 				case sf::Keyboard::E:
-					this->_memory.setPosition(10, -(0xE000 / 0x20) * 19);
+					this->_memBeg = 0xE000;
+					this->_memEnd = 0xE660;
 					break;
 				case sf::Keyboard::F:
-					this->_memory.setPosition(10, -(0xF000 / 0x20) * 19);
+					this->_memBeg = 0xF000;
+					this->_memEnd = 0xF660;
 					break;
 				default:
-					this->_memory.setPosition(10, 0);
+					break;
 				}
 		}
-		this->_memoryWindow.draw(this->_memory);
+		this->_debugWindow.draw(this->_memory);
 	}
 
 	void Debugger::_drawRegisters()
@@ -471,6 +503,6 @@ namespace GBEmulator::Debugger
 		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
 
 		this->_registers.setString(ss.str());
-		this->_registersWindow.draw(this->_registers);
+		this->_debugWindow.draw(this->_registers);
 	}
 }
