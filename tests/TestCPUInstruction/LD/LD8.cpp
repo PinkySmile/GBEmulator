@@ -12,8 +12,6 @@
 
 #define instructions GBEmulator::Instructions::_instructions
 
-
-
 Test(LD_8_b_b, random_value_0) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 4;
@@ -66,7 +64,7 @@ Test(LD_8_b_b, random_value_3) {
 }
 
 
-est(LD_8_b_c, random_value_0) {
+Test(LD_8_b_c, random_value_0) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 4;
 
