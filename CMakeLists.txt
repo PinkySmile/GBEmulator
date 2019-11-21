@@ -100,7 +100,7 @@ add_executable(
         tests/TestCPUInstruction/ADD16.cpp
         tests/TestCPUInstruction/JP.cpp
         tests/TestCPUInstruction/JR.cpp
-)
+		tests/TestCPUInstruction/LD/LD8.cpp)
 
 target_link_libraries(
         tests
