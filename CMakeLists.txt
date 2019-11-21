@@ -100,6 +100,7 @@ add_executable(
         tests/TestCPUInstruction/ADD16.cpp
         tests/TestCPUInstruction/JP.cpp
         tests/TestCPUInstruction/JR.cpp
+        tests/TestCPUInstruction/LD/LD8.cpp
         tests/TestCPUInstruction/PUSH.cpp
 	tests/TestCPUInstruction/POP.cpp
         tests/TestCPUInstruction/RET.cpp
