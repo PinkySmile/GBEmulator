@@ -155,7 +155,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return CPL(reg); },
 
 		//! 30; JR nc,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
-		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fc, cpu.fetchArgument()); },
+		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fc, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 31; LD sp, **: Loads ** into sp register
 		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -710,7 +710,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! E9; JP (hl): Loads the value of hl into pc.
-		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl); },
+		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl), JUMP_CYCLE_DURATION; },
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, cpu.fetchArgument16(), reg.a) + FETCH_ARGUMENT16_CYLCE_DURATION; },
