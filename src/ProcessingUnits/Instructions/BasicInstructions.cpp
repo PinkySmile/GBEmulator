@@ -614,7 +614,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fz); },
 
 		//! C9; RET: The top stack entry is popped into pc.
-		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.pc); },
+		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.pc) + BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -662,7 +662,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fc); },
 
 		//! D9; RETI
-		[](CPU &cpu, CPU::Registers &reg) { return cpu.setInterruptMaster(true), RET(cpu, reg, true); },
+		[](CPU &cpu, CPU::Registers &reg) { return cpu.setInterruptMaster(true), POP(cpu, reg, reg.pc) + BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! DA; JP c,**: If condition cc is true, ** is copied to pc.
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
