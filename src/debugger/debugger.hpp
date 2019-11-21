@@ -29,7 +29,7 @@ namespace GBEmulator::Debugger
 	class Debugger {
 	private:
 		CPU &_cpu;
-		unsigned _timer;
+		unsigned char _timer = 0;
 		Graphics::ILCD &_window;
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
