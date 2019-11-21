@@ -36,9 +36,11 @@ namespace GBEmulator::Debugger
 		std::vector<unsigned short> _breakPoints;
 		sf::RenderWindow _instructionsWindow;
 		sf::RenderWindow _memoryWindow;
+		sf::RenderWindow _registersWindow;
 		sf::Font _font;
 		std::vector<sf::Text> _texts;
 		sf::Text _memory;
+		sf::Text _registers;
 
 		void _dispVar(const std::string &name);
 		void _setVar(const std::string &name, unsigned short value);
@@ -48,6 +50,7 @@ namespace GBEmulator::Debugger
 		static std::vector<std::string> _splitCommand(const std::string& line);
 		void _drawInstruction();
 		void _drawMemory();
+		void _drawRegisters();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);

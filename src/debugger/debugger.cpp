@@ -19,7 +19,8 @@ namespace GBEmulator::Debugger
 		_window(window),
 		_input(input),
 		_instructionsWindow(sf::VideoMode{600, 900}, "Instructions", sf::Style::Titlebar),
-		_memoryWindow(sf::VideoMode{1000, 1000}, "Memory", sf::Style::Titlebar)
+		_memoryWindow(sf::VideoMode{1000, 1000}, "Memory", sf::Style::Titlebar),
+		_registersWindow(sf::VideoMode{600, 500}, "Registers", sf::Style::Titlebar)
 	{
 		if (!_font.loadFromFile("../courier.ttf"))
 			throw std::exception();
@@ -28,6 +29,11 @@ namespace GBEmulator::Debugger
 		this->_memory.setCharacterSize(14);
 		this->_memory.setFillColor(sf::Color::White);
 		this->_memory.setPosition(10, 10);
+
+		this->_registers.setFont(this->_font);
+		this->_registers.setCharacterSize(24);
+		this->_registers.setFillColor(sf::Color::White);
+		this->_registers.setPosition(10, 10);
 	}
 
 
@@ -268,6 +274,7 @@ namespace GBEmulator::Debugger
 		while (!this->_window.isClosed()) {
 			this->_instructionsWindow.clear(sf::Color::Blue);
 			this->_memoryWindow.clear(sf::Color::Blue);
+			this->_registersWindow.clear(sf::Color::Blue);
 			try {
 				if (dbg)
 					this->_checkCommands(dbg);
@@ -282,6 +289,7 @@ namespace GBEmulator::Debugger
 
 				this->_drawInstruction();
 				this->_drawMemory();
+				this->_drawRegisters();
 
 				if (!dbg) {
 					this->_cpu.update();
@@ -299,6 +307,7 @@ namespace GBEmulator::Debugger
 			}
 			this->_instructionsWindow.display();
 			this->_memoryWindow.display();
+			this->_registersWindow.display();
 		}
 		return 0;
 	}
@@ -416,5 +425,52 @@ namespace GBEmulator::Debugger
 				}
 		}
 		this->_memoryWindow.draw(this->_memory);
+	}
+
+	void Debugger::_drawRegisters()
+	{
+		std::stringstream ss;
+
+		ss << std::hex << std::uppercase;
+		ss << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af;
+		ss << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.a);
+		ss << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.f) << ")" << "     ";
+
+		ss << "bc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.bc;
+		ss << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.b);
+		ss << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.c) << ")" << std::endl;
+
+		ss << "de: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.de;
+		ss << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.d);
+		ss << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.e) << ")" << "     ";
+
+		ss << "hl: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.hl;
+		ss << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.h);
+		ss << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.l) << ")" << std::endl;
+
+		ss << "sp: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.sp << "     ";
+		ss << "pc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.pc << std::endl << std::endl;
+
+		ss << "Flags:" << std::endl;
+		ss << "z: " << (this->_cpu._registers.fz ? "set" : "unset") << "     ";
+		ss << "c: " << (this->_cpu._registers.fc ? "set" : "unset") << "     ";
+		ss << "h: " << (this->_cpu._registers.fh ? "set" : "unset") << "     ";
+		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << std::endl << std::endl;
+
+		ss << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
+		ss << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
+		ss << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_Y_COORD)) << std::endl;
+		ss << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(INTERRUPT_ENABLE_ADDRESS)) << "     ";
+		ss << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_REQUESTS)) << "     ";
+		ss << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._rom.getRomBank()) << std::endl << std::endl;
+
+		if (this->_cpu._halted)
+			ss << "Waiting for interrupt..." << std::endl;
+		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
+		ss << "Next instruction: " << Instructions::_instructionsString[this->_cpu.read(this->_cpu._registers.pc)](this->_cpu, this->_cpu._registers.pc + 1);
+		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
+
+		this->_registers.setString(ss.str());
+		this->_registersWindow.draw(this->_registers);
 	}
 }
