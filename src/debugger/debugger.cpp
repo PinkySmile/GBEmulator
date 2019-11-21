@@ -19,11 +19,17 @@ namespace GBEmulator::Debugger
 		_window(window),
 		_input(input),
 		_instructionsWindow(sf::VideoMode{600, 900}, "Instructions", sf::Style::Titlebar),
-		_memoryWindow(sf::VideoMode{600, 600}, "Memory", sf::Style::Titlebar)
+		_memoryWindow(sf::VideoMode{1000, 1000}, "Memory", sf::Style::Titlebar)
 	{
-		if (!_font.loadFromFile("../arial.ttf"))
+		if (!_font.loadFromFile("../courier.ttf"))
 			throw std::exception();
+
+		this->_memory.setFont(this->_font);
+		this->_memory.setCharacterSize(14);
+		this->_memory.setFillColor(sf::Color::White);
+		this->_memory.setPosition(10, 10);
 	}
+
 
 	std::vector<std::string> Debugger::_splitCommand(const std::string &line)
 	{
@@ -275,6 +281,7 @@ namespace GBEmulator::Debugger
 				}
 
 				this->_drawInstruction();
+				this->_drawMemory();
 
 				if (!dbg) {
 					this->_cpu.update();
@@ -323,6 +330,91 @@ namespace GBEmulator::Debugger
 
 	void Debugger::_drawMemory()
 	{
-		this->_cpu.dumpMemory();
+		std::stringstream ss;
+		size_t i = 0x0000;
+		size_t end = 0xFFFF;
+
+		i -= i % 0x20;
+		end += 0x20 - end % 0x20;
+		for (; i < end; i += 0x20) {
+			ss << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << i << ":  ";
+			for (unsigned j = 0; j < 0x20 && j + i < end; j++)
+				ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + i)) << " ";
+			for (int j = 0; j < static_cast<int>(i - end + 0x20); j++)
+				ss << "   ";
+			ss << " ";
+			for (unsigned j = 0; j < 0x20 && j + i < end; j++)
+				ss << static_cast<char>(std::isprint(this->_cpu.read(j + i)) ? this->_cpu.read(j + i) : '.');
+			for (int j = 0; j < static_cast<int>(i - end + 0x20); j++)
+				ss << " ";
+			ss << std::endl;
+		}
+
+		this->_memory.setString(ss.str());
+
+		sf::Event event;
+		while (this->_memoryWindow.pollEvent(event))
+		{
+			if (event.type == sf::Event::KeyPressed)
+				switch (event.key.code) {
+				case sf::Keyboard::Up:
+					this->_memory.move(0, 12);
+					break;
+				case sf::Keyboard::Down:
+					this->_memory.move(0, -12);
+					break;
+				case sf::Keyboard::Num0:
+					this->_memory.setPosition(10, 0);
+					break;
+				case sf::Keyboard::Num1:
+					this->_memory.setPosition(10, -(0x1000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num2:
+					this->_memory.setPosition(10, -(0x2000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num3:
+					this->_memory.setPosition(10, -(0x3000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num4:
+					this->_memory.setPosition(10, -(0x4000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num5:
+					this->_memory.setPosition(10, -(0x5000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num6:
+					this->_memory.setPosition(10, -(0x6000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num7:
+					this->_memory.setPosition(10, -(0x7000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num8:
+					this->_memory.setPosition(10, -(0x8000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::Num9:
+					this->_memory.setPosition(10, -(0x9000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::A:
+					this->_memory.setPosition(10, -(0xA000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::B:
+					this->_memory.setPosition(10, -(0xB000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::C:
+					this->_memory.setPosition(10, -(0xC000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::D:
+					this->_memory.setPosition(10, -(0xD000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::E:
+					this->_memory.setPosition(10, -(0xE000 / 0x20) * 19);
+					break;
+				case sf::Keyboard::F:
+					this->_memory.setPosition(10, -(0xF000 / 0x20) * 19);
+					break;
+				default:
+					this->_memory.setPosition(10, 0);
+				}
+		}
+		this->_memoryWindow.draw(this->_memory);
 	}
 }
