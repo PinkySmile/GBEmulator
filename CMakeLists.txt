@@ -4,7 +4,7 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	add_compile_options(-W -Wall -Wextra)
+        add_compile_options(-W -Wall -Wextra)
 endif()
 
 add_executable(
@@ -100,6 +100,7 @@ add_executable(
         tests/TestCPUInstruction/ADD16.cpp
         tests/TestCPUInstruction/JP.cpp
         tests/TestCPUInstruction/JR.cpp
+        tests/TestCPUInstruction/PUSH.cpp
 )
 
 target_link_libraries(

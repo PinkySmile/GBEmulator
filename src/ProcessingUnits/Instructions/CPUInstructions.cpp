@@ -58,7 +58,7 @@ namespace GBEmulator::Instructions
 		unsigned char temp = cpu.read(reg.sp++);
 
 		value = (cpu.read(reg.sp++) << 8U) | temp;
-		return PUSH_CYCLE_DURATION;
+		return POP_CYCLE_DURATION;
 	}
 
 	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond)
