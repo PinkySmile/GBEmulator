@@ -10,7 +10,7 @@
 #include "../TestComponents.hpp"
 #include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
 
-const auto instructions = GBEmulator::Instructions::_instructions;
+const auto &instructions = GBEmulator::Instructions::_instructions;
 
 //! INSTRUCTION 01
 
