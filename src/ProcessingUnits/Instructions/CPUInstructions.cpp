@@ -36,7 +36,7 @@ namespace GBEmulator::Instructions
 	{
 		PUSH(cpu, reg, reg.pc);
 		JP(reg, true, address);
-		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+		return PUSH_CYCLE_DURATION;
 	}
 
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address)
