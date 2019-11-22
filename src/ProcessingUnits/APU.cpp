@@ -77,6 +77,24 @@ namespace GBEmulator
 			this->_soundChannel.setPitch(newFrequency / 440);
 		}
 		//pitch
+		if (this->_havingPolynomial) {
+			double stepNumber = this->_polynomialCounterStep ? 7 : 15;
+			_counter++;
+			if (_counter == stepNumber)
+				_xored = !_xored;
+			if (_counter > stepNumber)
+				_counter = 0;
+			double frequency = shiftClockFrequencyRatio[this->_shiftClockFrequency] *
+				   dividingRatio[this->_dividingRatio];
+
+			unsigned newFrequency = (frequency +
+					this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(stepNumber / 128.) *
+					frequency / pow(2, stepNumber));
+			if (_xored)
+				newFrequency = ~newFrequency;
+			this->_soundChannel.setPitch((float)newFrequency / 440);
+
+		}
 	}
 
 	void APU::update(unsigned cycle)
@@ -474,9 +492,11 @@ namespace GBEmulator
 
 	void APU::Sound::setPolynomialCounters(unsigned char value)
 	{
+		this->_havingPolynomial = true;
 		this->_shiftClockFrequency = value >> 4;
 		this->_polynomialCounterStep = (value & 0b00001000) >> 3;
 		this->_dividingRatio = value & 0b00000111;
+
 	}
 
 	unsigned char APU::Sound::getPolynomialCounters() const

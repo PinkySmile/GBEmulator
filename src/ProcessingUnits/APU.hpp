@@ -9,6 +9,7 @@
 #define GBEMULATOR_APU_HPP
 
 #define CHANSIZE_WPRAM 0xF
+#define DIV_FREQUENCY 4194304
 
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
@@ -40,6 +41,7 @@ namespace GBEmulator
 		WPRAM_START = 0x20,
 		WPRAM_END = 0x2F
 	};
+
 	class APU {
 	public:
 		APU() = delete;
@@ -118,7 +120,7 @@ namespace GBEmulator
 
 
 			//wave pattern and sound duration
-			unsigned char _wavePattern; //chan1-2
+			unsigned char _wavePattern = 2; //chan1-2
 			unsigned char _soundLength = 0;
 
 			//volume
@@ -139,9 +141,38 @@ namespace GBEmulator
 			unsigned char _waveOutputLevel;
 
 			//PolynomialCounter //NOISE
-			unsigned char _shiftClockFrequency;
-			bool _polynomialCounterStep;
-			unsigned char _dividingRatio;
+			bool _havingPolynomial = false;
+			unsigned char _shiftClockFrequency = 0;
+			bool _polynomialCounterStep = false;
+			bool _xored = false;
+			char _counter = 0;
+			unsigned char _dividingRatio = 0;
+			static constexpr double dividingRatio[8] = {
+					DIV_FREQUENCY / 4.,
+					DIV_FREQUENCY / 8.,
+					DIV_FREQUENCY / 16.,
+					DIV_FREQUENCY / 24.,
+					DIV_FREQUENCY / 32.,
+					DIV_FREQUENCY / 40.,
+					DIV_FREQUENCY / 48.,
+					DIV_FREQUENCY / 56.
+			};
+			static constexpr double shiftClockFrequencyRatio[14] = {
+					1. / 2,
+					1. / 4,
+					1. / 8,
+					1. / 16,
+					1. / 32,
+					1. / 64,
+					1. / 128,
+					1. / 256,
+					1. / 512,
+					1. / 1024,
+					1. / 2048,
+					1. / 4096,
+					1. / 8192,
+					1. / 16384
+			};
 
 		};
 
