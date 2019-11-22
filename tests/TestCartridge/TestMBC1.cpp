@@ -184,3 +184,40 @@ Test(MBC1, tricky_ram_bank_switch) {
 			extend ? "true" : "false");
 	}
 }
+
+Test(MBC1, write_to_rom_ram) {
+	Tests::GBTest gb;
+	auto mem = new unsigned char[0x8000];
+	std::random_device rand;
+
+	gb.cpu._rom._rom.setMemory(new unsigned char[1], 1);
+	gb.cpu._rom._rom.setBankSize(1);
+	gb.cpu._rom._type = GBEmulator::Memory::Cartridge::MBC1_RAM;
+
+	gb.cpu._rom._ram.setMemory(mem, RAM_BANKING_SIZE * 4);
+	gb.cpu._rom._ram.setBankSize(RAM_BANKING_SIZE);
+
+	std::memset(mem, 0, 0x8000);
+
+	gb.cpu._rom.write(0x0000, 0);
+	for (unsigned i = 0; i < 0x100; i++) {
+		gb.cpu._rom.write(0x0000, i);
+		gb.cpu._rom.write(0xA000 + i, 0xAF);
+		if ((i & 0xFU) != 0x0A) {
+			cr_assert_eq(
+				gb.cpu._rom.read(0xA000 + i),
+				0x00,
+				"Writing to read only RAM didn't fail... (Expected 0x00 but found 0x%X [%d])",
+				gb.cpu._rom.read(0xA000 + i),
+				i
+			);
+		} else
+			cr_assert_eq(
+				gb.cpu._rom.read(0xA000 + i),
+				0xAF,
+				"Writing to RAM failed... (Expected 0xAF but found 0x%X [%d])",
+				gb.cpu._rom.read(0xA000 + i),
+				i
+			);
+	}
+}
