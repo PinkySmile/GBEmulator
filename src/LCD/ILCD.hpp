@@ -11,6 +11,10 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+namespace GBEmulator::Debugger {
+	class Debugger;
+}
+
 namespace GBEmulator::Graphics
 {
 	struct Sprite {
@@ -63,6 +67,7 @@ namespace GBEmulator::Graphics
 		};
 
 	public:
+		friend Debugger::Debugger;
 		virtual void updateTexture(unsigned char *tile, size_t id) = 0;
 		virtual void drawSprite(Sprite sprite, bool signedMode, bool doubleSize) = 0;
 		virtual void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) = 0;

@@ -11,6 +11,7 @@
 #include <iomanip>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
+#include "../LCD/LCDSFML.hpp"
 
 namespace GBEmulator::Debugger
 {
@@ -18,7 +19,7 @@ namespace GBEmulator::Debugger
 		_cpu(cpu),
 		_window(window),
 		_input(input),
-		_debugWindow(sf::VideoMode{1400, 1000}, "Debug", sf::Style::Titlebar)
+		_debugWindow(sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar)
 	{
 
 		this->_memBeg = 0x0000;
@@ -296,6 +297,7 @@ namespace GBEmulator::Debugger
 							this->_drawInstruction();
 							this->_drawMemory();
 							this->_drawRegisters();
+							this->_drawVram();
 							this->_debugWindow.display();
 							this->_handleWindowCommands();
 
@@ -315,6 +317,267 @@ namespace GBEmulator::Debugger
 		this->_debugWindow.setVisible(false);
 		return 0;
 	}
+
+
+	/*
+				1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                3,
+                3,
+                3,
+                1,
+                2,
+                1,
+                1,
+                1,
+                3,
+                2,
+                3,
+                3,
+                2,
+                1,
+                1,
+                1,
+                3,
+                1,
+                3,
+                1,
+                2,
+                1,
+                1,
+                1,
+                3,
+                1,
+                3,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                3,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                3,
+                1,
+                1,
+                1,
+                2,
+                1
+
+	 */
 
 	void Debugger::_drawInstruction()
 	{
@@ -553,5 +816,54 @@ namespace GBEmulator::Debugger
 			if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F'))
 				byteNbr++;
 		return byteNbr/2;
+	}
+
+	void Debugger::_drawVram()
+	{
+		sf::Sprite sprite;
+		sf::RectangleShape square(sf::Vector2f(600, 1000));
+		int tileNbr = 0;
+
+		square.setFillColor(sf::Color::Blue);
+		square.setPosition(1400, 0);
+		sprite.setPosition(1405, 5);
+		sprite.setScale(2, 2);
+		this->_debugWindow.draw(square);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
+		sprite.setPosition(1663, 5);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1663, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
+
+		sprite.setPosition(1405, 450);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
 	}
 }
