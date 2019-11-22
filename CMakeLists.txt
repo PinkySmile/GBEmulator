@@ -104,7 +104,9 @@ add_executable(
         tests/TestCPUInstruction/PUSH.cpp
 	tests/TestCPUInstruction/POP.cpp
         tests/TestCPUInstruction/RET.cpp
-        tests/TestCPUInstruction/CALL.cpp)
+        tests/TestCPUInstruction/CALL.cpp
+        tests/TestCartridge/TestMBC1.cpp
+)
 
 target_link_libraries(
         tests
