@@ -312,25 +312,27 @@ namespace GBEmulator::Debugger
 	void Debugger::_drawInstruction()
 	{
 		sf::Text text;
-		std::stringstream ss;
+		int shift = 0;
 
 		text.setFont(this->_font);
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::White);
-		text.setPosition(10, 400);
+		text.setPosition(10, 370);
 
-		this->_displayCurrentLine(ss);
-		text.setString(ss.str());
-
-		this->_texts.push_back(text);
-
-		if (this->_texts.size() >= 23) {
-			this->_texts.erase(this->_texts.begin());
-		}
-
-		for (int i = 0; i < this->_texts.size(); i++) {
-			this->_texts[i].setPosition(10, 400 + i * 25);
-			this->_debugWindow.draw(this->_texts[i]);
+		for (int i = 0; i < 23; i++) {
+			std::stringstream ss;
+			auto address = this->_cpu._registers.pc - 11 + i + shift;
+			if (address < 0)
+				continue;
+			this->_displayCurrentLine(address, ss);
+			shift += this->_getInstructionByLen(ss.str());
+			text.setString(ss.str());
+			text.move(0, 25);
+			if (this->_cpu._registers.pc == address)
+				text.setFillColor(sf::Color::Red);
+			else
+				text.setFillColor(sf::Color::White);
+			this->_debugWindow.draw(text);
 		}
 	}
 
@@ -504,5 +506,24 @@ namespace GBEmulator::Debugger
 
 		this->_registers.setString(ss.str());
 		this->_debugWindow.draw(this->_registers);
+	}
+
+	char Debugger::_getInstructionByLen(const std::string &str)
+	{
+		int index = 0;
+		int spaceNbr = 0;
+		char byteNbr = 0;
+
+		for (; index < str.length(); index++) {
+			if (spaceNbr == 2)
+				break;
+			if (str[index] == ' ')
+				spaceNbr++;
+		}
+
+		for (int i = index; i < str.length(); i++)
+			if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F'))
+				byteNbr++;
+		return byteNbr/2;
 	}
 }
