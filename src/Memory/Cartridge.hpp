@@ -90,6 +90,7 @@ namespace GBEmulator::Memory
 		ROM _rom;
 		bool _ramEnabled = false;
 		bool _ramExtended = false;
+		unsigned short _romBank = 1;
 		Memory _ram{0, RAM_BANKING_SIZE};
 		CartridgeType _type = ROM_ONLY;
 

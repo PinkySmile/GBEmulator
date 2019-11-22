@@ -36,7 +36,7 @@ namespace GBEmulator::Instructions
 	{
 		PUSH(cpu, reg, reg.pc);
 		JP(reg, true, address);
-		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+		return PUSH_CYCLE_DURATION;
 	}
 
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address)
@@ -58,7 +58,7 @@ namespace GBEmulator::Instructions
 		unsigned char temp = cpu.read(reg.sp++);
 
 		value = (cpu.read(reg.sp++) << 8U) | temp;
-		return PUSH_CYCLE_DURATION;
+		return POP_CYCLE_DURATION;
 	}
 
 	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond)
