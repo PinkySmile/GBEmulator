@@ -28,13 +28,14 @@ namespace GBEmulator::Debugger
 
 		this->_memory.setFont(this->_font);
 		this->_memory.setCharacterSize(14);
-		this->_memory.setFillColor(sf::Color::White);
+		this->_memory.setFillColor(sf::Color::Black);
 		this->_memory.setPosition(500, 10);
 
 		this->_registers.setFont(this->_font);
 		this->_registers.setCharacterSize(24);
-		this->_registers.setFillColor(sf::Color::White);
+		this->_registers.setFillColor(sf::Color::Black);
 		this->_registers.setPosition(10, 10);
+		this->_debugWindow.setVisible(false);
 	}
 
 
@@ -270,10 +271,10 @@ namespace GBEmulator::Debugger
 	int Debugger::startDebugSession()
 	{
 		bool dbg = true;
+		this->_debugWindow.setVisible(true);
 
 		this->_displayCurrentLine();
 		while (!this->_window.isClosed()) {
-			this->_debugWindow.clear(sf::Color::Blue);
 			try {
 				if (dbg)
 					this->_checkCommands(dbg);
@@ -286,17 +287,23 @@ namespace GBEmulator::Debugger
 					dbg = true;
 				}
 
-				this->_drawInstruction();
-				this->_drawMemory();
-				this->_drawRegisters();
-
 				if (!dbg) {
 					this->_cpu.update();
-					if (this->_timer++ == 30)
-						this->_timer = 0;
-					if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
-						dbg = true;
-						this->_displayCurrentLine();
+					if (++this->_timer > this->_baseTimer) {
+						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
+							this->_timer = 0;
+							this->_debugWindow.clear(sf::Color::White);
+							this->_drawInstruction();
+							this->_drawMemory();
+							this->_drawRegisters();
+							this->_debugWindow.display();
+							this->_handleWindowCommands();
+
+							if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+								dbg = true;
+								this->_displayCurrentLine();
+							}
+						}
 					}
 				}
 			} catch (CPU::InvalidOpcodeException &e) {
@@ -304,8 +311,8 @@ namespace GBEmulator::Debugger
 				std::cout << e.what() << std::endl;
 				this->_displayCurrentLine();
 			}
-			this->_debugWindow.display();
 		}
+		this->_debugWindow.setVisible(false);
 		return 0;
 	}
 
@@ -316,7 +323,7 @@ namespace GBEmulator::Debugger
 
 		text.setFont(this->_font);
 		text.setCharacterSize(24);
-		text.setFillColor(sf::Color::White);
+		text.setFillColor(sf::Color::Black);
 		text.setPosition(10, 370);
 
 		for (int i = 0; i < 23; i++) {
@@ -331,7 +338,7 @@ namespace GBEmulator::Debugger
 			if (this->_cpu._registers.pc == address)
 				text.setFillColor(sf::Color::Red);
 			else
-				text.setFillColor(sf::Color::White);
+				text.setFillColor(sf::Color::Black);
 			this->_debugWindow.draw(text);
 		}
 	}
@@ -360,10 +367,14 @@ namespace GBEmulator::Debugger
 		}
 
 		this->_memory.setString(ss.str());
+		this->_debugWindow.draw(this->_memory);
+	}
 
-		sf::Event event;
-		while (this->_debugWindow.pollEvent(event))
-		{
+	void Debugger::_handleWindowCommands()
+	{
+		sf::Event event{};
+
+		while (this->_debugWindow.pollEvent(event)) {
 			if (event.type == sf::Event::KeyPressed)
 				switch (event.key.code) {
 				case sf::Keyboard::Up:
@@ -454,11 +465,28 @@ namespace GBEmulator::Debugger
 					this->_memBeg = 0xF000;
 					this->_memEnd = 0xF660;
 					break;
+				case sf::Keyboard::P:
+					this->_baseTimer += 1;
+					break;
+				case sf::Keyboard::M:
+					this->_baseTimer -= 1;
+					break;
+				case sf::Keyboard::O:
+					this->_baseTimer += 10;
+					break;
+				case sf::Keyboard::L:
+					this->_baseTimer -= 10;
+					break;
+				case sf::Keyboard::K:
+					this->_baseTimer = -1000;
+					break;
+				case sf::Keyboard::I:
+					this->_baseTimer = 2000;
+					break;
 				default:
 					break;
 				}
 		}
-		this->_debugWindow.draw(this->_memory);
 	}
 
 	void Debugger::_drawRegisters()
@@ -510,7 +538,7 @@ namespace GBEmulator::Debugger
 
 	char Debugger::_getInstructionByLen(const std::string &str)
 	{
-		int index = 0;
+		unsigned index = 0;
 		int spaceNbr = 0;
 		char byteNbr = 0;
 
@@ -521,7 +549,7 @@ namespace GBEmulator::Debugger
 				spaceNbr++;
 		}
 
-		for (int i = index; i < str.length(); i++)
+		for (unsigned i = index; i < str.length(); i++)
 			if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F'))
 				byteNbr++;
 		return byteNbr/2;

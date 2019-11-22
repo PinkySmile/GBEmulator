@@ -29,7 +29,8 @@ namespace GBEmulator::Debugger
 	class Debugger {
 	private:
 		CPU &_cpu;
-		unsigned char _timer = 0;
+		int _timer = 0;
+		int _baseTimer = 0;
 		Graphics::ILCD &_window;
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
@@ -52,6 +53,7 @@ namespace GBEmulator::Debugger
 		void _drawMemory();
 		void _drawRegisters();
 		char _getInstructionByLen(const std::string &str);
+		void _handleWindowCommands();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
