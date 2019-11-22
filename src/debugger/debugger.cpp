@@ -183,6 +183,10 @@ namespace GBEmulator::Debugger
 		else if (args[0] == "set") {
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
+		} else if (args[0] == "slow") {
+			this->_cpu.update();
+			this->_baseTimer = -1000;
+			return true;
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
 				return this->_cpu.dumpMemory(), false;
