@@ -102,10 +102,13 @@ add_executable(
         tests/TestCPUInstruction/JR.cpp
         tests/TestCPUInstruction/LD/LD8.cpp
         tests/TestCPUInstruction/PUSH.cpp
-	tests/TestCPUInstruction/POP.cpp
+        tests/TestCPUInstruction/POP.cpp
         tests/TestCPUInstruction/RET.cpp
         tests/TestCPUInstruction/CALL.cpp
         tests/TestCartridge/TestMBC1.cpp
+        tests/TestCPUInstruction/bits/RES.cpp
+        tests/TestCPUInstruction/bits/SET.cpp
+        tests/TestCPUInstruction/CALL.cpp
 )
 
 target_link_libraries(
