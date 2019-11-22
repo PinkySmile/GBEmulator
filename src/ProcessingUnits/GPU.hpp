@@ -21,6 +21,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	class GPU {
 	private:
 		bool _paletteChanged = false;
@@ -81,6 +85,7 @@ namespace GBEmulator
 		unsigned char update(int cycle);
 
 	private:
+		friend Debugger::Debugger;
 		void _updateTiles();
 		unsigned char *_getTile(std::size_t id);
 		unsigned char *_getTileMap(bool alt);

@@ -54,6 +54,7 @@ namespace GBEmulator::Debugger
 		void _drawRegisters();
 		char _getInstructionByLen(const std::string &str);
 		void _handleWindowCommands();
+		void _drawVram();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
