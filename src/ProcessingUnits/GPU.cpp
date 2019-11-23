@@ -186,7 +186,6 @@ namespace GBEmulator
 	{
 		if ((this->_control & 0x80U) == 0 && (value & 0x80U))
 			this->_cycles = 0;
-		std::cout << std::hex << (int)value << std::endl;
 		this->_control = value;
 	}
 
