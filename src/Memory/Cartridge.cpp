@@ -209,7 +209,7 @@ namespace GBEmulator::Memory
 			return this->_ram.write(address - 0xA000, value);
 
 		else if (address < 0x2000)
-			this->_ramEnabled = value & 0b1010U;
+			this->_ramEnabled = (value & 0xFU) == 0x0A;
 
 		else if (address < 0x4000) {
 			value &= 0b11111U;
@@ -241,10 +241,10 @@ namespace GBEmulator::Memory
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			return this->_ram.write(address - 0xA000, value);
 		else if ((address >> 8) % 0x2 == 0 && address < 0x2000)
-			this->_ramEnabled = value & 0b1010U;
+			this->_ramEnabled = (value & 0b1111U) == 0x0A;
 		else if ((address >> 8) % 0x2 == 1 && address < 0x4000) {
 			value &= 0b11111U;
-			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+			this->_rom.setBank(value + (value % 0x20 == 0));
 		}
 	}
 
@@ -252,11 +252,14 @@ namespace GBEmulator::Memory
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);
+
 		else if (address < 0x2000)
-			this->_ramEnabled = value & 0b1010U;
+			this->_ramEnabled = (value & 0b1111U) == 0x0A;
+
 		else if (address < 0x4000) {
 			value &= 0b1111111U;
 			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+
 		} else if (address < 0x6000)
 			this->_ram.setBank(value & 0b11U);
 	}
@@ -265,13 +268,17 @@ namespace GBEmulator::Memory
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);
+
 		else if (address < 0x2000)
-			this->_ramEnabled = value & 0b1010U;
+			this->_ramEnabled = (value & 0b1111U) == 0x0A;
+
 		else if (address < 0x3000)
 			this->_rom.setBank((this->_rom.getCurrentBank() & 0x100U) + value);
-		else if (address < 0x4000) {
+
+		else if (address < 0x4000)
 			this->_rom.setBank((this->_rom.getCurrentBank() & 0xFFU) + ((value & 0x1U) << 8U));
-		} else if (address < 0x6000)
+
+		else if (address < 0x6000)
 			this->_ram.setBank(value & 0b1111U);
 	}
 
@@ -279,13 +286,17 @@ namespace GBEmulator::Memory
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);
+
 		else if (address < 0x2000)
-			this->_ramEnabled = value & 0b1010U;
+			this->_ramEnabled = (value & 0b1111U) == 0x0A;
+
 		else if (address < 0x3000)
 			this->_rom.setBank((this->_rom.getCurrentBank() & 0x100U) + value);
-		else if (address < 0x4000) {
+
+		else if (address < 0x4000)
 			this->_rom.setBank((this->_rom.getCurrentBank() & 0xFFU) + ((value & 0x1U) << 8U));
-		} else if (address < 0x6000)
+
+		else if (address < 0x6000)
 			this->_ram.setBank(value & 0b111U);
 	}
 }

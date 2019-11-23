@@ -108,7 +108,7 @@ namespace GBEmulator::Instructions
 		unsigned char time = fct(value, arguments...);
 
 		cpu.write(address, value);
-		return time + INDIRECTION_CYCLE_DURATION;
+		return time + INDIRECTION_CYCLE_DURATION * 2;
 	}
 
 	extern const std::function<unsigned char (CPU &, CPU::Registers &)> _instructions[256];

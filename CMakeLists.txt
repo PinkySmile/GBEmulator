@@ -108,7 +108,7 @@ add_executable(
         tests/TestCPUInstruction/bits/RES.cpp
         tests/TestCPUInstruction/bits/SET.cpp
         tests/TestCPUInstruction/CALL.cpp
-)
+        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp)
 
 target_link_libraries(
         tests
