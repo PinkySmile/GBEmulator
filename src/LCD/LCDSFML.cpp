@@ -133,8 +133,8 @@ void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float
 void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)
 {
 	this->_getTextureFromTile(tile, this->_BGTexture[id], Background);
-	this->_getTextureFromTile(tile, this->_palette0Texture[id], Palette0);
-	this->_getTextureFromTile(tile, this->_palette1Texture[id], Palette1);
+	this->_getTextureFromTile(tile, this->_palette0Texture[id], Background);
+	this->_getTextureFromTile(tile, this->_palette1Texture[id], Background);
 
 }
 

@@ -29,11 +29,19 @@ namespace GBEmulator::Debugger
 	class Debugger {
 	private:
 		CPU &_cpu;
-		unsigned char _timer = 0;
+		int _timer = 0;
+		int _baseTimer = 0;
 		Graphics::ILCD &_window;
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
 		std::vector<unsigned short> _breakPoints;
+		sf::RenderWindow _debugWindow;
+		sf::Font _font;
+		std::vector<sf::Text> _texts;
+		sf::Text _memory;
+		unsigned short _memBeg;
+		unsigned short _memEnd;
+		sf::Text _registers;
 
 		void _dispVar(const std::string &name);
 		void _setVar(const std::string &name, unsigned short value);
@@ -41,6 +49,12 @@ namespace GBEmulator::Debugger
 		void _displayCurrentLine(std::ostream &stream = std::cout);
 		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
 		static std::vector<std::string> _splitCommand(const std::string& line);
+		void _drawInstruction();
+		void _drawMemory();
+		void _drawRegisters();
+		char _getInstructionByLen(const std::string &str);
+		void _handleWindowCommands();
+		void _drawVram();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);

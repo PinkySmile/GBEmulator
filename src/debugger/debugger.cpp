@@ -11,15 +11,34 @@
 #include <iomanip>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
+#include "../LCD/LCDSFML.hpp"
 
 namespace GBEmulator::Debugger
 {
 	Debugger::Debugger(GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
 		_cpu(cpu),
 		_window(window),
-		_input(input)
+		_input(input),
+		_debugWindow(sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar)
 	{
+
+		this->_memBeg = 0x0000;
+		this->_memEnd = 0x660;
+
+		this->_font.loadFromFile("../courier.ttf");
+
+		this->_memory.setFont(this->_font);
+		this->_memory.setCharacterSize(14);
+		this->_memory.setFillColor(sf::Color::Black);
+		this->_memory.setPosition(500, 10);
+
+		this->_registers.setFont(this->_font);
+		this->_registers.setCharacterSize(24);
+		this->_registers.setFillColor(sf::Color::Black);
+		this->_registers.setPosition(10, 10);
+		this->_debugWindow.setVisible(false);
 	}
+
 
 	std::vector<std::string> Debugger::_splitCommand(const std::string &line)
 	{
@@ -165,6 +184,10 @@ namespace GBEmulator::Debugger
 		else if (args[0] == "set") {
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
+		} else if (args[0] == "slow") {
+			this->_cpu.update();
+			this->_baseTimer = -1000;
+			return true;
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
 				return this->_cpu.dumpMemory(), false;
@@ -253,6 +276,7 @@ namespace GBEmulator::Debugger
 	int Debugger::startDebugSession()
 	{
 		bool dbg = true;
+		this->_debugWindow.setVisible(true);
 
 		this->_displayCurrentLine();
 		while (!this->_window.isClosed()) {
@@ -270,11 +294,22 @@ namespace GBEmulator::Debugger
 
 				if (!dbg) {
 					this->_cpu.update();
-					if (this->_timer++ == 30)
-						this->_timer = 0;
-					if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
-						dbg = true;
-						this->_displayCurrentLine();
+					if (++this->_timer > this->_baseTimer) {
+						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
+							this->_timer = 0;
+							this->_debugWindow.clear(sf::Color::White);
+							this->_drawInstruction();
+							this->_drawMemory();
+							this->_drawRegisters();
+							this->_drawVram();
+							this->_debugWindow.display();
+							this->_handleWindowCommands();
+
+							if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+								dbg = true;
+								this->_displayCurrentLine();
+							}
+						}
 					}
 				}
 			} catch (CPU::InvalidOpcodeException &e) {
@@ -283,6 +318,556 @@ namespace GBEmulator::Debugger
 				this->_displayCurrentLine();
 			}
 		}
+		this->_debugWindow.setVisible(false);
 		return 0;
+	}
+
+
+	/*
+				1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                3,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                3,
+                3,
+                3,
+                1,
+                2,
+                1,
+                1,
+                1,
+                3,
+                2,
+                3,
+                3,
+                2,
+                1,
+                1,
+                1,
+                3,
+                1,
+                3,
+                1,
+                2,
+                1,
+                1,
+                1,
+                3,
+                1,
+                3,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                3,
+                1,
+                1,
+                1,
+                2,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                3,
+                1,
+                3,
+                1,
+                1,
+                1,
+                2,
+                1
+
+	 */
+
+	void Debugger::_drawInstruction()
+	{
+		sf::Text text;
+		int shift = 0;
+
+		text.setFont(this->_font);
+		text.setCharacterSize(24);
+		text.setFillColor(sf::Color::Black);
+		text.setPosition(10, 370);
+
+		for (int i = 0; i < 23; i++) {
+			std::stringstream ss;
+			auto address = this->_cpu._registers.pc - 11 + i + shift;
+			if (address < 0)
+				continue;
+			this->_displayCurrentLine(address, ss);
+			shift += this->_getInstructionByLen(ss.str());
+			text.setString(ss.str());
+			text.move(0, 25);
+			if (this->_cpu._registers.pc == address)
+				text.setFillColor(sf::Color::Red);
+			else
+				text.setFillColor(sf::Color::Black);
+			this->_debugWindow.draw(text);
+		}
+	}
+
+	void Debugger::_drawMemory()
+	{
+		std::stringstream ss;
+
+		size_t beg = this->_memBeg;
+		size_t end = this->_memEnd;
+
+		beg -= beg % 0x20;
+		end += 0x20 - end % 0x20;
+		for (; beg < end; beg += 0x20) {
+			ss << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << beg << ":  ";
+			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
+				ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + beg)) << " ";
+			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
+				ss << "   ";
+			ss << " ";
+			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
+				ss << static_cast<char>(std::isprint(this->_cpu.read(j + beg)) ? this->_cpu.read(j + beg) : '.');
+			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
+				ss << " ";
+			ss << std::endl;
+		}
+
+		this->_memory.setString(ss.str());
+		this->_debugWindow.draw(this->_memory);
+	}
+
+	void Debugger::_handleWindowCommands()
+	{
+		sf::Event event{};
+
+		while (this->_debugWindow.pollEvent(event)) {
+			if (event.type == sf::Event::KeyPressed)
+				switch (event.key.code) {
+				case sf::Keyboard::Up:
+					if (this->_memBeg > 0x0000) {
+						this->_memBeg -= 0x20;
+						this->_memEnd -= 0x20;
+					}
+					break;
+				case sf::Keyboard::Down:
+					if (this->_memEnd + 0x20 <= 0xFFFF) {
+						this->_memBeg += 0x20;
+						this->_memEnd += 0x20;
+					}
+					break;
+				case sf::Keyboard::PageUp:
+					if (this->_memBeg > 0x0000) {
+						this->_memBeg -= 0x0660;
+						this->_memEnd -= 0x0660;
+					}
+					break;
+				case sf::Keyboard::PageDown:
+					if (this->_memEnd + 0x0660 <= 0xFFFF) {
+						this->_memBeg += 0x0660;
+						this->_memEnd += 0x0660;
+					}
+					break;
+				case sf::Keyboard::Num0:
+					this->_memBeg = 0x0000;
+					this->_memEnd = 0x0660;
+					break;
+				case sf::Keyboard::Num1:
+					this->_memBeg = 0x1000;
+					this->_memEnd = 0x1660;
+					break;
+				case sf::Keyboard::Num2:
+					this->_memBeg = 0x2000;
+					this->_memEnd = 0x2660;
+					break;
+				case sf::Keyboard::Num3:
+					this->_memBeg = 0x3000;
+					this->_memEnd = 0x3660;
+					break;
+				case sf::Keyboard::Quote:
+					this->_memBeg = 0x4000;
+					this->_memEnd = 0x4660;
+					break;
+				case sf::Keyboard::Num5:
+					this->_memBeg = 0x5000;
+					this->_memEnd = 0x5660;
+					break;
+				case sf::Keyboard::Dash:
+					this->_memBeg = 0x6000;
+					this->_memEnd = 0x6660;
+					break;
+				case sf::Keyboard::Num7:
+					this->_memBeg = 0x7000;
+					this->_memEnd = 0x7660;
+					break;
+				case sf::Keyboard::Num8:
+					this->_memBeg = 0x8000;
+					this->_memEnd = 0x8660;
+					break;
+				case sf::Keyboard::Num9:
+					this->_memBeg = 0x9000;
+					this->_memEnd = 0x9660;
+					break;
+				case sf::Keyboard::A:
+					this->_memBeg = 0xA000;
+					this->_memEnd = 0xA660;
+					break;
+				case sf::Keyboard::B:
+					this->_memBeg = 0xB000;
+					this->_memEnd = 0xB660;
+					break;
+				case sf::Keyboard::C:
+					this->_memBeg = 0xC000;
+					this->_memEnd = 0xC660;
+					break;
+				case sf::Keyboard::D:
+					this->_memBeg = 0xD000;
+					this->_memEnd = 0xD660;
+					break;
+				case sf::Keyboard::E:
+					this->_memBeg = 0xE000;
+					this->_memEnd = 0xE660;
+					break;
+				case sf::Keyboard::F:
+					this->_memBeg = 0xF000;
+					this->_memEnd = 0xF660;
+					break;
+				case sf::Keyboard::P:
+					this->_baseTimer += 1;
+					break;
+				case sf::Keyboard::M:
+					this->_baseTimer -= 1;
+					break;
+				case sf::Keyboard::O:
+					this->_baseTimer += 10;
+					break;
+				case sf::Keyboard::L:
+					this->_baseTimer -= 10;
+					break;
+				case sf::Keyboard::K:
+					this->_baseTimer = -1000;
+					break;
+				case sf::Keyboard::I:
+					this->_baseTimer = 2000;
+					break;
+				default:
+					break;
+				}
+		}
+	}
+
+	void Debugger::_drawRegisters()
+	{
+		std::stringstream ss;
+
+		ss << std::hex << std::uppercase;
+		ss << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af;
+		ss << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.a);
+		ss << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.f) << ")" << "     ";
+
+		ss << "bc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.bc;
+		ss << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.b);
+		ss << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.c) << ")" << std::endl;
+
+		ss << "de: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.de;
+		ss << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.d);
+		ss << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.e) << ")" << "     ";
+
+		ss << "hl: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.hl;
+		ss << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.h);
+		ss << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.l) << ")" << std::endl;
+
+		ss << "sp: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.sp << "     ";
+		ss << "pc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.pc << std::endl << std::endl;
+
+		ss << "Flags:" << std::endl;
+		ss << "z: " << (this->_cpu._registers.fz ? "set" : "unset") << "     ";
+		ss << "c: " << (this->_cpu._registers.fc ? "set" : "unset") << "     ";
+		ss << "h: " << (this->_cpu._registers.fh ? "set" : "unset") << "     ";
+		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << std::endl << std::endl;
+
+		ss << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
+		ss << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
+		ss << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_Y_COORD)) << std::endl;
+		ss << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(INTERRUPT_ENABLE_ADDRESS)) << "     ";
+		ss << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_REQUESTS)) << "     ";
+		ss << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._rom.getRomBank()) << std::endl << std::endl;
+
+		if (this->_cpu._halted)
+			ss << "Waiting for interrupt..." << std::endl;
+		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
+		ss << "Next instruction: " << Instructions::_instructionsString[this->_cpu.read(this->_cpu._registers.pc)](this->_cpu, this->_cpu._registers.pc + 1);
+		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
+
+		this->_registers.setString(ss.str());
+		this->_debugWindow.draw(this->_registers);
+	}
+
+	char Debugger::_getInstructionByLen(const std::string &str)
+	{
+		unsigned index = 0;
+		int spaceNbr = 0;
+		char byteNbr = 0;
+
+		for (; index < str.length(); index++) {
+			if (spaceNbr == 2)
+				break;
+			if (str[index] == ' ')
+				spaceNbr++;
+		}
+
+		for (unsigned i = index; i < str.length(); i++)
+			if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F'))
+				byteNbr++;
+		return byteNbr/2;
+	}
+
+	void Debugger::_drawVram()
+	{
+		sf::Sprite sprite;
+		sf::RectangleShape square(sf::Vector2f(600, 1000));
+		int tileNbr = 0;
+
+		square.setFillColor(sf::Color::Blue);
+		square.setPosition(1400, 0);
+		sprite.setPosition(1405, 5);
+		sprite.setScale(2, 2);
+		this->_debugWindow.draw(square);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
+		sprite.setPosition(1663, 5);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1663, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
+
+		sprite.setPosition(1405, 450);
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture) {
+			sprite.setTexture(e);
+			this->_debugWindow.draw(sprite);
+			sprite.move(8 * 2, 0);
+			tileNbr++;
+			if (tileNbr == 16) {
+				tileNbr = 0;
+				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.move(0, 8 * 2);
+			}
+		}
 	}
 }
