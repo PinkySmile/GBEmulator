@@ -602,15 +602,50 @@ namespace GBEmulator::Debugger
 		sf::RectangleShape square(sf::Vector2f(800, 1000));
 		int tileNbr = 0;
 
+		square.setFillColor(sf::Color::Blue);
+		square.setPosition(1200, 0);
+		_debugWindow.draw(square);
+
+		sprite.setScale(1.5, 1.5);
+		sprite.setPosition(1465, 450);
+		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+		for (int i = 0; i < 32 * 32; i++) {
+			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[map[i]]);
+			_debugWindow.draw(sprite);
+			sprite.move(8 * 1.5, 0);
+			tileNbr++;
+			if (tileNbr == 32) {
+				tileNbr = 0;
+				sprite.setPosition(1465, sprite.getPosition().y);
+				sprite.move(0, 8 * 1.5);
+			}
+		}
 		cam.setFillColor(sf::Color::Transparent);
 		cam.setOutlineColor(sf::Color::Red);
 		cam.setOutlineThickness(4);
-		cam.setPosition(1465 + this->_cpu._gpu._scrollX * 1.5, 450 + this->_cpu._gpu._scrollY * 1.5);
-		square.setFillColor(sf::Color::Blue);
-		square.setPosition(1200, 0);
+		for (int i = 0; i < 4; i++) {
+			cam.setPosition(1465 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2), 450 + this->_cpu._gpu._scrollY * 1.5 - 384 * (i / 2));
+			if (1465 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2) > 1200)
+				_debugWindow.draw(cam);
+		}
+
+		square.setSize({1200, 446});
+		_debugWindow.draw(square);
+
+		square.setSize({261, 1000});
+		_debugWindow.draw(square);
+
+		square.setPosition(1200, 838);
+		square.setSize({1200, 450});
+		_debugWindow.draw(square);
+
+		square.setPosition(1853, 0);
+		square.setSize({1200, 1000});
+		_debugWindow.draw(square);
+
 		sprite.setPosition(1205, 5);
 		sprite.setScale(2, 2);
-		_debugWindow.draw(square);
+
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
@@ -648,21 +683,5 @@ namespace GBEmulator::Debugger
 				sprite.move(0, 8 * 2);
 			}
 		}
-
-		sprite.setScale(1.5, 1.5);
-		sprite.setPosition(1465, 450);
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
-		for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[map[i]]);
-			_debugWindow.draw(sprite);
-			sprite.move(8 * 1.5, 0);
-			tileNbr++;
-			if (tileNbr == 32) {
-				tileNbr = 0;
-				sprite.setPosition(1465, sprite.getPosition().y);
-				sprite.move(0, 8 * 1.5);
-			}
-		}
-		_debugWindow.draw(cam);
 	}
 }
