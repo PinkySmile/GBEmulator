@@ -89,7 +89,7 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 				this->_objectColorPalette0[tile[i]].r,
 				this->_objectColorPalette0[tile[i]].g,
 				this->_objectColorPalette0[tile[i]].b,
-				(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
+				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
 			};
 		break;
 	case Palette1:
@@ -98,7 +98,7 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 				this->_objectColorPalette1[tile[i]].r,
 				this->_objectColorPalette1[tile[i]].g,
 				this->_objectColorPalette1[tile[i]].b,
-				(i % 4 == 0) ? static_cast<sf::Uint8>(255) : static_cast<sf::Uint8>(0)
+				(tile[i]== 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
 			};
 		break;
 	}
@@ -133,8 +133,8 @@ void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float
 void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)
 {
 	this->_getTextureFromTile(tile, this->_BGTexture[id], Background);
-	this->_getTextureFromTile(tile, this->_palette0Texture[id], Background);
-	this->_getTextureFromTile(tile, this->_palette1Texture[id], Background);
+	this->_getTextureFromTile(tile, this->_palette0Texture[id], Palette0);
+	this->_getTextureFromTile(tile, this->_palette1Texture[id], Palette1);
 
 }
 
