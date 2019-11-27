@@ -53,7 +53,7 @@ namespace GBEmulator::Debugger
 		this->_memory.setFont(this->_font);
 		this->_memory.setCharacterSize(14);
 		this->_memory.setFillColor(sf::Color::Black);
-		this->_memory.setPosition(500, 10);
+		this->_memory.setPosition(300, 10);
 
 		this->_registers.setFont(this->_font);
 		this->_registers.setCharacterSize(14);
@@ -595,34 +595,20 @@ namespace GBEmulator::Debugger
 		_debugWindow.draw(this->_registers);
 	}
 
-	char Debugger::_getInstructionByLen(const std::string &str)
-	{
-		unsigned index = 0;
-		int spaceNbr = 0;
-		char byteNbr = 0;
-
-		for (; index < str.length(); index++) {
-			if (spaceNbr == 2)
-				break;
-			if (str[index] == ' ')
-				spaceNbr++;
-		}
-
-		for (unsigned i = index; i < str.length(); i++)
-			if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F'))
-				byteNbr++;
-		return byteNbr/2;
-	}
-
 	void Debugger::_drawVram(sf::RenderWindow &_debugWindow)
 	{
 		sf::Sprite sprite;
-		sf::RectangleShape square(sf::Vector2f(600, 1000));
+		sf::RectangleShape cam(sf::Vector2f(240, 216));
+		sf::RectangleShape square(sf::Vector2f(800, 1000));
 		int tileNbr = 0;
 
+		cam.setFillColor(sf::Color::Transparent);
+		cam.setOutlineColor(sf::Color::Red);
+		cam.setOutlineThickness(4);
+		cam.setPosition(1465 + this->_cpu._gpu._scrollX * 1.5, 450 + this->_cpu._gpu._scrollY * 1.5);
 		square.setFillColor(sf::Color::Blue);
-		square.setPosition(1400, 0);
-		sprite.setPosition(1405, 5);
+		square.setPosition(1200, 0);
+		sprite.setPosition(1205, 5);
 		sprite.setScale(2, 2);
 		_debugWindow.draw(square);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
@@ -632,11 +618,12 @@ namespace GBEmulator::Debugger
 			tileNbr++;
 			if (tileNbr == 16) {
 				tileNbr = 0;
-				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.setPosition(1205, sprite.getPosition().y);
 				sprite.move(0, 8 * 2);
 			}
 		}
-		sprite.setPosition(1663, 5);
+
+		sprite.setPosition(1463, 5);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
@@ -644,12 +631,12 @@ namespace GBEmulator::Debugger
 			tileNbr++;
 			if (tileNbr == 16) {
 				tileNbr = 0;
-				sprite.setPosition(1663, sprite.getPosition().y);
+				sprite.setPosition(1463, sprite.getPosition().y);
 				sprite.move(0, 8 * 2);
 			}
 		}
 
-		sprite.setPosition(1405, 450);
+		sprite.setPosition(1205, 450);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
@@ -657,9 +644,25 @@ namespace GBEmulator::Debugger
 			tileNbr++;
 			if (tileNbr == 16) {
 				tileNbr = 0;
-				sprite.setPosition(1405, sprite.getPosition().y);
+				sprite.setPosition(1205, sprite.getPosition().y);
 				sprite.move(0, 8 * 2);
 			}
 		}
+
+		sprite.setScale(1.5, 1.5);
+		sprite.setPosition(1465, 450);
+		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+		for (int i = 0; i < 32 * 32; i++) {
+			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[map[i]]);
+			_debugWindow.draw(sprite);
+			sprite.move(8 * 1.5, 0);
+			tileNbr++;
+			if (tileNbr == 32) {
+				tileNbr = 0;
+				sprite.setPosition(1465, sprite.getPosition().y);
+				sprite.move(0, 8 * 1.5);
+			}
+		}
+		_debugWindow.draw(cam);
 	}
 }
