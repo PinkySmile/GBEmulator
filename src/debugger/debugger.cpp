@@ -586,7 +586,6 @@ namespace GBEmulator::Debugger
 		this->_cpu._gpu._updateTiles();
 
 		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineColor(sf::Color::Red);
 		cam.setOutlineThickness(4);
 
 		square.setFillColor(sf::Color::Blue);
@@ -596,10 +595,14 @@ namespace GBEmulator::Debugger
 		sprite.setScale(1.5, 1.5);
 		sprite.setPosition(1142, 450);
 
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+		auto map = this->_cpu._gpu._getTileMap(false);
+
 		this->_cpu._gpu._updateTiles();
+
 		for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[map[i]]);
+			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[
+				!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[i]) + 0x100 : map[i]
+			]);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
 			tileNbr++;
@@ -609,15 +612,20 @@ namespace GBEmulator::Debugger
 				sprite.move(0, 8 * 1.5);
 			}
 		}
+		cam.setOutlineColor(!(this->_cpu._gpu._control & 0b0001000U) ? (this->_cpu._gpu._control & 0x80 ? sf::Color::Green : sf::Color::Red) : sf::Color::Transparent);
 		for (int i = 0; i < 4; i++) {
 			cam.setPosition(1142 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2), 450 + this->_cpu._gpu._scrollY * 1.5 - 384 * (i / 2));
 			if (this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2) >= 0)
 				_debugWindow.draw(cam);
 		}
 
+		map = this->_cpu._gpu._getTileMap(true);
+
 		sprite.setPosition(1531, 450);
 		for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[static_cast<char>(map[i]) + 0x100]);
+			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[
+				!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[i]) + 0x100 : map[i]
+			]);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
 			tileNbr++;
@@ -627,6 +635,7 @@ namespace GBEmulator::Debugger
 				sprite.move(0, 8 * 1.5);
 			}
 		}
+		cam.setOutlineColor((this->_cpu._gpu._control & 0b0001000U) ? (this->_cpu._gpu._control & 0x80 ? sf::Color::Green : sf::Color::Red) : sf::Color::Transparent);
 		for (int i = 0; i < 4; i++) {
 			cam.setPosition(1531 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2), 450 + this->_cpu._gpu._scrollY * 1.5 - 384 * (i / 2));
 			if (this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2) >= 0)
