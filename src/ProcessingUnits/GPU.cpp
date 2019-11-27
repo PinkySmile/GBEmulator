@@ -25,7 +25,7 @@ namespace GBEmulator
 		for (int i = 0; i < BG_MAP_SIZE; i++)
 			this->_backgroundMap[i] = rand() & 0xFF;
 
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 384; i++)
 			this->_screen.updateTexture(this->_getTile(i), i);
 	}
 
@@ -134,12 +134,6 @@ namespace GBEmulator
 				this->_cycles -= GPU_FULL_CYCLE_DURATION;
 				this->_screen.clear();
 
-				if (this->_paletteChanged) {
-					this->_screen.setBGPalette(this->_bgPalette);
-					this->_screen.setObjectPalette0(this->_objectPalette0);
-					this->_screen.setObjectPalette1(this->_objectPalette1);
-					this->_paletteChanged = false;
-				}
 				this->_updateTiles();
 
 				if (this->_control & 0b00000001U)
@@ -217,6 +211,10 @@ namespace GBEmulator
 	void GPU::_updateTiles()
 	{
 		if (this->_paletteChanged) {
+			this->_screen.setBGPalette(this->_bgPalette);
+			this->_screen.setObjectPalette0(this->_objectPalette0);
+			this->_screen.setObjectPalette1(this->_objectPalette1);
+			this->_paletteChanged = false;
 			for (int i = 0; i < 384; i++)
 				this->_screen.updateTexture(this->_getTile(i), i);
 		} else
@@ -330,7 +328,7 @@ namespace GBEmulator
 
 	void GPU::setObjectPalette1(unsigned char value)
 	{
-		this->_paletteChanged = this->_paletteChanged || this->_objectPalette0 != value;
+		this->_paletteChanged = this->_paletteChanged || this->_objectPalette1 != value;
 		this->_objectPalette1 = value;
 	}
 }
