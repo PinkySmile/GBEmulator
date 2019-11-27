@@ -5,9 +5,15 @@
 ** debugger.cpp
 */
 
+#ifndef _WIN32
+#	include <sys/select.h>
+#define closesocket(socket) close(socket)
+typedef fd_set FD_SET;
+#else
+#	include <windows.h>
+#endif
 
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
@@ -15,13 +21,30 @@
 
 namespace GBEmulator::Debugger
 {
+	const std::vector<unsigned char> Debugger::_instrSize = {
+		1, 3, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 1, 1, 2, 1,
+		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
+		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
+		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 3, 3, 3, 1, 2, 1, 1, 1, 3, 2, 3, 3, 2, 1,
+		1, 1, 3, 1, 3, 1, 2, 1, 1, 1, 3, 1, 3, 1, 2, 1,
+		2, 1, 1, 1, 1, 1, 2, 1, 3, 1, 3, 1, 1, 1, 2, 1,
+		2, 1, 1, 1, 1, 1, 2, 1, 3, 1, 3, 1, 1, 1, 2, 1
+	};
+
 	Debugger::Debugger(GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
 		_cpu(cpu),
 		_window(window),
-		_input(input),
-		_debugWindow(sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar)
+		_input(input)
 	{
-
 		this->_memBeg = 0x0000;
 		this->_memEnd = 0x660;
 
@@ -33,10 +56,9 @@ namespace GBEmulator::Debugger
 		this->_memory.setPosition(500, 10);
 
 		this->_registers.setFont(this->_font);
-		this->_registers.setCharacterSize(24);
+		this->_registers.setCharacterSize(14);
 		this->_registers.setFillColor(sf::Color::Black);
 		this->_registers.setPosition(10, 10);
-		this->_debugWindow.setVisible(false);
 	}
 
 
@@ -237,6 +259,12 @@ namespace GBEmulator::Debugger
 		return false;
 	}
 
+	Debugger::~Debugger()
+	{
+		if (this->_displayThread.joinable())
+			this->_displayThread.join();
+	}
+
 	bool Debugger::checkBreakPoints()
 	{
 		return std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc) != this->_breakPoints.end();
@@ -257,38 +285,66 @@ namespace GBEmulator::Debugger
 	{
 		std::string line;
 
-		while (true)
-			try {
-				std::cout << "gdbgb> ";
-				std::getline(inputStream, line);
-				if (std::cin.eof() || this->processCommandLine(line))
-					dbg = false;
-				return;
-			} catch (CommandNotFoundException &e) {
-				std::cout << e.what() << std::endl;
-			} catch (std::out_of_range &e) {
-				std::cout << "Not enough arguments" << std::endl;
-			} catch (std::exception &e) {
-				std::cout << "Error running command: " << e.what() << std::endl;
-			}
+		if (std::cin.eof())
+			return;
+
+		try {
+			std::getline(inputStream, line);
+			if (this->processCommandLine(line))
+				dbg = false;
+		} catch (CommandNotFoundException &e) {
+			std::cout << e.what() << std::endl;
+		} catch (std::out_of_range &e) {
+			std::cout << "Not enough arguments" << std::endl;
+		} catch (std::exception &e) {
+			std::cout << "Error running command: " << e.what() << std::endl;
+		}
 	}
 
 	int Debugger::startDebugSession()
 	{
 		bool dbg = true;
-		this->_debugWindow.setVisible(true);
+		sf::RenderWindow _debugWindow{sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar};
 
 		this->_displayCurrentLine();
+		std::cout << "gdbgb> ";
+		std::cout.flush();
 		while (!this->_window.isClosed()) {
 			try {
-				if (dbg)
-					this->_checkCommands(dbg);
+				if (dbg) {
+					FD_SET	set;
+					timeval time = {0, 0};
+
+					FD_ZERO(&set);
+					FD_SET(0, &set);
+
+					//TODO: Check WSAEventSelect and WaitForMultipleObjectsEx for Windows
+					int found = select(FD_SETSIZE, &set, nullptr, nullptr, &time);
+
+					if (!found) {
+						_debugWindow.clear(sf::Color::White);
+						this->_drawInstruction(_debugWindow);
+						this->_drawMemory(_debugWindow);
+						this->_drawRegisters(_debugWindow);
+						this->_drawVram(_debugWindow);
+						_debugWindow.display();
+						this->_handleWindowCommands(_debugWindow);
+					} else {
+						this->_checkCommands(dbg);
+						if (dbg) {
+							std::cout << "gdbgb> ";
+							std::cout.flush();
+						}
+					}
+				}
 
 				if (!dbg && this->checkBreakPoints()) {
 					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 
 					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
 					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
 					dbg = true;
 				}
 
@@ -297,17 +353,19 @@ namespace GBEmulator::Debugger
 					if (++this->_timer > this->_baseTimer) {
 						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
 							this->_timer = 0;
-							this->_debugWindow.clear(sf::Color::White);
-							this->_drawInstruction();
-							this->_drawMemory();
-							this->_drawRegisters();
-							this->_drawVram();
-							this->_debugWindow.display();
-							this->_handleWindowCommands();
 
+							_debugWindow.clear(sf::Color::White);
+							this->_drawInstruction(_debugWindow);
+							this->_drawMemory(_debugWindow);
+							this->_drawRegisters(_debugWindow);
+							this->_drawVram(_debugWindow);
+							_debugWindow.display();
+							this->_handleWindowCommands(_debugWindow);
 							if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
 								dbg = true;
 								this->_displayCurrentLine();
+								std::cout << "gdbgb> ";
+								std::cout.flush();
 							}
 						}
 					}
@@ -316,301 +374,48 @@ namespace GBEmulator::Debugger
 				dbg = true;
 				std::cout << e.what() << std::endl;
 				this->_displayCurrentLine();
+				std::cout << "gdbgb> ";
+				std::cout.flush();
 			}
 		}
-		this->_debugWindow.setVisible(false);
+
+		if (this->_displayThread.joinable())
+			this->_displayThread.join();
 		return 0;
 	}
 
-
-	/*
-				1,
-                3,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                3,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                1,
-                3,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                3,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                3,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                3,
-                3,
-                3,
-                1,
-                2,
-                1,
-                1,
-                1,
-                3,
-                2,
-                3,
-                3,
-                2,
-                1,
-                1,
-                1,
-                3,
-                1,
-                3,
-                1,
-                2,
-                1,
-                1,
-                1,
-                3,
-                1,
-                3,
-                1,
-                2,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                3,
-                1,
-                3,
-                1,
-                1,
-                1,
-                2,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                1,
-                3,
-                1,
-                3,
-                1,
-                1,
-                1,
-                2,
-                1
-
-	 */
-
-	void Debugger::_drawInstruction()
+	void Debugger::_drawInstruction(sf::RenderWindow &_debugWindow)
 	{
 		sf::Text text;
 		int shift = 0;
+		int start = this->_cpu._registers.pc - 5;
+
+		if (start < 0)
+			start = 0;
 
 		text.setFont(this->_font);
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::Black);
-		text.setPosition(10, 370);
+		text.setPosition(10, 570);
 
-		for (int i = 0; i < 23; i++) {
+		for (int i = 0; i < 15; i++) {
 			std::stringstream ss;
-			auto address = this->_cpu._registers.pc - 11 + i + shift;
+			auto address = start + i + shift;
 			if (address < 0)
 				continue;
 			this->_displayCurrentLine(address, ss);
-			shift += this->_getInstructionByLen(ss.str());
+			shift += this->_instrSize[this->_cpu.read(address)] - 1;
 			text.setString(ss.str());
 			text.move(0, 25);
 			if (this->_cpu._registers.pc == address)
 				text.setFillColor(sf::Color::Red);
 			else
 				text.setFillColor(sf::Color::Black);
-			this->_debugWindow.draw(text);
+			_debugWindow.draw(text);
 		}
 	}
 
-	void Debugger::_drawMemory()
+	void Debugger::_drawMemory(sf::RenderWindow &_debugWindow)
 	{
 		std::stringstream ss;
 
@@ -634,14 +439,14 @@ namespace GBEmulator::Debugger
 		}
 
 		this->_memory.setString(ss.str());
-		this->_debugWindow.draw(this->_memory);
+		_debugWindow.draw(this->_memory);
 	}
 
-	void Debugger::_handleWindowCommands()
+	void Debugger::_handleWindowCommands(sf::RenderWindow &_debugWindow)
 	{
 		sf::Event event{};
 
-		while (this->_debugWindow.pollEvent(event)) {
+		while (_debugWindow.pollEvent(event)) {
 			if (event.type == sf::Event::KeyPressed)
 				switch (event.key.code) {
 				case sf::Keyboard::Up:
@@ -756,35 +561,22 @@ namespace GBEmulator::Debugger
 		}
 	}
 
-	void Debugger::_drawRegisters()
+	void Debugger::_drawRegisters(sf::RenderWindow &_debugWindow)
 	{
 		std::stringstream ss;
 
 		ss << std::hex << std::uppercase;
-		ss << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af;
-		ss << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.a);
-		ss << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.f) << ")" << "     ";
-
-		ss << "bc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.bc;
-		ss << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.b);
-		ss << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.c) << ")" << std::endl;
-
-		ss << "de: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.de;
-		ss << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.d);
-		ss << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.e) << ")" << "     ";
-
-		ss << "hl: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.hl;
-		ss << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.h);
-		ss << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.l) << ")" << std::endl;
-
-		ss << "sp: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.sp << "     ";
-		ss << "pc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.pc << std::endl << std::endl;
-
+		ss << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af << "    ";
+		ss << "bc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.bc << "    ";
+		ss << "de: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.de << std::endl;
+		ss << "hl: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.hl << "    ";
+		ss << "sp: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.sp << "    ";
+		ss << "pc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.pc << std::endl;
 		ss << "Flags:" << std::endl;
-		ss << "z: " << (this->_cpu._registers.fz ? "set" : "unset") << "     ";
-		ss << "c: " << (this->_cpu._registers.fc ? "set" : "unset") << "     ";
-		ss << "h: " << (this->_cpu._registers.fh ? "set" : "unset") << "     ";
-		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << std::endl << std::endl;
+		ss << "z: " << (this->_cpu._registers.fz ? "set" : "unset") << "    ";
+		ss << "c: " << (this->_cpu._registers.fc ? "set" : "unset") << "    ";
+		ss << "h: " << (this->_cpu._registers.fh ? "set" : "unset") << "    ";
+		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << std::endl;
 
 		ss << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
 		ss << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
@@ -800,7 +592,7 @@ namespace GBEmulator::Debugger
 		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
 
 		this->_registers.setString(ss.str());
-		this->_debugWindow.draw(this->_registers);
+		_debugWindow.draw(this->_registers);
 	}
 
 	char Debugger::_getInstructionByLen(const std::string &str)
@@ -822,7 +614,7 @@ namespace GBEmulator::Debugger
 		return byteNbr/2;
 	}
 
-	void Debugger::_drawVram()
+	void Debugger::_drawVram(sf::RenderWindow &_debugWindow)
 	{
 		sf::Sprite sprite;
 		sf::RectangleShape square(sf::Vector2f(600, 1000));
@@ -832,10 +624,10 @@ namespace GBEmulator::Debugger
 		square.setPosition(1400, 0);
 		sprite.setPosition(1405, 5);
 		sprite.setScale(2, 2);
-		this->_debugWindow.draw(square);
+		_debugWindow.draw(square);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
 			sprite.setTexture(e);
-			this->_debugWindow.draw(sprite);
+			_debugWindow.draw(sprite);
 			sprite.move(8 * 2, 0);
 			tileNbr++;
 			if (tileNbr == 16) {
@@ -847,7 +639,7 @@ namespace GBEmulator::Debugger
 		sprite.setPosition(1663, 5);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
 			sprite.setTexture(e);
-			this->_debugWindow.draw(sprite);
+			_debugWindow.draw(sprite);
 			sprite.move(8 * 2, 0);
 			tileNbr++;
 			if (tileNbr == 16) {
@@ -860,7 +652,7 @@ namespace GBEmulator::Debugger
 		sprite.setPosition(1405, 450);
 		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture) {
 			sprite.setTexture(e);
-			this->_debugWindow.draw(sprite);
+			_debugWindow.draw(sprite);
 			sprite.move(8 * 2, 0);
 			tileNbr++;
 			if (tileNbr == 16) {

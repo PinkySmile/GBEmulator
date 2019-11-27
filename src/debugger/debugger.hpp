@@ -8,6 +8,7 @@
 #ifndef GBEMULATOR_DEBUGGER_HPP
 #define GBEMULATOR_DEBUGGER_HPP
 
+#include <thread>
 #include "../ProcessingUnits/CPU.hpp"
 
 namespace GBEmulator::Debugger
@@ -35,13 +36,15 @@ namespace GBEmulator::Debugger
 		Input::JoypadEmulator &_input;
 		std::string _lastCmd;
 		std::vector<unsigned short> _breakPoints;
-		sf::RenderWindow _debugWindow;
 		sf::Font _font;
 		std::vector<sf::Text> _texts;
 		sf::Text _memory;
 		unsigned short _memBeg;
 		unsigned short _memEnd;
 		sf::Text _registers;
+		std::thread _displayThread;
+
+		static const std::vector<unsigned char> _instrSize;
 
 		void _dispVar(const std::string &name);
 		void _setVar(const std::string &name, unsigned short value);
@@ -49,15 +52,16 @@ namespace GBEmulator::Debugger
 		void _displayCurrentLine(std::ostream &stream = std::cout);
 		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
 		static std::vector<std::string> _splitCommand(const std::string& line);
-		void _drawInstruction();
-		void _drawMemory();
-		void _drawRegisters();
+		void _drawInstruction(sf::RenderWindow &_debugWindow);
+		void _drawMemory(sf::RenderWindow &_debugWindow);
+		void _drawRegisters(sf::RenderWindow &_debugWindow);
+		void _handleWindowCommands(sf::RenderWindow &_debugWindow);
+		void _drawVram(sf::RenderWindow &_debugWindow);
 		char _getInstructionByLen(const std::string &str);
-		void _handleWindowCommands();
-		void _drawVram();
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
+		~Debugger();
 
 		bool processCommandLine(const std::string& line);
 		bool checkBreakPoints();

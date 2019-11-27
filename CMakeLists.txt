@@ -53,6 +53,7 @@ target_link_libraries(
         sfml-window
         sfml-system
         sfml-audio
+        pthread
 )
 
 add_executable(

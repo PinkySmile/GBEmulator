@@ -464,7 +464,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 97; SUB a: Subtracts a from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); },
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
 		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b + reg.fc); },
@@ -518,7 +518,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.b); },
 
 		//! A9; XOR c: Bitwise XOR on a with c.
-		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.l); },
+		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.c); },
 
 		//! AA; XOR d: Bitwise XOR on a with d.
 		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.d); },

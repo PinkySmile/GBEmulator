@@ -239,7 +239,7 @@ namespace GBEmulator
 
 	unsigned char GPU::getStatByte() const
 	{
-		return (this->_stat & 0b01111000U) | 0x80U | (this->getCurrentLine() == this->_lyc) << 2U | this->getMode();
+		return (this->_stat & 0b01111000U) | 0x80U | ((this->getCurrentLine() == this->_lyc && (this->_control & 0x80U)) << 2U) | this->getMode();
 	}
 
 	void GPU::setStatByte(unsigned char value)
@@ -261,11 +261,11 @@ namespace GBEmulator
 	{
 		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
 			return 1;
-		if (this->_cycles % 456 < 83)
+		if (this->_cycles % 456 < 198)
+			return 0;
+		if (this->_cycles % 456 < 281)
 			return 2;
-		if (this->_cycles % 456 < 258)
-			return 3;
-		return 0;
+		return 3;
 	}
 
 	bool GPU::_isStatInterrupt()
