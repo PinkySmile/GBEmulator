@@ -5,6 +5,7 @@
 ** Lcdsfml.cpp
 */
 
+#include <cmath>
 #include "LCDSFML.hpp"
 
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
@@ -107,12 +108,17 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 
 void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, float x, float y, bool signedMode)
 {
+	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
+
 	this->_sprite.setScale(1, 1);
-	for (unsigned i = 0; i < 1024; i++) {
-		this->_sprite.setTexture(this->_getTexture(tiles[i], signedMode, Background));
-		this->_sprite.setPosition(x + i % 32 * 8, y + i / 32 * 8);
-		this->draw(this->_sprite);
-	}
+	for (int xpos = -1; xpos < 20; xpos++)
+		for (int ypos = -1; ypos < 18; ypos++) {
+			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
+
+			this->_sprite.setTexture(this->_getTexture(tiles[index], signedMode, Background));
+			this->_sprite.setPosition(xpos * 8 + off.x, ypos * 8 + off.y);
+			this->draw(this->_sprite);
+		}
 }
 
 bool GBEmulator::Graphics::LCDSFML::isClosed() const
