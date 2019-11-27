@@ -40,7 +40,6 @@ namespace GBEmulator::Debugger
 		std::vector<sf::Text> _texts;
 		sf::Text _memory;
 		unsigned short _memBeg;
-		unsigned short _memEnd;
 		sf::Text _registers;
 		std::thread _displayThread;
 

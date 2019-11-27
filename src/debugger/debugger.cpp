@@ -46,7 +46,6 @@ namespace GBEmulator::Debugger
 		_input(input)
 	{
 		this->_memBeg = 0x0000;
-		this->_memEnd = 0x660;
 
 		this->_font.loadFromFile("../courier.ttf");
 
@@ -420,7 +419,7 @@ namespace GBEmulator::Debugger
 		std::stringstream ss;
 
 		size_t beg = this->_memBeg;
-		size_t end = this->_memEnd;
+		size_t end = this->_memBeg + 0x660;
 
 		beg -= beg % 0x20;
 		end += 0x20 - end % 0x20;
@@ -450,92 +449,74 @@ namespace GBEmulator::Debugger
 			if (event.type == sf::Event::KeyPressed)
 				switch (event.key.code) {
 				case sf::Keyboard::Up:
-					if (this->_memBeg > 0x0000) {
+					if (this->_memBeg > 0x0000)
 						this->_memBeg -= 0x20;
-						this->_memEnd -= 0x20;
-					}
 					break;
 				case sf::Keyboard::Down:
-					if (this->_memEnd + 0x20 <= 0xFFFF) {
+					if (this->_memBeg + 0x680 >= 0xFFFF)
+						this->_memBeg = 0x10000 - 0x680;
+					else
 						this->_memBeg += 0x20;
-						this->_memEnd += 0x20;
-					}
 					break;
 				case sf::Keyboard::PageUp:
-					if (this->_memBeg > 0x0000) {
+					if (this->_memBeg < 0x660)
+						this->_memBeg = 0;
+					else
 						this->_memBeg -= 0x0660;
-						this->_memEnd -= 0x0660;
-					}
 					break;
 				case sf::Keyboard::PageDown:
-					if (this->_memEnd + 0x0660 <= 0xFFFF) {
-						this->_memBeg += 0x0660;
-						this->_memEnd += 0x0660;
-					}
+					if (this->_memBeg + 0x660 * 2 >= 0xFFFF)
+						this->_memBeg = 0x10000 - 0x680;
+					else
+						this->_memBeg += 0x660;
 					break;
 				case sf::Keyboard::Num0:
 					this->_memBeg = 0x0000;
-					this->_memEnd = 0x0660;
 					break;
 				case sf::Keyboard::Num1:
 					this->_memBeg = 0x1000;
-					this->_memEnd = 0x1660;
 					break;
 				case sf::Keyboard::Num2:
 					this->_memBeg = 0x2000;
-					this->_memEnd = 0x2660;
 					break;
 				case sf::Keyboard::Num3:
 					this->_memBeg = 0x3000;
-					this->_memEnd = 0x3660;
 					break;
 				case sf::Keyboard::Quote:
 					this->_memBeg = 0x4000;
-					this->_memEnd = 0x4660;
 					break;
 				case sf::Keyboard::Num5:
 					this->_memBeg = 0x5000;
-					this->_memEnd = 0x5660;
 					break;
 				case sf::Keyboard::Dash:
 					this->_memBeg = 0x6000;
-					this->_memEnd = 0x6660;
 					break;
 				case sf::Keyboard::Num7:
 					this->_memBeg = 0x7000;
-					this->_memEnd = 0x7660;
 					break;
 				case sf::Keyboard::Num8:
 					this->_memBeg = 0x8000;
-					this->_memEnd = 0x8660;
 					break;
 				case sf::Keyboard::Num9:
 					this->_memBeg = 0x9000;
-					this->_memEnd = 0x9660;
 					break;
 				case sf::Keyboard::A:
 					this->_memBeg = 0xA000;
-					this->_memEnd = 0xA660;
 					break;
 				case sf::Keyboard::B:
 					this->_memBeg = 0xB000;
-					this->_memEnd = 0xB660;
 					break;
 				case sf::Keyboard::C:
 					this->_memBeg = 0xC000;
-					this->_memEnd = 0xC660;
 					break;
 				case sf::Keyboard::D:
 					this->_memBeg = 0xD000;
-					this->_memEnd = 0xD660;
 					break;
 				case sf::Keyboard::E:
 					this->_memBeg = 0xE000;
-					this->_memEnd = 0xE660;
 					break;
 				case sf::Keyboard::F:
 					this->_memBeg = 0xF000;
-					this->_memEnd = 0xF660;
 					break;
 				case sf::Keyboard::P:
 					this->_baseTimer += 1;
@@ -553,7 +534,7 @@ namespace GBEmulator::Debugger
 					this->_baseTimer = -1000;
 					break;
 				case sf::Keyboard::I:
-					this->_baseTimer = 2000;
+					this->_baseTimer = 1500;
 					break;
 				default:
 					break;
@@ -608,9 +589,18 @@ namespace GBEmulator::Debugger
 
 		sprite.setScale(1.5, 1.5);
 		sprite.setPosition(1465, 450);
+
 		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+
+		this->_cpu._gpu._updateTiles();
 		for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[map[i]]);
+			sprite.setTexture(
+				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[
+					!(this->_cpu._gpu._control & 0b00010000U) ?
+					static_cast<char>(map[i]) + 0x100 :
+					map[i]
+				]
+			);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
 			tileNbr++;
