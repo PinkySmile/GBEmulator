@@ -8,6 +8,8 @@
 #include <cmath>
 #include "LCDSFML.hpp"
 
+#define DUCK_TAPE(val) (((val & 1) << 1) | (val >> 1))
+
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
 	_BGTexture(0x180),
@@ -83,36 +85,36 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 	case Background:
 		for (int i = 0; i < 64; i++)
 			colors[i] = sf::Color {
-				this->_BGColorPalette[tile[i]].r,
-				this->_BGColorPalette[tile[i]].g,
-				this->_BGColorPalette[tile[i]].b,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].r,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].g,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].b,
 				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
 			};
 		break;
 	case Window:
 		for (int i = 0; i < 64; i++)
 			colors[i] = sf::Color {
-				this->_BGColorPalette[tile[i]].r,
-				this->_BGColorPalette[tile[i]].g,
-				this->_BGColorPalette[tile[i]].b,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].r,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].g,
+				this->_BGColorPalette[DUCK_TAPE(tile[i])].b,
 				255
 			};
 		break;
 	case Palette0:
 		for (int i = 0; i < 64; i++)
 			colors[i] = sf::Color {
-				this->_objectColorPalette0[tile[i]].r,
-				this->_objectColorPalette0[tile[i]].g,
-				this->_objectColorPalette0[tile[i]].b,
+				this->_objectColorPalette0[DUCK_TAPE(tile[i])].r,
+				this->_objectColorPalette0[DUCK_TAPE(tile[i])].g,
+				this->_objectColorPalette0[DUCK_TAPE(tile[i])].b,
 				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
 			};
 		break;
 	case Palette1:
 		for (int i = 0; i < 64; i++)
 			colors[i] = sf::Color {
-				this->_objectColorPalette1[tile[i]].r,
-				this->_objectColorPalette1[tile[i]].g,
-				this->_objectColorPalette1[tile[i]].b,
+				this->_objectColorPalette1[DUCK_TAPE(tile[i])].r,
+				this->_objectColorPalette1[DUCK_TAPE(tile[i])].g,
+				this->_objectColorPalette1[DUCK_TAPE(tile[i])].b,
 				(tile[i]== 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
 			};
 		break;
