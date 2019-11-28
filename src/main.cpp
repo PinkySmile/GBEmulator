@@ -7,6 +7,30 @@
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "Network/BgbProtocolNetworkInterface.hpp"
 #include "debugger/debugger.hpp"
+#ifdef __GNUG__
+#include <cxxabi.h>
+#endif
+
+std::string getLastExceptionName()
+{
+#ifdef __GNUG__
+	int status;
+	char *value;
+	std::string name;
+
+	auto val = abi::__cxa_current_exception_type();
+
+	if (!val)
+		return "No exception";
+
+	value = abi::__cxa_demangle(val->name(), nullptr, nullptr, &status);
+	name = value;
+	free(value);
+	return name;
+#else
+	return "Unknown exception";
+#endif
+}
 
 int main(int argc, char **argv)
 {
@@ -23,8 +47,8 @@ int main(int argc, char **argv)
 	GBEmulator::SoundPlayer channel4;
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
-		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},
-		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::Z},
+		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::W},
+		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::X},
 		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
 		{GBEmulator::Input::JOYPAD_DOWN, sf::Keyboard::Down},
 		{GBEmulator::Input::JOYPAD_LEFT, sf::Keyboard::Left},
@@ -52,7 +76,7 @@ int main(int argc, char **argv)
 			cpu.update();
 	} catch (std::exception &e) {
 		cpu.dump();
-		std::cerr << "Fatal error: " << e.what() << std::endl;
+		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
 	}
 	return EXIT_SUCCESS;
 }

@@ -155,7 +155,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return CPL(reg); },
 
 		//! 30; JR nc,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
-		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fc, cpu.fetchArgument()); },
+		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, !reg.fc, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 31; LD sp, **: Loads ** into sp register
 		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -464,7 +464,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 97; SUB a: Subtracts a from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); },
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
 		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b + reg.fc); },
@@ -518,7 +518,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.b); },
 
 		//! A9; XOR c: Bitwise XOR on a with c.
-		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.l); },
+		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.c); },
 
 		//! AA; XOR d: Bitwise XOR on a with d.
 		[](CPU &, CPU::Registers &reg) { return XOR(reg, reg.d); },
@@ -614,7 +614,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fz); },
 
 		//! C9; RET: The top stack entry is popped into pc.
-		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.pc); },
+		[](CPU &cpu, CPU::Registers &reg) { return POP(cpu, reg, reg.pc) + BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! CA; JP z,**: If condition cc is true, ** is copied to pc.
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fz, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -662,7 +662,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return RET(cpu, reg, reg.fc); },
 
 		//! D9; RETI
-		[](CPU &cpu, CPU::Registers &reg) { return cpu.setInterruptMaster(true), RET(cpu, reg, true); },
+		[](CPU &cpu, CPU::Registers &reg) { return cpu.setInterruptMaster(true), POP(cpu, reg, reg.pc) + BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! DA; JP c,**: If condition cc is true, ** is copied to pc.
 		[](CPU &cpu, CPU::Registers &reg) { return JP(reg, reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -710,7 +710,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! E9; JP (hl): Loads the value of hl into pc.
-		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl); },
+		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl), JUMP_CYCLE_DURATION; },
 
 		//! EA; LD (**),a: Load a into the address pointed to by **
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, cpu.fetchArgument16(), reg.a) + FETCH_ARGUMENT16_CYLCE_DURATION; },
@@ -754,8 +754,8 @@ namespace GBEmulator::Instructions
 		//! F7; RST 30h: The current pc value plus one is pushed onto the stack, then is loaded with 30h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x30); },
 
-		//! F8; LD hl,sp+**: Load sp+** to hl.
-		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, reg.sp + cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
+		//! F8; LD hl,sp+*: Load sp + the signed value * to hl.
+		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, reg.sp + static_cast<char>(cpu.fetchArgument())) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 		[](CPU &, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); },
@@ -1028,7 +1028,7 @@ namespace GBEmulator::Instructions
 		[](const CPU &, unsigned short) { return "PUSH af"; },
 		[](const CPU &cpu, unsigned short address) { return "OR " + intToHex(cpu.read(address)); },
 		[](const CPU &, unsigned short) { return "RST 30h"; },
-		[](const CPU &cpu, unsigned short address) { return "LD hl,sp+" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)); },
+		[](const CPU &cpu, unsigned short address) { return "LD hl,sp+" + intToHex(cpu.read(address)); },
 		[](const CPU &, unsigned short) { return "LD sp,hl"; },
 		[](const CPU &cpu, unsigned short address) { return "LD a,(" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + ")"; },
 		[](const CPU &, unsigned short) { return "EI"; },
