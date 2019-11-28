@@ -10,7 +10,7 @@
 #include "../TestComponents.hpp"
 #include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
 
-const auto instructions = GBEmulator::Instructions::_instructions;
+#define instructions GBEmulator::Instructions::_instructions
 
 //! INSTRUCTION 09
 
@@ -26,8 +26,8 @@ Test(ADD_HL_BC, value_1) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_BC, value_2) {
@@ -58,8 +58,8 @@ Test(ADD_HL_BC, value_3) {
 	unsigned short ex_result = 0x9FFF;
 	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_BC, value_4) {
@@ -74,7 +74,7 @@ Test(ADD_HL_BC, value_4) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
 	cr_assert_eq(gb.cpu._registers.fc, 1, "fc must be 1 but it was %d", gb.cpu._registers.fc);
 }
 
@@ -91,7 +91,7 @@ Test(ADD_HL_BC, value_5) {
 	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_BC, value_6) {
@@ -107,7 +107,7 @@ Test(ADD_HL_BC, value_6) {
 	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_BC, value_7) {
@@ -156,8 +156,8 @@ Test(ADD_HL_DE, value_1) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register de must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_DE, value_2) {
@@ -221,7 +221,7 @@ Test(ADD_HL_DE, value_5) {
 	cr_assert_eq(result, ex_result, "Register de must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_DE, value_6) {
@@ -237,7 +237,7 @@ Test(ADD_HL_DE, value_6) {
 	cr_assert_eq(result, ex_result, "Register de must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_DE, value_7) {
@@ -285,8 +285,8 @@ Test(ADD_HL_HL, value_1) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register hl must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_HL, value_2) {
@@ -330,7 +330,7 @@ Test(ADD_HL_HL, value_4) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register hl must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
 	cr_assert_eq(gb.cpu._registers.fc, 1, "fc must be 1 but it was %d", gb.cpu._registers.fc);
 }
 
@@ -346,7 +346,7 @@ Test(ADD_HL_HL, value_5) {
 	cr_assert_eq(result, ex_result, "Register hl must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 //! INSTRUCTION 19
@@ -363,8 +363,8 @@ Test(ADD_HL_SP, value_1) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register sp must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_SP, value_2) {
@@ -395,8 +395,8 @@ Test(ADD_HL_SP, value_3) {
 	unsigned short ex_result = 0x9FFF;
 	cr_assert_eq(result, ex_result, "Register sp must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_SP, value_4) {
@@ -411,7 +411,7 @@ Test(ADD_HL_SP, value_4) {
 	unsigned short ex_result = 0x0000;
 	cr_assert_eq(result, ex_result, "Register sp must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
-	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 1 but it was %d", gb.cpu._registers.fh);
+	cr_assert_eq(gb.cpu._registers.fh, 0, "fh must be 0 but it was %d", gb.cpu._registers.fh);
 	cr_assert_eq(gb.cpu._registers.fc, 1, "fc must be 1 but it was %d", gb.cpu._registers.fc);
 }
 
@@ -428,7 +428,7 @@ Test(ADD_HL_SP, value_5) {
 	cr_assert_eq(result, ex_result, "Register sp must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_SP, value_6) {
@@ -444,7 +444,7 @@ Test(ADD_HL_SP, value_6) {
 	cr_assert_eq(result, ex_result, "Register sp must be 0x%X but it was 0x%X", ex_result, result);
 	cr_assert_eq(gb.cpu._registers.fn, 0, "fn must be 0 but it was %d", gb.cpu._registers.fn);
 	cr_assert_eq(gb.cpu._registers.fh, 1, "fh must be 1 but it was %d", gb.cpu._registers.fh);
-	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 1 but it was %d", gb.cpu._registers.fc);
+	cr_assert_eq(gb.cpu._registers.fc, 0, "fc must be 0 but it was %d", gb.cpu._registers.fc);
 }
 
 Test(ADD_HL_SP, value_7) {

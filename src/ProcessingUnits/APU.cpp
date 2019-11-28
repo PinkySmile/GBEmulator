@@ -105,7 +105,6 @@ namespace GBEmulator
 
 	void APU::write(unsigned short address, unsigned char value)
 	{
-		printf("Writing %02x at %04x\n", value, address + 0xFF10);
 		switch (address) {
 			case FF10 ... FF14 :
 				channelOneWriting(address, value);

@@ -347,13 +347,13 @@ namespace GBEmulator
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
-			return this->_interruptRequest;
+			return this->_interruptRequest | 0b11100000U;
 
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
 
 		default:
-			return 0x00;
+			return 0xFF;
 		}
 	}
 
@@ -436,6 +436,7 @@ namespace GBEmulator
 		try {
 			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
 
+			this->_registers._ = 0;
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
 		} catch (std::bad_function_call &) {

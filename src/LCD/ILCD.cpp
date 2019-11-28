@@ -10,9 +10,9 @@
 
 namespace GBEmulator::Graphics
 {
-	const RGBColor RGBColor::White{200, 200, 200};
-	const RGBColor RGBColor::LGray{150, 150, 150};
-	const RGBColor RGBColor::DGray{50, 50, 50};
+	const RGBColor RGBColor::White{255, 255, 255};
+	const RGBColor RGBColor::LGray{190, 190, 190};
+	const RGBColor RGBColor::DGray{120, 120, 120};
 	const RGBColor RGBColor::Black{0, 0, 0};
 
 	void ILCD::setBGPalette(const std::vector<RGBColor> &colors) {

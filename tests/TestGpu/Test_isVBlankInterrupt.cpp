@@ -14,7 +14,7 @@ Test(isVBlankInterrupt, no_interrupt)
 {
 	Tests::GBTest gb;
 
-	gb.cpu._gpu._control = 0;
+	gb.cpu._gpu._control = 0x80;
 	gb.cpu._gpu._cycles = 0;
 
 	cr_assert(!gb.cpu._gpu._isVBlankInterrupt());

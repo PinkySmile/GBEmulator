@@ -36,7 +36,7 @@ namespace GBEmulator::Instructions
 	{
 		PUSH(cpu, reg, reg.pc);
 		JP(reg, true, address);
-		return PUSH_CYCLE_DURATION + JUMP_CYCLE_DURATION;
+		return PUSH_CYCLE_DURATION;
 	}
 
 	unsigned char CALLC(CPU &cpu, CPU::Registers &reg, bool cond, unsigned short address)
@@ -58,7 +58,7 @@ namespace GBEmulator::Instructions
 		unsigned char temp = cpu.read(reg.sp++);
 
 		value = (cpu.read(reg.sp++) << 8U) | temp;
-		return PUSH_CYCLE_DURATION;
+		return POP_CYCLE_DURATION;
 	}
 
 	unsigned char RET(CPU &cpu, CPU::Registers &reg, bool cond)
@@ -155,7 +155,7 @@ namespace GBEmulator::Instructions
 
 		setFlags(
 			reg,
-			(value1 + value2) == 0 ? SET : UNSET,
+			(value1 + value2) == 0x100 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
 			value1 + value2 > 0xFF ? SET : UNSET
@@ -171,7 +171,7 @@ namespace GBEmulator::Instructions
 		setFlags(
 			reg,
 			value1 == value2 ? SET : UNSET,
-			UNSET,
+			SET,
 			halfCarry ? SET : UNSET,
 			value1 < value2 ? SET : UNSET
 		);
@@ -201,7 +201,7 @@ namespace GBEmulator::Instructions
 		setFlags(
 			reg,
 			UNCHANGED,
-			UNSET,
+			SET,
 			halfCarry ? SET : UNSET,
 			value1 < value2 ? SET : UNSET
 		);
