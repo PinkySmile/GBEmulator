@@ -79,6 +79,7 @@ namespace GBEmulator::Memory
 				throw InvalidRomException("Cannot open file " + rom + ": " + strerror(errno));
 
 			mem = new unsigned char[size];
+			std::memset(mem, 0, size);
 			fread(mem, 1, size, stream);
 			fclose(stream);
 			this->_rom.setMemory(mem, size);

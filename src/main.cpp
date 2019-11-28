@@ -47,8 +47,8 @@ int main(int argc, char **argv)
 	GBEmulator::SoundPlayer channel4;
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
 	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
-		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::A},
-		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::Z},
+		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::W},
+		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::X},
 		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
 		{GBEmulator::Input::JOYPAD_DOWN, sf::Keyboard::Down},
 		{GBEmulator::Input::JOYPAD_LEFT, sf::Keyboard::Left},

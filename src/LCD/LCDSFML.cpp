@@ -115,6 +115,8 @@ void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, f
 		for (int ypos = -1; ypos < 18; ypos++) {
 			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
 
+			if (index < 0)
+				continue;
 			this->_sprite.setTexture(this->_getTexture(tiles[index], signedMode, Background));
 			this->_sprite.setPosition(xpos * 8 + off.x, ypos * 8 + off.y);
 			this->draw(this->_sprite);
