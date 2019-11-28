@@ -599,7 +599,7 @@ namespace GBEmulator::Debugger
 
 		this->_cpu._gpu._updateTiles();
 		for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[
+			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
 				!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[i]) + 0x100 : map[i]
 			]);
 			_debugWindow.draw(sprite);
@@ -699,7 +699,7 @@ namespace GBEmulator::Debugger
 		}
 
 		sprite.setPosition(1531, 5);
-		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture) {
+		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
