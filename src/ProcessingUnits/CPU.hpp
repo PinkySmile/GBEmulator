@@ -113,6 +113,7 @@ namespace GBEmulator
 			LCD_SCROLL_X            = 0x43,
 			LCDC_Y_COORD            = 0x44,
 			LCD_LYC	                = 0x45,
+			OAM_DMA	                = 0x46,
 			LCD_BG_COLOR            = 0x47,
 			OBJECT_PALETTE_0        = 0x48,
 			OBJECT_PALETTE_1        = 0x49,

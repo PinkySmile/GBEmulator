@@ -635,7 +635,7 @@ namespace GBEmulator::Debugger
 		sprite.setPosition(1531 + 1.5 * this->_cpu._gpu._windowX, 450 + 1.5 * this->_cpu._gpu._windowY);
 		for (int y = 0; y < 18; y++) {
 			for (int x = 0; x < 20; x++) {
-				sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGTexture[
+				sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
 					!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[x + y * 32]) + 0x100 : map[x + y * 32]
 				]);
 				_debugWindow.draw(sprite);

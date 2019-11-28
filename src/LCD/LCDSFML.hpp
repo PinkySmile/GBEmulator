@@ -20,12 +20,14 @@ namespace GBEmulator
 		private:
 			enum TextureType {
 				Background,
+				Window,
 				Palette0,
 				Palette1
 			};
 
 		private:
 			std::vector<sf::Texture> _BGTexture;
+			std::vector<sf::Texture> _winTexture;
 			std::vector<sf::Texture> _palette0Texture;
 			std::vector<sf::Texture> _palette1Texture;
 			sf::Sprite               _sprite;
