@@ -16,7 +16,7 @@
 #define TILE_DATA_SIZE 0x1800
 #define NB_TILES TILE_DATA_SIZE * 4
 #define BG_MAP_SIZE 0x800
-#define OAM_SIZE 0x100
+#define OAM_SIZE 0xA0
 #define GPU_FULL_CYCLE_DURATION 70224
 
 namespace GBEmulator
