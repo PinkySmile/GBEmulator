@@ -436,6 +436,7 @@ namespace GBEmulator
 		try {
 			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
 
+			this->_registers._ = 0;
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles);
 		} catch (std::bad_function_call &) {
