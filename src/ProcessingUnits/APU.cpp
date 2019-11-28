@@ -19,7 +19,7 @@ namespace GBEmulator
 
 		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++)
-			raw.push_back(frequency * (std::sin(i * frequency * 2 * M_PI / 44100) + waveModifier > 0 ? 1 : -1));
+			raw.push_back(frequency / 100. * (std::sin(i * frequency * 2 * M_PI / 44100) + waveModifier > 0 ? 1 : -1));
 		return (raw);
 	}
 
@@ -77,6 +77,48 @@ namespace GBEmulator
 			this->_soundChannel.setPitch(newFrequency / 440);
 		}
 		//pitch
+		if (this->_havingPolynomial) {
+			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
+
+			double frequency = shiftClockFrequencyRatio[this->_shiftClockFrequency] *
+				   dividingRatio[this->_dividingRatio];
+
+			if (_wroteInNoiseFrequency) {
+				this->_soundChannel.setWave(getNoiseWave(440, stepNumber), 44100);
+				this->_soundChannel.setPitch(frequency / 440);
+				_wroteInNoiseFrequency = false;
+			} else {
+				updateLSFR(stepNumber);
+			}
+		}
+	}
+
+	std::vector<unsigned char> APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
+	{
+		std::vector<unsigned char>	raw;
+
+		raw.reserve(44100LLU);
+		for (int i = 0; i < 44100; i++) {
+			raw.push_back(frequency / 100. * ((_lfsr & 0b1) > 0 ? 1 : -1));
+			updateLSFR(stepNumber);
+		}
+		return (raw);
+	}
+
+	void APU::Sound::updateLSFR(unsigned char stepNumber)
+	{
+		if (_counter == stepNumber) {
+			unsigned short xorResult = ((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1) << 15;
+			_lfsr >>= 1;
+			_lfsr |= xorResult;
+			if (stepNumber == 7) {
+				xorResult >>= 9;
+				_lfsr |= xorResult;
+			}
+		}
+		if (_counter > stepNumber)
+			_counter = 0x0;
+		_counter++;
 	}
 
 	void APU::update(unsigned cycle)
@@ -473,9 +515,12 @@ namespace GBEmulator
 
 	void APU::Sound::setPolynomialCounters(unsigned char value)
 	{
+		this->_havingPolynomial = true;
+		this->_wroteInNoiseFrequency = true;
 		this->_shiftClockFrequency = value >> 4;
 		this->_polynomialCounterStep = (value & 0b00001000) >> 3;
 		this->_dividingRatio = value & 0b00000111;
+
 	}
 
 	unsigned char APU::Sound::getPolynomialCounters() const
