@@ -111,8 +111,8 @@ void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, f
 	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
 
 	this->_sprite.setScale(1, 1);
-	for (int xpos = -1; xpos < 20; xpos++)
-		for (int ypos = -1; ypos < 18; ypos++) {
+	for (int xpos = -1; xpos < 21; xpos++)
+		for (int ypos = -1; ypos < 19; ypos++) {
 			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
 
 			if (index < 0)
