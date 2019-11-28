@@ -26,8 +26,8 @@ namespace GBEmulator::Graphics
 				unsigned char cgb_palette_number:3;
 				bool tile_bank:1;
 				bool palette_number:1;
-				bool y_flip:1;
 				bool x_flip:1;
+				bool y_flip:1;
 				bool priority:1;
 			};
 			unsigned char flags;

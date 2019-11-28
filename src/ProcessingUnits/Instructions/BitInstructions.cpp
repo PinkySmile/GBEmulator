@@ -154,29 +154,29 @@ namespace GBEmulator::Instructions
 		//! 2F; SRA a: The contents of a are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 7 are unchanged.
 		[](CPU &, CPU::Registers &reg){ return SRA(reg, reg.a); },
 
-		//! 30; SLL b: The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.b); },
+		//! 30; SWAP b: The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.b); },
 
-		//! 31; SLL c: The contents of c are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.c); },
+		//! 31; SWAP c: The contents of c are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.c); },
 
-		//! 32; SLL d: The contents of d are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.d); },
+		//! 32; SWAP d: The contents of d are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.d); },
 
-		//! 33; SLL e: The contents of e are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.e); },
+		//! 33; SWAP e: The contents of e are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.e); },
 
-		//! 34; SLL h: The contents of h are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.h); },
+		//! 34; SWAP h: The contents of h are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.h); },
 
-		//! 35; SLL l: The contents of l are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.l); },
+		//! 35; SWAP l: The contents of l are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.l); },
 
-		//! 36; SLL (hl): The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SLL, reg); },
+		//! 36; SWAP (hl): The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &cpu, CPU::Registers &reg){ return executeOnPtr(cpu, reg.hl, SWAP, reg); },
 
-		//! 37; SLL a: The contents of a are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLL(reg, reg.a); },
+		//! 37; SWAP a: The contents of a are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		[](CPU &, CPU::Registers &reg){ return SWAP(reg, reg.a); },
 
 		//! 38; SRL b: The contents of b are shifted right one bit position. The contents of bit 0 are copied to the carry flag and a zero is put into bit 7.
 		[](CPU &, CPU::Registers &reg){ return SRL(reg, reg.b); },
@@ -828,14 +828,14 @@ namespace GBEmulator::Instructions
 		[](const CPU &, unsigned short) { return "SRA l"; },
 		[](const CPU &, unsigned short) { return "SRA (hl)"; },
 		[](const CPU &, unsigned short) { return "SRA a"; },
-		[](const CPU &, unsigned short) { return "SLL b"; },
-		[](const CPU &, unsigned short) { return "SLL c"; },
-		[](const CPU &, unsigned short) { return "SLL d"; },
-		[](const CPU &, unsigned short) { return "SLL e"; },
-		[](const CPU &, unsigned short) { return "SLL h"; },
-		[](const CPU &, unsigned short) { return "SLL l"; },
-		[](const CPU &, unsigned short) { return "SLL (hl)"; },
-		[](const CPU &, unsigned short) { return "SLL a"; },
+		[](const CPU &, unsigned short) { return "SWAP b"; },
+		[](const CPU &, unsigned short) { return "SWAP c"; },
+		[](const CPU &, unsigned short) { return "SWAP d"; },
+		[](const CPU &, unsigned short) { return "SWAP e"; },
+		[](const CPU &, unsigned short) { return "SWAP h"; },
+		[](const CPU &, unsigned short) { return "SWAP l"; },
+		[](const CPU &, unsigned short) { return "SWAP (hl)"; },
+		[](const CPU &, unsigned short) { return "SWAP a"; },
 		[](const CPU &, unsigned short) { return "SRL b"; },
 		[](const CPU &, unsigned short) { return "SRL c"; },
 		[](const CPU &, unsigned short) { return "SRL d"; },
