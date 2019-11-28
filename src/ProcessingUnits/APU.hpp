@@ -103,6 +103,8 @@ namespace GBEmulator
 			unsigned char getOutputLevel() const;
 
 			//Noise Functions
+			void updateLSFR(unsigned char stepNumber);
+			std::vector<unsigned char> getNoiseWave(int frequency, unsigned char stepNumber);
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 
@@ -141,11 +143,12 @@ namespace GBEmulator
 			unsigned char _waveOutputLevel;
 
 			//PolynomialCounter //NOISE
+			bool _wroteInNoiseFrequency = false;
 			bool _havingPolynomial = false;
 			unsigned char _shiftClockFrequency = 0;
 			bool _polynomialCounterStep = false;
-			bool _xored = false;
-			char _counter = 0;
+			char _counter = 0xF;
+			unsigned short _lfsr = 0x7FFF;
 			unsigned char _dividingRatio = 0;
 			static constexpr double dividingRatio[8] = {
 					DIV_FREQUENCY / 4.,
