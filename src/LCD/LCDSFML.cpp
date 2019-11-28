@@ -11,6 +11,7 @@
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
 	_BGTexture(0x180),
+	_winTexture(0x180),
 	_palette0Texture(0x180),
 	_palette1Texture(0x180),
 	_title(title)
@@ -57,6 +58,10 @@ sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool s
 		if (signedMode)
 			return this->_BGTexture[static_cast<char>(id) + 0x100];
 		return this->_BGTexture[id];
+	case Window:
+		if (signedMode)
+			return this->_winTexture[static_cast<char>(id) + 0x100];
+		return this->_winTexture[id];
 	case Palette0:
 		if (signedMode)
 			return this->_palette0Texture[static_cast<char>(id) + 0x100];
@@ -76,6 +81,15 @@ void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *til
 	texture.create(8, 8);
 	switch (type) {
 	case Background:
+		for (int i = 0; i < 64; i++)
+			colors[i] = sf::Color {
+				this->_BGColorPalette[tile[i]].r,
+				this->_BGColorPalette[tile[i]].g,
+				this->_BGColorPalette[tile[i]].b,
+				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
+			};
+		break;
+	case Window:
 		for (int i = 0; i < 64; i++)
 			colors[i] = sf::Color {
 				this->_BGColorPalette[tile[i]].r,
@@ -135,15 +149,27 @@ void GBEmulator::Graphics::LCDSFML::close()
 
 void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float x, float y, bool signedMode)
 {
-	this->drawBackground(tiles, x, y, signedMode);
+	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
+
+	this->_sprite.setScale(1, 1);
+	for (int xpos = -1; xpos < 21; xpos++)
+		for (int ypos = -1; ypos < 19; ypos++) {
+			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
+
+			if (index < 0)
+				continue;
+			this->_sprite.setTexture(this->_getTexture(tiles[index], signedMode, Window));
+			this->_sprite.setPosition(xpos * 8 + off.x, ypos * 8 + off.y);
+			this->draw(this->_sprite);
+		}
 }
 
 void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)
 {
 	this->_getTextureFromTile(tile, this->_BGTexture[id], Background);
+	this->_getTextureFromTile(tile, this->_winTexture[id], Window);
 	this->_getTextureFromTile(tile, this->_palette0Texture[id], Palette0);
 	this->_getTextureFromTile(tile, this->_palette1Texture[id], Palette1);
-
 }
 
 void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize)
@@ -164,7 +190,7 @@ void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite spri
 		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette1));
 	else
 		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette0));
-	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8, sprite.y + sprite.y_flip * 8);
+	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8 - 8, sprite.y + sprite.y_flip * 8 - 16);
 	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
 	this->draw(this->_sprite);
 }

@@ -9,6 +9,7 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 #include "CPU.hpp"
 #include "Instructions/CPUInstructions.hpp"
 
@@ -386,6 +387,18 @@ namespace GBEmulator
 
 		case LCDC_STAT:
 			return this->_gpu.setStatByte(value);
+
+		//TODO: Add inaccessibility of everything but HRAM during DMA and copy only when OAM is accessible
+		case OAM_DMA:
+			if (value <= 0xF1) {
+				for (int i = 0; i < 40; i++) {
+					this->_gpu.writeOAM(i * 4, this->read(value * 0x100 + i * 4));
+					this->_gpu.writeOAM(i * 4 + 1, this->read(value * 0x100 + i * 4 + 1));
+					this->_gpu.writeOAM(i * 4 + 2, this->read(value * 0x100 + i * 4 + 2));
+					this->_gpu.writeOAM(i * 4 + 3, this->read(value * 0x100 + i * 4 + 3));
+				}
+			}
+			break;
 
 		case LCD_BG_COLOR:
 			return this->_gpu.setBGPalette(value);
