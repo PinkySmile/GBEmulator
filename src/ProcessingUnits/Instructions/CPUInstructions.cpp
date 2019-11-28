@@ -58,6 +58,7 @@ namespace GBEmulator::Instructions
 		unsigned char temp = cpu.read(reg.sp++);
 
 		value = (cpu.read(reg.sp++) << 8U) | temp;
+
 		return POP_CYCLE_DURATION;
 	}
 
