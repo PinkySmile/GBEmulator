@@ -175,6 +175,8 @@ namespace GBEmulator::Memory
 		case MBC2_BATTERY:
 			return this->_handleMBC2Write(address, value);
 
+		case MBC3_TIMER_RAM_BATTERY:
+		case MBC3_TIMER_BATTERY:
 		case MBC3_RAM_BATTERY:
 		case MBC3_RAM:
 		case MBC3:
