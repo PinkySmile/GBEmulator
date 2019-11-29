@@ -18,27 +18,21 @@ namespace GBEmulator
 	namespace Graphics {
 		class LCDSFML : public ILCD, public sf::RenderWindow {
 		private:
-			enum TextureType {
-				Background,
-				Window,
-				Palette0,
-				Palette1
-			};
+			unsigned char *_tiles;
+			sf::Color      *_screen;
+			std::string    _title;
+			sf::Clock      _fpsClock;
+			sf::Clock      _clock;
+			sf::Texture    _texture;
 
-		private:
-			std::vector<sf::Texture> _BGTexture;
-			std::vector<sf::Texture> _winTexture;
-			std::vector<sf::Texture> _palette0Texture;
-			std::vector<sf::Texture> _palette1Texture;
-			sf::Sprite               _sprite;
-			std::string              _title;
-			sf::Clock                _fpsClock;
-			sf::Clock                _clock;
+			void _drawTile(size_t id, int x, int y, bool swapX, bool swapY, const std::vector<RGBColor> &palette, bool transparency);
+
+			friend Debugger::Debugger;
 
 		public:
 			LCDSFML() = delete;
 			LCDSFML(const LCDSFML &) = delete;
-			~LCDSFML() override = default;
+			~LCDSFML() override;
 			LCDSFML &operator =(const LCDSFML &) = delete;
 			LCDSFML(sf::VideoMode mode, const std::string &title);
 			void updateTexture(unsigned char *tile, size_t id) override;
@@ -50,11 +44,6 @@ namespace GBEmulator
 			bool isClosed() const override;
 			void close() override;
 			double getFramerate();
-
-		private:
-			friend Debugger::Debugger;
-			sf::Texture &_getTexture(unsigned char id, bool signedMode, TextureType type);
-			void _getTextureFromTile(const unsigned char *tile, sf::Texture &texture, TextureType type) const;
 		};
 	}
 }

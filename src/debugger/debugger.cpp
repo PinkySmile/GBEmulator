@@ -598,7 +598,7 @@ namespace GBEmulator::Debugger
 		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
 
 		this->_cpu._gpu._updateTiles();
-		for (int i = 0; i < 32 * 32; i++) {
+		/*for (int i = 0; i < 32 * 32; i++) {
 			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
 				!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[i]) + 0x100 : map[i]
 			]);
@@ -610,7 +610,7 @@ namespace GBEmulator::Debugger
 				sprite.setPosition(1142, sprite.getPosition().y);
 				sprite.move(0, 8 * 1.5);
 			}
-		}
+		}*/
 		cam.setOutlineColor(((this->_cpu._gpu._control & 0x80) && (this->_cpu._gpu._control & 0b00000001U) ? sf::Color::Green : sf::Color::Red));
 		for (int i = 0; i < 4; i++) {
 			cam.setPosition(1142 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2), 450 + this->_cpu._gpu._scrollY * 1.5 - 384 * (i / 2));
@@ -633,7 +633,7 @@ namespace GBEmulator::Debugger
 		map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b01000000U);
 
 		sprite.setPosition(1531 + 1.5 * this->_cpu._gpu._windowX, 450 + 1.5 * this->_cpu._gpu._windowY);
-		for (int y = 0; y < 18; y++) {
+		/*for (int y = 0; y < 18; y++) {
 			for (int x = 0; x < 20; x++) {
 				sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
 					!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[x + y * 32]) + 0x100 : map[x + y * 32]
@@ -643,7 +643,7 @@ namespace GBEmulator::Debugger
 			}
 			sprite.setPosition(1531 + 1.5 * this->_cpu._gpu._windowX, sprite.getPosition().y);
 			sprite.move(0, 8 * 1.5);
-		}
+		}*/
 		cam.setOutlineColor(((this->_cpu._gpu._control & 0x80) && (this->_cpu._gpu._control & 0b00100000U) ? sf::Color::Green : sf::Color::Red));
 
 		cam.setPosition(1531, 450);
@@ -653,7 +653,7 @@ namespace GBEmulator::Debugger
 
 		sprite.setPosition(1142, 5);
 
-		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
+		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
@@ -663,7 +663,7 @@ namespace GBEmulator::Debugger
 				sprite.setPosition(1142, sprite.getPosition().y);
 				sprite.move(0, 8 * 1.5);
 			}
-		}
+		}*/
 		for (int i = 0; i < 4; i++) {
 			square.setFillColor({
 				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette0[i].r,
@@ -676,7 +676,7 @@ namespace GBEmulator::Debugger
 		}
 
 		sprite.setPosition(1336, 5);
-		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
+		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
@@ -686,7 +686,7 @@ namespace GBEmulator::Debugger
 				sprite.setPosition(1336, sprite.getPosition().y);
 				sprite.move(0, 8 * 1.5);
 			}
-		}
+		}*/
 		for (int i = 0; i < 4; i++) {
 			square.setFillColor({
 				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette1[i].r,
@@ -699,7 +699,7 @@ namespace GBEmulator::Debugger
 		}
 
 		sprite.setPosition(1531, 5);
-		for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture) {
+		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture) {
 			sprite.setTexture(e);
 			_debugWindow.draw(sprite);
 			sprite.move(8 * 1.5, 0);
@@ -709,7 +709,7 @@ namespace GBEmulator::Debugger
 				sprite.setPosition(1531, sprite.getPosition().y);
 				sprite.move(0, 8 * 1.5);
 			}
-		}
+		}*/
 		for (int i = 0; i < 4; i++) {
 			square.setFillColor({
 				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGColorPalette[i].r,

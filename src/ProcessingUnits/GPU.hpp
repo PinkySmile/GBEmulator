@@ -27,7 +27,6 @@ namespace GBEmulator
 
 	class GPU {
 	private:
-		bool _paletteChanged = false;
 		bool _triggeredStatInterrupt = false;
 		bool _triggeredVBlankInterrupt = false;
 		Memory::Memory _oam;
