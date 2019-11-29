@@ -23,6 +23,14 @@ namespace GBEmulator
 		this->_sound.setPitch(pitch);
 	}
 
+	void SoundPlayer::setDisabled(bool disabled) {
+		if (disabled)
+			this->_sound.stop();
+		else
+			this->_sound.play();
+		this->_disabled = disabled;
+	}
+
 	void GBEmulator::SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
 	{
 		auto buff = new sf::Int16[wave.size()];
@@ -34,7 +42,8 @@ namespace GBEmulator
 		delete[] buff;
 		this->_sound.setBuffer(this->_soundBuffer);
 		this->_sound.setVolume(this->_volume);
-		this->_sound.play();
+		if (!this->_disabled)
+			this->_sound.play();
 		this->_sound.setLoop(true);
 	}
 
