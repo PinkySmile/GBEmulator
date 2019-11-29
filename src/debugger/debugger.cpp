@@ -576,149 +576,80 @@ namespace GBEmulator::Debugger
 		_debugWindow.draw(this->_registers);
 	}
 
+	void Debugger::_displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
+	{
+		sf::RectangleShape square{sf::Vector2f{32, 16}};
+
+		for (int i = 0; i < 4; i++) {
+			square.setFillColor({
+				palette[i].r,
+				palette[i].g,
+				palette[i].b,
+				static_cast<unsigned char>(transparent && i == 0 ? 0 : 255)
+			});
+			square.setPosition(x + 32 * i, y);
+			_debugWindow.draw(square);
+		}
+	}
+
+	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
+	{
+		auto colors = new sf::Color[16 * 24 * 8 * 8];
+		sf::Sprite sprite;
+		sf::Texture texture;
+
+		texture.create(16 * 8, 24 * 8);
+		for (int xPos = 0; xPos < 16; xPos++) {
+			for (int yPos = 0; yPos < 24; yPos++) {
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						auto index = this->_cpu._gpu._tiles[x + y * 8 + xPos * 64 + yPos * 8 * 8 * 16];
+						auto &color = palette[((index & 1U) << 1U) | (index >> 1U)];
+
+						colors[x + xPos * 8 + yPos * 8 * 8 * 16 + y * 16 * 8] = {
+							color.r,
+							color.g,
+							color.b,
+							static_cast<unsigned char>(transparent && index == 0 ? 0 : 255)
+						};
+					}
+				}
+			}
+		}
+		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
+		sprite.setTexture(texture);
+		sprite.setPosition(x, y);
+		sprite.setScale(1.5, 1.5);
+		_debugWindow.draw(sprite);
+		delete[] colors;
+	}
+
 	void Debugger::_drawVram(sf::RenderWindow &_debugWindow)
 	{
-		sf::Sprite sprite;
-		sf::RectangleShape cam(sf::Vector2f(240, 216));
-		sf::RectangleShape square(sf::Vector2f(800, 1000));
-		int tileNbr = 0;
+		std::vector<Graphics::RGBColor> colors{
+			{0, 0, 0},
+			{0, 0, 255},
+			{0, 255, 0},
+			{255, 0, 0}
+		};
+		sf::RectangleShape square{sf::Vector2f{800, 1000}};
 
-		this->_cpu._gpu._updateTiles();
-
-		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineThickness(4);
-
-		square.setFillColor(sf::Color::Blue);
+		square.setFillColor(sf::Color::Cyan);
 		square.setPosition(1137, 0);
 		_debugWindow.draw(square);
-
-		sprite.setScale(1.5, 1.5);
-		sprite.setPosition(1142, 450);
-
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
-
-		this->_cpu._gpu._updateTiles();
-		/*for (int i = 0; i < 32 * 32; i++) {
-			sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
-				!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[i]) + 0x100 : map[i]
-			]);
-			_debugWindow.draw(sprite);
-			sprite.move(8 * 1.5, 0);
-			tileNbr++;
-			if (tileNbr == 32) {
-				tileNbr = 0;
-				sprite.setPosition(1142, sprite.getPosition().y);
-				sprite.move(0, 8 * 1.5);
-			}
-		}*/
-		cam.setOutlineColor(((this->_cpu._gpu._control & 0x80) && (this->_cpu._gpu._control & 0b00000001U) ? sf::Color::Green : sf::Color::Red));
-		for (int i = 0; i < 4; i++) {
-			cam.setPosition(1142 + this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2), 450 + this->_cpu._gpu._scrollY * 1.5 - 384 * (i / 2));
-			if (this->_cpu._gpu._scrollX * 1.5 - 384 * (i % 2) >= 0)
-				_debugWindow.draw(cam);
-		}
-
-		square.setPosition(1531, 0);
-		square.setSize({1200, 1200});
-		_debugWindow.draw(square);
-
-		square.setPosition(1137, 0);
-		square.setSize({1200, 446});
-		_debugWindow.draw(square);
-
-		square.setPosition(1137, 838);
-		square.setSize({394, 450});
-		_debugWindow.draw(square);
-
-		map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b01000000U);
-
-		sprite.setPosition(1531 + 1.5 * this->_cpu._gpu._windowX, 450 + 1.5 * this->_cpu._gpu._windowY);
-		/*for (int y = 0; y < 18; y++) {
-			for (int x = 0; x < 20; x++) {
-				sprite.setTexture(reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture[
-					!(this->_cpu._gpu._control & 0b00010000U) ? static_cast<char>(map[x + y * 32]) + 0x100 : map[x + y * 32]
-				]);
-				_debugWindow.draw(sprite);
-				sprite.move(8 * 1.5, 0);
-			}
-			sprite.setPosition(1531 + 1.5 * this->_cpu._gpu._windowX, sprite.getPosition().y);
-			sprite.move(0, 8 * 1.5);
-		}*/
-		cam.setOutlineColor(((this->_cpu._gpu._control & 0x80) && (this->_cpu._gpu._control & 0b00100000U) ? sf::Color::Green : sf::Color::Red));
-
-		cam.setPosition(1531, 450);
-		_debugWindow.draw(cam);
 
 		square.setSize({32, 16});
 
-		sprite.setPosition(1142, 5);
+		this->_displayVRAMContent(_debugWindow, 1139, 5, this->_cpu._gpu._screen._BGColorPalette, false);
+		this->_displayPalette(_debugWindow, 1139, 309, this->_cpu._gpu._screen._BGColorPalette, false);
 
-		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette0Texture) {
-			sprite.setTexture(e);
-			_debugWindow.draw(sprite);
-			sprite.move(8 * 1.5, 0);
-			tileNbr++;
-			if (tileNbr == 16) {
-				tileNbr = 0;
-				sprite.setPosition(1142, sprite.getPosition().y);
-				sprite.move(0, 8 * 1.5);
-			}
-		}*/
-		for (int i = 0; i < 4; i++) {
-			square.setFillColor({
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette0[i].r,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette0[i].g,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette0[i].b,
-				static_cast<unsigned char>(i == 0 ? 0 : 255),
-			});
-			square.setPosition(1142 + 32 * i, 309);
-			_debugWindow.draw(square);
-		}
+		this->_displayVRAMContent(_debugWindow, 1333, 5, this->_cpu._gpu._screen._objectColorPalette0, true);
+		this->_displayPalette(_debugWindow, 1333, 309, this->_cpu._gpu._screen._objectColorPalette0, true);
 
-		sprite.setPosition(1336, 5);
-		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._palette1Texture) {
-			sprite.setTexture(e);
-			_debugWindow.draw(sprite);
-			sprite.move(8 * 1.5, 0);
-			tileNbr++;
-			if (tileNbr == 16) {
-				tileNbr = 0;
-				sprite.setPosition(1336, sprite.getPosition().y);
-				sprite.move(0, 8 * 1.5);
-			}
-		}*/
-		for (int i = 0; i < 4; i++) {
-			square.setFillColor({
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette1[i].r,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette1[i].g,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._objectColorPalette1[i].b,
-				static_cast<unsigned char>(i == 0 ? 0 : 255),
-			});
-			square.setPosition(1336 + 32 * i, 309);
-			_debugWindow.draw(square);
-		}
+		this->_displayVRAMContent(_debugWindow, 1528, 5, this->_cpu._gpu._screen._objectColorPalette1, true);
+		this->_displayPalette(_debugWindow, 1528, 309, this->_cpu._gpu._screen._objectColorPalette1, true);
 
-		sprite.setPosition(1531, 5);
-		/*for (auto &e : reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._winTexture) {
-			sprite.setTexture(e);
-			_debugWindow.draw(sprite);
-			sprite.move(8 * 1.5, 0);
-			tileNbr++;
-			if (tileNbr == 16) {
-				tileNbr = 0;
-				sprite.setPosition(1531, sprite.getPosition().y);
-				sprite.move(0, 8 * 1.5);
-			}
-		}*/
-		for (int i = 0; i < 4; i++) {
-			square.setFillColor({
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGColorPalette[i].r,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGColorPalette[i].g,
-				reinterpret_cast<Graphics::LCDSFML&>(this->_cpu._gpu._screen)._BGColorPalette[i].b,
-				255
-			});
-			square.setPosition(1531 + 32 * i, 309);
-			_debugWindow.draw(square);
-		}
+		this->_displayVRAMContent(_debugWindow, 1722, 5, colors, false);
+		this->_displayPalette(_debugWindow, 1722, 309, colors, false);
 	}
 }

@@ -56,7 +56,10 @@ namespace GBEmulator::Debugger
 		void _drawRegisters(sf::RenderWindow &_debugWindow);
 		void _handleWindowCommands(sf::RenderWindow &_debugWindow);
 		void _drawVram(sf::RenderWindow &_debugWindow);
-		char _getInstructionByLen(const std::string &str);
+		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		void _displayVRAMContent(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		void _displayWindow(sf::RenderWindow &_debugWindow, float x, float y);
+		void _displayBackground(sf::RenderWindow &_debugWindow, float x, float y);
 
 	public:
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
