@@ -89,7 +89,7 @@ namespace GBEmulator
 					((this->_sweepDirection - 1) * 2 + 1)
 				);
 			if (!this->_isSixBitsLength) {
-				this->_soundChannel.setWave(getWavePattern(newFrequency, memory), 32);
+				this->_soundChannel.setWave(getWavePattern(newFrequency, memory), 44100);
 			}
 			this->_soundChannel.setPitch(newFrequency / BASE_FREQU);
 		}
@@ -117,9 +117,9 @@ namespace GBEmulator
 		std::vector<unsigned char>	raw;
 
 		int shifting = _waveOutputLevel + 4 % 5;
-		raw.reserve(32LLU);
-		for (int i = 0; i < 16; i++) {
-			unsigned char wpRam = memory.read(WPRAM_START + i);
+		raw.reserve(44100LLU);
+		for (int i = 0; i < 44100; i++) {
+			unsigned char wpRam = memory.read(WPRAM_START + (i % 16));
 			raw.push_back(frequency / BASE_FREQU * (((wpRam >> 4) >> shifting) / 16 * 127));
 			raw.push_back(frequency / BASE_FREQU * (((wpRam & 0b00001111) >> shifting) / 16 * 127));
 		}
