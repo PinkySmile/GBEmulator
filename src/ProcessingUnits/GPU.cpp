@@ -40,12 +40,6 @@ namespace GBEmulator
 		return this->_bgPalette;
 	}
 
-	void GPU::setBGPalette(unsigned char value)
-	{
-		this->_paletteChanged = this->_paletteChanged || this->_bgPalette != value;
-		this->_bgPalette = value;
-	}
-
 	unsigned char GPU::readVRAM(unsigned short address) const
 	{
 		if (this->getMode() == 3)
@@ -222,16 +216,8 @@ namespace GBEmulator
 
 	void GPU::_updateTiles()
 	{
-		if (this->_paletteChanged) {
-			this->_screen.setBGPalette(this->_bgPalette);
-			this->_screen.setObjectPalette0(this->_objectPalette0);
-			this->_screen.setObjectPalette1(this->_objectPalette1);
-			this->_paletteChanged = false;
-			for (int i = 0; i < 384; i++)
-				this->_screen.updateTexture(this->_getTile(i), i);
-		} else
-			for (auto &id : this->_tilesToUpdate)
-				this->_screen.updateTexture(this->_getTile(id), id);
+		for (auto &id : this->_tilesToUpdate)
+			this->_screen.updateTexture(this->_getTile(id), id);
 		this->_tilesToUpdate.clear();
 	}
 
@@ -309,7 +295,7 @@ namespace GBEmulator
 
 	unsigned char GPU::getWindowX() const {
 
-		return this->_windowX;
+		return this->_windowX + 7;
 	}
 
 	void GPU::setWindowY(unsigned char value)
@@ -332,15 +318,24 @@ namespace GBEmulator
 		return this->_objectPalette1;
 	}
 
+	void GPU::setBGPalette(unsigned char value)
+	{
+		if (this->_bgPalette != value)
+			this->_screen.setBGPalette(value);
+		this->_bgPalette = value;
+	}
+
 	void GPU::setObjectPalette0(unsigned char value)
 	{
-		this->_paletteChanged = this->_paletteChanged || this->_objectPalette0 != value;
+		if (this->_objectPalette0 != value)
+			this->_screen.setObjectPalette0(value);
 		this->_objectPalette0 = value;
 	}
 
 	void GPU::setObjectPalette1(unsigned char value)
 	{
-		this->_paletteChanged = this->_paletteChanged || this->_objectPalette1 != value;
+		if (this->_objectPalette1 != value)
+			this->_screen.setObjectPalette1(value);
 		this->_objectPalette1 = value;
 	}
 }

@@ -287,9 +287,9 @@ namespace GBEmulator
 
 		return (
 			common | (
-				this->_buttonEnabled * ~buts
+				this->_buttonEnabled * ~dirs
 			) | (
-				this->_directionEnabled * ~dirs
+				this->_directionEnabled * ~buts
 			) | (
 				!this->_directionEnabled * !this->_buttonEnabled * 0b1111
 			)
