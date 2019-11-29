@@ -6,20 +6,20 @@
 */
 
 #include <cmath>
-#include <cstdio>
 #include "APU.hpp"
 #include "../Timing/Timer.hpp"
+
+#define BASE_FREQU 1660
 
 namespace GBEmulator
 {
 	std::vector<unsigned char> getSquareWave(int frequency, float percentage)
 	{
 		std::vector<unsigned char>	raw;
-		float waveModifier = (percentage - 50) / 100 * -1;
 
 		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++)
-			raw.push_back(frequency / 100. * (std::sin(i * frequency * 2 * M_PI / 44100) + waveModifier > 0 ? 1 : -1));
+			raw.push_back((std::fmod(i * frequency * 100 / 44100, 100) > percentage ? 127 : -127));
 		return (raw);
 	}
 
@@ -30,8 +30,8 @@ namespace GBEmulator
 	_managerChannelNoise(channelFour),
 	_wpRAM(CHANSIZE_WPRAM, CHANSIZE_WPRAM)
 	{
-		channelOne.setWave(getSquareWave(440, 50), 44100);
-		channelTwo.setWave(getSquareWave(440, 50), 44100);
+		channelOne.setWave(getSquareWave(BASE_FREQU, 50), 44100);
+		channelTwo.setWave(getSquareWave(BASE_FREQU, 50), 44100);
 	}
 
 	APU::~APU() = default;
@@ -74,7 +74,7 @@ namespace GBEmulator
 					(this->_frequency / pow(2, this->_sweepShiftNumber)) *
 					((this->_sweepDirection - 1) * 2 + 1)
 				);
-			this->_soundChannel.setPitch(newFrequency / 440);
+			this->_soundChannel.setPitch(newFrequency / BASE_FREQU);
 		}
 		//pitch
 		if (this->_havingPolynomial) {
@@ -84,8 +84,8 @@ namespace GBEmulator
 				   dividingRatio[this->_dividingRatio];
 
 			if (_wroteInNoiseFrequency) {
-				this->_soundChannel.setWave(getNoiseWave(440, stepNumber), 44100);
-				this->_soundChannel.setPitch(frequency / 440);
+				this->_soundChannel.setWave(getNoiseWave(BASE_FREQU, stepNumber), 44100);
+				this->_soundChannel.setPitch(frequency / BASE_FREQU);
 				_wroteInNoiseFrequency = false;
 			} else {
 				updateLSFR(stepNumber);
@@ -382,16 +382,16 @@ namespace GBEmulator
 		this->_volumeCycles = 0;
 		switch (this->_wavePattern) {
 			case 0:
-				this->_soundChannel.setWave(getSquareWave(440, 12.5), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 12.5), 44100);
 				break;
 			case 1:
-				this->_soundChannel.setWave(getSquareWave(440, 25), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 25), 44100);
 				break;
 			case 2:
-				this->_soundChannel.setWave(getSquareWave(440, 50), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 50), 44100);
 				break;
 			case 3:
-				this->_soundChannel.setWave(getSquareWave(440, 75), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 75), 44100);
 				break;
 			default:
 				return;
@@ -430,7 +430,7 @@ namespace GBEmulator
 	{
 		this->_frequency = (this->_frequency & 0b11100000000) | value;
 		this->_volumeCycles = 0;
-		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
+		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
 
 	void APU::Sound::setRestartOptions(unsigned char value)
@@ -442,7 +442,7 @@ namespace GBEmulator
 		this->_restartType = (value & 0b01000000) >> 6;
 		this->_volumeCycles = 0;
 		this->_frequency = (this->_frequency & 0b00011111111) | val;
-		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
+		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
 
 	unsigned char APU::Sound::getRestartOptions() const
