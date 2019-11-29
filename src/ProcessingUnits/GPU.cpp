@@ -295,7 +295,7 @@ namespace GBEmulator
 
 	unsigned char GPU::getWindowX() const {
 
-		return this->_windowX;
+		return this->_windowX + 7;
 	}
 
 	void GPU::setWindowY(unsigned char value)

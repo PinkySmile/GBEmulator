@@ -624,6 +624,103 @@ namespace GBEmulator::Debugger
 		delete[] colors;
 	}
 
+	void Debugger::_displayBackground(sf::RenderWindow &_debugWindow, float x, float y)
+	{
+		auto colors = new sf::Color[32 * 32 * 8 * 8];
+		sf::Vector2u camPos = {this->_cpu._gpu._scrollX, this->_cpu._gpu._scrollY};
+		sf::Sprite sprite;
+		sf::Texture texture;
+		sf::RectangleShape cam{sf::Vector2f{160, 144}};
+		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+
+		cam.setFillColor(sf::Color::Transparent);
+		cam.setOutlineColor((this->_cpu._gpu._control & 0b10000001U) != 0b10000001U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineThickness(4);
+
+		texture.create(32 * 8, 32 * 8);
+		for (int xPos = 0; xPos < 32; xPos++) {
+			for (int yPos = 0; yPos < 32; yPos++) {
+				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto &color = this->_cpu._gpu._screen._BGColorPalette[((index & 1U) << 1U) | (index >> 1U)];
+
+						colors[x + xPos * 8 + yPos * 8 * 8 * 32 + y * 32 * 8] = {
+							color.r,
+							color.g,
+							color.b,
+							255
+						};
+					}
+				}
+			}
+		}
+		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
+		sprite.setTexture(texture);
+		sprite.setPosition(x, y);
+		_debugWindow.draw(sprite);
+
+		cam.setPosition(camPos.x + x, camPos.y + y);
+		if (camPos.x >= 96) {
+			cam.setSize({
+				cam.getSize().x - camPos.x + 96,
+				cam.getSize().y
+			});
+		}
+		if (camPos.y >= 112) {
+			cam.setSize({
+				cam.getSize().x,
+				cam.getSize().y - camPos.y + 112
+			});
+		}
+		_debugWindow.draw(cam);
+		delete[] colors;
+	}
+
+	void Debugger::_displayWindow(sf::RenderWindow &_debugWindow, float x, float y)
+	{
+		auto colors = new sf::Color[20 * 18 * 8 * 8];
+		sf::Sprite sprite;
+		sf::Texture texture;
+		sf::RectangleShape cam{sf::Vector2f{160, 144}};
+		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b01000000U);
+
+		cam.setFillColor(sf::Color::Transparent);
+		cam.setOutlineColor((this->_cpu._gpu._control & 0b10100000U) != 0b10100000U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineThickness(4);
+
+		texture.create(20 * 8, 18 * 8);
+		for (int xPos = 0; xPos < 20; xPos++) {
+			for (int yPos = 0; yPos < 18; yPos++) {
+				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto &color = this->_cpu._gpu._screen._BGColorPalette[((index & 1U) << 1U) | (index >> 1U)];
+
+						colors[x + xPos * 8 + yPos * 8 * 8 * 20 + y * 20 * 8] = {
+							color.r,
+							color.g,
+							color.b,
+							255
+						};
+					}
+				}
+			}
+		}
+		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
+		sprite.setTexture(texture);
+		sprite.setPosition(x + this->_cpu._gpu._windowX, y + this->_cpu._gpu._windowY);
+		_debugWindow.draw(sprite);
+
+		cam.setPosition(x, y);
+		_debugWindow.draw(cam);
+		delete[] colors;
+	}
+
 	void Debugger::_drawVram(sf::RenderWindow &_debugWindow)
 	{
 		std::vector<Graphics::RGBColor> colors{
@@ -651,5 +748,8 @@ namespace GBEmulator::Debugger
 
 		this->_displayVRAMContent(_debugWindow, 1722, 5, colors, false);
 		this->_displayPalette(_debugWindow, 1722, 309, colors, false);
+
+		this->_displayBackground(_debugWindow, 1200, 340);
+		this->_displayWindow(_debugWindow, 1500, 340);
 	}
 }

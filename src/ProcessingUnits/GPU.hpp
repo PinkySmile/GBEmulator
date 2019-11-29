@@ -33,7 +33,7 @@ namespace GBEmulator
 		Graphics::ILCD &_screen;
 		unsigned char _scrollX = 0;
 		unsigned char _scrollY = 0;
-		unsigned char _windowX = 0;
+		signed short _windowX = 0;
 		unsigned char _windowY = 0;
 		unsigned char _bgPalette = 0;
 		unsigned char _objectPalette0 = 0;
