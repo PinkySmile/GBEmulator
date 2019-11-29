@@ -76,8 +76,9 @@ namespace GBEmulator
 				);
 			this->_soundChannel.setPitch(newFrequency / BASE_FREQU);
 		}
-		//pitch
+		//pitchNoise
 		if (this->_havingPolynomial) {
+			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
 			double frequency = shiftClockFrequencyRatio[this->_shiftClockFrequency] *
@@ -87,6 +88,7 @@ namespace GBEmulator
 				this->_soundChannel.setWave(getNoiseWave(BASE_FREQU, stepNumber), 44100);
 				this->_soundChannel.setPitch(frequency / BASE_FREQU);
 				_wroteInNoiseFrequency = false;
+
 			} else {
 				updateLSFR(stepNumber);
 			}
