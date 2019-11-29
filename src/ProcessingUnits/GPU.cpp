@@ -136,6 +136,17 @@ namespace GBEmulator
 
 				this->_updateTiles();
 
+				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
+					Graphics::Sprite sprite;
+
+					sprite.y = this->_oam.read(i);
+					sprite.x = this->_oam.read(i + 1);
+					sprite.texture_id = this->_oam.read(i + 2);
+					sprite.flags = this->_oam.read(i + 3);
+					if (sprite.priority == 1)
+						this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
+				}
+
 				if (this->_control & 0b00000001U)
 					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollX, -this->_scrollY, !(this->_control & 0b00010000U));
 
@@ -149,7 +160,8 @@ namespace GBEmulator
 					sprite.x = this->_oam.read(i + 1);
 					sprite.texture_id = this->_oam.read(i + 2);
 					sprite.flags = this->_oam.read(i + 3);
-					this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
+					if (sprite.priority == 0)
+						this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
 				}
 				this->_screen.display();
 			}
