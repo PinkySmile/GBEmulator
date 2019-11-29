@@ -6,6 +6,7 @@
 */
 
 #include <cmath>
+#include <cstdio>
 #include "APU.hpp"
 #include "../Timing/Timer.hpp"
 
@@ -43,7 +44,15 @@ namespace GBEmulator
 		this->_volumeCycles = 0;
 	}
 
-	void APU::Sound::update(unsigned cycle)
+	void APU::Sound::updateRestart()
+	{
+		this->_soundOn = false;
+		this->_restart = false;
+		this->_volumeCycles = 0;
+		this->disable(true);
+	}
+
+	void APU::Sound::update(unsigned cycle, Memory::Memory &memory)
 	{
 		if (!this->_soundOn && this->_restart) {
 			this->_soundOn = true;
@@ -53,11 +62,16 @@ namespace GBEmulator
 			return;
 		this->_volumeCycles += cycle;
 		this->_sweepCycles += cycle;
-		if (this->_restartType && this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
-			this->_soundOn = false;
-			this->_restart = false;
-			this->_volumeCycles = 0;
-			this->disable(true);
+		if (this->_isSixBitsLength) {
+			if (this->_restartType &&
+				this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
+				updateRestart();
+			}
+		} else {
+			if (this->_restartType &&
+				this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(2 / (256 - this->_soundLength))) {
+				updateRestart();
+			}
 		}
 		if (this->_volumeShiftNumber) {
 			int volume = (
@@ -69,15 +83,19 @@ namespace GBEmulator
 		}
 		if (this->_sweepTime) {
 			double newFrequency = (
-					this->_frequency +
+					131072.f / (2048 - this->_frequency) +
 					(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
-					(this->_frequency / pow(2, this->_sweepShiftNumber)) *
+					(131072.f / (2048 - this->_frequency) / pow(2, this->_sweepShiftNumber)) *
 					((this->_sweepDirection - 1) * 2 + 1)
 				);
+			if (!this->_isSixBitsLength) {
+				this->_soundChannel.setWave(getWavePattern(newFrequency, memory), 44100);
+			}
 			this->_soundChannel.setPitch(newFrequency / BASE_FREQU);
 		}
-		//pitch
+		//pitchNoise
 		if (this->_havingPolynomial) {
+			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
 			double frequency = shiftClockFrequencyRatio[this->_shiftClockFrequency] *
@@ -87,10 +105,26 @@ namespace GBEmulator
 				this->_soundChannel.setWave(getNoiseWave(BASE_FREQU, stepNumber), 44100);
 				this->_soundChannel.setPitch(frequency / BASE_FREQU);
 				_wroteInNoiseFrequency = false;
+
 			} else {
-				updateLSFR(stepNumber);
+				updateLFSR(stepNumber);
 			}
 		}
+	}
+
+	std::vector<unsigned char> APU::Sound::getWavePattern(int frequency, Memory::Memory &memory) const
+	{
+		std::vector<unsigned char>	raw;
+
+		int shifting = _waveOutputLevel + 4 % 5;
+		raw.reserve(44100LLU);
+		for (int i = 0; i < 44100; i++) {
+			unsigned char wpRam = memory.read(WPRAM_START + (i % 16));
+			raw.push_back(frequency / BASE_FREQU * (((wpRam >> 4) >> shifting) / 16 * 127));
+			raw.push_back(frequency / BASE_FREQU * (((wpRam & 0b00001111) >> shifting) / 16 * 127));
+		}
+
+		return (raw);
 	}
 
 	std::vector<unsigned char> APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
@@ -99,22 +133,23 @@ namespace GBEmulator
 
 		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++) {
-			raw.push_back(frequency / 100. * ((_lfsr & 0b1) > 0 ? 1 : -1));
-			updateLSFR(stepNumber);
+			raw.push_back(frequency / BASE_FREQU * ((_lfsr & 0b1) == 0 ? 127 : -127));
+			updateLFSR(stepNumber);
 		}
 		return (raw);
 	}
 
-	void APU::Sound::updateLSFR(unsigned char stepNumber)
+	void APU::Sound::updateLFSR(unsigned char stepNumber)
 	{
 		if (_counter == stepNumber) {
-			unsigned short xorResult = ((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1) << 15;
+			unsigned short xorResult = (((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1)) << 15;
 			_lfsr >>= 1;
 			_lfsr |= xorResult;
 			if (stepNumber == 7) {
 				xorResult >>= 9;
 				_lfsr |= xorResult;
 			}
+			//printf("LFSR : %i\n",_lfsr);
 		}
 		if (_counter > stepNumber)
 			_counter = 0x0;
@@ -123,8 +158,10 @@ namespace GBEmulator
 
 	void APU::update(unsigned cycle)
 	{
-		this->_managerChannel1.update(cycle);
-		this->_managerChannel2.update(cycle);
+		this->_managerChannel1.update(cycle, this->_wpRAM);
+		this->_managerChannel2.update(cycle, this->_wpRAM);
+		this->_managerChannelWave.update(cycle, this->_wpRAM);
+		this->_managerChannelNoise.update(cycle, this->_wpRAM);
 	}
 
 	void APU::write(unsigned short address, unsigned char value)
@@ -250,6 +287,9 @@ namespace GBEmulator
 				break;
 			case 0x1 :
 				this->_managerChannel2.setVolume(value);
+				break;
+			case 0x2 :
+				this->_managerChannel2.setLowFrequency(value);
 				break;
 			case 0x3 :
 				this->_managerChannel2.setRestartOptions(value);
@@ -480,9 +520,10 @@ namespace GBEmulator
 	void APU::Sound::setSoundLength(unsigned char value, bool sixBitsLength)
 	{
 		this->_volumeCycles = 0;
-		if (!sixBitsLength)
+		if (!sixBitsLength) {
+			this->_isSixBitsLength = false;
 			this->_soundLength = value;
-		else
+		} else
 			this->_soundLength = value & 0b00111111;
 	}
 
@@ -515,6 +556,7 @@ namespace GBEmulator
 
 	void APU::Sound::setPolynomialCounters(unsigned char value)
 	{
+		//printf("oui\n");
 		this->_havingPolynomial = true;
 		this->_wroteInNoiseFrequency = true;
 		this->_shiftClockFrequency = value >> 4;

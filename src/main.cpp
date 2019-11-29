@@ -65,6 +65,11 @@ int main(int argc, char **argv)
 
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
+	//channel1.setDisabled(true);
+	//channel2.setDisabled(true);
+	//channel3.setDisabled(true);
+	//channel4.setDisabled(true);
+
 	window.setFramerateLimit(48);
 	window.setView(view);
 

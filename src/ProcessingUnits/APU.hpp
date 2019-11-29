@@ -101,14 +101,16 @@ namespace GBEmulator
 			unsigned char getSoundLength(bool) const;
 			void setOutputLevel(unsigned char);
 			unsigned char getOutputLevel() const;
+			std::vector<unsigned char> getWavePattern(int frequency, Memory::Memory &memory) const;
 
 			//Noise Functions
-			void updateLSFR(unsigned char stepNumber);
+			void updateLFSR(unsigned char stepNumber);
 			std::vector<unsigned char> getNoiseWave(int frequency, unsigned char stepNumber);
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 
-			void update(unsigned cycle);
+			void update(unsigned cycle, Memory::Memory &memory);
+			void updateRestart();
 			void disable(bool state);
 
 		private:
@@ -124,6 +126,7 @@ namespace GBEmulator
 			//wave pattern and sound duration
 			unsigned char _wavePattern = 2; //chan1-2
 			unsigned char _soundLength = 0;
+			bool _isSixBitsLength = true;
 
 			//volume
 			unsigned char _initialVolume = 0;
@@ -140,7 +143,7 @@ namespace GBEmulator
 			bool _soundOn = false; //WAVE
 
 			//WaveOutputLevel //WAVE
-			unsigned char _waveOutputLevel;
+			unsigned char _waveOutputLevel = 0;
 
 			//PolynomialCounter //NOISE
 			bool _wroteInNoiseFrequency = false;

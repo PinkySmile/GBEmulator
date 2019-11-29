@@ -22,11 +22,12 @@ namespace GBEmulator {
 		SoundPlayer(const SoundPlayer &) = delete;
 		SoundPlayer &operator=(const SoundPlayer &) = delete;
 
+		void setDisabled(bool disabled) override;
 		void setPitch(float frequency) override;
 		void setWave(std::vector<unsigned char> samples, unsigned int sampleRate) override;
 		void setVolume(float volume) override;
 	private:
-		bool _loop = false;
+		bool _disabled = false;
 		sf::Sound _sound;
 		sf::SoundBuffer _soundBuffer;
 		float _volume = 0;
