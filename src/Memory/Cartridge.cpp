@@ -95,6 +95,9 @@ namespace GBEmulator::Memory
 			size = this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024;
 			mem = new unsigned char[size];
 			this->_ram.setMemory(mem, size);
+			for (size_t i = 0; i < size; i++)
+				mem[i] = rand() % 0x100;
+
 			stream = fopen((rom + ".sav").c_str(), "rb");
 			if (stream) {
 				fread(mem, 1, size, stream);
