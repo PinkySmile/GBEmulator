@@ -421,9 +421,11 @@ namespace GBEmulator::Instructions
 		return SR(re, val, true);
 	}
 
-	unsigned char SLL(CPU::Registers &re, unsigned char &val)
+	unsigned char SWAP(CPU::Registers &re, unsigned char &val)
 	{
-		return SL(re, val, true);
+		val = ((val & 0b1111U) << 4U) | (val >> 4U);
+		setFlags(re, val ? UNSET : SET, UNSET, UNSET, UNSET);
+		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
 	unsigned char SRL(CPU::Registers &re, unsigned char &val)

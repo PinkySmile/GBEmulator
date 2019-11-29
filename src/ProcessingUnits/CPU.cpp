@@ -271,25 +271,28 @@ namespace GBEmulator
 
 	unsigned char CPU::_generateJoypadByte() const
 	{
+		unsigned char dirs = (0b11110000U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) << 3U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_UP)   << 2U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) << 1U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT)<< 0U
+		);
+		unsigned char buts = (0b11110000U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_START) << 3U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_SELECT)<< 2U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_B)     << 1U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_A)     << 0U
+		);
+		unsigned char common = 0b11000000U | (this->_buttonEnabled * 0b100000U) | (this->_directionEnabled * 0b010000U);
+
 		return (
-			(this->_buttonEnabled << 5U) |
-			(this->_directionEnabled << 4U) |
-			((
-				(this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) && this->_directionEnabled) ||
-				(this->_joypad.isButtonPressed(Input::JOYPAD_START) && this->_buttonEnabled)
-			) << 3U) |
-			((
-				(this->_joypad.isButtonPressed(Input::JOYPAD_UP) && this->_directionEnabled) ||
-				(this->_joypad.isButtonPressed(Input::JOYPAD_SELECT) && this->_buttonEnabled)
-			) << 2U) |
-			((
-				(this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) && this->_directionEnabled) ||
-				(this->_joypad.isButtonPressed(Input::JOYPAD_B) && this->_buttonEnabled)
-			) << 1U) |
-			((
-				(this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT) && this->_directionEnabled) ||
-				(this->_joypad.isButtonPressed(Input::JOYPAD_A) && this->_buttonEnabled)
-			) << 0U)
+			common | (
+				this->_buttonEnabled * ~dirs
+			) | (
+				this->_directionEnabled * ~buts
+			) | (
+				!this->_directionEnabled * !this->_buttonEnabled * 0b1111
+			)
 		);
 	}
 

@@ -94,7 +94,7 @@ namespace GBEmulator::Instructions
 	unsigned char SR(CPU::Registers &re, unsigned char &val, bool value);
 	unsigned char SLA(CPU::Registers &re, unsigned char &val);
 	unsigned char SRA(CPU::Registers &re, unsigned char &val);
-	unsigned char SLL(CPU::Registers &re, unsigned char &val);
+	unsigned char SWAP(CPU::Registers &re, unsigned char &val);
 	unsigned char SRL(CPU::Registers &re, unsigned char &val);
 	unsigned char STOP(CPU &cpu);
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val);
