@@ -91,7 +91,16 @@ namespace GBEmulator::Memory
 			} catch (std::exception &) {
 				throw;
 			}
-			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024);
+
+			size = this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024;
+			mem = new unsigned char[size];
+			this->_ram.setMemory(mem, size);
+			stream = fopen((rom + ".sav").c_str(), "rb");
+			if (stream) {
+				fread(mem, 1, size, stream);
+				fclose(stream);
+			}
+
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
 			throw;
