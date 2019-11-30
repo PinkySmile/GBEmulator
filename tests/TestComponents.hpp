@@ -33,9 +33,6 @@ namespace Tests {
 		void clear() override;
 		bool isClosed() const override;
 		void close() override;
-
-		void setPalette(const std::vector<GBEmulator::Graphics::RGBColor> &colors);
-		void setPalette(unsigned char colors);
 	};
 
 	class Sound : public GBEmulator::ISound {
@@ -43,6 +40,7 @@ namespace Tests {
 		void setPitch(float frequency) override;
 		void setWave(std::vector<unsigned char> samples, unsigned int sampleRate) override;
 		void setVolume(float volume) override;
+		void setDisabled(bool disabled) override;
 	};
 
 	class GBTest {
