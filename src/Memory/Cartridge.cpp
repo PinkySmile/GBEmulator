@@ -97,8 +97,10 @@ namespace GBEmulator::Memory
 			this->_ram.setMemory(mem, size);
 			for (size_t i = 0; i < size; i++)
 				mem[i] = rand() % 0x100;
+			this->_ramMem = mem;
 
-			stream = fopen((rom + ".sav").c_str(), "rb");
+			this->_savePath = rom.substr(0, rom.find('.')) + ".sav";
+			stream = fopen(this->_savePath.c_str(), "rb");
 			if (stream) {
 				fread(mem, 1, size, stream);
 				fclose(stream);
@@ -111,6 +113,17 @@ namespace GBEmulator::Memory
 			this->resetROM();
 			throw;
 		}
+	}
+
+	void Cartridge::saveRAM()
+	{
+		FILE *stream = fopen(this->_savePath.c_str(), "wb");
+
+		if (!stream)
+			throw SavingFailedException("Cannot open " + this->_savePath + ": " + strerror(errno));
+
+		fwrite(this->_ramMem, 1, this->_ram.getSize(), stream);
+		fclose(stream);
 	}
 
 	unsigned char Cartridge::read(unsigned short address) const

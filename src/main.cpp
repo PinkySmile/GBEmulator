@@ -83,5 +83,8 @@ int main(int argc, char **argv)
 		cpu.dump();
 		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
 	}
+
+	cpu.getCartridgeEmulator().saveRAM();
+
 	return EXIT_SUCCESS;
 }
