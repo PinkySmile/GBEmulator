@@ -706,8 +706,8 @@ namespace GBEmulator::Instructions
 		//! E7; RST 20h: The current pc value plus one is pushed onto the stack, then is loaded with 20h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x20); },
 
-		//! E8; ADD SP,**: Add ** to sp.
-		[](CPU &cpu, CPU::Registers &reg) { return ADD16(reg, reg.sp, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
+		//! E8; ADD SP,*: Add the signed value * to sp.
+		[](CPU &cpu, CPU::Registers &reg) { return SPECIAL_ADD(reg, reg.sp, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! E9; JP (hl): Loads the value of hl into pc.
 		[](CPU &, CPU::Registers &reg) { return JP(reg, true, reg.hl), JUMP_CYCLE_DURATION; },

@@ -156,7 +156,7 @@ namespace GBEmulator::Instructions
 
 		setFlags(
 			reg,
-			(value1 + value2) == 0x100 ? SET : UNSET,
+			(value1 + value2) % 0x100 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
 			value1 + value2 > 0xFF ? SET : UNSET
@@ -178,6 +178,13 @@ namespace GBEmulator::Instructions
 		);
 		value1 -= value2;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SPECIAL_ADD(CPU::Registers &reg, unsigned short &value1, char value2)
+	{
+		if (value2 >= 0)
+			return ADD16(reg, value1, value2);
+		return SUB16(reg, value1, -value2);
 	}
 
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)

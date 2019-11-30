@@ -99,6 +99,7 @@ namespace GBEmulator::Instructions
 	unsigned char STOP(CPU &cpu);
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val);
 	unsigned char CPL(CPU::Registers &reg);
+	unsigned char SPECIAL_ADD(CPU::Registers &reg, unsigned short &value1, char value2);
 	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(CPU::Registers &, unsigned char &), CPU::Registers &reg);
 
 	template <typename ...args>
