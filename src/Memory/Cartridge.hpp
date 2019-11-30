@@ -41,6 +41,11 @@ namespace GBEmulator::Memory
 			InvalidRomRamSizeException(const std::string &msg) : InvalidRomException(msg) {};
 		};
 
+		class SavingFailedException : public InvalidRomException {
+		public:
+			SavingFailedException(const std::string &msg) : InvalidRomException(msg) {};
+		};
+
 		enum CartridgeType {
 			ROM_ONLY                = 0x00,
 			MBC1                    = 0x01,
@@ -88,6 +93,8 @@ namespace GBEmulator::Memory
 		static const std::map<size_t, ROMSize> _sizeBytes;
 
 		ROM _rom;
+		unsigned char *_ramMem;
+		std::string _savePath;
 		bool _ramEnabled = false;
 		bool _ramExtended = false;
 		unsigned short _romBank = 1;
@@ -112,6 +119,7 @@ namespace GBEmulator::Memory
 
 		void resetROM();
 		void loadROM(const std::string &rom);
+		void saveRAM();
 		void write(unsigned short address, unsigned char value);
 		unsigned char read(unsigned short address) const;
 		unsigned char getRomBank() const;
