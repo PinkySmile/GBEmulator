@@ -47,14 +47,26 @@ add_executable(
         src/Timing/Timer.hpp
 )
 
-target_link_libraries(
-        GBEmulator
-        sfml-graphics
-        sfml-window
-        sfml-system
-        sfml-audio
-        pthread
-)
+if (WIN32)
+        target_link_libraries(
+                GBEmulator
+                ws2_32
+                sfml-graphics
+                sfml-window
+                sfml-system
+                sfml-audio
+                pthread
+        )
+else (WIN32)
+        target_link_libraries(
+                GBEmulator
+                sfml-graphics
+                sfml-window
+                sfml-system
+                sfml-audio
+                pthread
+        )
+endif (WIN32)
 
 add_executable(
         tests

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 	//channel3.setDisabled(true);
 	//channel4.setDisabled(true);
 
-	window.setFramerateLimit(48);
+	window.setFramerateLimit(60);
 	window.setView(view);
 
 	if (argc == 3)
