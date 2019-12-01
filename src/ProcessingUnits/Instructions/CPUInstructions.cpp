@@ -381,12 +381,12 @@ namespace GBEmulator::Instructions
 		bool cf = false;
 
 		if (((reg.fh & 0x0FU) > 9) || reg.fh) {
-			val += 6;
+			val += (reg.fn ? -6 : 6);
 			reg.fc = reg.fc || val >= 0xA0;
 		}
 
 		if ((oldVal > 0x99) || reg.fc) {
-			val += 0x60;
+			val += (reg.fn ? -0x60 : 0x60);
 			cf = true;
 		}
 		setFlags(reg, val == 0 ? SET : UNSET, UNCHANGED, UNSET, cf ? SET : UNSET);
