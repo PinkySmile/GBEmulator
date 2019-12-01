@@ -113,7 +113,7 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.c); },
 
 		//! 22; SLA d: The contents of d are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
-		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.b); },
+		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.d); },
 
 		//! 23; SLA e: The contents of e are shifted left one bit position. The contents of bit 7 are copied to the carry flag and a zero is put into bit 0.
 		[](CPU &, CPU::Registers &reg){ return SLA(reg, reg.e); },
