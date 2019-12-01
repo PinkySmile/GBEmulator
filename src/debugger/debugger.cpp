@@ -7,7 +7,6 @@
 
 #ifndef _WIN32
 #	include <sys/select.h>
-#define closesocket(socket) close(socket)
 typedef fd_set FD_SET;
 #else
 #	include <windows.h>
@@ -36,7 +35,7 @@ namespace GBEmulator::Debugger
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 1, 3, 3, 3, 1, 2, 1, 1, 1, 3, 2, 3, 3, 2, 1,
 		1, 1, 3, 1, 3, 1, 2, 1, 1, 1, 3, 1, 3, 1, 2, 1,
-		2, 1, 1, 1, 1, 1, 2, 1, 3, 1, 3, 1, 1, 1, 2, 1,
+		2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 1, 1, 2, 1,
 		2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 1, 1, 2, 1
 	};
 
@@ -330,6 +329,10 @@ namespace GBEmulator::Debugger
 						this->_handleWindowCommands(_debugWindow);
 					} else {
 						this->_checkCommands(dbg);
+
+						if (std::cin.eof())
+							return 0;
+
 						if (dbg) {
 							std::cout << "gdbgb> ";
 							std::cout.flush();

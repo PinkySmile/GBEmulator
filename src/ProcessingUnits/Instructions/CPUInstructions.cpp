@@ -167,7 +167,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry)
 	{
-		bool halfCarry = ((value1 & 0xF) < (value2 & 0xF) + carry);
+		bool halfCarry = ((value1 & 0xFU) < (value2 & 0xFU) + carry);
 
 		setFlags(
 			reg,
@@ -184,7 +184,11 @@ namespace GBEmulator::Instructions
 	{
 		if (value2 >= 0)
 			return ADD16(reg, value1, value2);
-		return SUB16(reg, value1, -value2);
+
+		unsigned char time = SUB16(reg, value1, -value2);
+
+		reg.fn = false;
+		return time;
 	}
 
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
@@ -204,7 +208,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
-		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x100U) == 0x100U;
+		bool halfCarry = (value1 & 0xFFU) < (value2 & 0xFFU);
 
 		setFlags(
 			reg,
