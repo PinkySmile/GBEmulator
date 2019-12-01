@@ -109,7 +109,7 @@ add_executable(
         tests/TestGpu/Test_isStatInterrupt.cpp
         tests/TestGpu/Test_isVBlankInterrupt.cpp
         tests/TestCpu/Test_write.cpp
-        tests/TestCPUInstruction/ADD16.cpp
+        tests/TestCPUInstruction/ADD/ADD16.cpp
         tests/TestCPUInstruction/JP.cpp
         tests/TestCPUInstruction/JR.cpp
         tests/TestCPUInstruction/LD/LD8.cpp
@@ -121,7 +121,7 @@ add_executable(
         tests/TestCPUInstruction/bits/RES.cpp
         tests/TestCPUInstruction/bits/SET.cpp
         tests/TestCPUInstruction/CALL.cpp
-        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp tests/TestCPUInstruction/ADD.cpp)
+        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp tests/TestCPUInstruction/ADD/ADD.cpp tests/TestCPUInstruction/ADD/ADC.cpp)
 
 target_link_libraries(
         tests

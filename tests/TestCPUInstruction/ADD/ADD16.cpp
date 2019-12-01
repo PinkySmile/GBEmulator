@@ -6,9 +6,9 @@
 */
 
 #include <criterion/criterion.h>
-#include "../communism.hpp"
-#include "../TestComponents.hpp"
-#include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
+#include "../../communism.hpp"
+#include "../../TestComponents.hpp"
+#include "../../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
 
 #define instructions GBEmulator::Instructions::_instructions
 

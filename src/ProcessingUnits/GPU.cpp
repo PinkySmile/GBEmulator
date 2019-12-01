@@ -257,11 +257,11 @@ namespace GBEmulator
 	{
 		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
 			return 1;
-		if (this->_cycles % 456 < 198)
-			return 0;
-		if (this->_cycles % 456 < 281)
+		if (this->_cycles % 456 < 83)
 			return 2;
-		return 3;
+		if (this->_cycles % 456 < 258)
+			return 3;
+		return 0;
 	}
 
 	bool GPU::_isStatInterrupt()

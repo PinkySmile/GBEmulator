@@ -395,100 +395,100 @@ namespace GBEmulator::Instructions
 		[](CPU &, CPU::Registers &reg) { return LD8(reg.a, reg.a); },
 
 		//! 80; ADD a,b: Adds b to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b, false); },
 
 		//! 81; ADD a,c: Adds c to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c, false); },
 
 		//! 82; ADD a,d: Adds d to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d, false); },
 
 		//! 83; ADD a,e: Adds e to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e, false); },
 
 		//! 84; ADD a,h: Adds h to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h, false); },
 
 		//! 85; ADD a,l: Adds l to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l, false); },
 
 		//! 86; ADD a,(hl): Adds (hl) to a.
-		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYCLE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl), false) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 87; ADD a,a: Adds a to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a, false); },
 
 		//! 88; ADC a,b: Adds b and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.b, reg.fc); },
 
 		//! 89; ADC a,c: Adds c and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.c, reg.fc); },
 
 		//! 8A; ADC a,d: Adds d and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.d, reg.fc); },
 
 		//! 8B; ADC a,e: Adds e and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.e, reg.fc); },
 
 		//! 8C; ADC a,h: Adds h and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.h, reg.fc); },
 
 		//! 8D; ADC a,l: Adds l and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.l, reg.fc); },
 
 		//! 8E; ADC a,(hl): Adds (hl) and the carry flag to a.
-		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl) + reg.fc) + INDIRECTION_CYCLE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.read(reg.hl), reg.fc) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 8F; ADC a,a: Adds a and the carry flag to a.
-		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return ADD8(reg, reg.a, reg.a, reg.fc); },
 
 		//! 90; SUB b: Subtracts b from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b, false); },
 
 		//! 91; SUB c: Subtracts c from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c, false); },
 
 		//! 92; SUB d: Subtracts d from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d, false); },
 
 		//! 93; SUB e: Subtracts e from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e, false); },
 
 		//! 94; SUB h: Subtracts h from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h, false); },
 
 		//! 95; SUB l: Subtracts l from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l, false); },
 
 		//! 96; SUB (hl): Subtracts (hl) from a.
-		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl)) + INDIRECTION_CYCLE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl), false) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 97; SUB a: Subtracts a from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a, false); },
 
 		//! 98; SBC a,b: Subtracts b and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.b, reg.fc); },
 
 		//! 99; SBC a,c: Subtracts c and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.c, reg.fc); },
 
 		//! 9A; SBC a,d: Subtracts d and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.d, reg.fc); },
 
 		//! 9B; SBC a,e: Subtracts e and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.e, reg.fc); },
 
 		//! 9C; SBC a,h: Subtracts h and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.h, reg.fc); },
 
 		//! 9D; SBC a,l: Subtracts l and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.l, reg.fc); },
 
 		//! 9E; SBC a,(hl): Subtracts (hl) and the carry flag from a.
-		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl) + reg.fc) + INDIRECTION_CYCLE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.read(reg.hl), reg.fc) + INDIRECTION_CYCLE_DURATION; },
 
 		//! 9F; SBC a,a: Subtracts a and the carry flag from a.
-		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a + reg.fc); },
+		[](CPU &, CPU::Registers &reg) { return SUB8(reg, reg.a, reg.a, reg.fc); },
 
 		//! A0; AND b: Bitwise AND on a with b.
 		[](CPU &, CPU::Registers &reg) { return AND8(reg, reg.a, reg.b); },
@@ -605,7 +605,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.bc); },
 
 		//! C6; ADD a,*: Adds * to a.
-		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument(), false) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! C7; RST 00h: The current pc value plus one is pushed onto the stack, then is loaded with 00h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x00); },
@@ -629,7 +629,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! CE; ADC a,*: Adds * and the carry flag to a.
-		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument() + reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return ADD8(reg, reg.a, cpu.fetchArgument(), reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! CF; RST 08h: The current pc value plus one is pushed onto the stack, then is loaded with 08h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x08); },
@@ -653,7 +653,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return PUSH(cpu, reg, reg.de); },
 
 		//! D6; SUB *: Subtracts * from a.
-		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument(), false) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! D7; RST 10h: The current pc value plus one is pushed onto the stack, then is loaded with 10h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x10); },
@@ -677,7 +677,7 @@ namespace GBEmulator::Instructions
 		{},
 
 		//! DE; SBC a,*: Subtracts * and the carry flag from a.
-		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument() + reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return SUB8(reg, reg.a, cpu.fetchArgument(), reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! DF; RST 18h: The current pc value plus one is pushed onto the stack, then is loaded with 18h.
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x18); },

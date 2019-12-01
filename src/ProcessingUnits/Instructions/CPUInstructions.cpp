@@ -150,33 +150,33 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry)
 	{
-		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
+		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU) + carry) & 0x10U) == 0x10U;
 
 		setFlags(
 			reg,
-			(value1 + value2) % 0x100 == 0 ? SET : UNSET,
+			(value1 + value2 + carry) % 0x100 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFF ? SET : UNSET
+			value1 + value2 + carry > 0xFF ? SET : UNSET
 		);
-		value1 += value2;
+		value1 += value2 + carry;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry)
 	{
-		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x10U) == 0x10U;
+		bool halfCarry = ((value1 & 0xF) < (value2 & 0xF) + carry);
 
 		setFlags(
 			reg,
-			value1 == value2 ? SET : UNSET,
+			value1 == value2 + carry ? SET : UNSET,
 			SET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 < value2 + carry ? SET : UNSET
 		);
-		value1 -= value2;
+		value1 -= value2 + carry;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
@@ -281,7 +281,7 @@ namespace GBEmulator::Instructions
 	{
 		unsigned char buf = reg.a;
 
-		return SUB8(reg, buf, value);
+		return SUB8(reg, buf, value, false);
 	}
 
 	unsigned char RES(unsigned char &val, unsigned char bit)
