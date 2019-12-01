@@ -49,7 +49,7 @@ namespace GBEmulator::Instructions
 		}
 	};
 
-	std::string intToHex(int i, unsigned size = 2);
+	std::string intToHex(unsigned i, unsigned size = 2);
 	void setFlags(CPU::Registers &reg, FlagValue z, FlagValue n, FlagValue h, FlagValue c);
 	unsigned char JR(CPU::Registers &reg, bool cond, char off);
 	unsigned char JP(CPU::Registers &reg, bool cond, unsigned short address);

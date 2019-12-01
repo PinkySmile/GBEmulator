@@ -12,7 +12,7 @@
 
 namespace GBEmulator::Instructions
 {
-	std::string intToHex(int i, unsigned size)
+	std::string intToHex(unsigned i, unsigned size)
 	{
 		std::stringstream stream;
 		stream << std::setfill ('0') << std::setw(size) << std::hex << std::uppercase << static_cast<int>(i);
@@ -380,20 +380,20 @@ namespace GBEmulator::Instructions
 		unsigned char oldVal = val;
 		bool cf = false;
 
+
 		if (((reg.fh & 0x0FU) > 9) || reg.fh) {
 			val += (reg.fn ? -6 : 6);
 			reg.fc = reg.fc || val >= 0xA0;
-		}
-
-		if ((val & 0xFU) > 9) {
+		} else if ((val & 0xFU) > 9 && !reg.fn) {
 			val -= 0xA;
 			val += 0x10;
 		}
 
-		if ((oldVal > 0x99) || reg.fc) {
+		if (((oldVal > 0x99) || reg.fc) && !reg.fn) {
 			val += (reg.fn ? -0x60 : 0x60);
 			cf = true;
 		}
+
 		setFlags(reg, val == 0 ? SET : UNSET, UNCHANGED, UNSET, cf ? SET : UNSET);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}

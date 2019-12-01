@@ -92,9 +92,11 @@ namespace GBEmulator::Memory
 				throw;
 			}
 
-			size = this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024;
+			size = (this->_rom.rawRead(0x149) != 0) * 2 * std::pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
 			mem = new unsigned char[size];
 			this->_ram.setMemory(mem, size);
+			if (size > RAM_BANKING_SIZE)
+				this->_ram.setBank(0);
 			for (size_t i = 0; i < size; i++)
 				mem[i] = rand() % 0x100;
 			this->_ramMem = mem;
@@ -308,6 +310,9 @@ namespace GBEmulator::Memory
 
 		else if (address < 0x6000)
 			this->_ram.setBank(value & 0b1111U);
+
+		else if (address >= 0xA000 && this->_ramEnabled)
+			printf("RAM disabled\n");
 	}
 
 	void Cartridge::_handleRumbleWrite(unsigned short address, unsigned char value)

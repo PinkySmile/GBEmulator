@@ -157,6 +157,7 @@ namespace GBEmulator
 	void CPU::write(unsigned short address, unsigned char value)
 	{
 		switch (address) {
+		case STARTUP_CODE_RANGE:
 		case ROM0_RANGE:
 		case ROM1_RANGE:
 			return this->_rom.write(address, value);
