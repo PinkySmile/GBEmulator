@@ -171,7 +171,7 @@ namespace GBEmulator::Instructions
 
 		setFlags(
 			reg,
-			value1 == value2 + carry ? SET : UNSET,
+			(value1 - value2 - carry) % 0x100 == 0 ? SET : UNSET,
 			SET,
 			halfCarry ? SET : UNSET,
 			value1 < value2 + carry ? SET : UNSET

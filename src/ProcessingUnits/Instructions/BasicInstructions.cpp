@@ -176,7 +176,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8toPTR(cpu, reg.hl, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
 
 		//! 37; SCF: Sets the carry flag.
-		[](CPU &, CPU::Registers &reg) { return (reg.fc = true), BASIC_BIT_OPERATION_CYCLE_DURATION; },
+		[](CPU &, CPU::Registers &reg) { return setFlags(reg, UNCHANGED, UNSET, UNSET, SET), BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! 38; JR c,*: If condition cc is true, the signed value * is added to pc. The jump is measured from the start of the instruction opcode.
 		[](CPU &cpu, CPU::Registers &reg) { return JR(reg, reg.fc, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
@@ -200,7 +200,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION; },
 
 		//! 3F; CCF: Inverts the carry flag.
-		[](CPU &, CPU::Registers &reg) { return (reg.fc = !reg.fc), BASIC_BIT_OPERATION_CYCLE_DURATION; },
+		[](CPU &, CPU::Registers &reg) { return setFlags(reg, UNCHANGED, UNSET, UNSET, reg.fc ? UNSET : SET), BASIC_BIT_OPERATION_CYCLE_DURATION; },
 
 		//! 40; LD b,b: The contents of b are loaded into b.
 		[](CPU &, CPU::Registers &reg) { return LD8(reg.b, reg.b); },

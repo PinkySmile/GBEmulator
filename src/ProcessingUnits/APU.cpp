@@ -14,13 +14,12 @@
 
 namespace GBEmulator
 {
-	std::vector<unsigned char> getSquareWave(int frequency, float percentage)
+	std::vector<unsigned char> &getSquareWave(int frequency, float percentage)
 	{
-		std::vector<unsigned char>	raw;
+		static std::vector<unsigned char>	raw(44100LLU);
 
-		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++)
-			raw.push_back((std::fmod(i * frequency * 100 / 44100, 100) > percentage ? 127 : -127));
+			raw[i] = (std::fmod(i * frequency * 100 / 44100, 100) > percentage ? 127 : -127);
 		return (raw);
 	}
 
@@ -127,13 +126,12 @@ namespace GBEmulator
 		return (raw);
 	}
 
-	std::vector<unsigned char> APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
+	std::vector<unsigned char> &APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
 	{
-		std::vector<unsigned char>	raw;
+		static std::vector<unsigned char>	raw(44100LLU);
 
-		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++) {
-			raw.push_back(frequency / BASE_FREQU * ((_lfsr & 0b1) == 0 ? 127 : -127));
+			raw[i] = frequency / BASE_FREQU * ((_lfsr & 0b1) == 0 ? 127 : -127);
 			updateLFSR(stepNumber);
 		}
 		return (raw);
@@ -417,10 +415,11 @@ namespace GBEmulator
 
 	void APU::Sound::setWave(unsigned char value)
 	{
-		this->_wavePattern = value >> 6;
 		this->_soundLength = value & 0b00111111;
 		this->_volumeCycles = 0;
-		switch (this->_wavePattern) {
+		if (this->_wavePattern != value >> 6) {
+			this->_wavePattern = value >> 6;
+			switch (this->_wavePattern) {
 			case 0:
 				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 12.5), 44100);
 				break;
@@ -435,6 +434,7 @@ namespace GBEmulator
 				break;
 			default:
 				return;
+			}
 		}
 	}
 

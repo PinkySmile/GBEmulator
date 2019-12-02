@@ -105,7 +105,8 @@ namespace GBEmulator
 
 			//Noise Functions
 			void updateLFSR(unsigned char stepNumber);
-			std::vector<unsigned char> getNoiseWave(int frequency, unsigned char stepNumber);
+			std::vector<unsigned char> &
+			getNoiseWave(int frequency, unsigned char stepNumber);
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 

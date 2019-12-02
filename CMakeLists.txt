@@ -3,10 +3,8 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        add_compile_options(-W -Wall -Wextra)
-endif()
-
+add_compile_options(-W -Wall -Wextra -Wshadow -g -pg)
+add_link_options(-pg)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -121,7 +119,7 @@ add_executable(
         tests/TestCPUInstruction/bits/RES.cpp
         tests/TestCPUInstruction/bits/SET.cpp
         tests/TestCPUInstruction/CALL.cpp
-        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp tests/TestCPUInstruction/arithmetic/ADD.cpp tests/TestCPUInstruction/arithmetic/ADC.cpp)
+        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp tests/TestCPUInstruction/arithmetic/ADD.cpp tests/TestCPUInstruction/arithmetic/ADC.cpp tests/TestCPUInstruction/arithmetic/SBC.cpp)
 
 target_link_libraries(
         tests
