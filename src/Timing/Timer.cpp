@@ -5,6 +5,7 @@
 ** Timer.cpp
 */
 
+#include <iostream>
 #include "Timer.hpp"
 
 namespace GBEmulator::Timing
@@ -13,9 +14,9 @@ namespace GBEmulator::Timing
 		_expected(getCyclesPerSecondsFromFrequency(this->getFrequency()))
 	{}
 
-	double getCyclesPerSecondsFromFrequency(unsigned char frequency)
+	double getCyclesPerSecondsFromFrequency(double frequency)
 	{
-		return static_cast<double>(GB_CPU_FREQUENCY) / frequency;
+		return GB_CPU_FREQUENCY / frequency;
 	}
 
 	unsigned char Timer::getControlByte() const
@@ -64,9 +65,10 @@ namespace GBEmulator::Timing
 			return false;
 
 		this->_cycles += cycles;
-		if (this->_cycles > this->_expected) {
+		if (this->_cycles >= this->_expected) {
 			this->_cycles -= this->_expected;
-			if (!++this->_counter) {
+			++this->_counter;
+			if (!this->_counter) {
 				this->_counter = this->modulo;
 				return true;
 			}

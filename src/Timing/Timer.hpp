@@ -13,7 +13,7 @@
 
 namespace GBEmulator::Timing
 {
-	double getCyclesPerSecondsFromFrequency(unsigned char frequency);
+	double getCyclesPerSecondsFromFrequency(double frequency);
 
 	class Timer {
 	private:
