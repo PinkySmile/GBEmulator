@@ -62,6 +62,7 @@ namespace GBEmulator
 		unsigned char _lyc = 0;
 		unsigned char _control = 0;
 		unsigned char *_tiles = nullptr;
+		unsigned char *_spritesMap = nullptr;
 		unsigned char *_backgroundMap = nullptr;
 		unsigned _cycles = 0;
 		std::vector<unsigned> _tilesToUpdate;

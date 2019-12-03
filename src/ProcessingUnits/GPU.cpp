@@ -11,7 +11,7 @@
 #include "GPU.hpp"
 #include "CPU.hpp"
 
-#define DUCT_TAPE(value) (((value & 0b1U) << 1U) | (value >> 1U))
+#define DUCT_TAPE(value) ((((value) & 0b1U) << 1U) | ((value) >> 1U))
 
 namespace GBEmulator
 {
@@ -26,8 +26,10 @@ namespace GBEmulator
 		_oam(OAM_SIZE, OAM_SIZE),
 		_screen(screen),
 		_tiles(new unsigned char [NB_TILES]),
+		_spritesMap(new unsigned char [256 * 256]),
 		_backgroundMap(new unsigned char [BG_MAP_SIZE])
 	{
+		std::memset(this->_spritesMap, 0, 256 * 256);
 		screen.setMaxSize(160, 144);
 		screen.clear();
 		screen.display();
@@ -174,32 +176,11 @@ namespace GBEmulator
 			color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
 		}
 
-		if (this->_control & 0b00000010U) {
-			unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
-
-			for (int i = 0; i < OAM_SIZE; i += 4) {
-				Sprite sprite;
-
-				sprite.y = this->_oam.read(i) - 8;
-				sprite.x = this->_oam.read(i + 1);
-				sprite.texture_id = this->_oam.read(i + 2);
-				sprite.flags = this->_oam.read(i + 3);
-
-				if (x < sprite.x && sprite.x <= x + 8 && y < sprite.y && sprite.y <= y + v && (sprite.priority == 0 || bgZero)) {
-					unsigned char newColor = this->_getSpritePixel(
-						sprite,
-						sprite.x_flip ? -1-(x - sprite.x) : (x + 8 - sprite.x),
-						sprite.y_flip ? -1-(y - sprite.y) : (y + 8 - sprite.y)
-					);
-
-					if (newColor) {
-						color = sprite.palette_number == 0 ?
-						        (this->_objectPalette0Value >> DUCT_TAPE(newColor) * 2) & 0b11U :
-						        (this->_objectPalette1Value >> DUCT_TAPE(newColor) * 2) & 0b11U;
-					}
-				}
-			}
+		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8) {
+			if (((this->_spritesMap[x + y * 256] & 0b100) == 0) || bgZero)
+				color = this->_spritesMap[x + y * 256] & 0b11U;
 		}
+
 		this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
@@ -211,6 +192,35 @@ namespace GBEmulator
 		if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
+		} else if (this->_cycles % 456 == 0 && (this->_control & 0b00000010U)) {
+			std::memset(this->_spritesMap, 0xFF, 256 * 256);
+
+			unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
+
+			for (int i = 0; i < OAM_SIZE; i += 4) {
+				Sprite sprite;
+
+				sprite.y = this->_oam.read(i) - 16;
+				sprite.x = this->_oam.read(i + 1) - 8;
+				sprite.texture_id = this->_oam.read(i + 2);
+				sprite.flags = this->_oam.read(i + 3);
+
+				unsigned char *tile = this->_tiles + sprite.texture_id * 64;
+
+				for (unsigned x = 0; x < 8U; x += 1) {
+					for (unsigned y = 0; y < v; y += 1) {
+						if (x + sprite.x <= 255 && y + sprite.y <= 255) {
+							unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
+							unsigned int index = (sprite.x_flip ? 7 - x : x) + sprite.x + ((sprite.y_flip ? v - 1 - y : y) + sprite.y) * 256;
+
+							if (newColor && sprite.palette_number == 0)
+								this->_spritesMap[index] = ((this->_objectPalette0Value >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+							else if (newColor)
+								this->_spritesMap[index] = ((this->_objectPalette1Value >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+						}
+					}
+				}
+			}
 		} else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % 456 - 83, this->getCurrentLine());
 
