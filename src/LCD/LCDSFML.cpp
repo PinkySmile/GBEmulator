@@ -49,9 +49,9 @@ void GBEmulator::Graphics::LCDSFML::clear()
 {
 	for (int i = 0; i < 160 * 144; i++)
 		this->_screen[i] = {
-			RGBColor::White.r,
-			RGBColor::White.g,
-			RGBColor::White.b,
+			this->_BGColorPalette[0].r,
+			this->_BGColorPalette[0].g,
+			this->_BGColorPalette[0].b,
 			255
 		};
 	sf::RenderWindow::clear(sf::Color::White);
@@ -149,15 +149,10 @@ void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id
 void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize)
 {
 	if (doubleSize) {
-		sprite.texture_id *= 4;
-		sprite.x = (sprite.x + sprite.x_flip) * 4;
-		sprite.y = (sprite.y + sprite.y_flip) * 4;
-		for (int i = 0; i < 4; i++) {
-			this->drawSprite(sprite, signedMode, false);
-			sprite.x += ((!sprite.x_flip * 2) - 1) * 8;
-			sprite.y += ((!sprite.y_flip * 2) - 1) * 8;
-			sprite.texture_id++;
-		}
+		this->drawSprite(sprite, signedMode, false);
+		sprite.y += ((!sprite.y_flip * 2) - 1) * 8;
+		sprite.texture_id++;
+		this->drawSprite(sprite, signedMode, false);
 		return;
 	}
 	if (sprite.palette_number)

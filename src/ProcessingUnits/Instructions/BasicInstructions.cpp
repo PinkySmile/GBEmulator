@@ -755,7 +755,7 @@ namespace GBEmulator::Instructions
 		[](CPU &cpu, CPU::Registers &reg) { return CALL(cpu, reg, 0x30); },
 
 		//! F8; LD hl,sp+*: Load sp + the signed value * to hl.
-		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, reg.sp), SPECIAL_ADD(reg, reg.hl, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION; },
+		[](CPU &cpu, CPU::Registers &reg) { return LD16(reg.hl, reg.sp), SPECIAL_ADD(reg, reg.hl, cpu.fetchArgument()), FETCH_ARGUMENT8_CYLCE_DURATION + LD_CYCLE_DURATION + ARITHMETIC_OPERATION_CYCLE_DURATION; },
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 		[](CPU &, CPU::Registers &reg) { return LD16(reg.sp, reg.hl); },
