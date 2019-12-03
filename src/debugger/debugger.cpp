@@ -648,7 +648,7 @@ namespace GBEmulator::Debugger
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
 						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
-						auto &color = this->_cpu._gpu._screen._BGColorPalette[((index & 1U) << 1U) | (index >> 1U)];
+						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 32 + y * 32 * 8] = {
 							color.r,
@@ -702,7 +702,7 @@ namespace GBEmulator::Debugger
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
 						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
-						auto &color = this->_cpu._gpu._screen._BGColorPalette[((index & 1U) << 1U) | (index >> 1U)];
+						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 20 + y * 20 * 8] = {
 							color.r,
@@ -740,17 +740,17 @@ namespace GBEmulator::Debugger
 
 		square.setSize({32, 16});
 
-		this->_displayVRAMContent(_debugWindow, 1139, 5, this->_cpu._gpu._screen._BGColorPalette, false);
-		this->_displayPalette(_debugWindow, 1139, 309, this->_cpu._gpu._screen._BGColorPalette, false);
-
-		this->_displayVRAMContent(_debugWindow, 1333, 5, this->_cpu._gpu._screen._objectColorPalette0, true);
-		this->_displayPalette(_debugWindow, 1333, 309, this->_cpu._gpu._screen._objectColorPalette0, true);
-
-		this->_displayVRAMContent(_debugWindow, 1528, 5, this->_cpu._gpu._screen._objectColorPalette1, true);
-		this->_displayPalette(_debugWindow, 1528, 309, this->_cpu._gpu._screen._objectColorPalette1, true);
-
 		this->_displayVRAMContent(_debugWindow, 1722, 5, colors, false);
 		this->_displayPalette(_debugWindow, 1722, 309, colors, false);
+
+		this->_displayVRAMContent(_debugWindow, 1139, 5, this->_cpu._gpu._bgPalette, false);
+		this->_displayPalette(_debugWindow, 1139, 309, this->_cpu._gpu._bgPalette, false);
+
+		this->_displayVRAMContent(_debugWindow, 1333, 5, this->_cpu._gpu._objectPalette0, true);
+		this->_displayPalette(_debugWindow, 1333, 309, this->_cpu._gpu._objectPalette0, true);
+
+		this->_displayVRAMContent(_debugWindow, 1528, 5, this->_cpu._gpu._objectPalette1, true);
+		this->_displayPalette(_debugWindow, 1528, 309, this->_cpu._gpu._objectPalette1, true);
 
 		this->_displayBackground(_debugWindow, 1200, 340);
 		this->_displayWindow(_debugWindow, 1500, 340);

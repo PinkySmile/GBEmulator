@@ -7,37 +7,40 @@
 
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include "GPU.hpp"
 #include "CPU.hpp"
 
+#define DUCT_TAPE(value) (((value & 0b1U) << 1U) | (value >> 1U))
+
 namespace GBEmulator
 {
+	const std::vector<Graphics::RGBColor> GPU::defaultColors{
+		Graphics::RGBColor::White,
+		Graphics::RGBColor::LGray,
+		Graphics::RGBColor::DGray,
+		Graphics::RGBColor::Black,
+	};
+
 	GPU::GPU(Graphics::ILCD &screen) :
 		_oam(OAM_SIZE, OAM_SIZE),
 		_screen(screen),
 		_tiles(new unsigned char [NB_TILES]),
 		_backgroundMap(new unsigned char [BG_MAP_SIZE])
 	{
+		screen.setMaxSize(160, 144);
 		screen.clear();
 		screen.display();
 		for (int i = 0; i < NB_TILES; i++)
 			this->_tiles[i] = rand() & 0b11;
 		for (int i = 0; i < BG_MAP_SIZE; i++)
 			this->_backgroundMap[i] = rand() & 0xFF;
-
-		for (int i = 0; i < 384; i++)
-			this->_screen.updateTexture(this->_getTile(i), i);
 	}
 
 	GPU::~GPU()
 	{
 		delete[] this->_tiles;
 		delete[] this->_backgroundMap;
-	}
-
-	unsigned char GPU::getBGPalette() const
-	{
-		return this->_bgPalette;
 	}
 
 	unsigned char GPU::readVRAM(unsigned short address) const
@@ -116,57 +119,72 @@ namespace GBEmulator
 		this->_oam.write(address, value);
 	}
 
-	unsigned char GPU::update(int cycle)
+	unsigned char GPU::_getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y)
 	{
-		static int buf = 0;
+		return tile[x + y * 8];
+	}
 
-		this->_cycles += cycle;
-		buf += cycle;
-		if (this->_control & 0x80U) {
-			buf = 0;
-			if (this->_cycles > GPU_FULL_CYCLE_DURATION) {
-				this->_cycles -= GPU_FULL_CYCLE_DURATION;
-				this->_screen.clear();
+	unsigned char GPU::_getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode)
+	{
+		int id = static_cast<int>(x / 8 % 32) + 32 * static_cast<int>(y / 8 % 32);
 
-				this->_updateTiles();
+		if (id < 0 || id > 1024)
+			return 0;
 
-				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
-					Graphics::Sprite sprite;
+		const unsigned char *tile = this->_tiles + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
 
-					sprite.y = this->_oam.read(i);
-					sprite.x = this->_oam.read(i + 1);
-					sprite.texture_id = this->_oam.read(i + 2);
-					sprite.flags = this->_oam.read(i + 3);
-					if (sprite.priority == 1)
-						this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
-				}
+		return this->_getPixelAt(tile, x % 8, y % 8);
+	}
 
-				if (this->_control & 0b00000001U)
-					this->_screen.drawBackground(this->_getTileMap(this->_control & 0b00001000U), -this->_scrollX, -this->_scrollY, !(this->_control & 0b00010000U));
+	void GPU::_drawPixel(unsigned x, unsigned y)
+	{
+		Graphics::RGBColor color = defaultColors[0];
 
-				if (this->_control & 0b00100000U)
-					this->_screen.drawWindow(this->_getTileMap(this->_control & 0b01000000U), this->_windowX, this->_windowY, !(this->_control & 0b00010000U));
+		if (this->_control & 0b00000001U) {
+			unsigned char val = this->_getPixelAt(this->_getTileMap(this->_control & 0b00001000U), x + this->_scrollX, y + this->_scrollY, !(this->_control & 0b00010000U));
 
-				for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
-					Graphics::Sprite sprite;
-
-					sprite.y = this->_oam.read(i);
-					sprite.x = this->_oam.read(i + 1);
-					sprite.texture_id = this->_oam.read(i + 2);
-					sprite.flags = this->_oam.read(i + 3);
-					if (sprite.priority == 0)
-						this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
-				}
-				this->_screen.display();
-			}
-		} else
-			this->_cycles = 0;
-
-		if (buf > 30000) {
-			this->_screen.clear();
-			this->_screen.display();
-			buf = 0;
+			color = this->_bgPalette[DUCT_TAPE(val)];
 		}
+
+		if (
+			(this->_control & 0b00100000U) &&
+			static_cast<int>(x) - this->_windowX >= 0 &&
+			static_cast<int>(x) - this->_windowX < 160 &&
+			static_cast<int>(y) - this->_windowY >= 0
+		) {
+			unsigned val = this->_getPixelAt(this->_getTileMap(this->_control & 0b01000000U), x - this->_windowX, y - this->_windowY, !(this->_control & 0b00010000U));
+
+			color = this->_bgPalette[DUCT_TAPE(val)];
+		}
+
+		/*for (int i = 0; i < OAM_SIZE && (this->_control & 0b00000010U); i += 4) {
+			Graphics::Sprite sprite;
+
+			sprite.y = this->_oam.read(i);
+			sprite.x = this->_oam.read(i + 1);
+			sprite.texture_id = this->_oam.read(i + 2);
+			sprite.flags = this->_oam.read(i + 3);
+			if (sprite.priority == 0)
+				this->_screen.drawSprite(sprite, false, this->_control & 0b00000100U);
+		}*/
+		this->_screen.setPixel(x, y, color);
+	}
+
+	unsigned char GPU::update()
+	{
+		if ((this->_control & 0x80U) == 0)
+			return 0;
+
+		if (this->_cycles == VBLANK_CYCLE_PT) {
+			this->_screen.display();
+			this->_screen.clear();
+		} else if (this->getMode() == 3)
+			this->_drawPixel(this->_cycles % 456 - 83, this->getCurrentLine());
+
+		this->_cycles++;
+
+		if (this->_cycles > GPU_FULL_CYCLE_DURATION)
+			this->_cycles = 0;
 
 		if (this->_isVBlankInterrupt()) {
 			if (this->_isStatInterrupt())
@@ -175,6 +193,15 @@ namespace GBEmulator
 		} else if (this->_isStatInterrupt())
 			return CPU::LCD_STAT_INTERRUPT;
 		return 0;
+	}
+
+	unsigned char GPU::update(int cycle)
+	{
+		unsigned char val = 0;
+
+		while (cycle-- > 0)
+			val |= this->update();
+		return val;
 	}
 
 	unsigned char GPU::getCurrentLine() const
@@ -212,13 +239,6 @@ namespace GBEmulator
 	void GPU::setYScroll(unsigned char value)
 	{
 		this->_scrollY = value;
-	}
-
-	void GPU::_updateTiles()
-	{
-		for (auto &id : this->_tilesToUpdate)
-			this->_screen.updateTexture(this->_getTile(id), id);
-		this->_tilesToUpdate.clear();
 	}
 
 	unsigned char *GPU::_getTileMap(bool alt)
@@ -259,7 +279,7 @@ namespace GBEmulator
 			return 1;
 		if (this->_cycles % 456 < 83)
 			return 2;
-		if (this->_cycles % 456 < 258)
+		if (this->_cycles % 456 < 243)
 			return 3;
 		return 0;
 	}
@@ -308,34 +328,42 @@ namespace GBEmulator
 		return this->_windowY;
 	}
 
+	unsigned char GPU::getBGPalette() const
+	{
+		return this->_bgPaletteValue;
+	}
+
 	unsigned char GPU::getObjectPalette0() const {
 
-		return this->_objectPalette0;
+		return this->_objectPalette0Value;
 	}
 
 	unsigned char GPU::getObjectPalette1() const {
 
-		return this->_objectPalette1;
+		return this->_objectPalette1Value;
 	}
 
 	void GPU::setBGPalette(unsigned char value)
 	{
-		if (this->_bgPalette != value)
-			this->_screen.setBGPalette(value);
-		this->_bgPalette = value;
+		if (this->_bgPaletteValue != value)
+			for (unsigned i = 0; i < 4; i++)
+				this->_bgPalette[i] = defaultColors[((value >> (i * 2))) & 0b11U];
+		this->_bgPaletteValue = value;
 	}
 
 	void GPU::setObjectPalette0(unsigned char value)
 	{
-		if (this->_objectPalette0 != value)
-			this->_screen.setObjectPalette0(value);
-		this->_objectPalette0 = value;
+		if (this->_objectPalette0Value != value)
+			for (unsigned i = 0; i < 4; i++)
+				this->_objectPalette0[i] = defaultColors[((value >> (i * 2))) & 0b11U];
+		this->_objectPalette0Value = value;
 	}
 
 	void GPU::setObjectPalette1(unsigned char value)
 	{
-		if (this->_objectPalette1 != value)
-			this->_screen.setObjectPalette1(value);
-		this->_objectPalette1 = value;
+		if (this->_objectPalette1Value != value)
+			for (unsigned i = 0; i < 4; i++)
+				this->_objectPalette1[i] = defaultColors[((value >> (i * 2))) & 0b11U];
+		this->_objectPalette1Value = value;
 	}
 }

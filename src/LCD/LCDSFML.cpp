@@ -9,15 +9,15 @@
 #include <cstring>
 #include "LCDSFML.hpp"
 
-#define DUCK_TAPE(val) (((val & 1U) << 1U) | (val >> 1U))
-
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
 	_tiles(nullptr),
 	_screen(new sf::Color[160 * 144]),
-	_title(title)
+	_title(title),
+	_view({80, 72}, {160, 144})
 {
 	this->_texture.create(160, 144);
+	this->setView(this->_view);
 }
 
 void GBEmulator::Graphics::LCDSFML::display()
@@ -49,80 +49,11 @@ void GBEmulator::Graphics::LCDSFML::clear()
 {
 	for (int i = 0; i < 160 * 144; i++)
 		this->_screen[i] = {
-			this->_BGColorPalette[0].r,
-			this->_BGColorPalette[0].g,
-			this->_BGColorPalette[0].b,
+			RGBColor::White.r,
+			RGBColor::White.g,
+			RGBColor::White.b,
 			255
 		};
-	sf::RenderWindow::clear(sf::Color::White);
-}
-
-void GBEmulator::Graphics::LCDSFML::_drawTile(size_t id, int x, int y, bool swapX, bool swapY, const std::vector<RGBColor> &palette, bool transparency)
-{
-	unsigned char *tile = this->_tiles + id * 64;
-
-	for (int xPos = 0; xPos < 8; xPos++)
-		for (int yPos = 0; yPos < 8; yPos++)
-			if (0 <= x + xPos && x + xPos < 160 && 0 <= yPos + y && yPos + y < 144) {
-				auto index = tile[(!swapX ? xPos : 7 - xPos) + (!swapY ? yPos : 7 - yPos) * 8];
-				auto &color = palette[DUCK_TAPE(index)];
-
-				if (index == 0 && transparency)
-					continue;
-
-				this->_screen[x + xPos + (yPos + y) * 160] = {
-					color.r,
-					color.g,
-					color.b,
-					255
-				};
-			}
-}
-
-void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, float x, float y, bool signedMode)
-{
-	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
-
-	for (int xpos = -1; xpos < 21; xpos++)
-		for (int ypos = -1; ypos < 19; ypos++) {
-			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
-
-			if (index < 0 || index > 1024)
-				continue;
-
-			this->_drawTile(
-				signedMode ? static_cast<char>(tiles[index]) + 0x100: tiles[index],
-				xpos * 8 + off.x,
-				ypos * 8 + off.y,
-				false,
-				false,
-				this->_BGColorPalette,
-				true
-			);
-		}
-}
-
-void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float x, float y, bool signedMode)
-{
-	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
-
-	for (int xpos = -1; xpos < 21; xpos++)
-		for (int ypos = -1; ypos < 19; ypos++) {
-			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
-
-			if (index < 0 || index > 1024)
-				continue;
-
-			this->_drawTile(
-				signedMode ? static_cast<char>(tiles[index]) + 0x100: tiles[index],
-				xpos * 8 + off.x,
-				ypos * 8 + off.y,
-				false,
-				false,
-				this->_BGColorPalette,
-				false
-			);
-		}
 }
 
 GBEmulator::Graphics::LCDSFML::~LCDSFML()
@@ -140,39 +71,29 @@ void GBEmulator::Graphics::LCDSFML::close()
 	sf::RenderWindow::close();
 }
 
-void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)
+void GBEmulator::Graphics::LCDSFML::setMaxSize(unsigned int x, unsigned y)
 {
-	if (!this->_tiles)
-		this->_tiles = tile - id * 64;
+	this->_view.setViewport({
+		x / 2.f,
+		y / 2.f,
+		static_cast<float>(x),
+		static_cast<float>(y)
+	});
+	this->setView(this->_view);
+	this->_texture.create(x, y);
+	delete[] this->_screen;
+	this->_screen = new sf::Color[x * y];
 }
 
-void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize)
+void GBEmulator::Graphics::LCDSFML::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 {
-	if (doubleSize) {
-		this->drawSprite(sprite, signedMode, false);
-		sprite.y += ((!sprite.y_flip * 2) - 1) * 8;
-		sprite.texture_id++;
-		this->drawSprite(sprite, signedMode, false);
-		return;
-	}
-	if (sprite.palette_number)
-		return this->_drawTile(
-			signedMode ? static_cast<char>(sprite.texture_id) + 0x100 : sprite.texture_id,
-			sprite.x - 8,
-			sprite.y - 16,
-			sprite.x_flip,
-			sprite.y_flip,
-			this->_objectColorPalette1,
-			true
-		);
+	if (x > this->_view.getSize().x || y > this->_view.getSize().y)
+		throw std::out_of_range(std::to_string(x) + ", " + std::to_string(y) + " is out of range");
 
-	this->_drawTile(
-		signedMode ? static_cast<char>(sprite.texture_id) + 0x100 : sprite.texture_id,
-		sprite.x - 8,
-		sprite.y - 16,
-		sprite.x_flip,
-		sprite.y_flip,
-		this->_objectColorPalette0,
-		true
-	);
+	this->_screen[x + y * static_cast<unsigned>(this->_view.getSize().x)] = sf::Color{
+		color.r,
+		color.g,
+		color.b,
+		255
+	};
 }
