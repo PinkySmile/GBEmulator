@@ -84,6 +84,7 @@ namespace GBEmulator
 		};
 
 		void _drawPixel(unsigned x, unsigned y);
+		unsigned char _getSpritePixel(const Sprite &sprite, unsigned int x, unsigned int y);
 		unsigned char _getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y);
 		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode);
 
@@ -124,7 +125,7 @@ namespace GBEmulator
 		void setObjectPalette1(unsigned char value);
 
 		unsigned char update(int cycle);
-		unsigned char update();
+		void update();
 
 	private:
 		friend Debugger::Debugger;
