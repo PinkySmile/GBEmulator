@@ -182,13 +182,25 @@ namespace GBEmulator::Instructions
 
 	unsigned char SPECIAL_ADD(CPU::Registers &reg, unsigned short &value1, char value2)
 	{
-		if (value2 >= 0)
-			return ADD16(reg, value1, value2);
-
-		unsigned char time = SUB16(reg, value1, -value2);
-
-		reg.fn = false;
-		return time;
+		if (value2 >= 0) {
+			setFlags(
+				reg,
+				UNSET,
+				UNSET,
+				(value1 & 0xFU) + (value2 & 0xFU) > 0xFU ? SET : UNSET,
+				((value1 & 0xFFU) + value2) > 0xFF ? SET : UNSET
+			);
+		} else {
+			setFlags(
+				reg,
+				UNSET,
+				UNSET,
+				(value1 & 0xFU) < ((-value2) & 0xFU) ? UNSET : SET,
+				((value1 & 0xFF) < -value2) ? UNSET : SET
+			);
+		}
+		value1 += value2;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 4;
 	}
 
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
@@ -208,7 +220,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
-		bool halfCarry = (value1 & 0xFFFU) < (value2 & 0xFFFU);
+		bool halfCarry = (value1 & 0xFU) < (value2 & 0xFU);
 
 		setFlags(
 			reg,
