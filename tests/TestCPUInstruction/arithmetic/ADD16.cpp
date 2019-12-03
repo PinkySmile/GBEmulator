@@ -28,7 +28,7 @@ Test(ADD_HL_BC, all_values) {
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);
 			cr_assert_eq(gb.cpu._registers.fn, 0, "fn must 0 but it was %d", gb.cpu._registers.fn);
-			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFF) + (j & 0xFF) > 0xFF, "fh must be %i but it was %d", (i & 0xFF) + (j & 0xFF) > 0xFF, gb.cpu._registers.fh);
+			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, "fh must be %i but it was %d", (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, gb.cpu._registers.fh);
 			cr_assert_eq(gb.cpu._registers.fc, (i + j) >= 0x10000, "fc must be %i but it was %d", (i + j) >= 0x10000, gb.cpu._registers.fc);
 		}
 	}
@@ -50,7 +50,7 @@ Test(ADD_HL_DE, all_values) {
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);
 			cr_assert_eq(gb.cpu._registers.fn, 0, "fn must 0 but it was %d", gb.cpu._registers.fn);
-			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFF) + (j & 0xFF) > 0xFF, "fh must be %i but it was %d", (i & 0xFF) + (j & 0xFF) > 0xFF, gb.cpu._registers.fh);
+			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, "fh must be %i but it was %d", (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, gb.cpu._registers.fh);
 			cr_assert_eq(gb.cpu._registers.fc, (i + j) >= 0x10000, "fc must be %i but it was %d", (i + j) >= 0x10000, gb.cpu._registers.fc);
 		}
 	}
@@ -70,7 +70,7 @@ Test(ADD_HL_HL, all_values) {
 		cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 		cr_assert_eq(gb.cpu._registers.hl, (i + i) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + i) % 0x10000, gb.cpu._registers.hl);
 		cr_assert_eq(gb.cpu._registers.fn, 0, "fn must 0 but it was %d", gb.cpu._registers.fn);
-		cr_assert_eq(gb.cpu._registers.fh, (i & 0xFF) + (i & 0xFF) > 0xFF, "fh must be %i but it was %d", (i & 0xFF) + (i & 0xFF) > 0xFF, gb.cpu._registers.fh);
+		cr_assert_eq(gb.cpu._registers.fh, (i & 0xFFFU) + (i & 0xFFFU) > 0xFFFU, "fh must be %i but it was %d", (i & 0xFFFU) + (i & 0xFFFU) > 0xFFFU, gb.cpu._registers.fh);
 		cr_assert_eq(gb.cpu._registers.fc, (i + i) >= 0x10000, "fc must be %i but it was %d", (i + i) >= 0x10000, gb.cpu._registers.fc);
 	}
 }
@@ -91,7 +91,7 @@ Test(ADD_HL_SP, all_values) {
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);
 			cr_assert_eq(gb.cpu._registers.fn, 0, "fn must 0 but it was %d", gb.cpu._registers.fn);
-			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFF) + (j & 0xFF) > 0xFF, "fh must be %i but it was %d", (i & 0xFF) + (j & 0xFF) > 0xFF, gb.cpu._registers.fh);
+			cr_assert_eq(gb.cpu._registers.fh, (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, "fh must be %i but it was %d", (i & 0xFFFU) + (j & 0xFFFU) > 0xFFFU, gb.cpu._registers.fh);
 			cr_assert_eq(gb.cpu._registers.fc, (i + j) >= 0x10000, "fc must be %i but it was %d", (i + j) >= 0x10000, gb.cpu._registers.fc);
 		}
 	}
