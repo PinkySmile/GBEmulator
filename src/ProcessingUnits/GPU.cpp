@@ -176,10 +176,9 @@ namespace GBEmulator
 			color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
 		}
 
-		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8) {
+		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8)
 			if (((this->_spritesMap[x + y * 256] & 0b100) == 0) || bgZero)
 				color = this->_spritesMap[x + y * 256] & 0b11U;
-		}
 
 		this->_screen.setPixel(x, y, defaultColors[color]);
 	}
