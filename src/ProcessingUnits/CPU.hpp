@@ -16,7 +16,7 @@
 #include "GPU.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
-#include "../Network/CableInterface.hpp"
+#include "../CableLink/CableInterface.hpp"
 #include "../Timing/Timer.hpp"
 
 //The total size of the working RAM

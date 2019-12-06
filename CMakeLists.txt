@@ -23,10 +23,10 @@ add_executable(
         src/Memory/Memory.hpp
         src/Memory/ROM.cpp
         src/Memory/ROM.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
-        src/Network/CableInterface.cpp
-        src/Network/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.cpp
+        src/CableLink/CableInterface.hpp
         src/ProcessingUnits/APU.cpp
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
@@ -43,6 +43,14 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
+        src/Network/TCPSocket.cpp
+        src/Network/TCPSocket.hpp
+        src/Network/TCPServerSocket.cpp
+        src/Network/TCPServerSocket.hpp
+        src/Network/BgbHandler.cpp
+        src/Network/BgbHandler.hpp
+        src/Network/Exception.hpp
+        src/Network/ProtocolHandle.hpp
 )
 
 if (WIN32)
@@ -82,12 +90,12 @@ add_executable(
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
         src/Joypad/JoypadEmulator.hpp
-        src/Network/CableInterface.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
         src/LCD/ILCD.hpp
         src/LCD/ILCD.cpp
-        src/Network/CableInterface.cpp
+        src/CableLink/CableInterface.cpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp

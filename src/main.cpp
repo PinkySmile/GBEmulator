@@ -5,8 +5,9 @@
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
-#include "Network/BgbProtocolNetworkInterface.hpp"
 #include "debugger/debugger.hpp"
+#include "CableLink/BgbProtocolNetworkInterface.hpp"
+
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif
@@ -64,6 +65,9 @@ int main(int argc, char **argv)
 	cpu.getCartridgeEmulator().loadROM(argv[1]);
 
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
+
+	network.host(10800);
+	//network.connect("localhost", 10800);
 
 	//channel1.setDisabled(true);
 	//channel2.setDisabled(true);
