@@ -43,10 +43,6 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
-        src/Network/TCPSocket.cpp
-        src/Network/TCPSocket.hpp
-        src/Network/TCPServerSocket.cpp
-        src/Network/TCPServerSocket.hpp
         src/Network/BgbHandler.cpp
         src/Network/BgbHandler.hpp
         src/Network/Exception.hpp
@@ -61,6 +57,7 @@ if (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                sfml-network
                 pthread
         )
 else (WIN32)
@@ -70,6 +67,7 @@ else (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                sfml-network
                 pthread
         )
 endif (WIN32)

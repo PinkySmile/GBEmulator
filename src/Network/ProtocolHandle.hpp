@@ -21,21 +21,21 @@
 
 namespace GBEmulator::Network
 {
-	typedef std::function<unsigned char(class ProtocolHandle &handler, unsigned char byte)> MasterByteHandle;
-	typedef std::function<void(class ProtocolHandle &handler, unsigned char byte)> SlaveByteHandle;
+	typedef std::function<void(class ProtocolHandle &handler, unsigned char byte)> ByteHandle;
 
 	class ProtocolHandle {
 	protected:
 		bool _disconnected = true;
-		SlaveByteHandle _slaveHandler;
-		MasterByteHandle _masterHandler;
+		ByteHandle _slaveHandler;
+		ByteHandle _masterHandler;
 
-		ProtocolHandle(const MasterByteHandle &masterHandler, const SlaveByteHandle &slaveHandler) :
+		ProtocolHandle(const ByteHandle &masterHandler, const ByteHandle &slaveHandler) :
 			_slaveHandler(slaveHandler),
 			_masterHandler(masterHandler)
 		{};
 
 	public:
+		virtual ~ProtocolHandle() = default;
 		virtual void host(unsigned short port) = 0;
 		virtual void connect(const std::string &ip, unsigned short port) = 0;
 		virtual void sendByte(unsigned char byte) = 0;

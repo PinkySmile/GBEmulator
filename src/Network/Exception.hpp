@@ -70,19 +70,9 @@ namespace GBEmulator::Network
 		explicit NotImplementedException(const std::string &msg) : BaseException(msg) {};
 	};
 
-	class BindFailedException : public BaseException {
-	public:
-		explicit BindFailedException(const std::string &msg) : BaseException(msg) {};
-	};
-
 	class ListenFailedException : public BaseException {
 	public:
 		explicit ListenFailedException(const std::string &msg) : BaseException(msg) {};
-	};
-
-	class InvalidHandlerException : public BaseException {
-	public:
-		explicit InvalidHandlerException(const std::string &msg) : BaseException(msg) {};
 	};
 }
 

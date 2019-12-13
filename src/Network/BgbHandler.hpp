@@ -10,9 +10,8 @@
 #include <thread>
 #include <iostream>
 #include <functional>
-#include "TCPSocket.hpp"
+#include <SFML/Network.hpp>
 #include "ProtocolHandle.hpp"
-#include "TCPServerSocket.hpp"
 
 namespace GBEmulator::Network
 {
@@ -20,9 +19,9 @@ namespace GBEmulator::Network
 	private:
 		bool _log;
 		bool _logging = false;
-		TCPServerSocket _serv;
-		std::shared_ptr<TCPSocket> _socket;
-		std::thread _mainThread;
+		sf::TcpListener _serv;
+		sf::TcpSocket _socket;
+		std::unique_ptr<sf::Thread> _mainThread;
 		unsigned _ticks = 0;
 		std::function<void ()> _mainHandler;
 
@@ -42,8 +41,8 @@ namespace GBEmulator::Network
 
 	public:
 		BGBHandler(
-			const MasterByteHandle &masterHandler,
-			const SlaveByteHandle &slaveHandler,
+			const ByteHandle &masterHandler,
+			const ByteHandle &slaveHandler,
 			bool log = false
 		);
 		void host(unsigned short port) override;
@@ -53,7 +52,6 @@ namespace GBEmulator::Network
 		void sendByte(unsigned char byte) override;
 		void reply(unsigned char byte) override;
 		void tick(unsigned nb);
-		~BGBHandler();
 
 		enum BGBCommand {
 			VERSION_CHECK	= 1,

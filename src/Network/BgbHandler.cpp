@@ -2,21 +2,13 @@
 // Created by Gegel85 on 13/07/2019.
 //
 
-#ifdef _WIN32
-#include <inaddr.h>
-#else
-#include <sys/socket.h>
-
-typedef fd_set FD_SET;
-typedef struct timeval TIMEVAL;
-#endif
 #include "BgbHandler.hpp"
 #include "Exception.hpp"
 
 namespace GBEmulator::Network
 {
 	BGBHandler::BGBHandler(
-		const std::function<unsigned char(ProtocolHandle &handler, unsigned char byte)> &masterHandler,
+		const std::function<void(ProtocolHandle &handler, unsigned char byte)> &masterHandler,
 		const std::function<void(ProtocolHandle &handler, unsigned char byte)> &slaveHandler,
 		bool log
 	) :
@@ -25,21 +17,30 @@ namespace GBEmulator::Network
 		_mainHandler([this] { while (this->_handleLoop()); })
 	{}
 
-	BGBHandler::~BGBHandler()
-	{
-		if (this->isConnected())
-			this->disconnect();
-	}
-
 	void BGBHandler::host(unsigned short port)
 	{
-		if (this->_serv.isOpen())
-			this->_serv.disconnect();
+		if (this->_serv.getLocalPort())
+			this->_serv.close();
+
 		this->log("Waiting for connection on port " + std::to_string(port));
-		this->_serv.disconnectClients();
-		this->_serv.bind(port);
-		this->_socket = this->_serv.acceptClient([](TCPSocket &){});
-		this->_handshake();
+
+		if (this->_serv.listen(port) != sf::Socket::Status::Done)
+			throw ListenFailedException("Couldn't listen on port " + std::to_string(port));
+
+		if (this->_serv.accept(this->_socket) != sf::Socket::Status::Done)
+			throw ConnectException("Couldn't accept client connection");
+
+		try {
+			this->_handshake();
+		} catch (std::exception &e) {
+			this->log(e.what());
+			this->_socket.disconnect();
+			throw;
+		}
+
+		this->_disconnected = false;
+		this->_mainThread.reset(new sf::Thread(this->_mainHandler));
+		this->_mainThread->launch();
 	}
 
 	void BGBHandler::_handshake()
@@ -63,28 +64,30 @@ namespace GBEmulator::Network
 	void BGBHandler::connect(const std::string &ip, unsigned short port)
 	{
 		this->log("Connecting to " + ip + ":" + std::to_string(port));
-		this->_socket.reset(new TCPSocket());
-		this->_socket->connect(ip, port);
+		this->_socket.disconnect();
+
+		if (this->_socket.connect(ip, port) != sf::Socket::Status::Done)
+			throw ConnectException("Cannot connect to " + ip + ":" + std::to_string(port));
 
 		try {
 			this->_handshake();
 		} catch (std::exception &e) {
 			this->log(e.what());
-			this->_socket->disconnect();
+			this->_socket.disconnect();
 			throw;
 		}
 
 		this->_disconnected = false;
-		this->_mainThread = std::thread(this->_mainHandler);
+		this->_mainThread.reset(new sf::Thread(this->_mainHandler));
+		this->_mainThread->launch();
 	}
 
 	void BGBHandler::disconnect()
 	{
 		this->log("Disconnecting...");
-		this->_sendPacket({WANT_DISCONNECT, 0, 0, 0, 0});
-		this->_socket->disconnect();
-		if (this->_mainThread.joinable())
-			this->_mainThread.join();
+		//this->_sendPacket({WANT_DISCONNECT, 0, 0, 0, 0});
+		this->_socket.disconnect();
+		this->_mainThread->terminate();
 		this->_disconnected = true;
 	}
 
@@ -112,7 +115,7 @@ namespace GBEmulator::Network
 
 	void BGBHandler::_sendPacket(const BGBHandler::BGBPacket &packet)
 	{
-		char buffer[8];
+		char buffer[PACKET_SIZE];
 
 		//this->log("Sending opcode " + std::to_string(packet.b1));
 		buffer[0] = packet.b1;
@@ -123,38 +126,35 @@ namespace GBEmulator::Network
 		buffer[5] = (static_cast<unsigned char>(packet.i1) >> 8LU);
 		buffer[6] = (static_cast<unsigned char>(packet.i1) >> 16LU);
 		buffer[7] = (static_cast<unsigned char>(packet.i1) >> 24LU);
-		try {
-			this->_socket->send({
-				buffer,
-				sizeof(buffer)
-			});
-		} catch (std::exception &) {}
+		this->_socket.send(buffer, sizeof(buffer));
 	}
 
 	BGBHandler::BGBPacket BGBHandler::_getNextPacket()
 	{
-		std::string serverMessage;
+		char buffer[PACKET_SIZE];
+		std::size_t readSize;
+		sf::Socket::Status status;
 
-		this->_socket->waitFor(10);
+		do {
+			status = this->_socket.receive(buffer, PACKET_SIZE, readSize);
 
-		if (!this->_socket->isOpen())
-			throw EOFException("EndOfFile");
+			if (status == sf::Socket::Status::Disconnected || status == sf::Socket::Status::Error)
+				throw DisconnectException("The socket got disconnected");
+		} while (status == sf::Socket::Status::NotReady);
 
-		serverMessage = this->_socket->read(PACKET_SIZE);
-
-		if (serverMessage.length() != 8)
-			throw InvalidVersionException("Server sent a " + std::to_string(serverMessage.length()) + " bytes long packet but it should be 8");
+		if (readSize != 8)
+			throw InvalidVersionException("Server sent a " + std::to_string(readSize) + " bytes long packet but it should be 8");
 
 		return {
-			static_cast<unsigned char>(serverMessage[0]),
-			static_cast<unsigned char>(serverMessage[1]),
-			static_cast<unsigned char>(serverMessage[2]),
-			static_cast<unsigned char>(serverMessage[3]),
+			static_cast<unsigned char>(buffer[0]),
+			static_cast<unsigned char>(buffer[1]),
+			static_cast<unsigned char>(buffer[2]),
+			static_cast<unsigned char>(buffer[3]),
 			static_cast<unsigned int>(
-				(static_cast<unsigned char>(serverMessage[4]) << 0LU) +
-				(static_cast<unsigned char>(serverMessage[5]) << 8LU) +
-				(static_cast<unsigned char>(serverMessage[6]) << 16LU)+
-				(static_cast<unsigned char>(serverMessage[7]) << 24LU)
+				(static_cast<unsigned char>(buffer[4]) << 0LU) +
+				(static_cast<unsigned char>(buffer[5]) << 8LU) +
+				(static_cast<unsigned char>(buffer[6]) << 16LU)+
+				(static_cast<unsigned char>(buffer[7]) << 24LU)
 			)
 		};
 	}
@@ -171,7 +171,7 @@ namespace GBEmulator::Network
 
 	bool BGBHandler::_handleLoop()
 	{
-		if (this->_disconnected || !this->_socket->isOpen())
+		if (this->_disconnected || !this->_socket.getLocalPort())
 			return false;
 
 		BGBPacket packet;
@@ -183,7 +183,10 @@ namespace GBEmulator::Network
 			this->log("Error: " + std::string(e.what()));
 			return false;
 		} catch (EOFException &e) {
-			this->log("Error: EOF found" + std::string(e.what()));
+			this->log("Error: EOF found: " + std::string(e.what()));
+			return false;
+		} catch (DisconnectException &e) {
+			this->log("Error: Remote disconnected: " + std::string(e.what()));
 			return false;
 		}
 
@@ -199,12 +202,12 @@ namespace GBEmulator::Network
 
 		case SYNC1_SIGNAL:
 			this->log("Received one byte (" + charToHex(packet.b2) + ") as master");
-			this->reply(this->_masterHandler(*this, packet.b2));
+			this->_masterHandler(*this, packet.b2);
 			return true;
 
 		case SYNC2_SIGNAL:
 			if (packet.b3 != 0x80) {
-				this->log("Received invalid sync2 packet");
+				this->log("Warning: Received invalid sync2 packet");
 				return true;
 			}
 			this->log("Received one byte (" + charToHex(packet.b2) + ") as slave");
@@ -224,7 +227,7 @@ namespace GBEmulator::Network
 			return true;
 
 		case WANT_DISCONNECT:
-			this->_socket->disconnect();
+			this->_socket.disconnect();
 			return false;
 		default:
 			this->log("Unknown command sent by server (Opcode: " + std::to_string(packet.b1) + ")");
