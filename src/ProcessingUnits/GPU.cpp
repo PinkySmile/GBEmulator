@@ -135,7 +135,7 @@ namespace GBEmulator
 
 		const unsigned char *tile = this->_tiles + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
 
-		return this->_getPixelAt(tile, x % 8, y % 8);
+		return tile[x % 8 + (y % 8) * 8];
 	}
 
 	unsigned char GPU::_getSpritePixel(const Sprite &sprite, unsigned int x, unsigned int y)
@@ -206,16 +206,17 @@ namespace GBEmulator
 
 				unsigned char *tile = this->_tiles + sprite.texture_id * 64;
 
-				for (unsigned x = 0; x < 8U; x += 1) {
-					for (unsigned y = 0; y < v; y += 1) {
-						if (x + sprite.x <= 255 && y + sprite.y <= 255) {
-							unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
-							unsigned int index = (sprite.x_flip ? 7 - x : x) + sprite.x + ((sprite.y_flip ? v - 1 - y : y) + sprite.y) * 256;
+				for (int x = 0; x < 8; x += 1) {
+					for (int y = 0; y < v; y += 1) {
+						int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
+						int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
 
-							if (newColor && sprite.palette_number == 0)
-								this->_spritesMap[index] = ((this->_objectPalette0Value >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
-							else if (newColor)
-								this->_spritesMap[index] = ((this->_objectPalette1Value >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+						if (realX < 160 && realY < 144) {
+							unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
+							unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
+
+							if (newColor)
+								this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
 						}
 					}
 				}
