@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	GBEmulator::SoundPlayer channel3;
 	GBEmulator::SoundPlayer channel4;
 	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
-	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad({
+	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad(window, {
 		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::W},
 		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::X},
 		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
@@ -65,10 +65,10 @@ int main(int argc, char **argv)
 
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
-	//channel1.setDisabled(true);
-	//channel2.setDisabled(true);
+	channel1.setDisabled(true);
+	channel2.setDisabled(true);
 	//channel3.setDisabled(true);
-	//channel4.setDisabled(true);
+	channel4.setDisabled(true);
 
 	window.setFramerateLimit(60);
 	window.setView(view);
