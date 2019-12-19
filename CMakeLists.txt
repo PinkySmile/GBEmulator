@@ -43,7 +43,7 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
-)
+        src/ProcessingUnits/Instructions/Instructions.hpp)
 
 if (WIN32)
         target_link_libraries(

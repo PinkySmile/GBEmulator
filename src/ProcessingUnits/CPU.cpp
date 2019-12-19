@@ -12,6 +12,7 @@
 #include <cmath>
 #include "CPU.hpp"
 #include "Instructions/CPUInstructions.hpp"
+#include "Instructions/Instructions.hpp"
 
 namespace GBEmulator
 {
@@ -450,15 +451,11 @@ namespace GBEmulator
 	{
 		unsigned char opcode = this->read(this->_registers.pc++);
 
-		try {
-			unsigned cycles = Instructions::_instructions[opcode](*this, this->_registers);
+		unsigned cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 
-			this->_registers._ = 0;
-			this->_divRegister += cycles;
-			this->_updateComponents(cycles);
-		} catch (std::bad_function_call &) {
-			throw InvalidOpcodeException(opcode, --this->_registers.pc);
-		}
+		this->_registers._ = 0;
+		this->_divRegister += cycles;
+		this->_updateComponents(cycles);
 	}
 
 	void CPU::dumpRegisters() const
@@ -522,5 +519,11 @@ namespace GBEmulator
 	{
 		this->dumpMemory();
 		this->dumpRegisters();
+	}
+
+	unsigned short CPU::getDecPc() noexcept
+	{
+		this->_registers.pc--;
+		return this->_registers.pc;
 	}
 }
