@@ -183,6 +183,39 @@ namespace GBEmulator
 		this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
+	void GPU::updateOAM()
+	{
+		std::memset(this->_spritesMap, 0xFF, 256 * 256);
+
+		unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
+
+		for (int i = 0; i < OAM_SIZE; i += 4) {
+			Sprite sprite;
+
+			sprite.y = this->_oam.read(i) - 16;
+			sprite.x = this->_oam.read(i + 1) - 8;
+			sprite.texture_id = this->_oam.read(i + 2);
+			sprite.flags = this->_oam.read(i + 3);
+
+			unsigned char *tile = this->_tiles + sprite.texture_id * 64;
+
+			for (int x = 0; x < 8; x += 1) {
+				for (int y = 0; y < v; y += 1) {
+					int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
+					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
+
+					if (realX < 160 && realY < 144) {
+						unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
+						unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
+
+						if (newColor)
+							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+					}
+				}
+			}
+		}
+	}
+
 	void GPU::update()
 	{
 		if ((this->_control & 0x80U) == 0)
@@ -192,35 +225,7 @@ namespace GBEmulator
 			this->_screen.display();
 			this->_screen.clear();
 		} else if (this->_cycles % 456 == 0 && (this->_control & 0b00000010U)) {
-			std::memset(this->_spritesMap, 0xFF, 256 * 256);
-
-			unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
-
-			for (int i = 0; i < OAM_SIZE; i += 4) {
-				Sprite sprite;
-
-				sprite.y = this->_oam.read(i) - 16;
-				sprite.x = this->_oam.read(i + 1) - 8;
-				sprite.texture_id = this->_oam.read(i + 2);
-				sprite.flags = this->_oam.read(i + 3);
-
-				unsigned char *tile = this->_tiles + sprite.texture_id * 64;
-
-				for (int x = 0; x < 8; x += 1) {
-					for (int y = 0; y < v; y += 1) {
-						int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
-						int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
-
-						if (realX < 160 && realY < 144) {
-							unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
-							unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
-
-							if (newColor)
-								this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
-						}
-					}
-				}
-			}
+			this->updateOAM();
 		} else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % 456 - 83, this->getCurrentLine());
 

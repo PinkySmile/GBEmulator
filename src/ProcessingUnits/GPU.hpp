@@ -112,6 +112,7 @@ namespace GBEmulator
 		unsigned char getObjectPalette0() const;
 		unsigned char getObjectPalette1() const;
 
+		void updateOAM();
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
 		void setControlByte(unsigned char value);
