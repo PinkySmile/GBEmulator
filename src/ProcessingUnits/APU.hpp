@@ -101,7 +101,7 @@ namespace GBEmulator
 			unsigned char getSoundLength(bool) const;
 			void setOutputLevel(unsigned char);
 			unsigned char getOutputLevel() const;
-			std::vector<unsigned char> getWavePattern(int frequency, Memory::Memory &memory) const;
+			std::vector<unsigned char> &getWavePattern(int frequency, Memory::Memory &memory) const;
 
 			//Noise Functions
 			void updateLFSR(unsigned char stepNumber);
