@@ -12,6 +12,7 @@
 
 namespace GBEmulator::Instructions {
 	unsigned executeInstruction(unsigned char opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
+	unsigned executeBitInstruction(unsigned char opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
 }
 
 #endif //GBEMULATOR_INSTRUCTIONS_HPP

@@ -6,6 +6,7 @@
 */
 
 #include "CPUInstructions.hpp"
+#include "Instructions.hpp"
 
 namespace GBEmulator::Instructions {
 	unsigned executeInstruction(unsigned char opcode, CPU &cpu, CPU::Registers &reg)
@@ -825,7 +826,7 @@ namespace GBEmulator::Instructions {
 
 		//! CB; Prefix for bit level instructions
 		case 0xCB:
-			return Instructions::_bitLevelInstructions[cpu.fetchArgument()](cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION;
+			return Instructions::executeBitInstruction(cpu.fetchArgument(), cpu, reg) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
 		//! CC; CALL z,**: If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **.
 		case 0xCC:
