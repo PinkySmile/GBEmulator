@@ -3,8 +3,7 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-W -Wall -Wextra -Wshadow -g -pg)
-add_link_options(-pg)
+add_compile_options(-W -Wall -Wextra -Wshadow -ofast)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -43,7 +42,7 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
-)
+        src/ProcessingUnits/Instructions/Instructions.hpp)
 
 if (WIN32)
         target_link_libraries(

@@ -111,18 +111,16 @@ namespace GBEmulator
 		}
 	}
 
-	std::vector<unsigned char> APU::Sound::getWavePattern(int frequency, Memory::Memory &memory) const
+	std::vector<unsigned char> &APU::Sound::getWavePattern(int frequency, Memory::Memory &memory) const
 	{
-		std::vector<unsigned char>	raw;
+		static std::vector<unsigned char>	raw(44100LLU * 2);
 
 		int shifting = _waveOutputLevel + 4 % 5;
-		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++) {
 			unsigned char wpRam = memory.read(WPRAM_START + (i % 16));
-			raw.push_back(frequency / BASE_FREQU * (((wpRam >> 4) >> shifting) / 16 * 127));
-			raw.push_back(frequency / BASE_FREQU * (((wpRam & 0b00001111) >> shifting) / 16 * 127));
+			raw[i*2] = (frequency / BASE_FREQU * (((wpRam >> 4) >> shifting) / 16 * 127));
+			raw[i*2 + 1] = (frequency / BASE_FREQU * (((wpRam & 0b00001111) >> shifting) / 16 * 127));
 		}
-
 		return (raw);
 	}
 
