@@ -33,6 +33,7 @@ namespace GBEmulator
 	{
 		channelOne.setWave(getSquareWave(BASE_FREQU, 50), 44100);
 		channelTwo.setWave(getSquareWave(BASE_FREQU, 50), 44100);
+		channelFour.setWave(Sound::getNoiseWave(44100, 0), 44100);
 	}
 
 	APU::~APU() = default;
@@ -98,15 +99,15 @@ namespace GBEmulator
 			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
-			double frequency = pow(2, -(this->_shiftClockFrequency + 1)) *
+			double frequency = 1048576 - pow(2, -(this->_shiftClockFrequency + 1)) *
 				   dividingRatio[this->_dividingRatio];
 
 			if (_wroteInNoiseFrequency) {
 				std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
 				std::cout << "_dividingRatio : " << (int)_dividingRatio << std::endl;
 				std::cout << "frequency : " << frequency << std::endl;
-				this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
-				this->_soundChannel.setPitch(BASE_FREQU);
+				//this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
+				this->_soundChannel.setPitch(frequency / 44100);
 				_wroteInNoiseFrequency = false;
 
 			} else {
