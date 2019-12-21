@@ -98,11 +98,13 @@ namespace GBEmulator
 			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
-			double frequency = shiftClockFrequencyRatio[this->_shiftClockFrequency] *
+			double frequency = pow(2, -(this->_shiftClockFrequency + 1)) *
 				   dividingRatio[this->_dividingRatio];
 
 			if (_wroteInNoiseFrequency) {
-				//std::cout << frequency << std::endl;
+				std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
+				std::cout << "_dividingRatio : " << (int)_dividingRatio << std::endl;
+				std::cout << "frequency : " << frequency << std::endl;
 				this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
 				this->_soundChannel.setPitch(BASE_FREQU);
 				_wroteInNoiseFrequency = false;
@@ -189,9 +191,9 @@ namespace GBEmulator
 			case FF16 ... FF19 :
 				channelTwoWriting(address - FF16, value);
 				break;
-			case FF1A ... FF1E :
+			/*case FF1A ... FF1E :
 				channelWaveWriting(address - FF1A, value);
-				break;
+				break;*/
 			case FF20 ... FF23 :
 				channelNoiseWriting(address - FF20, value);
 				break;
