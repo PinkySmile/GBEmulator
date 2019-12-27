@@ -113,6 +113,7 @@ namespace GBEmulator
 			void update(unsigned cycle, Memory::Memory &memory);
 			void updateRestart();
 			void disable(bool state);
+			void setSOTerminals(bool SO1, bool SO2);
 
 		private:
 			ISound &_soundChannel;    //tone and sweep

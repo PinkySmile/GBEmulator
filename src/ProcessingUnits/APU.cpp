@@ -99,20 +99,18 @@ namespace GBEmulator
 			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
-			double frequency = 1048576 - pow(2, -(this->_shiftClockFrequency + 1)) *
+			double frequency = pow(2, -(this->_shiftClockFrequency + 1)) *
 				   dividingRatio[this->_dividingRatio];
 
 			if (_wroteInNoiseFrequency) {
-				std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
+				/*std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
 				std::cout << "_dividingRatio : " << (int)_dividingRatio << std::endl;
-				std::cout << "frequency : " << frequency << std::endl;
+				std::cout << "frequency : " << frequency << std::endl;*/
 				//this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
 				this->_soundChannel.setPitch(frequency / 44100);
-				_wroteInNoiseFrequency = false;
-
-			} else {
+				this->_wroteInNoiseFrequency = false;
+			} else
 				updateLFSR(stepNumber);
-			}
 		}
 	}
 
@@ -586,6 +584,12 @@ namespace GBEmulator
 
 	}
 
+	void APU::Sound::setSOTerminals(bool SO1, bool SO2)
+	{
+		this->_soundChannel.setSO1(SO1);
+		this->_soundChannel.setSO2(SO2);
+	}
+
 	unsigned char APU::Sound::getPolynomialCounters() const
 	{
 		unsigned char value = this->_shiftClockFrequency;
@@ -633,27 +637,31 @@ namespace GBEmulator
 
 	void APU::setVin(unsigned char value)
 	{
-		this->_VinToSo2 = value >> 7;
-		this->_SO2OutputLevel = (value & 0b01110000) >> 4;
-		this->_VinToSo1 = (value & 0b00001000) >> 3;
-		this->_SO1OutputLevel = (value & 0b00000111);
+		this->_VinToSo2 = value >> 7U;
+		this->_SO2OutputLevel = (value & 0b01110000U) >> 4U;
+		this->_VinToSo1 = (value & 0b00001000U) >> 3U;
+		this->_SO1OutputLevel = (value & 0b00000111U);
 	}
 
 	unsigned char APU::getVin() const
 	{
 		unsigned char value = this->_VinToSo2;
 
-		value <<= 3;
+		value <<= 3U;
 		value |= this->_SO2OutputLevel;
-		value <<= 1;
+		value <<= 1U;
 		value |= this->_VinToSo1;
-		value <<= 3;
+		value <<= 3U;
 		return (value | this->_SO1OutputLevel);
 	}
 
 	void APU::setSOTS(unsigned char value)
 	{
 		this->_soundOutputTerminalSelection = value;
+		this->_managerChannel1.setSOTerminals(    value & 0b00000001U, value & 0b00010000U);
+		this->_managerChannel2.setSOTerminals(    value & 0b00000010U, value & 0b00100000U);
+		this->_managerChannelWave.setSOTerminals( value & 0b00000100U, value & 0b01000000U);
+		this->_managerChannelNoise.setSOTerminals(value & 0b00001000U, value & 0b10000000U);
 	}
 
 	unsigned char APU::getSOTS() const
@@ -663,7 +671,7 @@ namespace GBEmulator
 
 	void APU::setSoundOnOff(unsigned char value)
 	{
-		this->_allSoundsOn = value >> 7;
+		this->_allSoundsOn = value >> 7U;
 		this->_managerChannel1.disable(!this->_allSoundsOn);
 		this->_managerChannel2.disable(!this->_allSoundsOn);
 		this->_managerChannelWave.disable(!this->_allSoundsOn);
@@ -674,15 +682,15 @@ namespace GBEmulator
 	{
 		unsigned char value = this->_allSoundsOn;
 
-		value <<= 3;
-		value |= 0b00000111;
-		value <<= 1;
-		value |= this->_soundOnOff1;
-		value <<= 1;
-		value |= this->_soundOnOff2;
-		value <<= 1;
+		value <<= 3U;
+		value |= 0b00000111U;
+		value <<= 1U;
+		value |= this->_soundOnOffSound;
+		value <<= 1U;
 		value |= this->_soundOnOffWave;
-		value <<= 1;
-		return (value | this->_soundOnOffSound);
+		value <<= 1U;
+		value |= this->_soundOnOff2;
+		value <<= 1U;
+		return (value | this->_soundOnOff1);
 	}
 }

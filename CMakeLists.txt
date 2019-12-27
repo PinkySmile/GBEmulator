@@ -30,6 +30,7 @@ add_executable(
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
         src/ProcessingUnits/CPU.hpp
+        src/ProcessingUnits/Instructions/Instructions.hpp
         src/ProcessingUnits/Instructions/CPUInstructions.cpp
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp
@@ -42,7 +43,7 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
-        src/ProcessingUnits/Instructions/Instructions.hpp)
+)
 
 if (WIN32)
         target_link_libraries(

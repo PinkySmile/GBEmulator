@@ -5,11 +5,12 @@
 ** SoundPlayer.cpp
 */
 
+#include <iostream>
 #include "SoundPlayer.hpp"
 
 namespace GBEmulator
 {
-	GBEmulator::SoundPlayer::SoundPlayer() :
+	SoundPlayer::SoundPlayer() :
 		_volume(0)
 	{
 		this->_sound.setBuffer(this->_soundBuffer);
@@ -18,7 +19,7 @@ namespace GBEmulator
 		this->_sound.setLoop(true);
 	}
 
-	void GBEmulator::SoundPlayer::setPitch(float pitch)
+	void SoundPlayer::setPitch(float pitch)
 	{
 		this->_sound.setPitch(pitch);
 	}
@@ -31,7 +32,7 @@ namespace GBEmulator
 		this->_disabled = disabled;
 	}
 
-	void GBEmulator::SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
+	void SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
 	{
 		auto buff = new sf::Int16[wave.size()];
 
@@ -47,10 +48,31 @@ namespace GBEmulator
 		this->_sound.setLoop(true);
 	}
 
-	void GBEmulator::SoundPlayer::setVolume(float volume)
+	void SoundPlayer::setVolume(float volume)
 	{
 		this->_volume = volume;
 		this->_sound.setVolume(volume);
 	}
 
+	void SoundPlayer::setSO1(bool activated)
+	{
+		if (!this->_SO2activated && !this->_SO1activated && !this->_disabled && activated)
+			this->_sound.play();
+		this->_SO1activated = activated;
+		if (!this->_SO2activated && !this->_SO1activated)
+			this->_sound.stop();
+		else
+			this->_sound.setPosition(this->_SO1activated - this->_SO2activated, 0, 0);
+	}
+
+	void SoundPlayer::setSO2(bool activated)
+	{
+		if (!this->_SO2activated && !this->_SO1activated && !this->_disabled && activated)
+			this->_sound.play();
+		this->_SO2activated = activated;
+		if (!this->_SO2activated && !this->_SO1activated)
+			this->_sound.stop();
+		else
+			this->_sound.setPosition(this->_SO1activated - this->_SO2activated, 0, 0);
+	}
 }
