@@ -42,14 +42,12 @@ namespace GBEmulator
 	{
 		this->_soundOn = !state && this->_restart;
 		this->_soundChannel.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
-		this->_volumeCycles = 0;
 	}
 
 	void APU::Sound::updateRestart()
 	{
 		this->_soundOn = false;
 		this->_restart = false;
-		this->_volumeCycles = 0;
 		this->disable(true);
 	}
 
@@ -76,10 +74,12 @@ namespace GBEmulator
 		}
 		if (this->_volumeShiftNumber) {
 			int volume = (
-					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
+					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64) *
 					(this->_volumeDirection * 2 - 1) +
 					this->_initialVolume
 			);
+			if (this->_havingPolynomial && volume > 0)
+				std::cout << std::dec << "Required: " << Timing::getCyclesPerSecondsFromFrequency(256) << " | Cycles: " << this->_volumeCycles << " | New volume: " << volume << std::endl;
 			this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
 		}
 		if (this->_sweepTime) {
@@ -390,6 +390,7 @@ namespace GBEmulator
 				this->_managerChannelNoise.setSoundLength(value, true);
 				break;
 			case 0x1 :
+				std::cout << "Set volume to " << std::hex << static_cast<int>(value) << std::dec << std::endl;
 				this->_managerChannelNoise.setVolume(value);
 				break;
 			case 0x2 :
@@ -414,7 +415,6 @@ namespace GBEmulator
 
 	void APU::Sound::setSweep(unsigned char value)
 	{
-		this->_volumeCycles = 0;
 		this->_sweepTime = (value & 0b01110000) >> 4;
 		this->_sweepDirection = (value & 0b00001000) >> 3;
 		this->_sweepShiftNumber = (value & 0b00000111);
@@ -435,7 +435,6 @@ namespace GBEmulator
 	void APU::Sound::setWave(unsigned char value)
 	{
 		this->_soundLength = value & 0b00111111;
-		this->_volumeCycles = 0;
 		if (this->_wavePattern != value >> 6) {
 			this->_wavePattern = value >> 6;
 			switch (this->_wavePattern) {
@@ -479,16 +478,15 @@ namespace GBEmulator
 	{
 		unsigned char value = this->_initialVolume;
 
-		value <<= 1;
+		value <<= 4;
 		value |= this->_volumeDirection;
-		value <<= 3;
+		value <<= 1;
 		return (value | this->_volumeShiftNumber);
 	}
 
 	void APU::Sound::setLowFrequency(unsigned char value)
 	{
 		this->_frequency = (this->_frequency & 0b11100000000) | value;
-		this->_volumeCycles = 0;
 		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
 
@@ -499,7 +497,6 @@ namespace GBEmulator
 		val <<= 8;
 		this->_restart = value >> 7;
 		this->_restartType = (value & 0b01000000) >> 6;
-		this->_volumeCycles = 0;
 		this->_frequency = (this->_frequency & 0b00011111111) | val;
 		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
@@ -521,7 +518,6 @@ namespace GBEmulator
 	void APU::Sound::setSoundONOFF(unsigned char value)
 	{
 		this->_soundOn = value >> 7;
-		this->_volumeCycles = 0;
 		if (!this->_soundOn)
 			this->_soundChannel.setVolume(0);
 		else
@@ -538,7 +534,6 @@ namespace GBEmulator
 
 	void APU::Sound::setSoundLength(unsigned char value, bool sixBitsLength)
 	{
-		this->_volumeCycles = 0;
 		if (!sixBitsLength) {
 			this->_isSixBitsLength = false;
 			this->_soundLength = value;
