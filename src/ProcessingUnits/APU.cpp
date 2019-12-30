@@ -48,7 +48,8 @@ namespace GBEmulator
 	{
 		this->_soundOn = false;
 		this->_restart = false;
-		this->disable(true);
+		//std::cout << "Updated restart" << std::endl;
+		this->_soundChannel.setVolume(0);
 	}
 
 	void APU::Sound::update(unsigned cycle, Memory::Memory &memory)
@@ -57,29 +58,28 @@ namespace GBEmulator
 			this->_soundOn = true;
 			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 		}
-		if (!this->_soundOn)
-			return;
-		this->_volumeCycles += cycle;
-		this->_sweepCycles += cycle;
 		if (this->_isSixBitsLength) {
 			if (this->_restartType &&
-				this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
+			    this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
 				updateRestart();
 			}
 		} else {
 			if (this->_restartType &&
-				this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(2 / (256 - this->_soundLength))) {
+			    this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(2 / (256 - this->_soundLength))) {
 				updateRestart();
 			}
 		}
+		if (!this->_soundOn)
+			return;
+		this->_volumeCycles += cycle;
+		this->_sweepCycles += cycle;
 		if (this->_volumeShiftNumber) {
 			int volume = (
-					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64) *
+					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
 					(this->_volumeDirection * 2 - 1) +
 					this->_initialVolume
 			);
-			if (this->_havingPolynomial && volume > 0)
-				std::cout << std::dec << "Required: " << Timing::getCyclesPerSecondsFromFrequency(256) << " | Cycles: " << this->_volumeCycles << " | New volume: " << volume << std::endl;
+			//std::cout << std::dec << "Required: " << Timing::getCyclesPerSecondsFromFrequency(256) << " | Cycles: " << this->_volumeCycles << " | New volume: " << volume << std::endl;
 			this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
 		}
 		if (this->_sweepTime) {
@@ -190,9 +190,9 @@ namespace GBEmulator
 			case FF16 ... FF19 :
 				channelTwoWriting(address - FF16, value);
 				break;
-			/*case FF1A ... FF1E :
+			case FF1A ... FF1E :
 				channelWaveWriting(address - FF1A, value);
-				break;*/
+				break;
 			case FF20 ... FF23 :
 				channelNoiseWriting(address - FF20, value);
 				break;
@@ -390,7 +390,6 @@ namespace GBEmulator
 				this->_managerChannelNoise.setSoundLength(value, true);
 				break;
 			case 0x1 :
-				std::cout << "Set volume to " << std::hex << static_cast<int>(value) << std::dec << std::endl;
 				this->_managerChannelNoise.setVolume(value);
 				break;
 			case 0x2 :
@@ -470,6 +469,7 @@ namespace GBEmulator
 		this->_volumeDirection = (value & 0b00001000) >> 3;
 		this->_volumeShiftNumber = value & 0b00000111;
 		this->_volumeCycles = 0;
+		//std::cout << "Set volume to " << std::hex << static_cast<int>(value) << std::dec << std::endl;
 		if (this->_soundOn)
 			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 	}
