@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2019
+65;5803;1c** EPITECH PROJECT, 2019
 ** GBEmulator
 ** File description:
 ** Gpu.cpp
@@ -256,7 +256,7 @@ namespace GBEmulator
 
 	void GPU::setControlByte(unsigned char value)
 	{
-		if ((this->_control & 0x80U) == 0 && (value & 0x80U))
+		if ((this->_control & 0x80U) == 0x80 && (value & 0x80U) == 0)
 			this->_cycles = 0;
 		this->_control = value;
 	}
@@ -320,7 +320,9 @@ namespace GBEmulator
 
 	unsigned char GPU::getMode() const
 	{
-		if ((this->_control & 0x80U) == 0 || this->getCurrentLine() >= 144)
+		if ((this->_control & 0x80U) == 0)
+			return 0;
+		if (this->getCurrentLine() >= 144)
 			return 1;
 		if (this->_cycles % 456 < 83)
 			return 2;

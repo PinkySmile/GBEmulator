@@ -3,7 +3,7 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-W -Wall -Wextra -Wshadow -ofast)
+add_compile_options(-W -Wall -Wextra -Wshadow -o3)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
