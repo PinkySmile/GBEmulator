@@ -33,7 +33,6 @@ namespace GBEmulator
 	{
 		channelOne.setWave(getSquareWave(BASE_FREQU, 50), 44100);
 		channelTwo.setWave(getSquareWave(BASE_FREQU, 50), 44100);
-		channelFour.setWave(Sound::getNoiseWave(44100, 0), 44100);
 	}
 
 	APU::~APU() = default;
@@ -99,18 +98,17 @@ namespace GBEmulator
 			this->_sweepCycles = 0;
 			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
 
-			double frequency = pow(2, -(this->_shiftClockFrequency + 1)) *
+			_bitPeriod = 44100 * pow(2, (this->_shiftClockFrequency + 1)) *
 				   dividingRatio[this->_dividingRatio];
 
 			if (_wroteInNoiseFrequency) {
 				/*std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
 				std::cout << "_dividingRatio : " << (int)_dividingRatio << std::endl;
 				std::cout << "frequency : " << frequency << std::endl;*/
-				//this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
-				this->_soundChannel.setPitch(frequency / 44100);
+				this->_soundChannel.setWave(getNoiseWave(stepNumber), 44100);
+				//this->_soundChannel.setPitch(_bitPeriod);
 				this->_wroteInNoiseFrequency = false;
-			} else
-				updateLFSR(stepNumber);
+			}
 		}
 	}
 
@@ -139,25 +137,54 @@ namespace GBEmulator
 		return (raw);
 	}*/
 
-	std::vector<unsigned char> &APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
+	std::vector<unsigned char> APU::Sound::getNoiseWave(unsigned char stepNumber)
 	{
 		static std::vector<unsigned char>    raw(44100LLU);
-		bool random = rand() & 0b1;
-		int cnt = 0;
+		//bool random = rand() & 0b1;
+		//int cnt = 0;
+		double j = stepNumber == 7 ? 1 / _bitPeriod : ceil(_bitPeriod);
+		std::vector<unsigned char> lfsrBit(stepNumber == 7 ? 127LLU : 32767LLU);
+		updateLFSR(stepNumber, lfsrBit);
 
-		for (int i = 0; i < 44100; i++) {
+		if (stepNumber == 7) {
+			for (int i = 0; i < 2048; i++) {
+				_lfsr += j;
+				_lfsr %= 127;
+				raw[i] = lfsrBit[_lfsr];
+			}
+		} else {
+			for (int i = 0; i < 2048/*2048*/; i += j) {
+				_lfsr++;
+				_lfsr = _lfsr % 32767;
+				float s = lfsrBit[_lfsr];
+				for (int p = j; p--;)
+					raw[i + p] = s;
+			}
+		}
+		/*for (int i = 0; i < 44100; i++) {
 			raw[i] = (random == 0 ? 127 : -127);
 			if (++cnt >= (44100 / frequency)) {
 				random = rand() & 0b1;
 				cnt = 0;
 			}
-		}
+		}*/
 		return (raw);
 	}
 
-	void APU::Sound::updateLFSR(unsigned char stepNumber)
+	void APU::Sound::updateLFSR(unsigned char stepNumber, std::vector<unsigned char> &lfsrBit)
 	{
-		if (_counter == stepNumber) {
+		// precalculate LFSR patterns
+		unsigned char start_state = 127;
+		unsigned short LFSR = start_state;
+		int st = 0;
+		unsigned char bit = 0;
+
+		do {
+			bit = ((LFSR) ^ (LFSR >> 1)) & 0b1;
+			LFSR = (LFSR >> 1) | (bit << (stepNumber - 1));
+			lfsrBit[st++] = (bit ? 127 : -127);
+		} while (LFSR != start_state);
+		/*if (_counter == stepNumber) {
 			unsigned short xorResult = ((((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1)) << 15) | 0b0111111111111111;
 			_lfsr >>= 1;
 			_lfsr &= xorResult;
@@ -166,11 +193,11 @@ namespace GBEmulator
 				xorResult |= 0b1111111110000000;
 				_lfsr &= xorResult;
 			}
-			//printf("LFSR : %i\n",_lfsr);*/
+			//printf("LFSR : %i\n",_lfsr);
 		}
 		if (_counter > stepNumber)
 			_counter = 0x0;
-		_counter++;
+		_counter++;*/
 	}
 
 	void APU::update(unsigned cycle)

@@ -104,9 +104,8 @@ namespace GBEmulator
 			std::vector<unsigned char> &getWavePattern(int frequency, Memory::Memory &memory) const;
 
 			//Noise Functions
-			void updateLFSR(unsigned char stepNumber);
-			static std::vector<unsigned char> &
-			getNoiseWave(int frequency, unsigned char stepNumber);
+			void updateLFSR(unsigned char stepNumber, std::vector<unsigned char> &lfsrBit);
+			std::vector<unsigned char> getNoiseWave(unsigned char stepNumber);
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 
@@ -153,17 +152,18 @@ namespace GBEmulator
 			unsigned char _shiftClockFrequency = 0;
 			bool _polynomialCounterStep = false;
 			char _counter = 0xF;
-			unsigned short _lfsr = 0x7FFF;
+			unsigned short _lfsr = 0;
+			double _bitPeriod = 0;
 			unsigned char _dividingRatio = 0;
 			static constexpr double dividingRatio[8] = {
-					DIV_FREQUENCY / 4.,
-					DIV_FREQUENCY / 8.,
-					DIV_FREQUENCY / 16.,
-					DIV_FREQUENCY / 24.,
-					DIV_FREQUENCY / 32.,
-					DIV_FREQUENCY / 40.,
-					DIV_FREQUENCY / 48.,
-					DIV_FREQUENCY / 56.
+					4. / DIV_FREQUENCY,
+					8. / DIV_FREQUENCY,
+					16. / DIV_FREQUENCY,
+					24. / DIV_FREQUENCY,
+					32. / DIV_FREQUENCY,
+					40. / DIV_FREQUENCY,
+					48. / DIV_FREQUENCY,
+					56. / DIV_FREQUENCY
 			};
 
 		};
