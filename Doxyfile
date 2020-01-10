@@ -5,9 +5,9 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = GBEmulator
-PROJECT_NUMBER         = 0.3
+PROJECT_NUMBER         =
 PROJECT_BRIEF          = "Émulateur de GameBoy™ classique"
-PROJECT_LOGO           = /home/Elden/Documents/macrosoft_logo_officiel.png
+PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = /home/Elden/GBEmulator/docs
 CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
@@ -62,7 +62,7 @@ LOOKUP_CACHE_SIZE      = 0
 # Build related configuration options
 #---------------------------------------------------------------------------
 EXTRACT_ALL            = YES
-EXTRACT_PRIVATE        = NO
+EXTRACT_PRIVATE        = YES
 EXTRACT_PACKAGE        = NO
 EXTRACT_STATIC         = NO
 EXTRACT_LOCAL_CLASSES  = YES

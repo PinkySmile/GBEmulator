@@ -187,21 +187,38 @@ namespace GBEmulator
 		~CPU() = default;
 		CPU &operator=(const CPU &) = delete;
 
+		//! set CPU in halted mode
 		void halt();
+		//! set CPU in stoped mode
 		void stop();
+		//! Lis la valeur pointé par l'adresse passée
 		unsigned char read(unsigned short address) const;
+		//! Récupère l'adresse pointé par pc et incrémente pc
 		unsigned char fetchArgument();
+		//! Récupère l'adresse pointé par pc et pc+1 et incrémente pc de deux.
+		//! Renvoie les valeurs sous forme d'un nombre à 16 bits
 		unsigned short fetchArgument16();
+		//! fixe la valeur du flag interruptMaster à la valeur donnée
 		void setInterruptMaster(bool val);
+		//! Écrit la valeur sur la zone pointé par l'adresse passée
 		void write(unsigned short address, unsigned char value);
+		//! Affiche sur la sortie standard un dump de la Mémoire et des registres
 		void dump() const;
+		//! renvoie True si le CPU a été halt
 		bool isHalted() const;
+		//! renvoie True si le CPU a été stop
 		bool isStopped() const;
+		//! Affiche sur la sortie standard un debug de la mémoire
 		void dumpMemory() const;
+		//! Affiche sur la sortie standard un debug des registres
 		void dumpRegisters() const;
+		//! Récupère une copie des registres
 		Registers getRegisters() const;
+		//! Renvoie une référence vers la cartouche
 		Memory::Cartridge &getCartridgeEmulator();
+		//! Renvoie une référence vers la cartouche
 		const Memory::Cartridge &getCartridgeEmulator() const;
+		//! Éxécute un cycle
 		void update();
 
 		unsigned short getDecPc() noexcept;

@@ -1,0 +1,16 @@
+<map id="src/ProcessingUnits/Instructions/BasicInstructions.cpp" name="src/ProcessingUnits/Instructions/BasicInstructions.cpp">
+<area shape="rect" id="node2" href="$_c_p_u_instructions_8hpp.html" title="CPUInstructions.hpp" alt="" coords="51,169,204,196"/>
+<area shape="rect" id="node24" href="$_instructions_8hpp.html" title="Instructions.hpp" alt="" coords="115,95,241,121"/>
+<area shape="rect" id="node5" href="$_c_p_u_8hpp.html" title="../CPU.hpp" alt="" coords="480,244,569,271"/>
+<area shape="rect" id="node7" href="$_a_p_u_8hpp.html" title="APU.hpp" alt="" coords="449,319,526,345"/>
+<area shape="rect" id="node11" href="$_sound_player_8hpp.html" title="../Sound/SoundPlayer.hpp" alt="" coords="601,319,787,345"/>
+<area shape="rect" id="node14" href="$_g_p_u_8hpp.html" title="GPU.hpp" alt="" coords="675,393,753,420"/>
+<area shape="rect" id="node19" href="$_cartridge_8hpp.html" title="../Memory/Cartridge.hpp" alt="" coords="195,319,374,345"/>
+<area shape="rect" id="node21" href="$_joypad_emulator_8hpp.html" title="../Joypad/JoypadEmulator.hpp" alt="" coords="812,319,1024,345"/>
+<area shape="rect" id="node22" href="$_cable_interface_8hpp.html" title="../Network/CableInterface.hpp" alt="" coords="1049,319,1265,345"/>
+<area shape="rect" id="node23" href="$_timer_8hpp.html" title="../Timing/Timer.hpp" alt="" coords="1289,319,1437,345"/>
+<area shape="rect" id="node8" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="371,468,542,495"/>
+<area shape="rect" id="node10" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="500,393,651,420"/>
+<area shape="rect" id="node17" href="$_i_l_c_d_8hpp.html" title="../LCD/ILCD.hpp" alt="" coords="617,468,739,495"/>
+<area shape="rect" id="node20" href="$_r_o_m_8hpp.html" title="ROM.hpp" alt="" coords="278,393,358,420"/>
+</map>

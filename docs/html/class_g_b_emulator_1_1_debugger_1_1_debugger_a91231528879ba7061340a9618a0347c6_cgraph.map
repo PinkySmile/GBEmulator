@@ -1,0 +1,7 @@
+<map id="GBEmulator::Debugger::Debugger::_drawVram" name="GBEmulator::Debugger::Debugger::_drawVram">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a71dbc6943cf85347a5027d10f0e17b4e" title="Affiche la VRAM en utilisant la palette. " alt="" coords="228,5,471,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a76a5dc82cfe9173ca600beed21cd09ab" title="Affiche l&#39;état des palette sur la fenetre du débugger. " alt="" coords="249,71,449,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#aad575ca0053db646be2d4fe8a1fc7bd8" title="Affiche l&#39;état du background sur la fenetre du débugger. " alt="" coords="233,136,465,177"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a679defdc1766db326651533d7537b149" title="Affiche l&#39;état de la window sur la fenetre du débugger. " alt="" coords="246,201,453,243"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_g_p_u.html#ac87175264de42f813ebd7b94e1e50032" title="GBEmulator::GPU::_getTileMap" alt="" coords="519,177,741,203"/>
+</map>

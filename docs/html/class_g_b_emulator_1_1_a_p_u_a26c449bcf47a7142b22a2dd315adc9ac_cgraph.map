@@ -1,0 +1,7 @@
+<map id="GBEmulator::APU::controllerWriting" name="GBEmulator::APU::controllerWriting">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u.html#a2a2beb934182bc350294c957617b6b8e" title="GBEmulator::APU::setVin" alt="" coords="268,5,452,32"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u.html#af59e1853a3b0d45cead31b0977fdb6c8" title="GBEmulator::APU::setSOTS" alt="" coords="261,56,459,83"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u.html#ad62804e88f16bbc01a69bc76cb266450" title="GBEmulator::APU::setSound\lOnOff" alt="" coords="259,107,461,149"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a57d4a2674fce08fd3a8075ca9f84ef8d" title="GBEmulator::APU::Sound\l::disable" alt="" coords="509,107,692,149"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_i_sound.html#a61ff7b18438686d474c7db661db32ed7" title="GBEmulator::ISound\l::setVolume" alt="" coords="740,107,892,149"/>
+</map>

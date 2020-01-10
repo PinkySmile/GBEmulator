@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['inc16',['INC16',['../namespace_g_b_emulator_1_1_instructions.html#ac43eeb0be387e6024bf490073fe0770b',1,'GBEmulator::Instructions']]],
+  ['inc8',['INC8',['../namespace_g_b_emulator_1_1_instructions.html#a8a1d6686b5830a0385946e9fa81f5713',1,'GBEmulator::Instructions']]],
+  ['incptr',['INCPTR',['../namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff',1,'GBEmulator::Instructions']]],
+  ['inttohex',['intToHex',['../namespace_g_b_emulator_1_1_instructions.html#a80a3ff5d0867ed0f39f5cf0cfe31707e',1,'GBEmulator::Instructions']]],
+  ['invalidopcodeexception',['InvalidOpcodeException',['../class_g_b_emulator_1_1_c_p_u_1_1_invalid_opcode_exception.html#a5cb3b7e22936c30be05927dda320d4f0',1,'GBEmulator::CPU::InvalidOpcodeException']]],
+  ['invalidromexception',['InvalidRomException',['../class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_exception.html#aec318431eb84f80bee3dc9ca15c726fd',1,'GBEmulator::Memory::Cartridge::InvalidRomException']]],
+  ['invalidromramsizeexception',['InvalidRomRamSizeException',['../class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_ram_size_exception.html#a4eabcb11f90796e2b966ab92a41b7b84',1,'GBEmulator::Memory::Cartridge::InvalidRomRamSizeException']]],
+  ['invalidromsizeexception',['InvalidRomSizeException',['../class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_size_exception.html#ab2e184d0df7d4606825191a833fb346d',1,'GBEmulator::Memory::Cartridge::InvalidRomSizeException']]],
+  ['invalidstopexception',['InvalidSTOPException',['../class_g_b_emulator_1_1_instructions_1_1_invalid_s_t_o_p_exception.html#ae6d6047ea6c1bff6f0d90c3981033f96',1,'GBEmulator::Instructions::InvalidSTOPException']]],
+  ['isactivated',['isActivated',['../class_g_b_emulator_1_1_timing_1_1_timer.html#a673a24d7e20a30740ec29079a006253b',1,'GBEmulator::Timing::Timer']]],
+  ['isbuttonpressed',['isButtonPressed',['../class_g_b_emulator_1_1_input_1_1_joypad_emulator.html#a07bd84256676d0b4b9ab6ca6b2400c10',1,'GBEmulator::Input::JoypadEmulator::isButtonPressed()'],['../class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a4eeabc399d286f48875d674022be3a4f',1,'GBEmulator::Input::SFMLKeyboardJoypadEmulator::isButtonPressed()']]],
+  ['isclosed',['isClosed',['../class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a87bd4b8eee97826d88f971d9701e27f5',1,'GBEmulator::Graphics::ILCD::isClosed()'],['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a42bc52e97b30951e73ba509aa86d336a',1,'GBEmulator::Graphics::LCDSFML::isClosed()']]],
+  ['isexternal',['isExternal',['../class_g_b_emulator_1_1_network_1_1_cable_interface.html#a8e09922317906cfd3aae1f4ed22f7647',1,'GBEmulator::Network::CableInterface']]],
+  ['ishalted',['isHalted',['../class_g_b_emulator_1_1_c_p_u.html#ac5b012531f62b0dfad2a9cca8f9899c2',1,'GBEmulator::CPU']]],
+  ['isstopped',['isStopped',['../class_g_b_emulator_1_1_c_p_u.html#a737ae45d4dcc3e84c1d79fab163c5e91',1,'GBEmulator::CPU']]],
+  ['istransfering',['isTransfering',['../class_g_b_emulator_1_1_network_1_1_cable_interface.html#a61279044e8d0daf70416396a25415b81',1,'GBEmulator::Network::CableInterface']]]
+];

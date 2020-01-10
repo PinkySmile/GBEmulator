@@ -1,0 +1,7 @@
+<map id="GBEmulator::APU::channelWaveWriting" name="GBEmulator::APU::channelWaveWriting">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af96e2a6c4b3f426caf350a1b43a656a9" title="GBEmulator::APU::Sound\l::setSoundONOFF" alt="" coords="248,5,431,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a4f63ad10f591080c92dda2535b65c9f7" title="GBEmulator::APU::Sound\l::setSoundLength" alt="" coords="248,71,431,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aa8c6f7cd4d81148c841a5eec3a0fe3df" title="GBEmulator::APU::Sound\l::setOutputLevel" alt="" coords="248,136,431,177"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a5b9eef6ccfc8b4416692f4fa1b86ecff" title="GBEmulator::APU::Sound\l::setLowFrequency" alt="" coords="248,201,431,243"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af7b973bb3d500f51c880c2f028cf51ad" title="GBEmulator::APU::Sound\l::setRestartOptions" alt="" coords="248,267,431,308"/>
+</map>
