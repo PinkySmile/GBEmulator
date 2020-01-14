@@ -381,7 +381,10 @@ namespace GBEmulator
 			break;
 
 		case INTERNAL_ROM_ENABLE:
-			this->_internalRomEnabled = false;
+			if (value != 1)
+				this->_halted = true;
+			else
+				this->_internalRomEnabled = false;
 			break;
 
 		case TIMER_CONTROL:
