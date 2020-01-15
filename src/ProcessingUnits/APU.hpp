@@ -11,8 +11,10 @@
 #define CHANSIZE_WPRAM 0xF
 #define DIV_FREQUENCY 4194304
 
+#include <memory>
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
+#include "SoundChannel/SoundChannel.hpp"
 
 namespace GBEmulator
 {
@@ -170,10 +172,10 @@ namespace GBEmulator
 
 	private:
 		//soundChannel1
-		Sound _managerChannel1;
+		std::unique_ptr<SoundChannel::SoundChannel> _managerChannel1;
 
 		//soundChannel2
-		Sound _managerChannel2;    //only tone
+		std::unique_ptr<SoundChannel::SoundChannel> _managerChannel2;
 
 		//soundChannelWave
 		Sound _managerChannelWave; //wave output

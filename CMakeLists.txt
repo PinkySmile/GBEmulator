@@ -43,6 +43,14 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.hpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
 )
 
 if (WIN32)
