@@ -17,13 +17,19 @@ namespace GBEmulator::SoundChannel
 {
 	class NoiseChannel : public SoundChannel {
 	private:
-		//! @breif All 4 wave forms that can be played
+		//! @briif All 4 wave forms that can be played
 		std::vector<std::vector<unsigned char>> _waves;
+		//! @brief The dividing ratio of the noise.
 		unsigned char _dividingRatio = 0;
+		//! @brief Whether the noise wave needs to be updated.
 		bool _wroteInNoiseFrequency = false;
+		//! @brief The frequency of the clock.
 		unsigned char _shiftClockFrequency = 0;
+		//! @brief The step number of the noise.
 		bool _polynomialCounterStep = false;
+		//! @brief Current LFSR state.
 		unsigned short _lfsr = 0;
+		//! @brief The period in the noise wave.
 		double _bitPeriod = 0;
 
 		void _updateLFSR(unsigned char stepNumber, std::vector<unsigned char> &lfsrBit);

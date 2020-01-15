@@ -90,13 +90,8 @@ namespace GBEmulator::SoundChannel
 		}
 	}
 
-	void SoundChannel::update(unsigned cycles)
+	void SoundChannel::_checkRestart()
 	{
-		if (!this->_soundOn && this->_restart) {
-			this->_soundOn = true;
-			this->_sound.setVolume(this->_initialVolume * 100.f / 15);
-		}
-
 		if (
 			this->_restartType &&
 			this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256. / (64 - this->_soundLength))
@@ -105,6 +100,16 @@ namespace GBEmulator::SoundChannel
 			this->_restart = false;
 			this->_sound.setVolume(0);
 		}
+	}
+
+	void SoundChannel::update(unsigned cycles)
+	{
+		if (!this->_soundOn && this->_restart) {
+			this->_soundOn = true;
+			this->_sound.setVolume(this->_initialVolume * 100.f / 15);
+		}
+
+		this->_checkRestart();
 
 		if (!this->_soundOn)
 			return;

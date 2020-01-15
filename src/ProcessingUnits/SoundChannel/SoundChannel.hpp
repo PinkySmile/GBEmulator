@@ -63,6 +63,7 @@ namespace GBEmulator::SoundChannel
 
 		void _updateVolume(unsigned cycles);
 		void _updateSweep(unsigned cycles);
+		virtual void _checkRestart();
 
 	public:
 		//! @brief Constructor.
