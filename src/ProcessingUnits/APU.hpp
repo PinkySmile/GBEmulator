@@ -16,6 +16,7 @@
 #include "../Sound/ISound.hpp"
 #include "SoundChannel/SoundChannel.hpp"
 #include "SoundChannel/SquareWaveChannel.hpp"
+#include "SoundChannel/NoiseChannel.hpp"
 
 namespace GBEmulator
 {
@@ -182,7 +183,7 @@ namespace GBEmulator
 		Sound _managerChannelWave; //wave output
 
 		//soundChannelNoise
-		Sound _managerChannelNoise;//noise channel
+		SoundChannel::NoiseChannel _managerChannelNoise;//noise channel
 
 		Memory::Memory _wpRAM; //wave pattern RAM
 

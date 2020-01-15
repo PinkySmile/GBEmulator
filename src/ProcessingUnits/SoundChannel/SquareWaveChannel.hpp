@@ -23,18 +23,15 @@ namespace GBEmulator::SoundChannel
 		void _update(unsigned cycles) override;
 
 	public:
-
 		//! @brief Returns a square shaped wave;
 		static std::vector<unsigned char> &getSquareWave(int frequency, float percentage);
 
 		//! @brief Constructor.
 		//! @param soundInterface The interface to output the sound to.
 		SquareWaveChannel(ISound &soundInterface);
-		void write(unsigned char address, unsigned char value) override;
-		unsigned char read(unsigned char address) const override;
-		void restart() override;
-
+		//! @brief Change the wave duty.
 		void setWave(unsigned char value);
+		//! @brief Get the wave duty.
 		unsigned char getWave() const;
 	};
 }

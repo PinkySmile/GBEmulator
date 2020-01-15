@@ -80,20 +80,9 @@ namespace GBEmulator::SoundChannel
 		unsigned char getVolume() const;
 		unsigned char getRestartOptions() const;
 
-		//! @brief This function allows some channel to have extra registers.
-		//! Write the value to the given register.
-		//! @param address The register to write to.
-		//! @param value The new value for the register.
-		virtual void write(unsigned char address, unsigned char value) = 0;
-		//! @brief This function allows some channel to have extra registers.
-		//! Retrieve the value from the given register.
-		//! @param address The register to read from.
-		virtual unsigned char read(unsigned char address) const = 0;
 		//! @brief Update the channel.
 		//! @param The number of CPU cycles that elapsed.
 		void update(unsigned cycles);
-		//! @brief Restart the sound state.
-		virtual void restart() = 0;
 	};
 }
 

@@ -191,7 +191,7 @@ namespace GBEmulator
 		this->_managerChannel1.update(cycle);
 		this->_managerChannel2.update(cycle);
 		this->_managerChannelWave.update(cycle, this->_wpRAM);
-		this->_managerChannelNoise.update(cycle, this->_wpRAM);
+		this->_managerChannelNoise.update(cycle);
 	}
 
 	void APU::write(unsigned short address, unsigned char value)
@@ -371,7 +371,7 @@ namespace GBEmulator
 	{
 		switch (address) {
 			case 0x0 :
-				return this->_managerChannelNoise.getSoundLength(true);
+				return this->_managerChannelNoise.getSoundLength();
 			case 0x1 :
 				return this->_managerChannelNoise.getVolume();
 			case 0x2 :
@@ -387,7 +387,7 @@ namespace GBEmulator
 	{
 		switch (address) {
 			case 0x0 :
-				this->_managerChannelNoise.setSoundLength(value, true);
+				this->_managerChannelNoise.setSoundLength(value);
 				break;
 			case 0x1 :
 				this->_managerChannelNoise.setVolume(value);

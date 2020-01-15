@@ -34,10 +34,6 @@ namespace GBEmulator::SoundChannel
 	{
 	}
 
-	void SquareWaveChannel::restart()
-	{
-	}
-
 	void SquareWaveChannel::setWave(unsigned char value)
 	{
 		this->_soundLength = value & 0b00111111U;
@@ -50,18 +46,5 @@ namespace GBEmulator::SoundChannel
 	unsigned char SquareWaveChannel::getWave() const
 	{
 		return (this->_wavePattern << 6U) | 0b00111111U;
-	}
-
-	void SquareWaveChannel::write(unsigned char address, unsigned char value)
-	{
-		if (address == 0)
-			this->setWave(value);
-	}
-
-	unsigned char SquareWaveChannel::read(unsigned char address) const
-	{
-		if (address == 0)
-			return this->getWave();
-		return 0xFF;
 	}
 }
