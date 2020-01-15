@@ -45,7 +45,10 @@ namespace GBEmulator::SoundChannel
 		//! @brief The direction of the sweep.
 		Direction _sweepDirection = INCREASE;
 		//! @brief The number of CPU cycles that elapsed since the start of the sweep.
-		unsigned _sweepCycles = 0;
+		double _sweepCycles = 0;
+		unsigned char _shiftRemain = 0;
+		double _realFrequency = 0;
+
 
 		//Volume
 		//! @brief The Initial volume of the envelope.

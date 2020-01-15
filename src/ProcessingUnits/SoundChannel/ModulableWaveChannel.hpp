@@ -22,6 +22,8 @@ namespace GBEmulator::SoundChannel
 		Memory::Memory _wpRAM;
 		//! @brief The current wave output level
 		unsigned char _waveOutputLevel = 0;
+		//! @brief Whether the waves needs to be generated again.
+		bool _genWave = true;
 
 		void _update(unsigned cycles) override;
 		void _checkRestart() override;

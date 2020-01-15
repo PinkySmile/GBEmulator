@@ -18,6 +18,10 @@ namespace GBEmulator::SoundChannel
 
 	void ModulableWaveChannel::_update(unsigned)
 	{
+		if (this->_genWave) {
+			this->_genWave = false;
+
+		}
 	}
 
 	void ModulableWaveChannel::_checkRestart()
@@ -71,6 +75,7 @@ namespace GBEmulator::SoundChannel
 	void ModulableWaveChannel::write(unsigned char address, unsigned char value)
 	{
 		this->_wpRAM.write(address, value);
+		this->_genWave = true;
 	}
 
 }

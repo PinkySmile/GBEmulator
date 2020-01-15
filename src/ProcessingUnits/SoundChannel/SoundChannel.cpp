@@ -19,9 +19,11 @@ namespace GBEmulator::SoundChannel
 
 	void SoundChannel::setSweep(unsigned char value)
 	{
+		this->_realFrequency = 131072.f / (2048 - this->_frequency);
 		this->_sweepTime = (value & 0b01110000U) >> 4U;
 		this->_sweepDirection = (value & 0b00001000U) ? DECREASE : INCREASE;
 		this->_sweepShiftNumber = (value & 0b00000111U);
+		this->_shiftRemain = this->_sweepShiftNumber;
 	}
 
 	void SoundChannel::setVolume(unsigned char value)
@@ -36,7 +38,8 @@ namespace GBEmulator::SoundChannel
 	void SoundChannel::setLowFrequency(unsigned char value)
 	{
 		this->_frequency = (this->_frequency & 0b11100000000U) | value;
-		this->_sound.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
+		this->_realFrequency = 131072.f / (2048 - this->_frequency);
+		this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
 	}
 
 	void SoundChannel::setRestartOptions(unsigned char value)
@@ -46,7 +49,8 @@ namespace GBEmulator::SoundChannel
 		this->_restart = value >> 7U;
 		this->_restartType = (value & 0b01000000U) >> 6U;
 		this->_frequency = (this->_frequency & 0b00011111111U) | val;
-		this->_sound.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
+		this->_realFrequency = 131072.f / (2048 - this->_frequency);
+		this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
 	}
 
 	void SoundChannel::setSOTerminals(bool SO1, bool SO2)
@@ -79,14 +83,11 @@ namespace GBEmulator::SoundChannel
 	{
 		this->_sweepCycles += cycles;
 
-		if (this->_sweepTime) {
-			double realFrequency = 131072.f / (2048 - this->_frequency);
-
-			realFrequency += (
-				(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
-				realFrequency / std::pow(2, this->_sweepShiftNumber) * (this->_sweepDirection * 2 + 1)
-			);
-			this->_sound.setPitch(realFrequency / BASE_FREQU);
+		if (this->_sweepTime && this->_shiftRemain && this->_sweepCycles > Timing::getCyclesPerSecondsFromFrequency(this->_sweepTime / 128.)) {
+			this->_sweepCycles -= Timing::getCyclesPerSecondsFromFrequency(this->_sweepTime / 128.);
+			this->_shiftRemain--;
+			this->_realFrequency += this->_realFrequency / std::pow(2, this->_sweepShiftNumber) * (this->_sweepDirection * 2 - 1);
+			this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
 		}
 	}
 

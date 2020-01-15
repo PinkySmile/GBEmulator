@@ -15,7 +15,7 @@ namespace GBEmulator::SoundChannel
 		static std::vector<unsigned char> raw(44100LLU);
 
 		for (int i = 0; i < 44100; i++)
-			raw[i] = (std::fmod(i * frequency * 100 / 44100, 100) > percentage ? 127 : -127);
+			raw[i] = (std::fmod(i * frequency * 100 / 44100, 100) > percentage ? -127 : 127);
 		return (raw);
 	}
 
