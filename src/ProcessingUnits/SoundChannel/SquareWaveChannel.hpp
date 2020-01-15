@@ -20,8 +20,6 @@ namespace GBEmulator::SoundChannel
 		//! @breif The current wave form played.
 		unsigned char _wavePattern = 0;
 
-		void _setWave(unsigned char value);
-		unsigned char _getWave();
 		void _update(unsigned cycles) override;
 
 	public:
@@ -33,8 +31,11 @@ namespace GBEmulator::SoundChannel
 		//! @param soundInterface The interface to output the sound to.
 		SquareWaveChannel(ISound &soundInterface);
 		void write(unsigned char address, unsigned char value) override;
-		unsigned char read(unsigned char address) override;
+		unsigned char read(unsigned char address) const override;
 		void restart() override;
+
+		void setWave(unsigned char value);
+		unsigned char getWave() const;
 	};
 }
 

@@ -15,6 +15,7 @@
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
 #include "SoundChannel/SoundChannel.hpp"
+#include "SoundChannel/SquareWaveChannel.hpp"
 
 namespace GBEmulator
 {
@@ -48,7 +49,7 @@ namespace GBEmulator
 	public:
 		APU() = delete;
 		APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour);
-		~APU();
+		~APU() = default;
 		APU(const APU &) = delete;
 		APU &operator=(const APU &) = delete;
 
@@ -172,10 +173,10 @@ namespace GBEmulator
 
 	private:
 		//soundChannel1
-		std::unique_ptr<SoundChannel::SoundChannel> _managerChannel1;
+		SoundChannel::SquareWaveChannel _managerChannel1;
 
 		//soundChannel2
-		std::unique_ptr<SoundChannel::SoundChannel> _managerChannel2;
+		SoundChannel::SquareWaveChannel _managerChannel2;
 
 		//soundChannelWave
 		Sound _managerChannelWave; //wave output

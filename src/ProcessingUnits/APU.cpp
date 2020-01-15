@@ -14,17 +14,14 @@
 
 namespace GBEmulator
 {
-
 	APU::APU(ISound &channelOne, ISound &channelTwo, ISound &channelThree, ISound &channelFour) :
-		_managerChannel1(new SoundChannel::SquareWaveChannel(channelOne)),
-		_managerChannel2(new SoundChannel::SquareWaveChannel(channelTwo)),
+		_managerChannel1(channelOne),
+		_managerChannel2(channelTwo),
 		_managerChannelWave(channelThree),
 		_managerChannelNoise(channelFour),
 		_wpRAM(CHANSIZE_WPRAM, CHANSIZE_WPRAM)
 	{
 	}
-
-	APU::~APU() = default;
 
 	void APU::Sound::disable(bool state)
 	{
@@ -191,8 +188,8 @@ namespace GBEmulator
 
 	void APU::update(unsigned cycle)
 	{
-		this->_managerChannel1->update(cycle);
-		this->_managerChannel2->update(cycle);
+		this->_managerChannel1.update(cycle);
+		this->_managerChannel2.update(cycle);
 		this->_managerChannelWave.update(cycle, this->_wpRAM);
 		this->_managerChannelNoise.update(cycle, this->_wpRAM);
 	}
@@ -252,15 +249,15 @@ namespace GBEmulator
 	{
 		switch (address) {
 		case 0x0 :
-			return this->_managerChannel1->getSweep();
+			return this->_managerChannel1.getSweep();
 		case 0x1 :
-			return this->_managerChannel1->read(0);
+			return this->_managerChannel1.getWave();
 		case 0x2 :
-			return this->_managerChannel1->getVolume();
+			return this->_managerChannel1.getVolume();
 		case 0x3 :
 			return 0xFF;
 		case 0x4 :
-			return this->_managerChannel1->getRestartOptions();
+			return this->_managerChannel1.getRestartOptions();
 		default :
 			return 0xFF;
 		}
@@ -269,24 +266,18 @@ namespace GBEmulator
 	void APU::channelOneWriting(unsigned short address, unsigned char value)
 	{
 		switch (address) {
-			case 0x0 :
-				this->_managerChannel1->setSweep(value);
-				break;
-			case 0x1 :
-				this->_managerChannel1->write(0, value);
-				break;
-			case 0x2 :
-				this->_managerChannel1->setVolume(value);
-				break;
-			case 0x3 :
-				this->_managerChannel1->setLowFrequency(value);
-				break;
-			case 0x4 :
-				this->_managerChannel1->setRestartOptions(value);
-				break;
-			default :
-				break;
-
+		case 0x0 :
+			return this->_managerChannel1.setSweep(value);
+		case 0x1 :
+			return this->_managerChannel1.setWave(value);
+		case 0x2 :
+			return this->_managerChannel1.setVolume(value);
+		case 0x3 :
+			return this->_managerChannel1.setLowFrequency(value);
+		case 0x4 :
+			return this->_managerChannel1.setRestartOptions(value);
+		default :
+			return;
 		}
 	}
 
@@ -297,38 +288,32 @@ namespace GBEmulator
 	unsigned char APU::channelTwoReading(unsigned short address) const
 	{
 		switch (address) {
-			case 0x0 :
-				return this->_managerChannel2->read(0);
-			case 0x1 :
-				return this->_managerChannel2->getVolume();
-			case 0x2 :
-				return 0xFF;
-			case 0x3 :
-				return this->_managerChannel2->getRestartOptions();
-			default :
-				return 0xFF;
-
+		case 0x0 :
+			return this->_managerChannel2.getWave();
+		case 0x1 :
+			return this->_managerChannel2.getVolume();
+		case 0x2 :
+			return 0xFF;
+		case 0x3 :
+			return this->_managerChannel2.getRestartOptions();
+		default :
+			return 0xFF;
 		}
 	}
 
 	void APU::channelTwoWriting(unsigned short address, unsigned char value)
 	{
 		switch (address) {
-			case 0x0 :
-				this->_managerChannel2->write(0, value);
-				break;
-			case 0x1 :
-				this->_managerChannel2->setVolume(value);
-				break;
-			case 0x2 :
-				this->_managerChannel2->setLowFrequency(value);
-				break;
-			case 0x3 :
-				this->_managerChannel2->setRestartOptions(value);
-				break;
-			default :
-				break;
-
+		case 0x0 :
+			return this->_managerChannel2.setWave(value);
+		case 0x1 :
+			return this->_managerChannel2.setVolume(value);
+		case 0x2 :
+			return this->_managerChannel2.setLowFrequency(value);
+		case 0x3 :
+			return this->_managerChannel2.setRestartOptions(value);
+		default :
+			return;
 		}
 	}
 
@@ -668,8 +653,8 @@ namespace GBEmulator
 	void APU::setSOTS(unsigned char value)
 	{
 		this->_soundOutputTerminalSelection = value;
-		this->_managerChannel1->setSOTerminals(    value & 0b00000001U, value & 0b00010000U);
-		this->_managerChannel2->setSOTerminals(    value & 0b00000010U, value & 0b00100000U);
+		this->_managerChannel1.setSOTerminals(    value & 0b00000001U, value & 0b00010000U);
+		this->_managerChannel2.setSOTerminals(    value & 0b00000010U, value & 0b00100000U);
 		this->_managerChannelWave.setSOTerminals( value & 0b00000100U, value & 0b01000000U);
 		this->_managerChannelNoise.setSOTerminals(value & 0b00001000U, value & 0b10000000U);
 	}
@@ -682,8 +667,8 @@ namespace GBEmulator
 	void APU::setSoundOnOff(unsigned char value)
 	{
 		this->_allSoundsOn = value >> 7U;
-		this->_managerChannel1->disable(!this->_allSoundsOn);
-		this->_managerChannel2->disable(!this->_allSoundsOn);
+		this->_managerChannel1.disable(!this->_allSoundsOn);
+		this->_managerChannel2.disable(!this->_allSoundsOn);
 		this->_managerChannelWave.disable(!this->_allSoundsOn);
 		this->_managerChannelNoise.disable(!this->_allSoundsOn);
 	}

@@ -88,7 +88,7 @@ namespace GBEmulator::SoundChannel
 		//! @brief This function allows some channel to have extra registers.
 		//! Retrieve the value from the given register.
 		//! @param address The register to read from.
-		virtual unsigned char read(unsigned char address) = 0;
+		virtual unsigned char read(unsigned char address) const = 0;
 		//! @brief Update the channel.
 		//! @param The number of CPU cycles that elapsed.
 		void update(unsigned cycles);
