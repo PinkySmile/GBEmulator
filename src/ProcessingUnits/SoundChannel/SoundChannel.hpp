@@ -34,6 +34,8 @@ namespace GBEmulator::SoundChannel
 		bool _restartType = false;
 		//! @brief Whether this sound is enabled.
 		bool _soundOn = false;
+		//! @brief The length the sound should last.
+		unsigned char _soundLength = 0;
 
 		//Sweep
 		//! @brief The time remaining before the sweep is done.
@@ -54,6 +56,13 @@ namespace GBEmulator::SoundChannel
 		unsigned char _volumeShiftNumber = 0;
 		//! @brief The number of CPU cycles that elapsed since the start of the envelope.
 		unsigned _volumeCycles = 0;
+
+		//! @brief Update the channel.
+		//! @param The number of CPU cycles that elapsed.
+		virtual void _update(unsigned cycles) = 0;
+
+		void _updateVolume(unsigned cycles);
+		void _updateSweep(unsigned cycles);
 
 	public:
 		//! @brief Constructor.
@@ -82,7 +91,7 @@ namespace GBEmulator::SoundChannel
 		virtual unsigned char read(unsigned char address) = 0;
 		//! @brief Update the channel.
 		//! @param The number of CPU cycles that elapsed.
-		virtual void update(unsigned cycles) = 0;
+		void update(unsigned cycles);
 		//! @brief Restart the sound state.
 		virtual void restart() = 0;
 	};

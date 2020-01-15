@@ -7,7 +7,6 @@
 
 #include <cmath>
 #include "SquareWaveChannel.hpp"
-#include "../../Timing/Timer.hpp"
 
 namespace GBEmulator::SoundChannel
 {
@@ -21,50 +20,18 @@ namespace GBEmulator::SoundChannel
 	}
 
 	SquareWaveChannel::SquareWaveChannel(GBEmulator::ISound &soundInterface) :
-		SoundChannel(soundInterface)
+		SoundChannel(soundInterface),
+		_waves{
+			getSquareWave(BASE_FREQU, 12.5),
+			getSquareWave(BASE_FREQU, 25),
+			getSquareWave(BASE_FREQU, 50),
+			getSquareWave(BASE_FREQU, 75),
+		}
 	{
 	}
 
-	void SquareWaveChannel::update(unsigned cycles)
+	void SquareWaveChannel::_update(unsigned)
 	{
-		if (!this->_soundOn && this->_restart) {
-			this->_soundOn = true;
-			this->_sound.setVolume(this->_initialVolume * 100.f / 15);
-		}
-
-		if (
-			this->_restartType &&
-			this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256. / (64 - this->_soundLength))
-		) {
-			this->_soundOn = false;
-			this->_restart = false;
-			this->_sound.setVolume(0);
-		}
-
-		if (!this->_soundOn)
-			return;
-
-		this->_volumeCycles += cycles;
-		this->_sweepCycles += cycles;
-
-		if (this->_volumeShiftNumber) {
-			double volume = (
-				this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
-				(this->_volumeDirection * 2 - 1) + this->_initialVolume
-			);
-
-			this->_sound.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100 / 15);
-		}
-
-		if (this->_sweepTime) {
-			double realFrequency = 131072.f / (2048 - this->_frequency);
-
-			realFrequency += (
-				(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
-				realFrequency / pow(2, this->_sweepShiftNumber) * (this->_sweepDirection * 2 + 1)
-			);
-			this->_sound.setPitch(realFrequency / BASE_FREQU);
-		}
 	}
 
 	void SquareWaveChannel::restart()
@@ -76,18 +43,7 @@ namespace GBEmulator::SoundChannel
 		this->_soundLength = value & 0b00111111U;
 		if (this->_wavePattern != value >> 6U) {
 			this->_wavePattern = value >> 6U;
-			switch (this->_wavePattern) {
-			case 0:
-				return this->_sound.setWave(getSquareWave(BASE_FREQU, 12.5), 44100);
-			case 1:
-				return this->_sound.setWave(getSquareWave(BASE_FREQU, 25), 44100);
-			case 2:
-				return this->_sound.setWave(getSquareWave(BASE_FREQU, 50), 44100);
-			case 3:
-				return this->_sound.setWave(getSquareWave(BASE_FREQU, 75), 44100);
-			default:
-				return;
-			}
+			this->_sound.setWave(this->_waves[this->_wavePattern], 44100);
 		}
 	}
 

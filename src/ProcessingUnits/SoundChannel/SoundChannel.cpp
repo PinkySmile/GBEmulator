@@ -6,7 +6,9 @@
 */
 
 #include <iostream>
+#include <cmath>
 #include "SoundChannel.hpp"
+#include "../../Timing/Timer.hpp"
 
 namespace GBEmulator::SoundChannel
 {
@@ -57,6 +59,59 @@ namespace GBEmulator::SoundChannel
 	{
 		this->_soundOn = !disabled && this->_restart;
 		this->_sound.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
+	}
+
+	void SoundChannel::_updateVolume(unsigned cycles)
+	{
+		this->_volumeCycles += cycles;
+
+		if (this->_volumeShiftNumber) {
+			double volume = (
+				this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
+				(this->_volumeDirection * 2 - 1) + this->_initialVolume
+			);
+
+			this->_sound.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100 / 15);
+		}
+	}
+
+	void SoundChannel::_updateSweep(unsigned cycles)
+	{
+		this->_sweepCycles += cycles;
+
+		if (this->_sweepTime) {
+			double realFrequency = 131072.f / (2048 - this->_frequency);
+
+			realFrequency += (
+				(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
+				realFrequency / std::pow(2, this->_sweepShiftNumber) * (this->_sweepDirection * 2 + 1)
+			);
+			this->_sound.setPitch(realFrequency / BASE_FREQU);
+		}
+	}
+
+	void SoundChannel::update(unsigned cycles)
+	{
+		if (!this->_soundOn && this->_restart) {
+			this->_soundOn = true;
+			this->_sound.setVolume(this->_initialVolume * 100.f / 15);
+		}
+
+		if (
+			this->_restartType &&
+			this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256. / (64 - this->_soundLength))
+		) {
+			this->_soundOn = false;
+			this->_restart = false;
+			this->_sound.setVolume(0);
+		}
+
+		if (!this->_soundOn)
+			return;
+
+		this->_updateVolume(cycles);
+		this->_updateSweep(cycles);
+		this->_update(cycles);
 	}
 
 	unsigned char SoundChannel::getRestartOptions() const
