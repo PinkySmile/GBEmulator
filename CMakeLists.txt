@@ -3,10 +3,7 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        add_compile_options(-W -Wall -Wextra)
-endif()
-
+add_compile_options(-W -Wall -Wextra -Wshadow -o3)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -33,6 +30,7 @@ add_executable(
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
         src/ProcessingUnits/CPU.hpp
+        src/ProcessingUnits/Instructions/Instructions.hpp
         src/ProcessingUnits/Instructions/CPUInstructions.cpp
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp
@@ -47,14 +45,26 @@ add_executable(
         src/Timing/Timer.hpp
 )
 
-target_link_libraries(
-        GBEmulator
-        sfml-graphics
-        sfml-window
-        sfml-system
-        sfml-audio
-        pthread
-)
+if (WIN32)
+        target_link_libraries(
+                GBEmulator
+                ws2_32
+                sfml-graphics
+                sfml-window
+                sfml-system
+                sfml-audio
+                pthread
+        )
+else (WIN32)
+        target_link_libraries(
+                GBEmulator
+                sfml-graphics
+                sfml-window
+                sfml-system
+                sfml-audio
+                pthread
+        )
+endif (WIN32)
 
 add_executable(
         tests
@@ -97,7 +107,7 @@ add_executable(
         tests/TestGpu/Test_isStatInterrupt.cpp
         tests/TestGpu/Test_isVBlankInterrupt.cpp
         tests/TestCpu/Test_write.cpp
-        tests/TestCPUInstruction/ADD16.cpp
+        tests/TestCPUInstruction/arithmetic/ADD16.cpp
         tests/TestCPUInstruction/JP.cpp
         tests/TestCPUInstruction/JR.cpp
         tests/TestCPUInstruction/LD/LD8.cpp
@@ -109,7 +119,12 @@ add_executable(
         tests/TestCPUInstruction/bits/RES.cpp
         tests/TestCPUInstruction/bits/SET.cpp
         tests/TestCPUInstruction/CALL.cpp
-        tests/TestCPUInstruction/bits/RESunrefHL.cpp tests/TestCPUInstruction/bits/SETunrefHL.cpp)
+        tests/TestCPUInstruction/bits/RESunrefHL.cpp
+        tests/TestCPUInstruction/bits/SETunrefHL.cpp
+        tests/TestCPUInstruction/arithmetic/ADD.cpp
+        tests/TestCPUInstruction/arithmetic/ADC.cpp
+        tests/TestCPUInstruction/arithmetic/SBC.cpp
+)
 
 target_link_libraries(
         tests

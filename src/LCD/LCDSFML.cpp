@@ -6,24 +6,28 @@
 */
 
 #include <cmath>
+#include <cstring>
 #include "LCDSFML.hpp"
-
-#define DUCK_TAPE(val) (((val & 1) << 1) | (val >> 1))
 
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
-	_BGTexture(0x180),
-	_winTexture(0x180),
-	_palette0Texture(0x180),
-	_palette1Texture(0x180),
-	_title(title)
+	_tiles(nullptr),
+	_screen(new sf::Color[160 * 144]),
+	_title(title),
+	_view({80, 72}, {160, 144})
 {
+	this->_texture.create(160, 144);
+	this->setView(this->_view);
 }
 
 void GBEmulator::Graphics::LCDSFML::display()
 {
 	sf::Event event;
+	sf::Sprite sprite;
 
+	this->_texture.update(reinterpret_cast<sf::Uint8 *>(this->_screen));
+	sprite.setTexture(this->_texture);
+	this->draw(sprite);
 	if (this->_clock.getElapsedTime().asMilliseconds() > 1000) {
 		this->setTitle(this->_title + " (" + std::to_string(this->getFramerate()) + ") FPS");
 		this->_clock.restart();
@@ -43,100 +47,18 @@ double GBEmulator::Graphics::LCDSFML::getFramerate()
 
 void GBEmulator::Graphics::LCDSFML::clear()
 {
-	sf::RenderWindow::clear(
-		sf::Color{
+	for (int i = 0; i < 160 * 144; i++)
+		this->_screen[i] = {
 			RGBColor::White.r,
 			RGBColor::White.g,
 			RGBColor::White.b,
 			255
-		}
-	);
+		};
 }
 
-sf::Texture& GBEmulator::Graphics::LCDSFML::_getTexture(unsigned char id, bool signedMode, TextureType type)
+GBEmulator::Graphics::LCDSFML::~LCDSFML()
 {
-	switch (type) {
-	case Background:
-		if (signedMode)
-			return this->_BGTexture[static_cast<char>(id) + 0x100];
-		return this->_BGTexture[id];
-	case Window:
-		if (signedMode)
-			return this->_winTexture[static_cast<char>(id) + 0x100];
-		return this->_winTexture[id];
-	case Palette0:
-		if (signedMode)
-			return this->_palette0Texture[static_cast<char>(id) + 0x100];
-		return this->_palette0Texture[id];
-	case Palette1:
-		if (signedMode)
-			return this->_palette1Texture[static_cast<char>(id) + 0x100];
-		return this->_palette1Texture[id];
-	}
-	return this->_BGTexture[id];
-}
-
-void GBEmulator::Graphics::LCDSFML::_getTextureFromTile(const unsigned char *tile, sf::Texture &texture, TextureType type) const
-{
-	sf::Color colors[64];
-
-	texture.create(8, 8);
-	switch (type) {
-	case Background:
-		for (int i = 0; i < 64; i++)
-			colors[i] = sf::Color {
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].r,
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].g,
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].b,
-				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
-			};
-		break;
-	case Window:
-		for (int i = 0; i < 64; i++)
-			colors[i] = sf::Color {
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].r,
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].g,
-				this->_BGColorPalette[DUCK_TAPE(tile[i])].b,
-				255
-			};
-		break;
-	case Palette0:
-		for (int i = 0; i < 64; i++)
-			colors[i] = sf::Color {
-				this->_objectColorPalette0[DUCK_TAPE(tile[i])].r,
-				this->_objectColorPalette0[DUCK_TAPE(tile[i])].g,
-				this->_objectColorPalette0[DUCK_TAPE(tile[i])].b,
-				(tile[i] == 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
-			};
-		break;
-	case Palette1:
-		for (int i = 0; i < 64; i++)
-			colors[i] = sf::Color {
-				this->_objectColorPalette1[DUCK_TAPE(tile[i])].r,
-				this->_objectColorPalette1[DUCK_TAPE(tile[i])].g,
-				this->_objectColorPalette1[DUCK_TAPE(tile[i])].b,
-				(tile[i]== 0) ? static_cast<sf::Uint8>(0) : static_cast<sf::Uint8>(255)
-			};
-		break;
-	}
-	texture.update(reinterpret_cast<sf::Uint8 *>(&colors));
-}
-
-void GBEmulator::Graphics::LCDSFML::drawBackground(const unsigned char *tiles, float x, float y, bool signedMode)
-{
-	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
-
-	this->_sprite.setScale(1, 1);
-	for (int xpos = -1; xpos < 21; xpos++)
-		for (int ypos = -1; ypos < 19; ypos++) {
-			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
-
-			if (index < 0)
-				continue;
-			this->_sprite.setTexture(this->_getTexture(tiles[index], signedMode, Background));
-			this->_sprite.setPosition(xpos * 8 + off.x, ypos * 8 + off.y);
-			this->draw(this->_sprite);
-		}
+	delete[] this->_screen;
 }
 
 bool GBEmulator::Graphics::LCDSFML::isClosed() const
@@ -149,50 +71,26 @@ void GBEmulator::Graphics::LCDSFML::close()
 	sf::RenderWindow::close();
 }
 
-void GBEmulator::Graphics::LCDSFML::drawWindow(const unsigned char *tiles, float x, float y, bool signedMode)
+void GBEmulator::Graphics::LCDSFML::setMaxSize(unsigned int x, unsigned y)
 {
-	sf::Vector2<double> off{fmod(x, 8), fmod(y, 8)};
-
-	this->_sprite.setScale(1, 1);
-	for (int xpos = -1; xpos < 21; xpos++)
-		for (int ypos = -1; ypos < 19; ypos++) {
-			int index = fmod(xpos - x / 8, 32) + 32 * static_cast<int>(fmod(ypos - y / 8, 32));
-
-			if (index < 0)
-				continue;
-			this->_sprite.setTexture(this->_getTexture(tiles[index], signedMode, Window));
-			this->_sprite.setPosition(xpos * 8 + off.x, ypos * 8 + off.y);
-			this->draw(this->_sprite);
-		}
+	this->_view.setViewport({
+		x / 2.f,
+		y / 2.f,
+		static_cast<float>(x),
+		static_cast<float>(y)
+	});
+	this->setView(this->_view);
+	this->_texture.create(x, y);
+	delete[] this->_screen;
+	this->_screen = new sf::Color[x * y];
 }
 
-void GBEmulator::Graphics::LCDSFML::updateTexture(unsigned char *tile, size_t id)
+void GBEmulator::Graphics::LCDSFML::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 {
-	this->_getTextureFromTile(tile, this->_BGTexture[id], Background);
-	this->_getTextureFromTile(tile, this->_winTexture[id], Window);
-	this->_getTextureFromTile(tile, this->_palette0Texture[id], Palette0);
-	this->_getTextureFromTile(tile, this->_palette1Texture[id], Palette1);
-}
-
-void GBEmulator::Graphics::LCDSFML::drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize)
-{
-	if (doubleSize) {
-		sprite.texture_id *= 4;
-		sprite.x = (sprite.x + sprite.x_flip) * 4;
-		sprite.y = (sprite.y + sprite.y_flip) * 4;
-		for (int i = 0; i < 4; i++) {
-			this->drawSprite(sprite, signedMode, false);
-			sprite.x += ((!sprite.x_flip * 2) - 1) * 8;
-			sprite.y += ((!sprite.y_flip * 2) - 1) * 8;
-			sprite.texture_id++;
-		}
-		return;
-	}
-	if (sprite.palette_number)
-		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette1));
-	else
-		this->_sprite.setTexture(this->_getTexture(sprite.texture_id, signedMode, Palette0));
-	this->_sprite.setPosition(sprite.x + sprite.x_flip * 8 - 8, sprite.y + sprite.y_flip * 8 - 16);
-	this->_sprite.setScale((!sprite.x_flip * 2) - 1, (!sprite.y_flip * 2) - 1);
-	this->draw(this->_sprite);
+	this->_screen[x + y * static_cast<unsigned>(this->_view.getSize().x)] = sf::Color{
+		color.r,
+		color.g,
+		color.b,
+		255
+	};
 }

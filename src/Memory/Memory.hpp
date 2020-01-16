@@ -18,6 +18,7 @@ namespace GBEmulator::Memory
 		bool _readOnly;
 		unsigned char _currentBank;
 		unsigned short _bankSize;
+		unsigned char *_bankPtr = nullptr;
 
 	protected:
 		size_t _size;

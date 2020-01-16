@@ -7,19 +7,20 @@
 
 #include <cmath>
 #include <cstdio>
+#include <iostream>
 #include "APU.hpp"
 #include "../Timing/Timer.hpp"
 
+#define BASE_FREQU 1660
+
 namespace GBEmulator
 {
-	std::vector<unsigned char> getSquareWave(int frequency, float percentage)
+	std::vector<unsigned char> &getSquareWave(int frequency, float percentage)
 	{
-		std::vector<unsigned char>	raw;
-		float waveModifier = (percentage - 50) / 100 * -1;
+		static std::vector<unsigned char>	raw(44100LLU);
 
-		raw.reserve(44100LLU);
 		for (int i = 0; i < 44100; i++)
-			raw.push_back(frequency * (std::sin(i * frequency * 2 * M_PI / 44100) + waveModifier > 0 ? 1 : -1));
+			raw[i] = (std::fmod(i * frequency * 100 / 44100, 100) > percentage ? 127 : -127);
 		return (raw);
 	}
 
@@ -30,8 +31,9 @@ namespace GBEmulator
 	_managerChannelNoise(channelFour),
 	_wpRAM(CHANSIZE_WPRAM, CHANSIZE_WPRAM)
 	{
-		channelOne.setWave(getSquareWave(440, 50), 44100);
-		channelTwo.setWave(getSquareWave(440, 50), 44100);
+		channelOne.setWave(getSquareWave(BASE_FREQU, 50), 44100);
+		channelTwo.setWave(getSquareWave(BASE_FREQU, 50), 44100);
+		channelFour.setWave(Sound::getNoiseWave(44100, 0), 44100);
 	}
 
 	APU::~APU() = default;
@@ -40,49 +42,143 @@ namespace GBEmulator
 	{
 		this->_soundOn = !state && this->_restart;
 		this->_soundChannel.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
-		this->_volumeCycles = 0;
 	}
 
-	void APU::Sound::update(unsigned cycle)
+	void APU::Sound::updateRestart()
+	{
+		this->_soundOn = false;
+		this->_restart = false;
+		//std::cout << "Updated restart" << std::endl;
+		this->_soundChannel.setVolume(0);
+	}
+
+	void APU::Sound::update(unsigned cycle, Memory::Memory &memory)
 	{
 		if (!this->_soundOn && this->_restart) {
 			this->_soundOn = true;
 			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 		}
+		if (this->_isSixBitsLength) {
+			if (this->_restartType &&
+			    this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
+				updateRestart();
+			}
+		} else {
+			if (this->_restartType &&
+			    this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(2 / (256 - this->_soundLength))) {
+				updateRestart();
+			}
+		}
 		if (!this->_soundOn)
 			return;
 		this->_volumeCycles += cycle;
 		this->_sweepCycles += cycle;
-		if (this->_restartType && this->_volumeCycles > Timing::getCyclesPerSecondsFromFrequency(256 / (64 - this->_soundLength))) {
-			this->_soundOn = false;
-			this->_restart = false;
-			this->_volumeCycles = 0;
-			this->disable(true);
-		}
 		if (this->_volumeShiftNumber) {
 			int volume = (
 					this->_volumeCycles / (this->_volumeShiftNumber * Timing::getCyclesPerSecondsFromFrequency(64)) *
 					(this->_volumeDirection * 2 - 1) +
 					this->_initialVolume
 			);
+			//std::cout << std::dec << "Required: " << Timing::getCyclesPerSecondsFromFrequency(256) << " | Cycles: " << this->_volumeCycles << " | New volume: " << volume << std::endl;
 			this->_soundChannel.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100.f / 15);
 		}
 		if (this->_sweepTime) {
 			double newFrequency = (
-					this->_frequency +
+					131072.f / (2048 - this->_frequency) +
 					(this->_sweepCycles / Timing::getCyclesPerSecondsFromFrequency(this->_sweepShiftNumber / 128.)) *
-					(this->_frequency / pow(2, this->_sweepShiftNumber)) *
+					(131072.f / (2048 - this->_frequency) / pow(2, this->_sweepShiftNumber)) *
 					((this->_sweepDirection - 1) * 2 + 1)
 				);
-			this->_soundChannel.setPitch(newFrequency / 440);
+			if (!this->_isSixBitsLength) {
+				this->_soundChannel.setWave(getWavePattern(newFrequency, memory), 44100);
+			}
+			this->_soundChannel.setPitch(newFrequency / BASE_FREQU);
 		}
-		//pitch
+		//pitchNoise
+		if (this->_havingPolynomial) {
+			this->_sweepCycles = 0;
+			unsigned char stepNumber = this->_polynomialCounterStep ? 7 : 15;
+
+			double frequency = pow(2, -(this->_shiftClockFrequency + 1)) *
+				   dividingRatio[this->_dividingRatio];
+
+			if (_wroteInNoiseFrequency) {
+				/*std::cout << "_shiftClockFrequency : " << (int)_shiftClockFrequency << std::endl;
+				std::cout << "_dividingRatio : " << (int)_dividingRatio << std::endl;
+				std::cout << "frequency : " << frequency << std::endl;*/
+				//this->_soundChannel.setWave(getNoiseWave(frequency, stepNumber), 44100);
+				this->_soundChannel.setPitch(frequency / 44100);
+				this->_wroteInNoiseFrequency = false;
+			} else
+				updateLFSR(stepNumber);
+		}
+	}
+
+	std::vector<unsigned char> &APU::Sound::getWavePattern(int frequency, Memory::Memory &memory) const
+	{
+		static std::vector<unsigned char>	raw(44100LLU * 2);
+
+		int shifting = _waveOutputLevel + 4 % 5;
+		for (int i = 0; i < 44100; i++) {
+			unsigned char wpRam = memory.read(WPRAM_START + (i % 16));
+			raw[i*2] = (frequency / BASE_FREQU * (((wpRam >> 4) >> shifting) / 16 * 127));
+			raw[i*2 + 1] = (frequency / BASE_FREQU * (((wpRam & 0b00001111) >> shifting) / 16 * 127));
+		}
+		return (raw);
+	}
+
+	/*std::vector<unsigned char> &APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
+	{
+		static std::vector<unsigned char>	raw(44100LLU);
+
+		for (int i = 0; i < 44100; i++) {
+			//std::cout << (_lfsr & 0b1) << std::endl;
+			raw[i] = ((rand() & 0b1) == 0 ? 127 : -127);
+			//updateLFSR(stepNumber);
+		}
+		return (raw);
+	}*/
+
+	std::vector<unsigned char> &APU::Sound::getNoiseWave(int frequency, unsigned char stepNumber)
+	{
+		static std::vector<unsigned char>    raw(44100LLU);
+		bool random = rand() & 0b1;
+		int cnt = 0;
+
+		for (int i = 0; i < 44100; i++) {
+			raw[i] = (random == 0 ? 127 : -127);
+			if (++cnt >= (44100 / frequency)) {
+				random = rand() & 0b1;
+				cnt = 0;
+			}
+		}
+		return (raw);
+	}
+
+	void APU::Sound::updateLFSR(unsigned char stepNumber)
+	{
+		if (_counter == stepNumber) {
+			unsigned short xorResult = ((((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1)) << 15) | 0b0111111111111111;
+			_lfsr >>= 1;
+			_lfsr &= xorResult;
+			if (stepNumber == 7) {
+				xorResult >>= 9;
+				xorResult |= 0b1111111110000000;
+				_lfsr &= xorResult;
+			}
+			//printf("LFSR : %i\n",_lfsr);*/
+		}
+		if (_counter > stepNumber)
+			_counter = 0x0;
+		_counter++;
 	}
 
 	void APU::update(unsigned cycle)
 	{
-		this->_managerChannel1.update(cycle);
-		this->_managerChannel2.update(cycle);
+		this->_managerChannel1.update(cycle, this->_wpRAM);
+		this->_managerChannel2.update(cycle, this->_wpRAM);
+		this->_managerChannelWave.update(cycle, this->_wpRAM);
+		this->_managerChannelNoise.update(cycle, this->_wpRAM);
 	}
 
 	void APU::write(unsigned short address, unsigned char value)
@@ -209,6 +305,9 @@ namespace GBEmulator
 			case 0x1 :
 				this->_managerChannel2.setVolume(value);
 				break;
+			case 0x2 :
+				this->_managerChannel2.setLowFrequency(value);
+				break;
 			case 0x3 :
 				this->_managerChannel2.setRestartOptions(value);
 				break;
@@ -315,7 +414,6 @@ namespace GBEmulator
 
 	void APU::Sound::setSweep(unsigned char value)
 	{
-		this->_volumeCycles = 0;
 		this->_sweepTime = (value & 0b01110000) >> 4;
 		this->_sweepDirection = (value & 0b00001000) >> 3;
 		this->_sweepShiftNumber = (value & 0b00000111);
@@ -335,24 +433,25 @@ namespace GBEmulator
 
 	void APU::Sound::setWave(unsigned char value)
 	{
-		this->_wavePattern = value >> 6;
 		this->_soundLength = value & 0b00111111;
-		this->_volumeCycles = 0;
-		switch (this->_wavePattern) {
+		if (this->_wavePattern != value >> 6) {
+			this->_wavePattern = value >> 6;
+			switch (this->_wavePattern) {
 			case 0:
-				this->_soundChannel.setWave(getSquareWave(440, 12.5), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 12.5), 44100);
 				break;
 			case 1:
-				this->_soundChannel.setWave(getSquareWave(440, 25), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 25), 44100);
 				break;
 			case 2:
-				this->_soundChannel.setWave(getSquareWave(440, 50), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 50), 44100);
 				break;
 			case 3:
-				this->_soundChannel.setWave(getSquareWave(440, 75), 44100);
+				this->_soundChannel.setWave(getSquareWave(BASE_FREQU, 75), 44100);
 				break;
 			default:
 				return;
+			}
 		}
 	}
 
@@ -370,6 +469,7 @@ namespace GBEmulator
 		this->_volumeDirection = (value & 0b00001000) >> 3;
 		this->_volumeShiftNumber = value & 0b00000111;
 		this->_volumeCycles = 0;
+		//std::cout << "Set volume to " << std::hex << static_cast<int>(value) << std::dec << std::endl;
 		if (this->_soundOn)
 			this->_soundChannel.setVolume(this->_initialVolume * 100.f / 15);
 	}
@@ -378,17 +478,16 @@ namespace GBEmulator
 	{
 		unsigned char value = this->_initialVolume;
 
-		value <<= 1;
+		value <<= 4;
 		value |= this->_volumeDirection;
-		value <<= 3;
+		value <<= 1;
 		return (value | this->_volumeShiftNumber);
 	}
 
 	void APU::Sound::setLowFrequency(unsigned char value)
 	{
 		this->_frequency = (this->_frequency & 0b11100000000) | value;
-		this->_volumeCycles = 0;
-		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
+		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
 
 	void APU::Sound::setRestartOptions(unsigned char value)
@@ -398,9 +497,8 @@ namespace GBEmulator
 		val <<= 8;
 		this->_restart = value >> 7;
 		this->_restartType = (value & 0b01000000) >> 6;
-		this->_volumeCycles = 0;
 		this->_frequency = (this->_frequency & 0b00011111111) | val;
-		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / 440);
+		this->_soundChannel.setPitch(131072.f / (2048 - this->_frequency) / BASE_FREQU);
 	}
 
 	unsigned char APU::Sound::getRestartOptions() const
@@ -420,7 +518,6 @@ namespace GBEmulator
 	void APU::Sound::setSoundONOFF(unsigned char value)
 	{
 		this->_soundOn = value >> 7;
-		this->_volumeCycles = 0;
 		if (!this->_soundOn)
 			this->_soundChannel.setVolume(0);
 		else
@@ -437,10 +534,10 @@ namespace GBEmulator
 
 	void APU::Sound::setSoundLength(unsigned char value, bool sixBitsLength)
 	{
-		this->_volumeCycles = 0;
-		if (!sixBitsLength)
+		if (!sixBitsLength) {
+			this->_isSixBitsLength = false;
 			this->_soundLength = value;
-		else
+		} else
 			this->_soundLength = value & 0b00111111;
 	}
 
@@ -473,9 +570,19 @@ namespace GBEmulator
 
 	void APU::Sound::setPolynomialCounters(unsigned char value)
 	{
+		//printf("oui\n");
+		this->_havingPolynomial = true;
+		this->_wroteInNoiseFrequency = true;
 		this->_shiftClockFrequency = value >> 4;
 		this->_polynomialCounterStep = (value & 0b00001000) >> 3;
 		this->_dividingRatio = value & 0b00000111;
+
+	}
+
+	void APU::Sound::setSOTerminals(bool SO1, bool SO2)
+	{
+		this->_soundChannel.setSO1(SO1);
+		this->_soundChannel.setSO2(SO2);
 	}
 
 	unsigned char APU::Sound::getPolynomialCounters() const
@@ -525,27 +632,31 @@ namespace GBEmulator
 
 	void APU::setVin(unsigned char value)
 	{
-		this->_VinToSo2 = value >> 7;
-		this->_SO2OutputLevel = (value & 0b01110000) >> 4;
-		this->_VinToSo1 = (value & 0b00001000) >> 3;
-		this->_SO1OutputLevel = (value & 0b00000111);
+		this->_VinToSo2 = value >> 7U;
+		this->_SO2OutputLevel = (value & 0b01110000U) >> 4U;
+		this->_VinToSo1 = (value & 0b00001000U) >> 3U;
+		this->_SO1OutputLevel = (value & 0b00000111U);
 	}
 
 	unsigned char APU::getVin() const
 	{
 		unsigned char value = this->_VinToSo2;
 
-		value <<= 3;
+		value <<= 3U;
 		value |= this->_SO2OutputLevel;
-		value <<= 1;
+		value <<= 1U;
 		value |= this->_VinToSo1;
-		value <<= 3;
+		value <<= 3U;
 		return (value | this->_SO1OutputLevel);
 	}
 
 	void APU::setSOTS(unsigned char value)
 	{
 		this->_soundOutputTerminalSelection = value;
+		this->_managerChannel1.setSOTerminals(    value & 0b00000001U, value & 0b00010000U);
+		this->_managerChannel2.setSOTerminals(    value & 0b00000010U, value & 0b00100000U);
+		this->_managerChannelWave.setSOTerminals( value & 0b00000100U, value & 0b01000000U);
+		this->_managerChannelNoise.setSOTerminals(value & 0b00001000U, value & 0b10000000U);
 	}
 
 	unsigned char APU::getSOTS() const
@@ -555,7 +666,7 @@ namespace GBEmulator
 
 	void APU::setSoundOnOff(unsigned char value)
 	{
-		this->_allSoundsOn = value >> 7;
+		this->_allSoundsOn = value >> 7U;
 		this->_managerChannel1.disable(!this->_allSoundsOn);
 		this->_managerChannel2.disable(!this->_allSoundsOn);
 		this->_managerChannelWave.disable(!this->_allSoundsOn);
@@ -566,15 +677,15 @@ namespace GBEmulator
 	{
 		unsigned char value = this->_allSoundsOn;
 
-		value <<= 3;
-		value |= 0b00000111;
-		value <<= 1;
-		value |= this->_soundOnOff1;
-		value <<= 1;
-		value |= this->_soundOnOff2;
-		value <<= 1;
+		value <<= 3U;
+		value |= 0b00000111U;
+		value <<= 1U;
+		value |= this->_soundOnOffSound;
+		value <<= 1U;
 		value |= this->_soundOnOffWave;
-		value <<= 1;
-		return (value | this->_soundOnOffSound);
+		value <<= 1U;
+		value |= this->_soundOnOff2;
+		value <<= 1U;
+		return (value | this->_soundOnOff1);
 	}
 }

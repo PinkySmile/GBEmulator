@@ -91,7 +91,23 @@ namespace GBEmulator::Memory
 			} catch (std::exception &) {
 				throw;
 			}
-			this->_ram.resize(this->_rom.read((this->_rom.read(0x149) != 0) * 2 * std::pow(4, this->_rom.read(0x149) - 1)) * 1024);
+
+			size = (this->_rom.rawRead(0x149) != 0) * 2 * std::pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
+			mem = new unsigned char[size];
+			this->_ram.setMemory(mem, size);
+			if (size > RAM_BANKING_SIZE)
+				this->_ram.setBank(0);
+			for (size_t i = 0; i < size; i++)
+				mem[i] = rand() % 0x100;
+			this->_ramMem = mem;
+
+			this->_savePath = rom.substr(0, rom.find('.')) + ".sav";
+			stream = fopen(this->_savePath.c_str(), "rb");
+			if (stream) {
+				fread(mem, 1, size, stream);
+				fclose(stream);
+			}
+
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
 			throw;
@@ -99,6 +115,17 @@ namespace GBEmulator::Memory
 			this->resetROM();
 			throw;
 		}
+	}
+
+	void Cartridge::saveRAM()
+	{
+		FILE *stream = fopen(this->_savePath.c_str(), "wb");
+
+		if (!stream)
+			throw SavingFailedException("Cannot open " + this->_savePath + ": " + strerror(errno));
+
+		fwrite(this->_ramMem, 1, this->_ram.getSize(), stream);
+		fclose(stream);
 	}
 
 	unsigned char Cartridge::read(unsigned short address) const
@@ -261,8 +288,9 @@ namespace GBEmulator::Memory
 
 		else if (address < 0x4000) {
 			value &= 0b1111111U;
-			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+			this->_rom.setBank(value);
 
+			//TODO: Implement timers
 		} else if (address < 0x6000)
 			this->_ram.setBank(value & 0b11U);
 	}
@@ -283,6 +311,9 @@ namespace GBEmulator::Memory
 
 		else if (address < 0x6000)
 			this->_ram.setBank(value & 0b1111U);
+
+		else if (address >= 0xA000 && this->_ramEnabled)
+			printf("RAM disabled\n");
 	}
 
 	void Cartridge::_handleRumbleWrite(unsigned short address, unsigned char value)

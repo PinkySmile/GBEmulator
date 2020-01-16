@@ -25,7 +25,9 @@ void Tests::Screen::updateTexture(unsigned char *, size_t)
 {}
 
 bool Tests::Screen::isClosed() const
-{}
+{
+	return false;
+}
 
 void Tests::Screen::clear()
 {}
@@ -45,17 +47,17 @@ void Tests::Screen::drawSprite(GBEmulator::Graphics::Sprite, bool, bool)
 void Tests::Screen::drawWindow(const unsigned char *, float, float, bool)
 {}
 
-void Tests::Screen::setPalette(unsigned char)
+void Tests::Sound::setPitch(float)
+{
+}
+
+void Tests::Sound::setWave(std::vector<unsigned char>, unsigned int)
+{
+}
+
+void Tests::Sound::setVolume(float)
+{
+}
+
+void Tests::Sound::setDisabled(bool)
 {}
-
-void Tests::Sound::setPitch(float frequency)
-{
-}
-
-void Tests::Sound::setWave(std::vector<unsigned char> samples, unsigned int sampleRate)
-{
-}
-
-void Tests::Sound::setVolume(float volume)
-{
-}

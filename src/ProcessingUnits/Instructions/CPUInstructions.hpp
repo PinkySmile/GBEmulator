@@ -59,8 +59,8 @@ namespace GBEmulator::Instructions
 	unsigned char LD16(unsigned short &value1, unsigned short value2);
 	unsigned char AND8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
 	unsigned char OR8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
-	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
-	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2);
+	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry);
+	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry);
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2);
 	unsigned char INC8(CPU::Registers &reg, unsigned char &value);
@@ -99,6 +99,7 @@ namespace GBEmulator::Instructions
 	unsigned char STOP(CPU &cpu);
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val);
 	unsigned char CPL(CPU::Registers &reg);
+	unsigned char SPECIAL_ADD(CPU::Registers &reg, unsigned short &value1, char value2);
 	unsigned char executeOnPtr(CPU &cpu, unsigned short address, unsigned char (&fct)(CPU::Registers &, unsigned char &), CPU::Registers &reg);
 
 	template <typename ...args>

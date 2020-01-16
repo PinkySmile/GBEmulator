@@ -9,6 +9,7 @@
 #define GBEMULATOR_APU_HPP
 
 #define CHANSIZE_WPRAM 0xF
+#define DIV_FREQUENCY 4194304
 
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
@@ -40,6 +41,7 @@ namespace GBEmulator
 		WPRAM_START = 0x20,
 		WPRAM_END = 0x2F
 	};
+
 	class APU {
 	public:
 		APU() = delete;
@@ -99,13 +101,19 @@ namespace GBEmulator
 			unsigned char getSoundLength(bool) const;
 			void setOutputLevel(unsigned char);
 			unsigned char getOutputLevel() const;
+			std::vector<unsigned char> &getWavePattern(int frequency, Memory::Memory &memory) const;
 
 			//Noise Functions
+			void updateLFSR(unsigned char stepNumber);
+			static std::vector<unsigned char> &
+			getNoiseWave(int frequency, unsigned char stepNumber);
 			void setPolynomialCounters(unsigned char);
 			unsigned char getPolynomialCounters() const;
 
-			void update(unsigned cycle);
+			void update(unsigned cycle, Memory::Memory &memory);
+			void updateRestart();
 			void disable(bool state);
+			void setSOTerminals(bool SO1, bool SO2);
 
 		private:
 			ISound &_soundChannel;    //tone and sweep
@@ -118,8 +126,9 @@ namespace GBEmulator
 
 
 			//wave pattern and sound duration
-			unsigned char _wavePattern; //chan1-2
+			unsigned char _wavePattern = 2; //chan1-2
 			unsigned char _soundLength = 0;
+			bool _isSixBitsLength = true;
 
 			//volume
 			unsigned char _initialVolume = 0;
@@ -136,12 +145,26 @@ namespace GBEmulator
 			bool _soundOn = false; //WAVE
 
 			//WaveOutputLevel //WAVE
-			unsigned char _waveOutputLevel;
+			unsigned char _waveOutputLevel = 0;
 
 			//PolynomialCounter //NOISE
-			unsigned char _shiftClockFrequency;
-			bool _polynomialCounterStep;
-			unsigned char _dividingRatio;
+			bool _wroteInNoiseFrequency = false;
+			bool _havingPolynomial = false;
+			unsigned char _shiftClockFrequency = 0;
+			bool _polynomialCounterStep = false;
+			char _counter = 0xF;
+			unsigned short _lfsr = 0x7FFF;
+			unsigned char _dividingRatio = 0;
+			static constexpr double dividingRatio[8] = {
+					DIV_FREQUENCY / 4.,
+					DIV_FREQUENCY / 8.,
+					DIV_FREQUENCY / 16.,
+					DIV_FREQUENCY / 24.,
+					DIV_FREQUENCY / 32.,
+					DIV_FREQUENCY / 40.,
+					DIV_FREQUENCY / 48.,
+					DIV_FREQUENCY / 56.
+			};
 
 		};
 

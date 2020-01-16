@@ -150,39 +150,62 @@ namespace GBEmulator::Instructions
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	unsigned char ADD8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry)
 	{
-		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU)) & 0x10U) == 0x10U;
+		bool halfCarry = (((value1 & 0xFU) + (value2 & 0xFU) + carry) & 0x10U) == 0x10U;
 
 		setFlags(
 			reg,
-			(value1 + value2) == 0x100 ? SET : UNSET,
+			(value1 + value2 + carry) % 0x100 == 0 ? SET : UNSET,
 			UNSET,
 			halfCarry ? SET : UNSET,
-			value1 + value2 > 0xFF ? SET : UNSET
+			value1 + value2 + carry > 0xFF ? SET : UNSET
 		);
-		value1 += value2;
+		value1 += value2 + carry;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
-	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2)
+	unsigned char SUB8(CPU::Registers &reg, unsigned char &value1, unsigned char value2, bool carry)
 	{
-		bool halfCarry = (((value1 & 0xFU) - (value2 & 0xFU)) & 0x10U) == 0x10U;
+		bool halfCarry = ((value1 & 0xFU) < (value2 & 0xFU) + carry);
 
 		setFlags(
 			reg,
-			value1 == value2 ? SET : UNSET,
+			(value1 - value2 - carry) % 0x100 == 0 ? SET : UNSET,
 			SET,
 			halfCarry ? SET : UNSET,
-			value1 < value2 ? SET : UNSET
+			value1 < value2 + carry ? SET : UNSET
 		);
-		value1 -= value2;
+		value1 -= value2 + carry;
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
+	}
+
+	unsigned char SPECIAL_ADD(CPU::Registers &reg, unsigned short &value1, char value2)
+	{
+		if (value2 >= 0) {
+			setFlags(
+				reg,
+				UNSET,
+				UNSET,
+				(value1 & 0xFU) + (value2 & 0xFU) > 0xFU ? SET : UNSET,
+				((value1 & 0xFFU) + value2) > 0xFF ? SET : UNSET
+			);
+		} else {
+			setFlags(
+				reg,
+				UNSET,
+				UNSET,
+				(value1 & 0xFU) < ((-value2) & 0xFU) ? UNSET : SET,
+				((value1 & 0xFF) < -value2) ? UNSET : SET
+			);
+		}
+		value1 += value2;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 4;
 	}
 
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
-		bool halfCarry = (((value1 & 0xFFU) + (value2 & 0xFFU)) & 0x100U) == 0x100U;
+		bool halfCarry = (value1 & 0xFFFU) + (value2 & 0xFFFU) > 0xFFFU;
 
 		setFlags(
 			reg,
@@ -197,7 +220,7 @@ namespace GBEmulator::Instructions
 
 	unsigned char SUB16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)
 	{
-		bool halfCarry = (((value1 & 0xFFU) - (value2 & 0xFFU)) & 0x100U) == 0x100U;
+		bool halfCarry = (value1 & 0xFU) < (value2 & 0xFU);
 
 		setFlags(
 			reg,
@@ -274,7 +297,7 @@ namespace GBEmulator::Instructions
 	{
 		unsigned char buf = reg.a;
 
-		return SUB8(reg, buf, value);
+		return SUB8(reg, buf, value, false);
 	}
 
 	unsigned char RES(unsigned char &val, unsigned char bit)
@@ -370,19 +393,31 @@ namespace GBEmulator::Instructions
 
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val)
 	{
-		unsigned char oldVal = val;
-		bool cf = false;
+		unsigned oldVal = val;
+		bool fc = reg.fc;
 
-		if (((reg.fh & 0x0FU) > 9) || reg.fh) {
-			val += 6;
-			reg.fc = reg.fc || val >= 0xA0;
+		if (!reg.fn) {
+			if (reg.fh || (oldVal & 0x0FU) > 9)
+				oldVal += 0x06U;
+			if (reg.fc || oldVal > 0x9FU) {
+				oldVal += 0x60U;
+				fc = true;
+			}
+		} else {
+			if (reg.fh)
+				oldVal -= 0x06U;
+			if (reg.fc)
+				oldVal -= 0x60;
 		}
 
-		if ((oldVal > 0x99) || reg.fc) {
-			val += 0x60;
-			cf = true;
-		}
-		setFlags(reg, val == 0 ? SET : UNSET, UNCHANGED, UNSET, cf ? SET : UNSET);
+		val = oldVal;
+		setFlags(
+			reg,
+			val == 0 ? SET : UNSET,
+			UNCHANGED,
+			UNSET,
+			fc ? SET : UNSET
+		);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 
