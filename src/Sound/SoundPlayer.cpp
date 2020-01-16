@@ -13,22 +13,33 @@ namespace GBEmulator
 	SoundPlayer::SoundPlayer() :
 		_volume(0)
 	{
-		this->_sound.setBuffer(this->_soundBuffer);
-		this->_sound.setVolume(0);
-		this->_sound.play();
-		this->_sound.setLoop(true);
+		this->_soundSO1.setBuffer(this->_soundBuffer);
+		this->_soundSO1.setVolume(0);
+		this->_soundSO1.play();
+		this->_soundSO1.setLoop(true);
+		this->_soundSO1.setPosition(1, 0, 0);
+
+		this->_soundSO2.setBuffer(this->_soundBuffer);
+		this->_soundSO2.setVolume(0);
+		this->_soundSO2.play();
+		this->_soundSO2.setLoop(true);
+		this->_soundSO2.setPosition(-1, 0, 0);
 	}
 
 	void SoundPlayer::setPitch(float pitch)
 	{
-		this->_sound.setPitch(pitch);
+		this->_soundSO1.setPitch(pitch);
+		this->_soundSO2.setPitch(pitch);
 	}
 
 	void SoundPlayer::setDisabled(bool disabled) {
-		if (disabled)
-			this->_sound.stop();
-		else
-			this->_sound.play();
+		if (disabled) {
+			this->_soundSO1.stop();
+			this->_soundSO2.stop();
+		} else {
+			this->_soundSO1.play();
+			this->_soundSO2.play();
+		}
 		this->_disabled = disabled;
 	}
 
@@ -41,38 +52,36 @@ namespace GBEmulator
 		if (!this->_soundBuffer.loadFromSamples(buff, wave.size(), 1, sampleRate))
 			throw std::invalid_argument("Cannot load sound buffer");
 		delete[] buff;
-		this->_sound.setBuffer(this->_soundBuffer);
-		this->_sound.setVolume(this->_volume);
-		if (!this->_disabled)
-			this->_sound.play();
-		this->_sound.setLoop(true);
+		this->_soundSO1.setBuffer(this->_soundBuffer);
+		this->_soundSO2.setBuffer(this->_soundBuffer);
+		this->_soundSO1.setVolume(this->_volume * this->_volumeSO1 / 100);
+		this->_soundSO2.setVolume(this->_volume * this->_volumeSO2 / 100);
+		if (!this->_disabled) {
+			this->_soundSO1.play();
+			this->_soundSO2.play();
+		}
+		this->_soundSO1.setLoop(true);
+		this->_soundSO2.setLoop(true);
+		this->_soundSO1.setPosition(1, 0, 0);
+		this->_soundSO2.setPosition(-1, 0, 0);
 	}
 
 	void SoundPlayer::setVolume(float volume)
 	{
 		this->_volume = volume;
-		this->_sound.setVolume(volume);
+		this->_soundSO1.setVolume(volume * this->_volumeSO1 / 100);
+		this->_soundSO2.setVolume(volume * this->_volumeSO2 / 100);
 	}
 
-	void SoundPlayer::setSO1(bool activated)
+	void SoundPlayer::setSO1Volume(float volume)
 	{
-		if (!this->_SO2activated && !this->_SO1activated && !this->_disabled && activated)
-			this->_sound.play();
-		this->_SO1activated = activated;
-		if (!this->_SO2activated && !this->_SO1activated)
-			this->_sound.stop();
-		else
-			this->_sound.setPosition(this->_SO1activated - this->_SO2activated, 0, 0);
+		this->_volumeSO1 = volume;
+		this->_soundSO1.setVolume(volume * this->_volume / 100);
 	}
 
-	void SoundPlayer::setSO2(bool activated)
+	void SoundPlayer::setSO2Volume(float volume)
 	{
-		if (!this->_SO2activated && !this->_SO1activated && !this->_disabled && activated)
-			this->_sound.play();
-		this->_SO2activated = activated;
-		if (!this->_SO2activated && !this->_SO1activated)
-			this->_sound.stop();
-		else
-			this->_sound.setPosition(this->_SO1activated - this->_SO2activated, 0, 0);
+		this->_volumeSO2 = volume;
+		this->_soundSO2.setVolume(volume * this->_volume / 100);
 	}
 }

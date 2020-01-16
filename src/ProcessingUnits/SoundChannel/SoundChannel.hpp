@@ -77,7 +77,7 @@ namespace GBEmulator::SoundChannel
 		void setVolume(unsigned char);
 		void setLowFrequency(unsigned char);
 		void setRestartOptions(unsigned char);
-		void setSOTerminals(bool SO1, bool SO2);
+		void setSOTerminalsVolumes(unsigned char SO1, unsigned char SO2);
 		void disable(bool disabled);
 
 		unsigned char getSweep() const;
