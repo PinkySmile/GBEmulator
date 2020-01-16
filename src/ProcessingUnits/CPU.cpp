@@ -119,7 +119,7 @@ namespace GBEmulator
 			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
 		case WPRAM_RANGE:
-			return 0x00;
+			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
 		case IO_PORT2_RANGE:
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
@@ -192,7 +192,7 @@ namespace GBEmulator
 			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
 
 		case WPRAM_RANGE:
-			return;
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
 
 		case IO_PORT2_RANGE:
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
