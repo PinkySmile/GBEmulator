@@ -24,6 +24,7 @@ namespace GBEmulator::SoundChannel
 		this->_sweepDirection = (value & 0b00001000U) ? DECREASE : INCREASE;
 		this->_sweepShiftNumber = (value & 0b00000111U);
 		this->_shiftRemain = this->_sweepShiftNumber;
+		this->_sweepCycles = 0;
 	}
 
 	void SoundChannel::setVolume(unsigned char value)
@@ -53,10 +54,10 @@ namespace GBEmulator::SoundChannel
 		this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
 	}
 
-	void SoundChannel::setSOTerminals(bool SO1, bool SO2)
+	void SoundChannel::setSOTerminalsVolumes(unsigned char SO1, unsigned char SO2)
 	{
-		this->_sound.setSO1(SO1);
-		this->_sound.setSO2(SO2);
+		this->_sound.setSO1Volume(SO1 * 100 / 15.f);
+		this->_sound.setSO2Volume(SO2 * 100 / 15.f);
 	}
 
 	void SoundChannel::disable(bool disabled)

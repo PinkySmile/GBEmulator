@@ -280,6 +280,10 @@ namespace GBEmulator
 		this->_SO2OutputLevel = (value & 0b01110000U) >> 4U;
 		this->_VinToSo1 = (value & 0b00001000U) >> 3U;
 		this->_SO1OutputLevel = (value & 0b00000111U);
+		this->_managerChannel1.setSOTerminalsVolumes(    ((this->_soundOutputTerminalSelection & 0b00000001U) != 0) * this->_SO1OutputLevel, ((this->_soundOutputTerminalSelection & 0b00010000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannel2.setSOTerminalsVolumes(    ((this->_soundOutputTerminalSelection & 0b00000010U) != 0) * this->_SO1OutputLevel, ((this->_soundOutputTerminalSelection & 0b00100000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannelWave.setSOTerminalsVolumes( ((this->_soundOutputTerminalSelection & 0b00000100U) != 0) * this->_SO1OutputLevel, ((this->_soundOutputTerminalSelection & 0b01000000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannelNoise.setSOTerminalsVolumes(((this->_soundOutputTerminalSelection & 0b00001000U) != 0) * this->_SO1OutputLevel, ((this->_soundOutputTerminalSelection & 0b10000000U) != 0) * this->_SO2OutputLevel);
 	}
 
 	unsigned char APU::getVin() const
@@ -297,10 +301,10 @@ namespace GBEmulator
 	void APU::setSOTS(unsigned char value)
 	{
 		this->_soundOutputTerminalSelection = value;
-		this->_managerChannel1.setSOTerminals(    value & 0b00000001U, value & 0b00010000U);
-		this->_managerChannel2.setSOTerminals(    value & 0b00000010U, value & 0b00100000U);
-		this->_managerChannelWave.setSOTerminals( value & 0b00000100U, value & 0b01000000U);
-		this->_managerChannelNoise.setSOTerminals(value & 0b00001000U, value & 0b10000000U);
+		this->_managerChannel1.setSOTerminalsVolumes(    ((value & 0b00000001U) != 0) * this->_SO1OutputLevel, ((value & 0b00010000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannel2.setSOTerminalsVolumes(    ((value & 0b00000010U) != 0) * this->_SO1OutputLevel, ((value & 0b00100000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannelWave.setSOTerminalsVolumes( ((value & 0b00000100U) != 0) * this->_SO1OutputLevel, ((value & 0b01000000U) != 0) * this->_SO2OutputLevel);
+		this->_managerChannelNoise.setSOTerminalsVolumes(((value & 0b00001000U) != 0) * this->_SO1OutputLevel, ((value & 0b10000000U) != 0) * this->_SO2OutputLevel);
 	}
 
 	unsigned char APU::getSOTS() const
