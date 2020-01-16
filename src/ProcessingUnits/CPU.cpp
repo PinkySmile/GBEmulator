@@ -61,8 +61,18 @@ namespace GBEmulator
 		_interruptEnabled(0x00),
 		_interruptRequest(0x00),
 		_interruptMasterEnableFlag(false),
-		_cable(cable)
+		_cable(cable),
+		_threadCycles(0)
 	{
+		this->_componentsThread = std::thread([this]{
+			while (this->_threadRunning) {
+				if (this->_threadCycles > 0) {
+					auto cycles = this->_threadCycles;
+					this->_updateComponents(cycles);
+					this->_threadCycles -= cycles;
+				}
+			}
+		});
 	}
 
 	Memory::Cartridge& CPU::getCartridgeEmulator()
@@ -228,16 +238,23 @@ namespace GBEmulator
 
 		if (!this->_halted)
 			this->_executeNextInstruction();
-		else
-			this->_updateComponents(16);
+		else {
+			unsigned gpuInts = this->_gpu.update(16);
+
+			this->_interruptRequest |= gpuInts;
+			this->_interruptRequest &= (0b11111100U | gpuInts);
+
+			this->_threadCycles += 16;
+		}
+			//this->_updateComponents(16);
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		unsigned gpuInts = this->_gpu.update(cycles);
+		/*unsigned gpuInts = this->_gpu.update(cycles);
 
 		this->_interruptRequest |= gpuInts;
-		this->_interruptRequest &= (0b11111100U | gpuInts);
+		this->_interruptRequest &= (0b11111100U | gpuInts);*/
 
 		if (this->_cable.isTransfering())
 			this->_interruptRequest |= SERIAL_INTERRUPT;
@@ -458,7 +475,13 @@ namespace GBEmulator
 
 		this->_registers._ = 0;
 		this->_divRegister += cycles;
-		this->_updateComponents(cycles);
+		this->_threadCycles += cycles;
+
+		unsigned gpuInts = this->_gpu.update(cycles);
+
+		this->_interruptRequest |= gpuInts;
+		this->_interruptRequest &= (0b11111100U | gpuInts);
+		//this->_updateComponents(cycles);
 	}
 
 	void CPU::dumpRegisters() const
@@ -528,5 +551,11 @@ namespace GBEmulator
 	{
 		this->_registers.pc--;
 		return this->_registers.pc;
+	}
+
+	CPU::~CPU()
+	{
+		this->_threadRunning = false;
+		this->_componentsThread.join();
 	}
 }

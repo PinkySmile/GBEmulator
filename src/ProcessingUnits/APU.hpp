@@ -11,6 +11,8 @@
 #define CHANSIZE_WPRAM 0xF
 #define DIV_FREQUENCY 4194304
 
+#include <thread>
+#include <mutex>
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
 
@@ -74,6 +76,13 @@ namespace GBEmulator
 		unsigned char getSOTS() const; // getting it
 		void setSoundOnOff(unsigned char value);
 		unsigned char getSoundOnOff() const;
+
+		void threadUpdate(unsigned cycle);
+
+		std::mutex mutex;
+		bool updateDone;
+		std::thread thread1;
+		std::thread thread2;
 
 		class Sound {
 		public:
