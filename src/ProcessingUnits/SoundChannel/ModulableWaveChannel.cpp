@@ -5,8 +5,13 @@
 ** ModulableWaveChannel.cpp
 */
 
+#include <cmath>
+#include <cstdio>
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
+#include "SquareWaveChannel.hpp"
+
+#define MEILLEUR 3
 
 namespace GBEmulator::SoundChannel
 {
@@ -14,13 +19,29 @@ namespace GBEmulator::SoundChannel
 		SoundChannel(soundInterface),
 		_wpRAM(CHANSIZE_WPRAM, CHANSIZE_WPRAM)
 	{
+		this->_sound.setWave(getWavePattern(), 44100);
+	}
+
+	std::vector<unsigned char> ModulableWaveChannel::getWavePattern() const
+	{
+		static std::vector<unsigned char>	raw(4096LLU * MEILLEUR);
+
+		for (int i = 0; i < 2048 * MEILLEUR; i += MEILLEUR) {
+			unsigned char wpRam = this->_wpRAM.read(i % 16);
+
+			for (int j = 0; j < MEILLEUR; j++) {
+				raw[i * 2 + j] = (wpRam >> 4) / 15 * 254 - 127;
+				raw[i * 2 + MEILLEUR / 2 + j] = (wpRam & 0b00001111) / 15 * 254 - 127;
+			}
+		}
+		return (raw);
 	}
 
 	void ModulableWaveChannel::_update(unsigned)
 	{
 		if (this->_genWave) {
 			this->_genWave = false;
-
+			this->_sound.setWave(getWavePattern(), 44100);
 		}
 	}
 
@@ -69,7 +90,16 @@ namespace GBEmulator::SoundChannel
 
 	void ModulableWaveChannel::setOutputLevel(unsigned char value)
 	{
-		this->_waveOutputLevel = (value & 0b10011111U) >> 5U;
+		this->_waveOutputLevel = (value & 0b01100000U) >> 5U;
+		switch (this->_waveOutputLevel) {
+			case 0:
+				this->_initialVolume = 0;
+				break;
+			default:
+				this->_initialVolume = 15 / (1U << this->_waveOutputLevel - 1);
+				break;
+		}
+		this->setVolume(this->_initialVolume * 100.f / 15);
 	}
 
 	void ModulableWaveChannel::write(unsigned char address, unsigned char value)

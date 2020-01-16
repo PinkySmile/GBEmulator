@@ -10,7 +10,7 @@
 
 #include "../../Sound/ISound.hpp"
 
-#define BASE_FREQU 1660
+#define BASE_FREQU (1760)
 
 namespace GBEmulator::SoundChannel
 {

@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
 	//channel1.setDisabled(true);
 	//channel2.setDisabled(true);
-	channel3.setDisabled(true);
+	//channel3.setDisabled(true);
 	//channel4.setDisabled(true);
 
 	window.setFramerateLimit(60);
