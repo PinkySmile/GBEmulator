@@ -3,6 +3,8 @@
 //
 
 #include "BgbHandler.hpp"
+
+#include <memory>
 #include "Exception.hpp"
 
 namespace GBEmulator::Network
@@ -39,7 +41,7 @@ namespace GBEmulator::Network
 		}
 
 		this->_disconnected = false;
-		this->_mainThread.reset(new sf::Thread(this->_mainHandler));
+		this->_mainThread = std::make_unique<sf::Thread>(this->_mainHandler);
 		this->_mainThread->launch();
 	}
 
@@ -78,12 +80,21 @@ namespace GBEmulator::Network
 		}
 
 		this->_disconnected = false;
-		this->_mainThread.reset(new sf::Thread(this->_mainHandler));
+		this->_mainThread = std::make_unique<sf::Thread>(this->_mainHandler);
 		this->_mainThread->launch();
+	}
+
+	BGBHandler::~BGBHandler()
+	{
+		try {
+			this->disconnect();
+		} catch (std::exception &) {}
 	}
 
 	void BGBHandler::disconnect()
 	{
+		if (this->_disconnected)
+			return;
 		this->log("Disconnecting...");
 		//this->_sendPacket({WANT_DISCONNECT, 0, 0, 0, 0});
 		this->_socket.disconnect();

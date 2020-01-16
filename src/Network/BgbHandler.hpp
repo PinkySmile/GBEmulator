@@ -45,6 +45,7 @@ namespace GBEmulator::Network
 			const ByteHandle &slaveHandler,
 			bool log = false
 		);
+		~BGBHandler();
 		void host(unsigned short port) override;
 		void log(const std::string &string, std::ostream &stream = std::cerr);
 		void connect(const std::string &ip, unsigned short port) override;
