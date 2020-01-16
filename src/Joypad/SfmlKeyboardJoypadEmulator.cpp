@@ -9,8 +9,9 @@
 
 namespace GBEmulator::Input
 {
-	SFMLKeyboardJoypadEmulator::SFMLKeyboardJoypadEmulator(const std::map<GBEmulator::Input::Keys, sf::Keyboard::Key> &&keys) :
-		_keys(keys)
+	SFMLKeyboardJoypadEmulator::SFMLKeyboardJoypadEmulator(sf::RenderWindow &window, const std::map<GBEmulator::Input::Keys, sf::Keyboard::Key> &&keys) :
+		_keys(keys),
+		_window(window)
 	{}
 
 	void SFMLKeyboardJoypadEmulator::setKey(GBEmulator::Input::Keys button, sf::Keyboard::Key key)
@@ -20,6 +21,6 @@ namespace GBEmulator::Input
 
 	bool SFMLKeyboardJoypadEmulator::isButtonPressed(GBEmulator::Input::Keys button) const noexcept
 	{
-		return sf::Keyboard::isKeyPressed(this->_keys.at(button));
+		return this->_window.hasFocus() && sf::Keyboard::isKeyPressed(this->_keys.at(button));
 	}
 }

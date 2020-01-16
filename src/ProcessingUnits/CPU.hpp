@@ -204,6 +204,8 @@ namespace GBEmulator
 		const Memory::Cartridge &getCartridgeEmulator() const;
 		void update();
 
+		unsigned short getDecPc() noexcept;
+
 	private:
 		friend Debugger::Debugger;
 		static const std::vector<unsigned char> _startupCode;

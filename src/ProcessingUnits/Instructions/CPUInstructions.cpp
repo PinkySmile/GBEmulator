@@ -393,24 +393,31 @@ namespace GBEmulator::Instructions
 
 	unsigned char DAA(CPU::Registers &reg, unsigned char &val)
 	{
-		unsigned char oldVal = val;
-		bool cf = false;
+		unsigned oldVal = val;
+		bool fc = reg.fc;
 
-
-		if (((reg.fh & 0x0FU) > 9) || reg.fh) {
-			val += (reg.fn ? -6 : 6);
-			reg.fc = reg.fc || val >= 0xA0;
-		} else if ((val & 0xFU) > 9 && !reg.fn) {
-			val -= 0xA;
-			val += 0x10;
+		if (!reg.fn) {
+			if (reg.fh || (oldVal & 0x0FU) > 9)
+				oldVal += 0x06U;
+			if (reg.fc || oldVal > 0x9FU) {
+				oldVal += 0x60U;
+				fc = true;
+			}
+		} else {
+			if (reg.fh)
+				oldVal -= 0x06U;
+			if (reg.fc)
+				oldVal -= 0x60;
 		}
 
-		if (((oldVal > 0x99) || reg.fc) && !reg.fn) {
-			val += (reg.fn ? -0x60 : 0x60);
-			cf = true;
-		}
-
-		setFlags(reg, val == 0 ? SET : UNSET, UNCHANGED, UNSET, cf ? SET : UNSET);
+		val = oldVal;
+		setFlags(
+			reg,
+			val == 0 ? SET : UNSET,
+			UNCHANGED,
+			UNSET,
+			fc ? SET : UNSET
+		);
 		return BASIC_BIT_OPERATION_CYCLE_DURATION;
 	}
 

@@ -3,8 +3,7 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-W -Wall -Wextra -Wshadow -g -pg)
-add_link_options(-pg)
+add_compile_options(-W -Wall -Wextra -Wshadow -o3)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -31,6 +30,7 @@ add_executable(
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
         src/ProcessingUnits/CPU.hpp
+        src/ProcessingUnits/Instructions/Instructions.hpp
         src/ProcessingUnits/Instructions/CPUInstructions.cpp
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp
@@ -47,6 +47,14 @@ add_executable(
         src/Network/BgbHandler.hpp
         src/Network/Exception.hpp
         src/Network/ProtocolHandle.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.hpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
 )
 
 if (WIN32)

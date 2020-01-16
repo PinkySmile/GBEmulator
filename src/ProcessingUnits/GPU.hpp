@@ -17,7 +17,7 @@
 #define NB_TILES TILE_DATA_SIZE * 4
 #define BG_MAP_SIZE 0x800
 #define OAM_SIZE 0xA0
-#define GPU_FULL_CYCLE_DURATION 70224
+#define GPU_FULL_CYCLE_DURATION 69905
 #define VBLANK_CYCLE_PT 66093
 #define HBLANK_CYLCE_PT
 
@@ -112,6 +112,7 @@ namespace GBEmulator
 		unsigned char getObjectPalette0() const;
 		unsigned char getObjectPalette1() const;
 
+		void updateOAM();
 		void writeVRAM(unsigned short address, unsigned char value);
 		void writeOAM(unsigned short address, unsigned char value);
 		void setControlByte(unsigned char value);

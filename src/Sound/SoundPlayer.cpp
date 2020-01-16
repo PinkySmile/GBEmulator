@@ -5,33 +5,45 @@
 ** SoundPlayer.cpp
 */
 
+#include <iostream>
 #include "SoundPlayer.hpp"
 
 namespace GBEmulator
 {
-	GBEmulator::SoundPlayer::SoundPlayer() :
+	SoundPlayer::SoundPlayer() :
 		_volume(0)
 	{
-		this->_sound.setBuffer(this->_soundBuffer);
-		this->_sound.setVolume(0);
-		this->_sound.play();
-		this->_sound.setLoop(true);
+		this->_soundSO1.setBuffer(this->_soundBuffer);
+		this->_soundSO1.setVolume(0);
+		this->_soundSO1.play();
+		this->_soundSO1.setLoop(true);
+		this->_soundSO1.setPosition(1, 0, 0);
+
+		this->_soundSO2.setBuffer(this->_soundBuffer);
+		this->_soundSO2.setVolume(0);
+		this->_soundSO2.play();
+		this->_soundSO2.setLoop(true);
+		this->_soundSO2.setPosition(-1, 0, 0);
 	}
 
-	void GBEmulator::SoundPlayer::setPitch(float pitch)
+	void SoundPlayer::setPitch(float pitch)
 	{
-		this->_sound.setPitch(pitch);
+		this->_soundSO1.setPitch(pitch);
+		this->_soundSO2.setPitch(pitch);
 	}
 
 	void SoundPlayer::setDisabled(bool disabled) {
-		if (disabled)
-			this->_sound.stop();
-		else
-			this->_sound.play();
+		if (disabled) {
+			this->_soundSO1.stop();
+			this->_soundSO2.stop();
+		} else {
+			this->_soundSO1.play();
+			this->_soundSO2.play();
+		}
 		this->_disabled = disabled;
 	}
 
-	void GBEmulator::SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
+	void SoundPlayer::setWave(std::vector<unsigned char> wave, unsigned int sampleRate)
 	{
 		auto buff = new sf::Int16[wave.size()];
 
@@ -40,17 +52,36 @@ namespace GBEmulator
 		if (!this->_soundBuffer.loadFromSamples(buff, wave.size(), 1, sampleRate))
 			throw std::invalid_argument("Cannot load sound buffer");
 		delete[] buff;
-		this->_sound.setBuffer(this->_soundBuffer);
-		this->_sound.setVolume(this->_volume);
-		if (!this->_disabled)
-			this->_sound.play();
-		this->_sound.setLoop(true);
+		this->_soundSO1.setBuffer(this->_soundBuffer);
+		this->_soundSO2.setBuffer(this->_soundBuffer);
+		this->_soundSO1.setVolume(this->_volume * this->_volumeSO1 / 100);
+		this->_soundSO2.setVolume(this->_volume * this->_volumeSO2 / 100);
+		if (!this->_disabled) {
+			this->_soundSO1.play();
+			this->_soundSO2.play();
+		}
+		this->_soundSO1.setLoop(true);
+		this->_soundSO2.setLoop(true);
+		this->_soundSO1.setPosition(1, 0, 0);
+		this->_soundSO2.setPosition(-1, 0, 0);
 	}
 
-	void GBEmulator::SoundPlayer::setVolume(float volume)
+	void SoundPlayer::setVolume(float volume)
 	{
 		this->_volume = volume;
-		this->_sound.setVolume(volume);
+		this->_soundSO1.setVolume(volume * this->_volumeSO1 / 100);
+		this->_soundSO2.setVolume(volume * this->_volumeSO2 / 100);
 	}
 
+	void SoundPlayer::setSO1Volume(float volume)
+	{
+		this->_volumeSO1 = volume;
+		this->_soundSO1.setVolume(volume * this->_volume / 100);
+	}
+
+	void SoundPlayer::setSO2Volume(float volume)
+	{
+		this->_volumeSO2 = volume;
+		this->_soundSO2.setVolume(volume * this->_volume / 100);
+	}
 }
