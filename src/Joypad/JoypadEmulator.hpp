@@ -8,6 +8,7 @@
 #ifndef GBEMULATOR_JOYPADEMULATOR_HPP
 #define GBEMULATOR_JOYPADEMULATOR_HPP
 
+#define KEYS_LENGTH 9
 
 namespace GBEmulator::Input
 {
