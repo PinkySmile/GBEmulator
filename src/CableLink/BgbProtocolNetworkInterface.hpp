@@ -17,9 +17,7 @@ namespace GBEmulator::Network
 {
 	class BGBProtocolCableInterface : public CableInterface {
 	private:
-		bool _received = true;
 		BGBHandler _handler;
-		bool _isTransfering() override;
 		void _sync(unsigned cycles) override;
 		void _sendByte(unsigned char byte) override;
 

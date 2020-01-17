@@ -256,11 +256,11 @@ namespace GBEmulator
 		this->_interruptRequest |= gpuInts;
 		this->_interruptRequest &= (0b11111100U | gpuInts);*/
 
-		if (this->_cable.isTransfering())
+		if (this->_cable.triggerInterrupt())
 			this->_interruptRequest |= SERIAL_INTERRUPT;
 		else
 			this->_interruptRequest &= ~SERIAL_INTERRUPT;
-		this->_cable.transfer(cycles);
+		this->_cable.update(cycles);
 
 		if (this->_timer.update(cycles))
 			this->_interruptRequest |= TIMER_INTERRUPT;

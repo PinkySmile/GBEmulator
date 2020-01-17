@@ -11,14 +11,24 @@ namespace GBEmulator::Network
 {
 	BGBProtocolCableInterface::BGBProtocolCableInterface() :
 		_handler([this](ProtocolHandle &handler, unsigned char rbyte){
-			unsigned char tosend = this->byte;
-
-			this->byte = rbyte;
-			if (this->isTransfering())
-				handler.reply(tosend);
+			if (this->isTransfering()) {
+				this->_isExternal = true;
+				this->_isTransfering = false;
+				this->_needInterrupt = true;
+				handler.reply(this->byte);
+				this->byte = rbyte;
+			} else {
+				std::cout << "Receive but not transfering" << std::endl;
+			}
 		},
 		[this](ProtocolHandle &, unsigned char b){
-			this->byte = b;
+			if (this->isTransfering()) {
+				this->_isTransfering = false;
+				this->_needInterrupt = true;
+				this->byte = b;
+			} else {
+				std::cout << "Receive but not transfering" << std::endl;
+			}
 		}, true)
 	{
 	}
@@ -35,14 +45,7 @@ namespace GBEmulator::Network
 
 	void BGBProtocolCableInterface::_sendByte(unsigned char sbyte)
 	{
-		if (this->_byte & 0b1U)
-			this->_handler.sendByte(sbyte);
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-
-	bool BGBProtocolCableInterface::_isTransfering()
-	{
-		return false;
+		this->_handler.sendByte(sbyte);
 	}
 
 	void BGBProtocolCableInterface::connect(const std::string &host, unsigned short port)

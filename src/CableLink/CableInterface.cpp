@@ -5,42 +5,51 @@
 ** CableInterface.cpp
 */
 
+#include <iostream>
 #include "CableInterface.hpp"
 
 namespace GBEmulator::Network
 {
 	bool CableInterface::isExternal() const
 	{
-		return this->_byte & 0x01U;
+		return this->_isExternal;
 	}
 
 	bool CableInterface::isTransfering() const
 	{
-		return this->_byte & 0x80U;
+		return this->_isTransfering;
 	}
 
-	void CableInterface::setControlByte(unsigned char cbyte)
+	void CableInterface::setControlByte(unsigned char c_byte)
 	{
-		this->_byte = cbyte;
+		this->_isExternal = c_byte & 0x01U;
+		if (!this->_isTransfering && (c_byte & 0x80U) && this->_isExternal)
+			std::cout << "" << std::endl;
+		if (!this->_isTransfering && !this->_isExternal && (c_byte & 0x80U))
+			transfer();
+		this->_isTransfering = c_byte & 0x80U;
 	}
 
 	unsigned char CableInterface::getControlByte() const
 	{
-		return this->_byte;
+		return (this->_isTransfering << 7U) | this->_isExternal | 0b01111110U;
 	}
 
-	void CableInterface::transfer(unsigned int cycles)
+	bool CableInterface::triggerInterrupt()
+	{
+		bool val = this->_needInterrupt;
+
+		this->_needInterrupt = false;
+		return val;
+	}
+
+	void CableInterface::update(unsigned int cycles)
 	{
 		this->_sync(cycles);
+	}
 
-		if (!this->isTransfering())
-			return;
-
-		unsigned char toSend = this->byte;
-
-		this->_sendByte(toSend);
-
-		if (!this->_isTransfering())
-			this->_byte &= 0x7FU;
+	void CableInterface::transfer()
+	{
+		this->_sendByte(this->byte);
 	}
 }
