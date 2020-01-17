@@ -308,8 +308,7 @@ namespace GBEmulator
 		unsigned char *_getTile(std::size_t id);
 		/*!
 		 * Obtient une tile map
-		 * // TODO : tile map c quoi ? la VRAM ?
-		 * @param alt     //TODO : alt what is it
+		 * @param alt: mode signé
 		 * @return la tile map
 		 */
 		unsigned char *_getTileMap(bool alt);
