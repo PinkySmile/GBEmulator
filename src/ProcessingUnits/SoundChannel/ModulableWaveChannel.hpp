@@ -33,6 +33,7 @@ namespace GBEmulator::SoundChannel
 		//! @param soundInterface The interface to output the sound to.
 		ModulableWaveChannel(ISound &soundInterface);
 
+		std::vector<unsigned char> getWavePattern() const;
 		unsigned char getSoundOnOff() const;
 		unsigned char getSoundLength() const;
 		unsigned char getOutputLevel() const;

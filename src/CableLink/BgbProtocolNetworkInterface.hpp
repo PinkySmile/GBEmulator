@@ -11,20 +11,24 @@
 
 #include <string>
 #include "CableInterface.hpp"
+#include "../Network/BgbHandler.hpp"
 
 namespace GBEmulator::Network
 {
 	class BGBProtocolCableInterface : public CableInterface {
 	private:
+		BGBHandler _handler;
 		void _sync(unsigned cycles) override;
-		unsigned char _receiveByte() override;
 		void _sendByte(unsigned char byte) override;
 
 	public:
-		BGBProtocolCableInterface() = default;
+		BGBProtocolCableInterface();
 		BGBProtocolCableInterface(const BGBProtocolCableInterface &) = delete;
 		~BGBProtocolCableInterface() = default;
 		BGBProtocolCableInterface &operator=(const BGBProtocolCableInterface &) = delete;
+		void connect(const std::string &host, unsigned short port);
+		void host(unsigned short port);
+		void disconnect();
 	};
 }
 

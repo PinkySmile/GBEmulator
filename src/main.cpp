@@ -5,11 +5,22 @@
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
-#include "Network/BgbProtocolNetworkInterface.hpp"
 #include "debugger/debugger.hpp"
+#include "CableLink/BgbProtocolNetworkInterface.hpp"
+
 #ifdef __GNUG__
 #include <cxxabi.h>
+#include <getopt.h>
+
 #endif
+
+struct Args
+{
+	std::string fileName;
+	std::string listenPort;
+	std::string connectIp;
+	bool debug = false;
+};
 
 std::string getLastExceptionName()
 {
@@ -32,10 +43,56 @@ std::string getLastExceptionName()
 #endif
 }
 
+Args parseArguments(int argc, char **argv)
+{
+	Args args{
+		"",
+		"",
+		"",
+		false
+	};
+	struct option long_options[] = {
+		{"debug",   no_argument,       nullptr, 'd'},
+		{"listen",  required_argument, nullptr, 'l'},
+		{"connect", required_argument, nullptr, 'c'}
+	};
+
+	while (true) {
+		int c = getopt_long(argc, argv, "l:c:d", long_options, nullptr);
+
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'd':
+			args.debug = true;
+			break;
+		case 'c':
+			args.connectIp = optarg;
+			break;
+		case 'l':
+			args.listenPort = optarg;
+			break;
+		default:
+			throw std::invalid_argument("Invalid argument");
+		}
+	}
+	if (optind != argc - 1)
+		throw std::invalid_argument("Too many or no ROM given");
+	args.fileName = argv[optind];
+	return args;
+}
+
 int main(int argc, char **argv)
 {
-	if (argc < 2 || argc > 3 || (argc == 3 && std::strcmp(argv[2], "-d") != 0)) {
-		std::cout << "Usage: " << argv[0] << " rom.gb [-d]" << std::endl;
+	GBEmulator::Network::BGBProtocolCableInterface network;
+	Args args;
+
+	try {
+		args = parseArguments(argc, argv);
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		std::cerr << "Usage: " << argv[0] << " rom.gb [-d] [-l <port>] [-c <ip:port>]" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -57,23 +114,31 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
-	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{cpu, window, joypad};
-
-	cpu.getCartridgeEmulator().loadROM(argv[1]);
-
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
-
-	//channel1.setDisabled(true);
-	//channel2.setDisabled(true);
-	channel3.setDisabled(true);
-	//channel4.setDisabled(true);
 
 	window.setFramerateLimit(60);
 	window.setView(view);
 
-	if (argc == 3)
+	try {
+		cpu.getCartridgeEmulator().loadROM(args.fileName);
+
+		if (!args.connectIp.empty() && !args.listenPort.empty())
+			throw std::invalid_argument("Cannot connect and listen at the same time");
+		else if (!args.connectIp.empty())
+			network.connect(
+				args.connectIp.substr(0, args.connectIp.find(':')),
+				std::stoi(args.connectIp.substr(args.connectIp.find(':') + 1))
+			);
+		else if (!args.listenPort.empty())
+			network.host(std::stoi(args.listenPort));
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	if (args.debug)
 		return debugger.startDebugSession();
 
 	try {
