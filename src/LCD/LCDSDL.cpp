@@ -61,14 +61,14 @@ namespace GBEmulator::Graphics {
 
 	void LCDSDL::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 	{
-		Uint32 *pixels = static_cast<Uint32 *>(this->screen->pixels);
-		Uint32 col = RGBAColor(color);
-		x *= 2;
-		y *= 2;
-		pixels[y * video_mode.width + x] = col;
-		pixels[y * video_mode.width + x + 1] = col;
-		pixels[(y + 1) * video_mode.width + x] = col;
-		pixels[(y + 1) * video_mode.width + x + 1] = col;
+		auto *pixels = static_cast<Uint16 *>(this->screen->pixels);
+		Uint16 col = RGBAColor(color);
+
+		x *= 4;
+		y *= 4;
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 4; j++)
+				pixels[(y + j) * video_mode.width + (x + i)] = col;
 	}
 
 	RGBAColor::RGBAColor(const GBEmulator::Graphics::RGBColor &color):

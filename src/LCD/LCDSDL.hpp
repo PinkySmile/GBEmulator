@@ -36,8 +36,8 @@ namespace GBEmulator
 			unsigned char b;
 			unsigned char a;
 			RGBAColor(const RGBColor &color);
-			operator Uint32() const noexcept {
-				return *reinterpret_cast<const Uint32 *>(this);
+			operator Uint16() const noexcept {
+				return ((this->r >> 3U) << 11U | (this->g >> 2U) << 5U | (this->b >> 3U));
 			}
 		};
 
