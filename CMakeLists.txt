@@ -51,7 +51,7 @@ add_executable(
         src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
-)
+        src/LCD/LCDSDL.cpp src/LCD/LCDSDL.hpp src/Joypad/SDLKeyboardJoypadEmulator.cpp src/Joypad/SDLKeyboardJoypadEmulator.hpp)
 
 if (WIN32)
         target_link_libraries(
