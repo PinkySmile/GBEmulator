@@ -13,9 +13,6 @@
 
 namespace GBEmulator
 {
-	namespace Debugger {
-		class Debugger;
-	}
 	namespace Graphics {
 		class Exception : public std::exception {
 		private:
@@ -33,13 +30,24 @@ namespace GBEmulator
 			Uint32 flags;
 		};
 
+		struct RGBAColor {
+			unsigned char r;
+			unsigned char g;
+			unsigned char b;
+			unsigned char a;
+			RGBAColor(const RGBColor &color);
+			operator Uint32() const noexcept {
+				return *reinterpret_cast<const Uint32 *>(this);
+			}
+		};
+
 		class LCDSDL : public ILCD {
 		private:
 			SDL_Surface *screen;
 			TimerSDL fps = TimerSDL();
 			int frame_counter = 0;
+			SDLVideoMode video_mode;
 
-			friend Debugger::Debugger;
 		public:
 			LCDSDL();
 			LCDSDL(const LCDSDL &) = delete;
@@ -53,7 +61,6 @@ namespace GBEmulator
 			bool isClosed() const override;
 			void close() override;
 			double getFramerate();
-			void capFPS();
 		};
 	}
 }
