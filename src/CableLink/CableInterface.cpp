@@ -24,7 +24,7 @@ namespace GBEmulator::Network
 	{
 		this->_isExternal = c_byte & 0x01U;
 		if (!this->_isTransfering && (c_byte & 0x80U) && this->_isExternal)
-			std::cout << "" << std::endl;
+			std::cout << "Set to transfering as external" << std::endl;
 		if (!this->_isTransfering && !this->_isExternal && (c_byte & 0x80U))
 			transfer();
 		this->_isTransfering = c_byte & 0x80U;
