@@ -51,7 +51,8 @@ add_executable(
         src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
-        src/LCD/LCDSDL.cpp src/LCD/LCDSDL.hpp src/Joypad/SDLKeyboardJoypadEmulator.cpp src/Joypad/SDLKeyboardJoypadEmulator.hpp)
+        src/LCD/LCDSDL.cpp src/LCD/LCDSDL.hpp src/Joypad/SDLKeyboardJoypadEmulator.cpp src/Joypad/SDLKeyboardJoypadEmulator.hpp
+	src/LCD/util/TimerSDL.cpp src/LCD/util/TimerSDL.hpp)
 
 if (WIN32)
         target_link_libraries(
@@ -61,6 +62,7 @@ if (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                SDL
                 pthread
         )
 else (WIN32)
@@ -70,6 +72,7 @@ else (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                SDL
                 pthread
         )
 endif (WIN32)

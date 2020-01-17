@@ -32,9 +32,10 @@ namespace GBEmulator::Graphics {
 		int ticks = fps.get_ticks();
 
 		this->frame_counter++;
-		if (ticks < 1000 / FRAMES_PER_SECOND) {
-			SDL_Delay((1000 / FRAMES_PER_SECOND) - ticks);
-		}
+//		if (ticks < 1000 / FRAMES_PER_SECOND) {
+//			SDL_Delay((1000 / FRAMES_PER_SECOND) - ticks);
+//		}
+		SDL_Flip(screen);
 		this->fps.reset();
 	}
 
@@ -60,7 +61,6 @@ namespace GBEmulator::Graphics {
 
 	void LCDSDL::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 	{
-		SDL_LockSurface(this->screen);
 		Uint32 *pixels = static_cast<Uint32 *>(this->screen->pixels);
 		Uint32 col = RGBAColor(color);
 		x *= 2;
@@ -69,7 +69,6 @@ namespace GBEmulator::Graphics {
 		pixels[y * video_mode.width + x + 1] = col;
 		pixels[(y + 1) * video_mode.width + x] = col;
 		pixels[(y + 1) * video_mode.width + x + 1] = col;
-		SDL_UnlockSurface(this->screen);
 	}
 
 	RGBAColor::RGBAColor(const GBEmulator::Graphics::RGBColor &color):

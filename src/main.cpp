@@ -7,6 +7,9 @@
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "Network/BgbProtocolNetworkInterface.hpp"
 #include "debugger/debugger.hpp"
+#include "LCD/LCDSDL.hpp"
+#include "Joypad/SDLKeyboardJoypadEmulator.hpp"
+
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif
@@ -45,8 +48,8 @@ int main(int argc, char **argv)
 	GBEmulator::SoundPlayer channel2;
 	GBEmulator::SoundPlayer channel3;
 	GBEmulator::SoundPlayer channel4;
-	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
-	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad(window, {
+//	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
+	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad(nullptr, {
 		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::W},
 		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::X},
 		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
@@ -57,6 +60,20 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
+
+	GBEmulator::Graphics::LCDSDL window;
+/*	GBEmulator::Input::SDLKeyboardJoypadEmulator joypad({
+		{GBEmulator::Input::JOYPAD_A, SDLK_w},
+		{GBEmulator::Input::JOYPAD_B, SDLK_x},
+		{GBEmulator::Input::JOYPAD_UP, SDLK_UP},
+		{GBEmulator::Input::JOYPAD_DOWN, SDLK_DOWN},
+		{GBEmulator::Input::JOYPAD_LEFT, SDLK_LEFT},
+		{GBEmulator::Input::JOYPAD_RIGHT, SDLK_RIGHT},
+		{GBEmulator::Input::JOYPAD_START, SDLK_RETURN},
+		{GBEmulator::Input::JOYPAD_SELECT, SDLK_BACKSPACE},
+		{GBEmulator::Input::ENABLE_DEBUGGING, SDLK_v}
+	});
+ */
 	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{cpu, window, joypad};
@@ -70,8 +87,8 @@ int main(int argc, char **argv)
 	channel3.setDisabled(true);
 	//channel4.setDisabled(true);
 
-	window.setFramerateLimit(60);
-	window.setView(view);
+//	window.setFramerateLimit(60);
+//	window.setView(view);
 
 	if (argc == 3)
 		return debugger.startDebugSession();

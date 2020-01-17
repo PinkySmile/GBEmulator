@@ -7,6 +7,7 @@
 #ifndef GBEMULATOR_SDLKEYBOARDJOYPADEMULATOR_HPP
 #define GBEMULATOR_SDLKEYBOARDJOYPADEMULATOR_HPP
 
+#include <unordered_map>
 #include <map>
 #include "JoypadEmulator.hpp"
 #include <SDL/SDL.h>
@@ -15,8 +16,8 @@ namespace GBEmulator::Input
 {
 	class SDLKeyboardJoypadEmulator : public JoypadEmulator {
 	private:
-		std::map<Keys, SDL_keysym> _keys;
-		std::map<SDL_keysym, Keys> _rkeys;
+		std::map<Keys, SDLKey> _keys;
+		std::unordered_map<SDLKey, Keys> _rkeys;
 		bool keyPressed[KEYS_LENGTH] = {false};
 
 	public:
@@ -24,10 +25,10 @@ namespace GBEmulator::Input
 		SDLKeyboardJoypadEmulator(const SDLKeyboardJoypadEmulator &) = delete;
 		~SDLKeyboardJoypadEmulator() = default;
 		SDLKeyboardJoypadEmulator &operator=(const SDLKeyboardJoypadEmulator &) = delete;
-		explicit SDLKeyboardJoypadEmulator(const std::map<Keys, SDL_keysym> &&keys);
+		explicit SDLKeyboardJoypadEmulator(const std::map<Keys, SDLKey> &&keys);
 		void update();
-		void setKeyValue(SDL_keysym keysym, bool value);
-		void setKey(Keys button, SDL_keysym key);
+		void setKeyValue(SDLKey keysym, bool value);
+		void setKey(Keys button, SDLKey key);
 		bool isButtonPressed(Keys button) const noexcept override;
 	};
 }
