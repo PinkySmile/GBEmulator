@@ -184,7 +184,7 @@ namespace GBEmulator
 		);
 		CPU() = delete;
 		CPU(const CPU &) = delete;
-		~CPU();
+		~CPU() = default;
 		CPU &operator=(const CPU &) = delete;
 
 		//! set CPU in halted mode
@@ -246,9 +246,6 @@ namespace GBEmulator
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;
 		Network::CableInterface &_cable;
-		unsigned short _threadCycles;
-		std::thread _componentsThread;
-		bool _threadRunning = true;
 
 		void _updateComponents(unsigned int cycles);
 		bool _checkInterrupts();
