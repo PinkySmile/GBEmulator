@@ -71,6 +71,7 @@ namespace GBEmulator
 					this->_updateComponents(cycles);
 					this->_threadCycles -= cycles;
 				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
 		});
 	}
