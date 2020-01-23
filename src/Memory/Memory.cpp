@@ -19,6 +19,7 @@ namespace GBEmulator::Memory
 		_size(size),
 		_memory(new unsigned char [size])
 	{
+		this->_bankPtr = this->_memory;
 		for (unsigned i = 0; i < size; i++)
 			this->_memory[i] = rand() % 0x100;
 	}
@@ -30,12 +31,12 @@ namespace GBEmulator::Memory
 
 	unsigned char Memory::rawRead(unsigned short address) const
 	{
-		return this->_memory[address % this->_size];
+		return this->_memory[address];
 	}
 
 	unsigned char Memory::read(unsigned short address) const
 	{
-		return this->_memory[(address + this->_currentBank * this->_bankSize) % this->_size];
+		return this->_bankPtr[address];
 	}
 
 	size_t Memory::getSize() const
@@ -46,6 +47,7 @@ namespace GBEmulator::Memory
 	void Memory::setBankSize(size_t size)
 	{
 		this->_bankSize = size;
+		this->_bankPtr = this->_memory + size * this->_currentBank;
 	}
 
 	unsigned char Memory::getCurrentBank() const
@@ -58,6 +60,7 @@ namespace GBEmulator::Memory
 		delete[] this->_memory;
 		this->_memory = memory;
 		this->_size = size;
+		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 	}
 
 	void Memory::resize(size_t size)
@@ -72,6 +75,7 @@ namespace GBEmulator::Memory
 			std::memcpy(tab, this->_memory, size);
 		delete[] this->_memory;
 		this->_memory = tab;
+		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 		this->_size = size;
 	}
 
@@ -84,12 +88,13 @@ namespace GBEmulator::Memory
 
 	void Memory::forceWrite(unsigned short address,unsigned char value)
 	{
-		this->_memory[(address + this->_currentBank * this->_bankSize) % this->_size] = value;
+		this->_bankPtr[address] = value;
 	}
 
 	void Memory::setBank(unsigned char bank)
 	{
 		this->_currentBank = bank % (this->_size / this->_bankSize);
+		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 	}
 
 	void Memory::dump(unsigned short offset) const

@@ -8,7 +8,7 @@
 #ifndef GBEMULATOR_CPU_HPP
 #define GBEMULATOR_CPU_HPP
 
-
+#include <thread>
 #include <string>
 #include <functional>
 #include "APU.hpp"
@@ -16,7 +16,7 @@
 #include "GPU.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
-#include "../Network/CableInterface.hpp"
+#include "../CableLink/CableInterface.hpp"
 #include "../Timing/Timer.hpp"
 
 //The total size of the working RAM
@@ -184,7 +184,7 @@ namespace GBEmulator
 		);
 		CPU() = delete;
 		CPU(const CPU &) = delete;
-		~CPU() = default;
+		~CPU();
 		CPU &operator=(const CPU &) = delete;
 
 		void halt();
@@ -229,6 +229,9 @@ namespace GBEmulator
 		unsigned char _interruptRequest;
 		bool _interruptMasterEnableFlag;
 		Network::CableInterface &_cable;
+		unsigned short _threadCycles;
+		std::thread _componentsThread;
+		bool _threadRunning = true;
 
 		void _updateComponents(unsigned int cycles);
 		bool _checkInterrupts();
