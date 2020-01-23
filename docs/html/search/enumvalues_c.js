@@ -14,5 +14,12 @@ var searchData=
   ['size_5f32kbyte',['SIZE_32KByte',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a36da6f9711c89fb868c7dea6aa3802e8aaa6cab49265e1b87406a16223283619f',1,'GBEmulator::Memory::Cartridge']]],
   ['size_5f4mbyte',['SIZE_4MByte',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a36da6f9711c89fb868c7dea6aa3802e8a3235b90828de945f99085e1d473829db',1,'GBEmulator::Memory::Cartridge']]],
   ['size_5f512kbyte',['SIZE_512KByte',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a36da6f9711c89fb868c7dea6aa3802e8a6f48fe60c8141b6172e0d8688c56a2e4',1,'GBEmulator::Memory::Cartridge']]],
-  ['size_5f64kbyte',['SIZE_64KByte',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a36da6f9711c89fb868c7dea6aa3802e8acd49914ee74531f72a15c4c388eed420',1,'GBEmulator::Memory::Cartridge']]]
+  ['size_5f64kbyte',['SIZE_64KByte',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a36da6f9711c89fb868c7dea6aa3802e8acd49914ee74531f72a15c4c388eed420',1,'GBEmulator::Memory::Cartridge']]],
+  ['status',['STATUS',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451aacee533772eeda0c64d943aff560a00ab',1,'GBEmulator::Network::BGBHandler']]],
+  ['statusflag_5fpaused',['STATUSFLAG_PAUSED',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a40124cf4da65de59f620cd2b1c1789e6a9a9b87fe68cc7be259d3e5a775a18a2b',1,'GBEmulator::Network::BGBHandler']]],
+  ['statusflag_5frunning',['STATUSFLAG_RUNNING',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a40124cf4da65de59f620cd2b1c1789e6a49e7cf542a95588209f412759ca01104',1,'GBEmulator::Network::BGBHandler']]],
+  ['statusflag_5fsupport_5freconnect',['STATUSFLAG_SUPPORT_RECONNECT',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a40124cf4da65de59f620cd2b1c1789e6a9638ee1619cde8dd6997a73146476912',1,'GBEmulator::Network::BGBHandler']]],
+  ['sync1_5fsignal',['SYNC1_SIGNAL',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451aaf8e06c933665fd5e260fca71cc5e0cd2',1,'GBEmulator::Network::BGBHandler']]],
+  ['sync2_5fsignal',['SYNC2_SIGNAL',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451aa67c3656fbba94540db69064519bff133',1,'GBEmulator::Network::BGBHandler']]],
+  ['sync3_5fsignal',['SYNC3_SIGNAL',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451aa1a6e5f4c5a12c49de2faaca74a0ba9ae',1,'GBEmulator::Network::BGBHandler']]]
 ];

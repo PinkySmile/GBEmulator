@@ -1,3 +1,5 @@
-<map id="src/Network/BgbProtocolNetworkInterface.hpp" name="src/Network/BgbProtocolNetworkInterface.hpp">
-<area shape="rect" id="node3" href="$_cable_interface_8hpp.html" title="CableInterface.hpp" alt="" coords="115,95,261,121"/>
+<map id="src/CableLink/BgbProtocolNetworkInterface.hpp" name="src/CableLink/BgbProtocolNetworkInterface.hpp">
+<area shape="rect" id="node3" href="$_cable_interface_8hpp.html" title="CableInterface.hpp" alt="" coords="89,95,234,121"/>
+<area shape="rect" id="node4" href="$_bgb_handler_8hpp.html" title="../Network/BgbHandler.hpp" alt="" coords="258,95,454,121"/>
+<area shape="rect" id="node10" href="$_protocol_handle_8hpp.html" title="ProtocolHandle.hpp" alt="" coords="419,169,568,196"/>
 </map>

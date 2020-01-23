@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fd_5fset',['FD_SET',['../debugger_8cpp.html#ad8a8662549478823ee0d459795420284',1,'debugger.cpp']]]
+  ['bytehandle',['ByteHandle',['../namespace_g_b_emulator_1_1_network.html#af67e6687c977c83315079983c15d2719',1,'GBEmulator::Network']]]
 ];

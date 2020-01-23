@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['eofexception',['EOFException',['../class_g_b_emulator_1_1_network_1_1_e_o_f_exception.html#a61a0b63def1a63f5c3faca75159aedd9',1,'GBEmulator::Network::EOFException']]],
   ['exception',['Exception',['../class_g_b_emulator_1_1_debugger_1_1_exception.html#a8fdfa019b1876a7d7a7a110ecb4b69ca',1,'GBEmulator::Debugger::Exception']]],
   ['executebitinstruction',['executeBitInstruction',['../namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002',1,'GBEmulator::Instructions']]],
   ['executeinstruction',['executeInstruction',['../namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54',1,'GBEmulator::Instructions']]],

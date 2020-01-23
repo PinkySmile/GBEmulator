@@ -1,26 +1,38 @@
 <map id="GBEmulator::ISound::setVolume" name="GBEmulator::ISound::setVolume">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a57d4a2674fce08fd3a8075ca9f84ef8d" title="GBEmulator::APU::Sound\l::disable" alt="" coords="205,151,388,193"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u.html#ad62804e88f16bbc01a69bc76cb266450" title="GBEmulator::APU::setSound\lOnOff" alt="" coords="436,151,639,193"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u.html#a26c449bcf47a7142b22a2dd315adc9ac" title="GBEmulator::APU::controller\lWriting" alt="" coords="687,151,892,193"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u.html#a982ab0a257c874711186e69b63eab433" title="GBEmulator::APU::write" alt="" coords="940,159,1116,185"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_c_p_u.html#a121d9852c3b16173125e53058a884820" title="Écrit la valeur sur la zone pointé par l&#39;adresse passée. " alt="" coords="1164,159,1340,185"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="2417,85,2588,126"/>
-<area shape="rect" id="node11" href="$namespace_g_b_emulator_1_1_instructions.html#af8fc849b3742e9d228ac83b2cf35803b" title="GBEmulator::Instructions\l::PUSH" alt="" coords="1388,282,1572,323"/>
-<area shape="rect" id="node20" href="$namespace_g_b_emulator_1_1_instructions.html#a891a7743ac4c8e191123d86420d324d2" title="GBEmulator::Instructions\l::LD8toPTR" alt="" coords="1620,477,1804,518"/>
-<area shape="rect" id="node21" href="$namespace_g_b_emulator_1_1_instructions.html#a8c177205893c908bd0e0b7cd2966b4f3" title="GBEmulator::Instructions\l::LD16toPTR" alt="" coords="1861,43,2045,85"/>
-<area shape="rect" id="node22" href="$namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff" title="GBEmulator::Instructions\l::INCPTR" alt="" coords="1620,94,1804,135"/>
-<area shape="rect" id="node23" href="$namespace_g_b_emulator_1_1_instructions.html#af9c606cc20d0becd92ef6a2edd12bc82" title="GBEmulator::Instructions\l::DECPTR" alt="" coords="1388,151,1572,193"/>
-<area shape="rect" id="node24" href="$namespace_g_b_emulator_1_1_instructions.html#a8f7187c49a10c33d10edca7d86356c6d" title="GBEmulator::Instructions\l::executeOnPtr" alt="" coords="1388,217,1572,258"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="2888,161,3133,202"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="3181,186,3401,227"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="3449,241,3672,282"/>
-<area shape="rect" id="node12" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="2136,245,2320,286"/>
-<area shape="rect" id="node16" href="$namespace_g_b_emulator_1_1_instructions.html#a695737ff51c6b6f80beee86d52307848" title="GBEmulator::Instructions\l::CALL" alt="" coords="1620,357,1804,398"/>
-<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="2401,245,2604,286"/>
-<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="2652,252,2840,279"/>
-<area shape="rect" id="node15" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="2983,227,3038,253"/>
-<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="1852,446,2055,487"/>
-<area shape="rect" id="node19" href="$namespace_g_b_emulator_1_1_instructions.html#afb0182fc72c6295ac52ccb51ee9fa08c" title="GBEmulator::Instructions\l::CALLC" alt="" coords="1861,329,2045,370"/>
-<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="2103,395,2353,421"/>
-<area shape="rect" id="node25" href="$namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002" title="GBEmulator::Instructions\l::executeBitInstruction" alt="" coords="1861,211,2045,253"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#af02407ec3a4509d66ac07a258fb48444" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::_checkRestart" alt="" coords="221,53,422,109"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a09fa4ee3c1027d4ce64b692137e73f1c" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::setSoundOnOff" alt="" coords="221,265,422,321"/>
+<area shape="rect" id="node25" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abcd9e6ea6cef641c33fc7799c9d1db89" title="GBEmulator::SoundChannel\l::SoundChannel::setVolume" alt="" coords="221,199,422,241"/>
+<area shape="rect" id="node30" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a90bff2c08aef69a53779dce5f414aa1e" title="GBEmulator::SoundChannel\l::SoundChannel::disable" alt="" coords="221,134,422,175"/>
+<area shape="rect" id="node33" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abb00fdde5570668136a66e0621797fce" title="GBEmulator::SoundChannel\l::SoundChannel::_updateVolume" alt="" coords="205,462,437,503"/>
+<area shape="rect" id="node34" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a119d2e85059194de1becfe6fb95bec98" title="Update the channel. " alt="" coords="486,397,687,438"/>
+<area shape="rect" id="node37" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#aa45065a2283204015e5bc1f24bbe94f9" title="GBEmulator::SoundChannel\l::SoundChannel::_checkRestart" alt="" coords="210,397,433,438"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u.html#afd8c07d98d6c9d448da7cf07bcfbd5d8" title="GBEmulator::APU::channel\lWaveWriting" alt="" coords="741,282,936,323"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u.html#a982ab0a257c874711186e69b63eab433" title="GBEmulator::APU::write" alt="" coords="999,159,1175,185"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_c_p_u.html#a121d9852c3b16173125e53058a884820" title="Écrit la valeur sur la zone pointé par l&#39;adresse passée. " alt="" coords="1232,159,1408,185"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="2485,94,2656,135"/>
+<area shape="rect" id="node11" href="$namespace_g_b_emulator_1_1_instructions.html#af8fc849b3742e9d228ac83b2cf35803b" title="GBEmulator::Instructions\l::PUSH" alt="" coords="1456,282,1640,323"/>
+<area shape="rect" id="node19" href="$namespace_g_b_emulator_1_1_instructions.html#a891a7743ac4c8e191123d86420d324d2" title="GBEmulator::Instructions\l::LD8toPTR" alt="" coords="1688,477,1872,518"/>
+<area shape="rect" id="node20" href="$namespace_g_b_emulator_1_1_instructions.html#a8c177205893c908bd0e0b7cd2966b4f3" title="GBEmulator::Instructions\l::LD16toPTR" alt="" coords="1929,43,2113,85"/>
+<area shape="rect" id="node21" href="$namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff" title="GBEmulator::Instructions\l::INCPTR" alt="" coords="1688,94,1872,135"/>
+<area shape="rect" id="node22" href="$namespace_g_b_emulator_1_1_instructions.html#af9c606cc20d0becd92ef6a2edd12bc82" title="GBEmulator::Instructions\l::DECPTR" alt="" coords="1456,151,1640,193"/>
+<area shape="rect" id="node23" href="$namespace_g_b_emulator_1_1_instructions.html#a8f7187c49a10c33d10edca7d86356c6d" title="GBEmulator::Instructions\l::executeOnPtr" alt="" coords="1456,217,1640,258"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="2956,182,3201,223"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="3249,182,3469,223"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="3517,211,3740,253"/>
+<area shape="rect" id="node12" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="2204,241,2388,282"/>
+<area shape="rect" id="node15" href="$namespace_g_b_emulator_1_1_instructions.html#a695737ff51c6b6f80beee86d52307848" title="GBEmulator::Instructions\l::CALL" alt="" coords="1688,357,1872,398"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="2469,241,2672,282"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="2720,248,2908,275"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="1920,446,2123,487"/>
+<area shape="rect" id="node18" href="$namespace_g_b_emulator_1_1_instructions.html#afb0182fc72c6295ac52ccb51ee9fa08c" title="GBEmulator::Instructions\l::CALLC" alt="" coords="1929,329,2113,370"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="2171,395,2421,421"/>
+<area shape="rect" id="node24" href="$namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002" title="GBEmulator::Instructions\l::executeBitInstruction" alt="" coords="1929,211,2113,253"/>
+<area shape="rect" id="node26" href="$class_g_b_emulator_1_1_a_p_u.html#a34dd16e19145b2edb708d43c33d3dd6e" title="GBEmulator::APU::channel\lOneWriting" alt="" coords="741,151,936,193"/>
+<area shape="rect" id="node27" href="$class_g_b_emulator_1_1_a_p_u.html#a3b83c012b409d34ef1700bd347538228" title="GBEmulator::APU::channel\lTwoWriting" alt="" coords="741,217,936,258"/>
+<area shape="rect" id="node28" href="$class_g_b_emulator_1_1_a_p_u.html#a7b66c5b8d118800c24af80831da75adf" title="GBEmulator::APU::channel\lNoiseWriting" alt="" coords="489,94,684,135"/>
+<area shape="rect" id="node29" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a68fa70003f37b0ed2f8745bb1a13f510" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::setOutputLevel" alt="" coords="486,261,687,317"/>
+<area shape="rect" id="node31" href="$class_g_b_emulator_1_1_a_p_u.html#ad62804e88f16bbc01a69bc76cb266450" title="GBEmulator::APU::setSound\lOnOff" alt="" coords="485,29,688,70"/>
+<area shape="rect" id="node32" href="$class_g_b_emulator_1_1_a_p_u.html#a26c449bcf47a7142b22a2dd315adc9ac" title="GBEmulator::APU::controller\lWriting" alt="" coords="736,31,941,73"/>
+<area shape="rect" id="node35" href="$class_g_b_emulator_1_1_a_p_u.html#ae673c87a7e7c4dcf2639abe396f9ea15" title="GBEmulator::APU::update" alt="" coords="745,404,933,431"/>
+<area shape="rect" id="node36" href="$class_g_b_emulator_1_1_c_p_u.html#abe06dc8fe4c7745b02af45e394128372" title="GBEmulator::CPU::_update\lComponents" alt="" coords="989,397,1184,438"/>
 </map>

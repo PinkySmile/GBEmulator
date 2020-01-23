@@ -65,8 +65,7 @@ $(function() {
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">GBEmulator Namespace Reference</div>  </div>
 </div><!--header-->
@@ -86,6 +85,8 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_g_b_emulator_1_1_network"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_b_emulator_1_1_network.html">Network</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespace_g_b_emulator_1_1_sound_channel"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_b_emulator_1_1_sound_channel.html">SoundChannel</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_g_b_emulator_1_1_timing"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_b_emulator_1_1_timing.html">Timing</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -96,6 +97,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_c_p_u.html">CPU</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_g_p_u.html">GPU</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classe représentant le <a class="el" href="class_g_b_emulator_1_1_g_p_u.html" title="Classe représentant le GPU. Cette classe gère l&#39;écriture/lecture de la VRAM et de l&#39;OAM...">GPU</a>. Cette classe gère l'écriture/lecture de la VRAM et de l'OAM.  <a href="class_g_b_emulator_1_1_g_p_u.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_i_sound.html">ISound</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,11 +138,6 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a27c16361b2c17606a0702b097d1a4342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:abeb01e92d770fb7e3df6a135a9943fc3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_b_emulator.html#abeb01e92d770fb7e3df6a135a9943fc3">getSquareWave</a> (int frequency, float percentage)</td></tr>
-<tr class="separator:abeb01e92d770fb7e3df6a135a9943fc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a27c16361b2c17606a0702b097d1a4342"></a>
@@ -179,67 +176,6 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a27c16361b2c17606a0702b097d1a4342ae420463b4c412074597969bd5b2c24b8"></a>WPRAM_START&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a27c16361b2c17606a0702b097d1a4342ae292fd97a9794bf9f528efd66a5ed6df"></a>WPRAM_END&#160;</td><td class="fielddoc"></td></tr>
 </table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="abeb01e92d770fb7e3df6a135a9943fc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abeb01e92d770fb7e3df6a135a9943fc3">&#9670;&nbsp;</a></span>getSquareWave()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;unsigned char&gt;&amp; GBEmulator::getSquareWave </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>frequency</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>percentage</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="namespace_g_b_emulator_abeb01e92d770fb7e3df6a135a9943fc3_icgraph.png" border="0" usemap="#namespace_g_b_emulator_abeb01e92d770fb7e3df6a135a9943fc3_icgraph" alt=""/></div>
-<map name="namespace_g_b_emulator_abeb01e92d770fb7e3df6a135a9943fc3_icgraph" id="namespace_g_b_emulator_abeb01e92d770fb7e3df6a135a9943fc3_icgraph">
-<area shape="rect" id="node2" href="class_g_b_emulator_1_1_a_p_u.html#aab1be0466041de5b6cba99e4ca24cbe0" title="GBEmulator::APU::APU" alt="" coords="270,100,441,127"/>
-<area shape="rect" id="node3" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a1e79621a4b84766da99fe246713d2298" title="GBEmulator::APU::Sound\l::setWave" alt="" coords="264,151,447,193"/>
-<area shape="rect" id="node4" href="class_g_b_emulator_1_1_a_p_u.html#a34dd16e19145b2edb708d43c33d3dd6e" title="GBEmulator::APU::channel\lOneWriting" alt="" coords="495,118,689,159"/>
-<area shape="rect" id="node26" href="class_g_b_emulator_1_1_a_p_u.html#a3b83c012b409d34ef1700bd347538228" title="GBEmulator::APU::channel\lTwoWriting" alt="" coords="495,183,689,225"/>
-<area shape="rect" id="node5" href="class_g_b_emulator_1_1_a_p_u.html#a982ab0a257c874711186e69b63eab433" title="GBEmulator::APU::write" alt="" coords="737,159,913,185"/>
-<area shape="rect" id="node6" href="class_g_b_emulator_1_1_c_p_u.html#a121d9852c3b16173125e53058a884820" title="Écrit la valeur sur la zone pointé par l&#39;adresse passée. " alt="" coords="961,159,1137,185"/>
-<area shape="rect" id="node7" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="2215,85,2385,126"/>
-<area shape="rect" id="node11" href="namespace_g_b_emulator_1_1_instructions.html#af8fc849b3742e9d228ac83b2cf35803b" title="GBEmulator::Instructions\l::PUSH" alt="" coords="1185,282,1369,323"/>
-<area shape="rect" id="node20" href="namespace_g_b_emulator_1_1_instructions.html#a891a7743ac4c8e191123d86420d324d2" title="GBEmulator::Instructions\l::LD8toPTR" alt="" coords="1417,477,1601,518"/>
-<area shape="rect" id="node21" href="namespace_g_b_emulator_1_1_instructions.html#a8c177205893c908bd0e0b7cd2966b4f3" title="GBEmulator::Instructions\l::LD16toPTR" alt="" coords="1659,43,1843,85"/>
-<area shape="rect" id="node22" href="namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff" title="GBEmulator::Instructions\l::INCPTR" alt="" coords="1417,94,1601,135"/>
-<area shape="rect" id="node23" href="namespace_g_b_emulator_1_1_instructions.html#af9c606cc20d0becd92ef6a2edd12bc82" title="GBEmulator::Instructions\l::DECPTR" alt="" coords="1185,151,1369,193"/>
-<area shape="rect" id="node24" href="namespace_g_b_emulator_1_1_instructions.html#a8f7187c49a10c33d10edca7d86356c6d" title="GBEmulator::Instructions\l::executeOnPtr" alt="" coords="1185,217,1369,258"/>
-<area shape="rect" id="node8" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="2685,161,2931,202"/>
-<area shape="rect" id="node9" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="2979,186,3199,227"/>
-<area shape="rect" id="node10" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="3247,241,3469,282"/>
-<area shape="rect" id="node12" href="namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="1933,245,2117,286"/>
-<area shape="rect" id="node16" href="namespace_g_b_emulator_1_1_instructions.html#a695737ff51c6b6f80beee86d52307848" title="GBEmulator::Instructions\l::CALL" alt="" coords="1417,357,1601,398"/>
-<area shape="rect" id="node13" href="class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="2199,245,2401,286"/>
-<area shape="rect" id="node14" href="class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="2449,252,2637,279"/>
-<area shape="rect" id="node15" href="main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="2781,227,2835,253"/>
-<area shape="rect" id="node17" href="class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="1649,446,1852,487"/>
-<area shape="rect" id="node19" href="namespace_g_b_emulator_1_1_instructions.html#afb0182fc72c6295ac52ccb51ee9fa08c" title="GBEmulator::Instructions\l::CALLC" alt="" coords="1659,329,1843,370"/>
-<area shape="rect" id="node18" href="class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="1900,395,2151,421"/>
-<area shape="rect" id="node25" href="namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002" title="GBEmulator::Instructions\l::executeBitInstruction" alt="" coords="1659,211,1843,253"/>
-</map>
-</div>
 
 </div>
 </div>

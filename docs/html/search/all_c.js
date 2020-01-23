@@ -22,5 +22,8 @@ var searchData=
   ['ld8toptr',['LD8toPTR',['../namespace_g_b_emulator_1_1_instructions.html#a891a7743ac4c8e191123d86420d324d2',1,'GBEmulator::Instructions']]],
   ['ld_5fcycle_5fduration',['LD_CYCLE_DURATION',['../_c_p_u_instructions_8hpp.html#af380fa018ddbbc89796629fc05652743',1,'CPUInstructions.hpp']]],
   ['lgray',['LGray',['../struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#ae2c036780259e66c91f4435591638e09',1,'GBEmulator::Graphics::RGBColor']]],
-  ['loadrom',['loadROM',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a8e724bf32b716472aea4f43fb4e625a1',1,'GBEmulator::Memory::Cartridge']]]
+  ['listenfailedexception',['ListenFailedException',['../class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html',1,'GBEmulator::Network::ListenFailedException'],['../class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html#a247368eb3c4acf9b13bd5badc72f71ef',1,'GBEmulator::Network::ListenFailedException::ListenFailedException()']]],
+  ['listenport',['listenPort',['../struct_args.html#a33ddbe6eb92378834481de0af0759ff4',1,'Args']]],
+  ['loadrom',['loadROM',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a8e724bf32b716472aea4f43fb4e625a1',1,'GBEmulator::Memory::Cartridge']]],
+  ['log',['log',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a155908c52258253a1af3defb6c8ea60e',1,'GBEmulator::Network::BGBHandler']]]
 ];

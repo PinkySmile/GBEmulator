@@ -1,19 +1,21 @@
 <map id="GBEmulator::APU::read" name="GBEmulator::APU::read">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u.html#a382c9886c6ebe2b10cd089dfb35234ad" title="GBEmulator::APU::channel\lOneReading" alt="" coords="231,136,425,177"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_a_p_u.html#ad92d850dad064253e8f7112e3e907a59" title="GBEmulator::APU::channel\lTwoReading" alt="" coords="231,201,425,243"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_a_p_u.html#a6bc60464f73de1410d6b48268abb1fe9" title="GBEmulator::APU::channel\lWaveReading" alt="" coords="231,332,425,373"/>
-<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_a_p_u.html#ad228cd7b7ada46fcaefdbba076062074" title="GBEmulator::APU::channel\lNoiseReading" alt="" coords="231,267,425,308"/>
-<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_a_p_u.html#a9e4c922d02cf92cd0ad82c8c4bbe1635" title="GBEmulator::APU::controller\lReading" alt="" coords="225,521,431,563"/>
-<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="247,587,409,628"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aaa996fec1f009687c07d90fad41b4b34" title="GBEmulator::APU::Sound\l::getSweep" alt="" coords="489,5,672,47"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a31f4aa5671486ee81d3b563e207118bc" title="GBEmulator::APU::Sound\l::getWave" alt="" coords="489,71,672,112"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a9058f46ee3122d1fe204694d85a6cb8f" title="GBEmulator::APU::Sound\l::getVolume" alt="" coords="489,136,672,177"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#acc45025aa8d60e4a0cae566db14e4014" title="GBEmulator::APU::Sound\l::getRestartOptions" alt="" coords="489,201,672,243"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a6a9815474d9b3d7ff0314054869d6978" title="GBEmulator::APU::Sound\l::getSoundONOFF" alt="" coords="489,463,672,504"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a2121b4feb7f7d90cc0bdb2a919f2d15d" title="GBEmulator::APU::Sound\l::getSoundLength" alt="" coords="489,332,672,373"/>
-<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a83c02a8ee6f152f5b2da37ea1ff2729b" title="GBEmulator::APU::Sound\l::getOutputLevel" alt="" coords="489,397,672,439"/>
-<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aa63b67a4fa7e4423769007662b95718f" title="GBEmulator::APU::Sound\l::getPolynomialCounters" alt="" coords="489,267,672,308"/>
-<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_a_p_u.html#ae9381444aa1d2f63d25891a6f698db33" title="GBEmulator::APU::getVin" alt="" coords="488,529,673,555"/>
-<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_a_p_u.html#a96d7d9650a1d8697eed2649e49533a94" title="GBEmulator::APU::getSOTS" alt="" coords="481,579,680,606"/>
-<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_a_p_u.html#ac40412d6724a0ef49af8856d5bbf15df" title="GBEmulator::APU::getSound\lOnOff" alt="" coords="479,631,683,672"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u.html#a382c9886c6ebe2b10cd089dfb35234ad" title="GBEmulator::APU::channel\lOneReading" alt="" coords="239,136,434,177"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_a_p_u.html#ad92d850dad064253e8f7112e3e907a59" title="GBEmulator::APU::channel\lTwoReading" alt="" coords="239,201,434,243"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_a_p_u.html#a6bc60464f73de1410d6b48268abb1fe9" title="GBEmulator::APU::channel\lWaveReading" alt="" coords="239,315,434,356"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_a_p_u.html#ad228cd7b7ada46fcaefdbba076062074" title="GBEmulator::APU::channel\lNoiseReading" alt="" coords="239,380,434,421"/>
+<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_a_p_u.html#a9e4c922d02cf92cd0ad82c8c4bbe1635" title="GBEmulator::APU::controller\lReading" alt="" coords="234,657,439,699"/>
+<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#ab021dffd2fcd3f25a6c040998211b46f" title="GBEmulator::SoundChannel\l::ModulableWaveChannel::read" alt="" coords="225,777,448,819"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a70682bf4954afb8b011eb7f6242d4c12" title="GBEmulator::SoundChannel\l::SoundChannel::getSweep" alt="" coords="535,5,737,47"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html#aa5895301d43b79808595e9d4fe8829ac" title="Get the wave duty. " alt="" coords="521,71,751,112"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a246fe2b4a3ae6bac0702d04d55580178" title="GBEmulator::SoundChannel\l::SoundChannel::getVolume" alt="" coords="535,136,737,177"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a60ade2dee428de63b0273c5e1953b490" title="GBEmulator::SoundChannel\l::SoundChannel::getRestartOptions" alt="" coords="512,201,760,243"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a2a137159179326b65c80fdc41023354f" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getSoundOnOff" alt="" coords="535,267,737,323"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a6d5518f039e0728e2eaf0758bb46ad5d" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getSoundLength" alt="" coords="535,347,737,403"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a387b000da709db527c34324628ae7beb" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getOutputLevel" alt="" coords="535,427,737,483"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a5f428bfe003a90b733a72c1da3874bf6" title="GBEmulator::SoundChannel\l::NoiseChannel::getSoundLength" alt="" coords="519,573,753,615"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a3273ef7e2780f615732a34bd3d33be1a" title="GBEmulator::SoundChannel\l::NoiseChannel::getPolynomialCounters" alt="" coords="496,508,776,549"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_a_p_u.html#ae9381444aa1d2f63d25891a6f698db33" title="GBEmulator::APU::getVin" alt="" coords="543,639,729,666"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_a_p_u.html#a96d7d9650a1d8697eed2649e49533a94" title="GBEmulator::APU::getSOTS" alt="" coords="537,690,735,717"/>
+<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_a_p_u.html#ac40412d6724a0ef49af8856d5bbf15df" title="GBEmulator::APU::getSound\lOnOff" alt="" coords="534,741,738,783"/>
+<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="555,807,717,848"/>
 </map>

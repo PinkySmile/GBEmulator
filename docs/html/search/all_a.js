@@ -2,6 +2,7 @@ var searchData=
 [
   ['joypad_5fa',['JOYPAD_A',['../namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcbae1723671db6feebd3313556649030193',1,'GBEmulator::Input']]],
   ['joypad_5fb',['JOYPAD_B',['../namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcbae2904b2ad8ea0c463a707ddc703ff2c8',1,'GBEmulator::Input']]],
+  ['joypad_5fchange',['JOYPAD_CHANGE',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451aa6eeea9b4be1a760ab8b4649917b5ba32',1,'GBEmulator::Network::BGBHandler']]],
   ['joypad_5fdown',['JOYPAD_DOWN',['../namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcbac2538365d57775470a00cf07b2193f3d',1,'GBEmulator::Input']]],
   ['joypad_5finterrupt',['JOYPAD_INTERRUPT',['../class_g_b_emulator_1_1_c_p_u.html#a502bccda9fe3c0f1d6cd08e70f74d260ae000545a09d6f6f4e05ec7aa0c2fb842',1,'GBEmulator::CPU']]],
   ['joypad_5fleft',['JOYPAD_LEFT',['../namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcba209f8fa2bbb00f9f870bb0b67ba6df93',1,'GBEmulator::Input']]],

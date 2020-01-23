@@ -7,5 +7,7 @@ var searchData=
   ['ld8',['LD8',['../namespace_g_b_emulator_1_1_instructions.html#a2c808d3cda6d7025fa55b079100eaad8',1,'GBEmulator::Instructions']]],
   ['ld8fromptr',['LD8fromPTR',['../namespace_g_b_emulator_1_1_instructions.html#a9ccbb173ead49324a26a9a313ab8e42f',1,'GBEmulator::Instructions']]],
   ['ld8toptr',['LD8toPTR',['../namespace_g_b_emulator_1_1_instructions.html#a891a7743ac4c8e191123d86420d324d2',1,'GBEmulator::Instructions']]],
-  ['loadrom',['loadROM',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a8e724bf32b716472aea4f43fb4e625a1',1,'GBEmulator::Memory::Cartridge']]]
+  ['listenfailedexception',['ListenFailedException',['../class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html#a247368eb3c4acf9b13bd5badc72f71ef',1,'GBEmulator::Network::ListenFailedException']]],
+  ['loadrom',['loadROM',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a8e724bf32b716472aea4f43fb4e625a1',1,'GBEmulator::Memory::Cartridge']]],
+  ['log',['log',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a155908c52258253a1af3defb6c8ea60e',1,'GBEmulator::Network::BGBHandler']]]
 ];

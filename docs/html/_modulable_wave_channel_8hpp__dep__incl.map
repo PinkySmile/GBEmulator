@@ -1,0 +1,18 @@
+<map id="src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp" name="src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp">
+<area shape="rect" id="node2" href="$_a_p_u_8hpp.html" title="src/ProcessingUnits\l/APU.hpp" alt="" coords="1287,117,1437,158"/>
+<area shape="rect" id="node17" href="$_modulable_wave_channel_8cpp.html" title="src/ProcessingUnits\l/SoundChannel/ModulableWave\lChannel.cpp" alt="" coords="1461,109,1687,165"/>
+<area shape="rect" id="node3" href="$_c_p_u_8hpp.html" title="src/ProcessingUnits\l/CPU.hpp" alt="" coords="1201,213,1350,255"/>
+<area shape="rect" id="node16" href="$_a_p_u_8cpp.html" title="src/ProcessingUnits\l/APU.cpp" alt="" coords="1374,213,1523,255"/>
+<area shape="rect" id="node4" href="$debugger_8hpp.html" title="src/debugger/debugger.hpp" alt="" coords="135,310,333,337"/>
+<area shape="rect" id="node6" href="$main_8cpp.html" title="src/main.cpp" alt="" coords="5,399,111,426"/>
+<area shape="rect" id="node7" href="$_c_p_u_instructions_8hpp.html" title="src/ProcessingUnits\l/Instructions/CPUInstructions.hpp" alt="" coords="753,303,990,344"/>
+<area shape="rect" id="node9" href="$_c_p_u_8cpp.html" title="src/ProcessingUnits\l/CPU.cpp" alt="" coords="1045,481,1194,523"/>
+<area shape="rect" id="node13" href="$_c_p_u_instructions_8cpp.html" title="src/ProcessingUnits\l/Instructions/CPUInstructions.cpp" alt="" coords="1157,392,1393,433"/>
+<area shape="rect" id="node14" href="$_g_p_u_8cpp.html" title="src/ProcessingUnits\l/GPU.cpp" alt="" coords="1469,303,1618,344"/>
+<area shape="rect" id="node15" href="$_startup_code_8cpp.html" title="src/ProcessingUnits\l/StartupCode.cpp" alt="" coords="1642,303,1791,344"/>
+<area shape="rect" id="node5" href="$debugger_8cpp.html" title="src/debugger/debugger.cpp" alt="" coords="135,399,333,426"/>
+<area shape="rect" id="node8" href="$_cartridge_8cpp.html" title="src/Memory/Cartridge.cpp" alt="" coords="893,399,1082,426"/>
+<area shape="rect" id="node10" href="$_instructions_8hpp.html" title="src/ProcessingUnits\l/Instructions/Instructions.hpp" alt="" coords="407,392,618,433"/>
+<area shape="rect" id="node11" href="$_basic_instructions_8cpp.html" title="src/ProcessingUnits\l/Instructions/BasicInstructions.cpp" alt="" coords="320,481,564,523"/>
+<area shape="rect" id="node12" href="$_bit_instructions_8cpp.html" title="src/ProcessingUnits\l/Instructions/BitInstructions.cpp" alt="" coords="642,392,869,433"/>
+</map>

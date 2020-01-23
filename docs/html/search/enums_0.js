@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['cartridgetype',['CartridgeType',['../class_g_b_emulator_1_1_memory_1_1_cartridge.html#a7227a9e8b4a7014c07d71737c12fc1ac',1,'GBEmulator::Memory::Cartridge']]]
+  ['bgbcommand',['BGBCommand',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe29eea09186ff236ac35fdfb612451a',1,'GBEmulator::Network::BGBHandler']]],
+  ['bgbstatusflag',['BGBStatusFlag',['../class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a40124cf4da65de59f620cd2b1c1789e6',1,'GBEmulator::Network::BGBHandler']]]
 ];

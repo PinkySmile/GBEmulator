@@ -77,6 +77,9 @@ $(function() {
 <li>_backgroundMap
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#aca67ff5fecf871276b2c804cf6413ffc">GBEmulator::GPU</a>
 </li>
+<li>_bankPtr
+: <a class="el" href="class_g_b_emulator_1_1_memory_1_1_memory.html#af17fe4716f679545771fb05ac2e88372">GBEmulator::Memory::Memory</a>
+</li>
 <li>_bankSize
 : <a class="el" href="class_g_b_emulator_1_1_memory_1_1_memory.html#aaca299f7e92387b82204d5d280b1d80b">GBEmulator::Memory::Memory</a>
 </li>
@@ -89,6 +92,9 @@ $(function() {
 <li>_bgPaletteValue
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a645dddb5626c692a86e804c9d037ad86">GBEmulator::GPU</a>
 </li>
+<li>_bitPeriod
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#afb1184ac244336c0ad88ff9835c8731f">GBEmulator::SoundChannel::NoiseChannel</a>
+</li>
 <li>_breakPoints
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#aa0ca10bea0cce254739f099b268d20a0">GBEmulator::Debugger::Debugger</a>
 </li>
@@ -99,8 +105,7 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#aa3ae8780de0998a325bcf4db7dc79a5b">GBEmulator::CPU</a>
 </li>
 <li>_byte
-: <a class="el" href="class_g_b_emulator_1_1_network_1_1_cable_interface.html#afb94cdc1ec9c7b4c7699f874d9643f6c">GBEmulator::Network::CableInterface</a>
-, <a class="el" href="class_g_b_emulator_1_1_timing_1_1_timer.html#af88f50840d61fff1233eece6cc6d91ae">GBEmulator::Timing::Timer</a>
+: <a class="el" href="class_g_b_emulator_1_1_timing_1_1_timer.html#af88f50840d61fff1233eece6cc6d91ae">GBEmulator::Timing::Timer</a>
 </li>
 <li>_cable
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a29f6890aade95a148ad27d15bf01f5ee">GBEmulator::CPU</a>
@@ -108,12 +113,14 @@ $(function() {
 <li>_clock
 : <a class="el" href="class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#ae43846c8edadd80b540ffdc939698f6f">GBEmulator::Graphics::LCDSFML</a>
 </li>
+<li>_componentsThread
+: <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#ae6b0631042d10b38ec788f8aec39a947">GBEmulator::CPU</a>
+</li>
 <li>_control
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a31f6ea594e8be6f70f472c562ed6dd34">GBEmulator::GPU</a>
 </li>
 <li>_counter
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a6e689210d5421ee46367ed642c702c59">GBEmulator::APU::Sound</a>
-, <a class="el" href="class_g_b_emulator_1_1_timing_1_1_timer.html#a7bf647d165376e72e225d47b8743f5eb">GBEmulator::Timing::Timer</a>
+: <a class="el" href="class_g_b_emulator_1_1_timing_1_1_timer.html#a7bf647d165376e72e225d47b8743f5eb">GBEmulator::Timing::Timer</a>
 </li>
 <li>_cpu
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a739215606c8b6a3915e0031bbf7ebe55">GBEmulator::Debugger::Debugger</a>
@@ -131,11 +138,14 @@ $(function() {
 <li>_disabled
 : <a class="el" href="class_g_b_emulator_1_1_sound_player.html#afaaa193e36316bacd9e26e7ed1848b4d">GBEmulator::SoundPlayer</a>
 </li>
+<li>_disconnected
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_protocol_handle.html#a5a283dc12bd91221fafa966a4f730579">GBEmulator::Network::ProtocolHandle</a>
+</li>
 <li>_displayThread
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a9fc14ac26b579a0532537ec54ba0be1f">GBEmulator::Debugger::Debugger</a>
 </li>
 <li>_dividingRatio
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af648532a1a01926e3dd1419bde8a862d">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#aab459f1f8051c9f8408d850d643049c7">GBEmulator::SoundChannel::NoiseChannel</a>
 </li>
 <li>_divRegister
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a60492bc4d8bfcae78f3014eabe0a950f">GBEmulator::CPU</a>
@@ -150,7 +160,10 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#af6049c9496525eb8673aca2893ce95d4">GBEmulator::Graphics::LCDSFML</a>
 </li>
 <li>_frequency
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ac9201021e8f2f0fe10b5ad7df511ea06">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a0a4f191f7bd0c3c474b4815b7f5e9865">GBEmulator::SoundChannel::SoundChannel</a>
+</li>
+<li>_genWave
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#ab7a9853a0891d3e0e87eeca2092b4ec5">GBEmulator::SoundChannel::ModulableWaveChannel</a>
 </li>
 <li>_gpu
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#ac44ed58a79c1e6cf4d8f32ea2cca8d29">GBEmulator::CPU</a>
@@ -158,14 +171,14 @@ $(function() {
 <li>_halted
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a5f381620edbaf7fedff3d53fff9a56c3">GBEmulator::CPU</a>
 </li>
-<li>_havingPolynomial
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af17542684f6cc11c1c3d95c5c0ccc292">GBEmulator::APU::Sound</a>
+<li>_handler
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_protocol_cable_interface.html#aaa5dc7174f6e5f5fb9d6f9f0dd8c97ae">GBEmulator::Network::BGBProtocolCableInterface</a>
 </li>
 <li>_hram
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a57c8cad9c1b23c3c9eb5f4334e9ca1ab">GBEmulator::CPU</a>
 </li>
 <li>_initialVolume
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a166ccc5d797cb40731d0cd258241c629">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a7d54ac5905daf61426b6a17c12d148d8">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_input
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a31ee1f650e7f6fcc7a29ca6b00339cfd">GBEmulator::Debugger::Debugger</a>
@@ -185,8 +198,11 @@ $(function() {
 <li>_interruptRequest
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a0a2b1e6a7293cb59e8954b54bbbc319a">GBEmulator::CPU</a>
 </li>
-<li>_isSixBitsLength
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ad0610a71f435634d596786fdd8c204cd">GBEmulator::APU::Sound</a>
+<li>_isExternal
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_cable_interface.html#a920023ec3ae31c42d80bb542de1fceef">GBEmulator::Network::CableInterface</a>
+</li>
+<li>_isTransfering
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_cable_interface.html#ad72ed54516198c54671c19b1916db5cb">GBEmulator::Network::CableInterface</a>
 </li>
 <li>_joypad
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#ab4b4ce59cc2de6ae7482baadf7353d68">GBEmulator::CPU</a>
@@ -198,22 +214,37 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#aa23258605fdb62f9c69c152647908356">GBEmulator::Debugger::Debugger</a>
 </li>
 <li>_lfsr
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af74291b5c8c5bf2679a68d37b6f45a5e">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a505581d44c8bcfd91bdf5f120c08a7ad">GBEmulator::SoundChannel::NoiseChannel</a>
+</li>
+<li>_log
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a427ac5f0084fac99cca0556094005478">GBEmulator::Network::BGBHandler</a>
+</li>
+<li>_logging
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a93fec680de6af5d15c6fcf761cb1965b">GBEmulator::Network::BGBHandler</a>
 </li>
 <li>_lyc
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a4c0b926b4af12691705098b58408e720">GBEmulator::GPU</a>
 </li>
+<li>_mainHandler
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a8533c177af039f5a678b40936cd8f3f4">GBEmulator::Network::BGBHandler</a>
+</li>
+<li>_mainThread
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ac790ea365898231af1de9301ee80acb5">GBEmulator::Network::BGBHandler</a>
+</li>
 <li>_managerChannel1
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#a8714401cf70d0ae385e49933182b619f">GBEmulator::APU</a>
+: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#ae5f8eb8971e3e07ed2a83892a0665981">GBEmulator::APU</a>
 </li>
 <li>_managerChannel2
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#ad1ef765ddf808ccc4705cae184857469">GBEmulator::APU</a>
+: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#a793ea8d864b4718abf9fcb96a6e22b00">GBEmulator::APU</a>
 </li>
 <li>_managerChannelNoise
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#acbac97964158ecb94406b8fda859e23e">GBEmulator::APU</a>
+: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#a4ffb049b870ce4ebdc49fe640d9750aa">GBEmulator::APU</a>
 </li>
 <li>_managerChannelWave
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#a4fba0edde6028275b80c3c410d63bcde">GBEmulator::APU</a>
+: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#a5a034a9d267cede0075fedab37f5e61f">GBEmulator::APU</a>
+</li>
+<li>_masterHandler
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_protocol_handle.html#a928dddb2ff209ceb8edae97f027f4c33">GBEmulator::Network::ProtocolHandle</a>
 </li>
 <li>_memBeg
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad882fc8e71ccfe16bf56870501b8f05f">GBEmulator::Debugger::Debugger</a>
@@ -226,6 +257,10 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_exception.html#a1ed549b9a133316518a6b4c1369bf33f">GBEmulator::Debugger::Exception</a>
 , <a class="el" href="class_g_b_emulator_1_1_instructions_1_1_invalid_s_t_o_p_exception.html#ad4f2ab0de70cde7f881915382642bcdc">GBEmulator::Instructions::InvalidSTOPException</a>
 , <a class="el" href="class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_exception.html#aac80dd07939b8e84ca15f16f481f2b20">GBEmulator::Memory::Cartridge::InvalidRomException</a>
+, <a class="el" href="class_g_b_emulator_1_1_network_1_1_base_exception.html#a14dae9df21d3a896f728f0bb1aa659f1">GBEmulator::Network::BaseException</a>
+</li>
+<li>_needInterrupt
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_cable_interface.html#acac1d11c3a09b92ee9294a052d5e4a0c">GBEmulator::Network::CableInterface</a>
 </li>
 <li>_oam
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a4d0eab6999ca48a1e173b7d5b29705f7">GBEmulator::GPU</a>
@@ -243,7 +278,7 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#af5c3d9e1ef579e1b28b0fc93571bf0c2">GBEmulator::GPU</a>
 </li>
 <li>_polynomialCounterStep
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a7cbdc41777dd99ef07ea949ee9f38502">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a6566b1c9410433f5e5d76e8f27b291cb">GBEmulator::SoundChannel::NoiseChannel</a>
 </li>
 <li>_ram
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a6b95df91f8879186c66137e2d5878694">GBEmulator::CPU</a>
@@ -261,15 +296,18 @@ $(function() {
 <li>_readOnly
 : <a class="el" href="class_g_b_emulator_1_1_memory_1_1_memory.html#a6f2a6f4ef4199ec2427d51ffc23d3746">GBEmulator::Memory::Memory</a>
 </li>
+<li>_realFrequency
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a813c4ed6e204bd91542d9f391fd22733">GBEmulator::SoundChannel::SoundChannel</a>
+</li>
 <li>_registers
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#addc9d998848d99665914ce83e55de45f">GBEmulator::CPU</a>
 , <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad2ef457937049f8885b78ebb545088b8">GBEmulator::Debugger::Debugger</a>
 </li>
 <li>_restart
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ab962892244b77bdffcb57ea67ea20bd3">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a3a87050db5eac515eeb2296f1fd65f37">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_restartType
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a05e10a72461bb3d7863f07c8552279df">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#ad7a4effb4ae52a3e47966932d7ab79f5">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_rom
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a509c8d8c60489f066f85efa51321e59f">GBEmulator::CPU</a>
@@ -291,8 +329,14 @@ $(function() {
 <li>_scrollY
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a6805a0801f5989cc471812ba3725a2e8">GBEmulator::GPU</a>
 </li>
+<li>_serv
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a369cd15adfb786a099368d56724569f3">GBEmulator::Network::BGBHandler</a>
+</li>
 <li>_shiftClockFrequency
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aebccef6207f3cbb9b30d03b43d1fde7c">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#aabfc9eae0181c88bab277dca466326b0">GBEmulator::SoundChannel::NoiseChannel</a>
+</li>
+<li>_shiftRemain
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a583f23c8a62c930c11d8f34401c7971e">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_size
 : <a class="el" href="class_g_b_emulator_1_1_memory_1_1_memory.html#ae7035050123ab8df489c47b5e05fcb49">GBEmulator::Memory::Memory</a>
@@ -300,26 +344,29 @@ $(function() {
 <li>_sizeBytes
 : <a class="el" href="class_g_b_emulator_1_1_memory_1_1_cartridge.html#acbdd1b3b1937a4f0188ee643b6a89f11">GBEmulator::Memory::Cartridge</a>
 </li>
+<li>_slaveHandler
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_protocol_handle.html#a8976cef743b7d54a12d68d7d0ad99bcf">GBEmulator::Network::ProtocolHandle</a>
+</li>
 <li>_SO1OutputLevel
 : <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#aec7a85f4552c30e78db3114eb23612b3">GBEmulator::APU</a>
 </li>
 <li>_SO2OutputLevel
 : <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#af704935dfa83b41ca89768b45a12db7c">GBEmulator::APU</a>
 </li>
+<li>_socket
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a7646034393b1a31b1901907903cb2218">GBEmulator::Network::BGBHandler</a>
+</li>
 <li>_sound
-: <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a4d53f5fb137f9d9f754f7962379bba22">GBEmulator::SoundPlayer</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a4821ba27639eaf68f5271d5db8f837d9">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_soundBuffer
 : <a class="el" href="class_g_b_emulator_1_1_sound_player.html#ac55924febef20b08bc30b30b6f9b1b19">GBEmulator::SoundPlayer</a>
 </li>
-<li>_soundChannel
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ad1d3b9e6134d464c3cccb16eca8ab399">GBEmulator::APU::Sound</a>
-</li>
 <li>_soundLength
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a430af8bc5b5b67c896a2ed6e2e49f3b7">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#ae62831ef19ba89160af29d7b21242388">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_soundOn
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a73b564fbd80844c2ec7d8689ebae5950">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#af3f227a82f512426b29923d446db8eb5">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_soundOnOff1
 : <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#ad3aa39dbd6c01579d5d6236e135c4a65">GBEmulator::APU</a>
@@ -336,6 +383,12 @@ $(function() {
 <li>_soundOutputTerminalSelection
 : <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#ae2d9de100d9adc6873a4596f8c385f4e">GBEmulator::APU</a>
 </li>
+<li>_soundSO1
+: <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a14d9d15a972771d2425f3684d3f58ef8">GBEmulator::SoundPlayer</a>
+</li>
+<li>_soundSO2
+: <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a82aa973a3725db9d40d498c3353e2c93">GBEmulator::SoundPlayer</a>
+</li>
 <li>_spritesMap
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#acf4278315e78328af7c52d147ba6f2a3">GBEmulator::GPU</a>
 </li>
@@ -349,22 +402,31 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a3ba409b9a633589797fb4ea016d0a149">GBEmulator::CPU</a>
 </li>
 <li>_sweepCycles
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a46ff9658ee2331506d14a1184ae51cd0">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a3b8312e22a3e7fb8f0d0be7ea690a8a9">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_sweepDirection
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#afbb99fa791d60a3b21e5d9454819bf33">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abf6f89ce3cd163fe75da92765ba2a011">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_sweepShiftNumber
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af21a3564d252fabdf6aeccfa0bf9941d">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a95f2430fd28bc14d5746c150a9779844">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_sweepTime
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a0e8c42717117ff1aa128e50f69700392">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a9ea2aed5079d04e2f488e7e41bde919b">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_texts
 : <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#a2a8f9439a903cac8bc5dec805269c6c9">GBEmulator::Debugger::Debugger</a>
 </li>
 <li>_texture
 : <a class="el" href="class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a37acb315ee51c59a7abcccc7640e934a">GBEmulator::Graphics::LCDSFML</a>
+</li>
+<li>_threadCycles
+: <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a5b58b6ba9a8e5601cd89e38e139fd531">GBEmulator::CPU</a>
+</li>
+<li>_threadRunning
+: <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a0f912c10b16aad721cba1035631391d6">GBEmulator::CPU</a>
+</li>
+<li>_ticks
+: <a class="el" href="class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a9cadea9c478de1c2337e13545a3ca332">GBEmulator::Network::BGBHandler</a>
 </li>
 <li>_tiles
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a8d62a4afc0a16df0b8a4c9c5da8b7546">GBEmulator::GPU</a>
@@ -402,23 +464,34 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a60a2d14546345435052c9a4aa22d1b04">GBEmulator::SoundPlayer</a>
 </li>
 <li>_volumeCycles
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af8885fabb11e7fa702e4887f84ffe82d">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#aca8e4101c57c034035b75d1de208d233">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_volumeDirection
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a2818391ab177dcc8916f2711dd5adc9a">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abd67f449565b333eac481e18ca7a2f26">GBEmulator::SoundChannel::SoundChannel</a>
 </li>
 <li>_volumeShiftNumber
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a91815eaf1db2c27f010624383c8cb837">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a12b3eb58d6a559ae9958a6e30023e2ce">GBEmulator::SoundChannel::SoundChannel</a>
+</li>
+<li>_volumeSO1
+: <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a257d6d559a986db68bbb6964a8ed3fb3">GBEmulator::SoundPlayer</a>
+</li>
+<li>_volumeSO2
+: <a class="el" href="class_g_b_emulator_1_1_sound_player.html#a577983c4b15606bf4a8708ae2073102d">GBEmulator::SoundPlayer</a>
 </li>
 <li>_waveOutputLevel
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aaf99ec7e0e7f9500bc9a3db0df1cf55e">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a5abb678b26a17b267da173c5251c5d9e">GBEmulator::SoundChannel::ModulableWaveChannel</a>
 </li>
 <li>_wavePattern
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#aa249e7c8a3f99faada6711b1d4af4f4c">GBEmulator::APU::Sound</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html#a5067e89e55a1bdd7a042809215193ab0">GBEmulator::SoundChannel::SquareWaveChannel</a>
+</li>
+<li>_waves
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a870e16af0209a7842821068d437d8d50">GBEmulator::SoundChannel::NoiseChannel</a>
+, <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html#af5c23aa649709a7a2aca197fd9552930">GBEmulator::SoundChannel::SquareWaveChannel</a>
 </li>
 <li>_window
 : <a class="el" href="class_g_b_emulator_1_1_c_p_u.html#a31bdcf19025af8ff5fc8b0ac9d561c4a">GBEmulator::CPU</a>
 , <a class="el" href="class_g_b_emulator_1_1_debugger_1_1_debugger.html#abade2f7e176159d058c9e43301ff9150">GBEmulator::Debugger::Debugger</a>
+, <a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a28779c04c8f4dd8b5d3be62dd457e523">GBEmulator::Input::SFMLKeyboardJoypadEmulator</a>
 </li>
 <li>_windowX
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a91485d6c10e73ffdb546fd0dcc957025">GBEmulator::GPU</a>
@@ -427,196 +500,10 @@ $(function() {
 : <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a85ffa6db1d2adc66501d68016fa928b8">GBEmulator::GPU</a>
 </li>
 <li>_wpRAM
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u.html#ace4cbe97285ae183521d8faa643da918">GBEmulator::APU</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a29c97d417d98783ed2972663a360e4a7">GBEmulator::SoundChannel::ModulableWaveChannel</a>
 </li>
 <li>_wroteInNoiseFrequency
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a648ddafc58e6fd37b2a70a7aff0766b7">GBEmulator::APU::Sound</a>
-</li>
-</ul>
-
-
-<h3><a id="index_a"></a>- a -</h3><ul>
-<li>a
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a26676cfcaf4fa241d7d04d9917d2a76b">GBEmulator::CPU::Registers</a>
-</li>
-<li>af
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a2610fbe0d7918c0971c45e5bc13b6a74">GBEmulator::CPU::Registers</a>
-</li>
-</ul>
-
-
-<h3><a id="index_b"></a>- b -</h3><ul>
-<li>b
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a7917c300c0a62978aa00716bc89fcbb3">GBEmulator::CPU::Registers</a>
-, <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a123433c559c725aea7f84ff190e876c2">GBEmulator::Graphics::RGBColor</a>
-</li>
-<li>bc
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a38c8fa160a7e386d29d3eb4de978e1e7">GBEmulator::CPU::Registers</a>
-</li>
-<li>Black
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a8e1d2f4e121578e63d81da52730edb89">GBEmulator::Graphics::RGBColor</a>
-</li>
-<li>byte
-: <a class="el" href="class_g_b_emulator_1_1_network_1_1_cable_interface.html#a22b8e24efdfeb2537d85549efbb3684c">GBEmulator::Network::CableInterface</a>
-</li>
-</ul>
-
-
-<h3><a id="index_c"></a>- c -</h3><ul>
-<li>c
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#ab7f21cb96fa05b8c4b7ed443de42dfb0">GBEmulator::CPU::Registers</a>
-</li>
-<li>cgb_palette_number
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#ae0660fc0592e09dcc38fd3fee4ff353b">GBEmulator::GPU::Sprite</a>
-</li>
-</ul>
-
-
-<h3><a id="index_d"></a>- d -</h3><ul>
-<li>d
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a5dbd7cb2b1b9f54bf33522375c54a254">GBEmulator::CPU::Registers</a>
-</li>
-<li>de
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a49b20df8c9e461cd652f55b43af14742">GBEmulator::CPU::Registers</a>
-</li>
-<li>defaultColors
-: <a class="el" href="class_g_b_emulator_1_1_g_p_u.html#ac4a1d598ee59f794081ff0c47b15be57">GBEmulator::GPU</a>
-</li>
-<li>DGray
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a8d7800f6611fb4121c862e8f05f38cab">GBEmulator::Graphics::RGBColor</a>
-</li>
-<li>dividingRatio
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a3a03db2395ac8e048548c2bc77b13249">GBEmulator::APU::Sound</a>
-</li>
-</ul>
-
-
-<h3><a id="index_e"></a>- e -</h3><ul>
-<li>e
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a80a7fbbe21f22329e6aac80ef08914cb">GBEmulator::CPU::Registers</a>
-</li>
-</ul>
-
-
-<h3><a id="index_f"></a>- f -</h3><ul>
-<li>f
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a2fa1966b35a83c9bf578fb4b8fb4b7b9">GBEmulator::CPU::Registers</a>
-</li>
-<li>fc
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#af838f315a5a371ae731f9f51ec1cac00">GBEmulator::CPU::Registers</a>
-</li>
-<li>fh
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a10b6c6991aed24de1cf54782962a31af">GBEmulator::CPU::Registers</a>
-</li>
-<li>flags
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a0ef0fcb0b4a1cc4a74d0d6191bfa7ab5">GBEmulator::GPU::Sprite</a>
-</li>
-<li>fn
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a847731fb01e2aed797a44dfb122e2ac2">GBEmulator::CPU::Registers</a>
-</li>
-<li>fz
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a374839d6b06b00cf50b8e4c7ea0eccfd">GBEmulator::CPU::Registers</a>
-</li>
-</ul>
-
-
-<h3><a id="index_g"></a>- g -</h3><ul>
-<li>g
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a2318505d45eb4ad657e8cb448c1b0109">GBEmulator::Graphics::RGBColor</a>
-</li>
-</ul>
-
-
-<h3><a id="index_h"></a>- h -</h3><ul>
-<li>h
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a637292c42b75315c96d788a46a09530a">GBEmulator::CPU::Registers</a>
-</li>
-<li>hl
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a709888b23311bfadb2f3e17b8078c57d">GBEmulator::CPU::Registers</a>
-</li>
-</ul>
-
-
-<h3><a id="index_l"></a>- l -</h3><ul>
-<li>l
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a2d68911763e6a4205f84694e0ed01326">GBEmulator::CPU::Registers</a>
-</li>
-<li>LGray
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#ae2c036780259e66c91f4435591638e09">GBEmulator::Graphics::RGBColor</a>
-</li>
-</ul>
-
-
-<h3><a id="index_m"></a>- m -</h3><ul>
-<li>modulo
-: <a class="el" href="class_g_b_emulator_1_1_timing_1_1_timer.html#a327b8df20170c55b64ef10b6926780cc">GBEmulator::Timing::Timer</a>
-</li>
-</ul>
-
-
-<h3><a id="index_p"></a>- p -</h3><ul>
-<li>palette_number
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a4e856f1053b8564a3cdb0f541848f95a">GBEmulator::GPU::Sprite</a>
-</li>
-<li>pc
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a2f5eff829049ea34f0a69aaf9700b3d7">GBEmulator::CPU::Registers</a>
-</li>
-<li>priority
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#acb4057614efeea83982f87d022dafdd4">GBEmulator::GPU::Sprite</a>
-</li>
-</ul>
-
-
-<h3><a id="index_r"></a>- r -</h3><ul>
-<li>r
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a0362a849e484ce8f962e7e917c9ff840">GBEmulator::Graphics::RGBColor</a>
-</li>
-</ul>
-
-
-<h3><a id="index_s"></a>- s -</h3><ul>
-<li>shiftClockFrequencyRatio
-: <a class="el" href="class_g_b_emulator_1_1_a_p_u_1_1_sound.html#adfd143002294c7a55fa2d273c8077fea">GBEmulator::APU::Sound</a>
-</li>
-<li>sp
-: <a class="el" href="struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a24ae5e4e1326403cbbd41a91fbd3aeb2">GBEmulator::CPU::Registers</a>
-</li>
-</ul>
-
-
-<h3><a id="index_t"></a>- t -</h3><ul>
-<li>texture_id
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a26315030a8c6f57263665b5c673c026d">GBEmulator::GPU::Sprite</a>
-</li>
-<li>tile_bank
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a9642cccf0bde94c80435b253ba809dc0">GBEmulator::GPU::Sprite</a>
-</li>
-</ul>
-
-
-<h3><a id="index_w"></a>- w -</h3><ul>
-<li>White
-: <a class="el" href="struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a662b9fb71c65a2baa97636cc8bc08f6c">GBEmulator::Graphics::RGBColor</a>
-</li>
-</ul>
-
-
-<h3><a id="index_x"></a>- x -</h3><ul>
-<li>x
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#ad9377ae8150613bba1ab6f66fa2c2c97">GBEmulator::GPU::Sprite</a>
-</li>
-<li>x_flip
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#adc640cb4e624cce77e642aeceb8a8241">GBEmulator::GPU::Sprite</a>
-</li>
-</ul>
-
-
-<h3><a id="index_y"></a>- y -</h3><ul>
-<li>y
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a67768906944d15610deee8e64a4ecd2b">GBEmulator::GPU::Sprite</a>
-</li>
-<li>y_flip
-: <a class="el" href="struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#a0f0572fbec774242587cd78358661460">GBEmulator::GPU::Sprite</a>
+: <a class="el" href="class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a4d5377deb95c4d1289cb815ca4f15d05">GBEmulator::SoundChannel::NoiseChannel</a>
 </li>
 </ul>
 </div><!-- contents -->

@@ -103,8 +103,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6218da9675d88df6a00a1dfe4f8035f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af359cd1f5c74a35209f4d745b17fc108"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html">SFMLKeyboardJoypadEmulator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#af359cd1f5c74a35209f4d745b17fc108">operator=</a> (const <a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html">SFMLKeyboardJoypadEmulator</a> &amp;)=delete</td></tr>
 <tr class="separator:af359cd1f5c74a35209f4d745b17fc108"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a333ebc79793131b3a69a6fa48fd073df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a333ebc79793131b3a69a6fa48fd073df">SFMLKeyboardJoypadEmulator</a> (const std::map&lt; <a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key &gt; &amp;&amp;keys)</td></tr>
-<tr class="separator:a333ebc79793131b3a69a6fa48fd073df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa165903b63c907e529f8a18feb7b16e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#aa165903b63c907e529f8a18feb7b16e0">SFMLKeyboardJoypadEmulator</a> (sf::RenderWindow &amp;window, const std::map&lt; <a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key &gt; &amp;&amp;keys)</td></tr>
+<tr class="separator:aa165903b63c907e529f8a18feb7b16e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9764ceec98607c8424a3e6eddfd730a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a9764ceec98607c8424a3e6eddfd730a3">setKey</a> (<a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a> button, sf::Keyboard::Key key)</td></tr>
 <tr class="memdesc:a9764ceec98607c8424a3e6eddfd730a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lie une touche du clavier à un bouton du Joypad.  <a href="#a9764ceec98607c8424a3e6eddfd730a3">More...</a><br /></td></tr>
 <tr class="separator:a9764ceec98607c8424a3e6eddfd730a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,6 +116,8 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a4a55c8493d023b10a9c28c70eb1cb5fd"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a4a55c8493d023b10a9c28c70eb1cb5fd">_keys</a></td></tr>
 <tr class="separator:a4a55c8493d023b10a9c28c70eb1cb5fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28779c04c8f4dd8b5d3be62dd457e523"><td class="memItemLeft" align="right" valign="top">sf::RenderWindow &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html#a28779c04c8f4dd8b5d3be62dd457e523">_window</a></td></tr>
+<tr class="separator:a28779c04c8f4dd8b5d3be62dd457e523"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4873b0a54e1d8b833ffee59bed1c7408"></a>
@@ -194,8 +196,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a333ebc79793131b3a69a6fa48fd073df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a333ebc79793131b3a69a6fa48fd073df">&#9670;&nbsp;</a></span>SFMLKeyboardJoypadEmulator() <span class="overload">[3/3]</span></h2>
+<a id="aa165903b63c907e529f8a18feb7b16e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa165903b63c907e529f8a18feb7b16e0">&#9670;&nbsp;</a></span>SFMLKeyboardJoypadEmulator() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,9 +208,19 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">GBEmulator::Input::SFMLKeyboardJoypadEmulator::SFMLKeyboardJoypadEmulator </td>
           <td>(</td>
-          <td class="paramtype">const std::map&lt; <a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key &gt; &amp;&amp;&#160;</td>
-          <td class="paramname"><em>keys</em></td><td>)</td>
+          <td class="paramtype">sf::RenderWindow &amp;&#160;</td>
+          <td class="paramname"><em>window</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::map&lt; <a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"><em>keys</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -319,6 +331,28 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::map&lt;<a class="el" href="namespace_g_b_emulator_1_1_input.html#a3087c3bb4ab5d312b19a9a9d7e6befcb">Keys</a>, sf::Keyboard::Key&gt; GBEmulator::Input::SFMLKeyboardJoypadEmulator::_keys</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a28779c04c8f4dd8b5d3be62dd457e523"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28779c04c8f4dd8b5d3be62dd457e523">&#9670;&nbsp;</a></span>_window</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sf::RenderWindow&amp; GBEmulator::Input::SFMLKeyboardJoypadEmulator::_window</td>
         </tr>
       </table>
   </td>

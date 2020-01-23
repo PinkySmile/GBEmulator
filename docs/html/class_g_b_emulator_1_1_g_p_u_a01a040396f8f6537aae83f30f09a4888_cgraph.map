@@ -1,5 +1,5 @@
 <map id="GBEmulator::GPU::GPU" name="GBEmulator::GPU::GPU">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#aa33af6635c3ee90156594a4819297588" title="Change la taille maximale de l&#39;écran. " alt="" coords="225,5,391,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a761c5faef29553880a8f6edda0962b45" title="Nettoie la fenetre du jeu. " alt="" coords="225,71,391,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a4dcad1d1589acac22194b2a043f073c5" title="Met à jour la fenetre du jeu. " alt="" coords="225,136,391,177"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#aa33af6635c3ee90156594a4819297588" title="Définie la taille de l&#39;écran. " alt="" coords="225,5,391,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a761c5faef29553880a8f6edda0962b45" title="Efface l&#39;écran. " alt="" coords="225,71,391,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a4dcad1d1589acac22194b2a043f073c5" title="Affiche l&#39;écran mis àa jour. " alt="" coords="225,136,391,177"/>
 </map>

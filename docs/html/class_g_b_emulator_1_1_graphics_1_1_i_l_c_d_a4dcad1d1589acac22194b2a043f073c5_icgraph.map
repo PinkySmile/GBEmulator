@@ -1,12 +1,10 @@
 <map id="GBEmulator::Graphics::ILCD::display" name="GBEmulator::Graphics::ILCD::display">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="1187,71,1375,98"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_g_p_u.html#a01a040396f8f6537aae83f30f09a4888" title="GBEmulator::GPU::GPU" alt="" coords="227,71,399,98"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_g_p_u.html#a99966fe776892464894284e414cd4293" title="GBEmulator::GPU::update" alt="" coords="219,122,408,149"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="1423,5,1668,47"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="1984,35,2207,76"/>
-<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1518,122,1573,149"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="1716,5,1936,47"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_g_p_u.html#a4713e9bd3715e433433611e8d3ba1320" title="GBEmulator::GPU::update" alt="" coords="456,122,645,149"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_c_p_u.html#abe06dc8fe4c7745b02af45e394128372" title="GBEmulator::CPU::_update\lComponents" alt="" coords="693,115,888,156"/>
-<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="936,123,1139,164"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="944,42,1132,69"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_g_p_u.html#a01a040396f8f6537aae83f30f09a4888" title="GBEmulator::GPU::GPU" alt="" coords="227,42,399,69"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_g_p_u.html#a99966fe776892464894284e414cd4293" title="Met à jour le GPU. " alt="" coords="219,93,408,119"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="1180,5,1425,47"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="1741,35,1964,76"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="1473,5,1693,47"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_g_p_u.html#a4713e9bd3715e433433611e8d3ba1320" title="Met à jour le GPU Met à jour le GPU &#39;cycle&#39; nombre de fois. " alt="" coords="456,93,645,119"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="693,93,896,135"/>
 </map>

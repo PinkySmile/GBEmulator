@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['x',['x',['../struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#ad9377ae8150613bba1ab6f66fa2c2c97',1,'GBEmulator::GPU::Sprite']]],
-  ['x_5fflip',['x_flip',['../struct_g_b_emulator_1_1_g_p_u_1_1_sprite.html#adc640cb4e624cce77e642aeceb8a8241',1,'GBEmulator::GPU::Sprite']]]
+  ['white',['White',['../struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#a662b9fb71c65a2baa97636cc8bc08f6c',1,'GBEmulator::Graphics::RGBColor']]]
 ];

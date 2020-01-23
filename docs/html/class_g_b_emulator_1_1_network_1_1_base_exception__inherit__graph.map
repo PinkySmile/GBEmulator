@@ -1,0 +1,13 @@
+<map id="GBEmulator::Network::BaseException" name="GBEmulator::Network::BaseException">
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_already_opened_exception.html" title="GBEmulator::Network\l::AlreadyOpenedException" alt="" coords="365,5,560,47"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_connect_exception.html" title="GBEmulator::Network\l::ConnectException" alt="" coords="381,71,544,112"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_network_1_1_disconnect_exception.html" title="GBEmulator::Network\l::DisconnectException" alt="" coords="379,136,546,177"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_network_1_1_e_o_f_exception.html" title="GBEmulator::Network\l::EOFException" alt="" coords="381,201,544,243"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_network_1_1_host_not_found_exception.html" title="GBEmulator::Network\l::HostNotFoundException" alt="" coords="369,267,556,308"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_network_1_1_invalid_version_exception.html" title="GBEmulator::Network\l::InvalidVersionException" alt="" coords="369,332,556,373"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html" title="GBEmulator::Network\l::ListenFailedException" alt="" coords="377,397,548,439"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_network_1_1_not_connected_exception.html" title="GBEmulator::Network\l::NotConnectedException" alt="" coords="369,463,556,504"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_network_1_1_not_implemented_exception.html" title="GBEmulator::Network\l::NotImplementedException" alt="" coords="361,528,565,569"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_network_1_1_socket_creation_error_exception.html" title="GBEmulator::Network\l::SocketCreationErrorException" alt="" coords="351,593,575,635"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_network_1_1_time_out_exception.html" title="GBEmulator::Network\l::TimeOutException" alt="" coords="381,659,544,700"/>
+</map>

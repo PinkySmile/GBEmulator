@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['l',['l',['../struct_g_b_emulator_1_1_c_p_u_1_1_registers.html#a2d68911763e6a4205f84694e0ed01326',1,'GBEmulator::CPU::Registers']]],
-  ['lgray',['LGray',['../struct_g_b_emulator_1_1_graphics_1_1_r_g_b_color.html#ae2c036780259e66c91f4435591638e09',1,'GBEmulator::Graphics::RGBColor']]]
+  ['i1',['i1',['../struct_g_b_emulator_1_1_network_1_1_b_g_b_handler_1_1_b_g_b_packet.html#aa42433bd49711f7b12383233f28e92f6',1,'GBEmulator::Network::BGBHandler::BGBPacket']]]
 ];

@@ -1,40 +1,39 @@
 <map id="GBEmulator::Instructions::setFlags" name="GBEmulator::Instructions::setFlags">
 <area shape="rect" id="node2" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="1039,569,1223,610"/>
-<area shape="rect" id="node9" href="$namespace_g_b_emulator_1_1_instructions.html#a34f9910fc78b1abeb9bca81acbdb14bc" title="GBEmulator::Instructions::BIT" alt="" coords="508,1304,721,1331"/>
-<area shape="rect" id="node11" href="$namespace_g_b_emulator_1_1_instructions.html#acfbb3d7e52105269e576b8e30d292274" title="GBEmulator::Instructions::XOR" alt="" coords="772,79,991,105"/>
-<area shape="rect" id="node12" href="$namespace_g_b_emulator_1_1_instructions.html#af93bf756b6fd39d87a80e41a8ada7659" title="GBEmulator::Instructions\l::AND8" alt="" coords="789,130,973,171"/>
-<area shape="rect" id="node13" href="$namespace_g_b_emulator_1_1_instructions.html#ad3529cf692fa7010e217cc70209d5fcf" title="GBEmulator::Instructions::OR8" alt="" coords="772,196,991,223"/>
-<area shape="rect" id="node14" href="$namespace_g_b_emulator_1_1_instructions.html#a9e9cfcbcc314763a8cc6ffaf40e8eb5b" title="GBEmulator::Instructions\l::ADD8" alt="" coords="789,247,973,289"/>
-<area shape="rect" id="node15" href="$namespace_g_b_emulator_1_1_instructions.html#aec086eb7b1e116acc9133bda63c0efb4" title="GBEmulator::Instructions\l::SUB8" alt="" coords="523,329,707,370"/>
-<area shape="rect" id="node17" href="$namespace_g_b_emulator_1_1_instructions.html#a9f0e2ac089dbf86ae05c6d4e3268e09c" title="GBEmulator::Instructions\l::SPECIAL_ADD" alt="" coords="789,415,973,457"/>
-<area shape="rect" id="node18" href="$namespace_g_b_emulator_1_1_instructions.html#aa46c541b4a7d7056080ef266086fb216" title="GBEmulator::Instructions\l::ADD16" alt="" coords="789,481,973,522"/>
-<area shape="rect" id="node19" href="$namespace_g_b_emulator_1_1_instructions.html#ae572b476a64ba31586b19a8dd8b8a5de" title="GBEmulator::Instructions\l::SUB16" alt="" coords="255,547,439,589"/>
-<area shape="rect" id="node20" href="$namespace_g_b_emulator_1_1_instructions.html#a8a1d6686b5830a0385946e9fa81f5713" title="GBEmulator::Instructions\l::INC8" alt="" coords="523,518,707,559"/>
-<area shape="rect" id="node22" href="$namespace_g_b_emulator_1_1_instructions.html#aa96007c9bb9f30869ac993117b4d47f2" title="GBEmulator::Instructions\l::DEC8" alt="" coords="523,583,707,625"/>
-<area shape="rect" id="node24" href="$namespace_g_b_emulator_1_1_instructions.html#a5c608d55401c555f6dfe7cb0cbc10295" title="GBEmulator::Instructions\l::RLCA" alt="" coords="523,649,707,690"/>
-<area shape="rect" id="node25" href="$namespace_g_b_emulator_1_1_instructions.html#abf62e3c9a15a4e99c725b4e77950132d" title="GBEmulator::Instructions\l::RRCA" alt="" coords="523,867,707,909"/>
-<area shape="rect" id="node26" href="$namespace_g_b_emulator_1_1_instructions.html#a3f27d55b0b6c1284137e02ad5d847db9" title="GBEmulator::Instructions::RLA" alt="" coords="506,984,723,1011"/>
-<area shape="rect" id="node27" href="$namespace_g_b_emulator_1_1_instructions.html#a3eb78dbb1fd954d0eb676fa750e6e8b1" title="GBEmulator::Instructions::RRA" alt="" coords="505,765,724,792"/>
-<area shape="rect" id="node28" href="$namespace_g_b_emulator_1_1_instructions.html#aadcccc75583c1e178d3e450d8f2834e2" title="GBEmulator::Instructions::RLC" alt="" coords="239,715,456,741"/>
-<area shape="rect" id="node29" href="$namespace_g_b_emulator_1_1_instructions.html#abe302e841e49e08893fb5f18b7313b14" title="GBEmulator::Instructions::RRC" alt="" coords="238,917,457,944"/>
-<area shape="rect" id="node30" href="$namespace_g_b_emulator_1_1_instructions.html#a84ceb32a29073e5581fb28b43df7c475" title="GBEmulator::Instructions::RL" alt="" coords="243,1019,451,1045"/>
-<area shape="rect" id="node31" href="$namespace_g_b_emulator_1_1_instructions.html#a7609e3b2621deae8a9c5d00020642cc4" title="GBEmulator::Instructions::RR" alt="" coords="242,816,453,843"/>
-<area shape="rect" id="node32" href="$namespace_g_b_emulator_1_1_instructions.html#ad312705660a8021be8a72cfbcdef6a53" title="GBEmulator::Instructions::DAA" alt="" coords="237,1323,457,1349"/>
-<area shape="rect" id="node33" href="$namespace_g_b_emulator_1_1_instructions.html#a3b7b17c3c5b414bafb47ceaae12f1527" title="GBEmulator::Instructions::CPL" alt="" coords="239,1399,455,1425"/>
-<area shape="rect" id="node34" href="$namespace_g_b_emulator_1_1_instructions.html#a97fb6842637a03e0a592e3a1b7f97a56" title="GBEmulator::Instructions::SL" alt="" coords="244,1075,451,1101"/>
-<area shape="rect" id="node36" href="$namespace_g_b_emulator_1_1_instructions.html#a262a6d8ed8067e3070d61488d974baab" title="GBEmulator::Instructions::SR" alt="" coords="243,1203,452,1229"/>
-<area shape="rect" id="node39" href="$namespace_g_b_emulator_1_1_instructions.html#a0b183f7973396de288b3a35d99998919" title="GBEmulator::Instructions\l::SWAP" alt="" coords="523,1137,707,1178"/>
+<area shape="rect" id="node8" href="$namespace_g_b_emulator_1_1_instructions.html#a34f9910fc78b1abeb9bca81acbdb14bc" title="GBEmulator::Instructions::BIT" alt="" coords="508,1304,721,1331"/>
+<area shape="rect" id="node10" href="$namespace_g_b_emulator_1_1_instructions.html#acfbb3d7e52105269e576b8e30d292274" title="GBEmulator::Instructions::XOR" alt="" coords="772,79,991,105"/>
+<area shape="rect" id="node11" href="$namespace_g_b_emulator_1_1_instructions.html#af93bf756b6fd39d87a80e41a8ada7659" title="GBEmulator::Instructions\l::AND8" alt="" coords="789,130,973,171"/>
+<area shape="rect" id="node12" href="$namespace_g_b_emulator_1_1_instructions.html#ad3529cf692fa7010e217cc70209d5fcf" title="GBEmulator::Instructions::OR8" alt="" coords="772,196,991,223"/>
+<area shape="rect" id="node13" href="$namespace_g_b_emulator_1_1_instructions.html#a9e9cfcbcc314763a8cc6ffaf40e8eb5b" title="GBEmulator::Instructions\l::ADD8" alt="" coords="789,247,973,289"/>
+<area shape="rect" id="node14" href="$namespace_g_b_emulator_1_1_instructions.html#aec086eb7b1e116acc9133bda63c0efb4" title="GBEmulator::Instructions\l::SUB8" alt="" coords="523,329,707,370"/>
+<area shape="rect" id="node16" href="$namespace_g_b_emulator_1_1_instructions.html#a9f0e2ac089dbf86ae05c6d4e3268e09c" title="GBEmulator::Instructions\l::SPECIAL_ADD" alt="" coords="789,415,973,457"/>
+<area shape="rect" id="node17" href="$namespace_g_b_emulator_1_1_instructions.html#aa46c541b4a7d7056080ef266086fb216" title="GBEmulator::Instructions\l::ADD16" alt="" coords="789,481,973,522"/>
+<area shape="rect" id="node18" href="$namespace_g_b_emulator_1_1_instructions.html#ae572b476a64ba31586b19a8dd8b8a5de" title="GBEmulator::Instructions\l::SUB16" alt="" coords="255,547,439,589"/>
+<area shape="rect" id="node19" href="$namespace_g_b_emulator_1_1_instructions.html#a8a1d6686b5830a0385946e9fa81f5713" title="GBEmulator::Instructions\l::INC8" alt="" coords="523,518,707,559"/>
+<area shape="rect" id="node21" href="$namespace_g_b_emulator_1_1_instructions.html#aa96007c9bb9f30869ac993117b4d47f2" title="GBEmulator::Instructions\l::DEC8" alt="" coords="523,583,707,625"/>
+<area shape="rect" id="node23" href="$namespace_g_b_emulator_1_1_instructions.html#a5c608d55401c555f6dfe7cb0cbc10295" title="GBEmulator::Instructions\l::RLCA" alt="" coords="523,649,707,690"/>
+<area shape="rect" id="node24" href="$namespace_g_b_emulator_1_1_instructions.html#abf62e3c9a15a4e99c725b4e77950132d" title="GBEmulator::Instructions\l::RRCA" alt="" coords="523,867,707,909"/>
+<area shape="rect" id="node25" href="$namespace_g_b_emulator_1_1_instructions.html#a3f27d55b0b6c1284137e02ad5d847db9" title="GBEmulator::Instructions::RLA" alt="" coords="506,984,723,1011"/>
+<area shape="rect" id="node26" href="$namespace_g_b_emulator_1_1_instructions.html#a3eb78dbb1fd954d0eb676fa750e6e8b1" title="GBEmulator::Instructions::RRA" alt="" coords="505,765,724,792"/>
+<area shape="rect" id="node27" href="$namespace_g_b_emulator_1_1_instructions.html#aadcccc75583c1e178d3e450d8f2834e2" title="GBEmulator::Instructions::RLC" alt="" coords="239,715,456,741"/>
+<area shape="rect" id="node28" href="$namespace_g_b_emulator_1_1_instructions.html#abe302e841e49e08893fb5f18b7313b14" title="GBEmulator::Instructions::RRC" alt="" coords="238,917,457,944"/>
+<area shape="rect" id="node29" href="$namespace_g_b_emulator_1_1_instructions.html#a84ceb32a29073e5581fb28b43df7c475" title="GBEmulator::Instructions::RL" alt="" coords="243,1019,451,1045"/>
+<area shape="rect" id="node30" href="$namespace_g_b_emulator_1_1_instructions.html#a7609e3b2621deae8a9c5d00020642cc4" title="GBEmulator::Instructions::RR" alt="" coords="242,816,453,843"/>
+<area shape="rect" id="node31" href="$namespace_g_b_emulator_1_1_instructions.html#ad312705660a8021be8a72cfbcdef6a53" title="GBEmulator::Instructions::DAA" alt="" coords="237,1323,457,1349"/>
+<area shape="rect" id="node32" href="$namespace_g_b_emulator_1_1_instructions.html#a3b7b17c3c5b414bafb47ceaae12f1527" title="GBEmulator::Instructions::CPL" alt="" coords="239,1399,455,1425"/>
+<area shape="rect" id="node33" href="$namespace_g_b_emulator_1_1_instructions.html#a97fb6842637a03e0a592e3a1b7f97a56" title="GBEmulator::Instructions::SL" alt="" coords="244,1077,451,1104"/>
+<area shape="rect" id="node35" href="$namespace_g_b_emulator_1_1_instructions.html#a262a6d8ed8067e3070d61488d974baab" title="GBEmulator::Instructions::SR" alt="" coords="243,1203,452,1229"/>
+<area shape="rect" id="node38" href="$namespace_g_b_emulator_1_1_instructions.html#a0b183f7973396de288b3a35d99998919" title="GBEmulator::Instructions\l::SWAP" alt="" coords="523,1137,707,1178"/>
 <area shape="rect" id="node3" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="1271,569,1473,610"/>
 <area shape="rect" id="node4" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="1521,576,1709,603"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="1757,510,2003,551"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="2319,539,2541,581"/>
-<area shape="rect" id="node8" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1853,627,1907,653"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="2051,510,2271,551"/>
-<area shape="rect" id="node10" href="$namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002" title="GBEmulator::Instructions\l::executeBitInstruction" alt="" coords="789,1053,973,1094"/>
-<area shape="rect" id="node16" href="$namespace_g_b_emulator_1_1_instructions.html#a16ce0a6916842d6caf7b098128b35e31" title="GBEmulator::Instructions::CP" alt="" coords="777,364,986,391"/>
-<area shape="rect" id="node21" href="$namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff" title="GBEmulator::Instructions\l::INCPTR" alt="" coords="789,598,973,639"/>
-<area shape="rect" id="node23" href="$namespace_g_b_emulator_1_1_instructions.html#af9c606cc20d0becd92ef6a2edd12bc82" title="GBEmulator::Instructions\l::DECPTR" alt="" coords="789,715,973,757"/>
-<area shape="rect" id="node35" href="$namespace_g_b_emulator_1_1_instructions.html#add6c51173695689df24c4e7d1ef6f024" title="GBEmulator::Instructions::SLA" alt="" coords="507,1085,723,1112"/>
-<area shape="rect" id="node37" href="$namespace_g_b_emulator_1_1_instructions.html#abef21da002b846690aa33399f5a11428" title="GBEmulator::Instructions::SRA" alt="" coords="506,1253,723,1280"/>
-<area shape="rect" id="node38" href="$namespace_g_b_emulator_1_1_instructions.html#a12d26bac59c071b377e76176ac5cc3b0" title="GBEmulator::Instructions::SRL" alt="" coords="507,1203,723,1229"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="1757,539,2003,581"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="2319,569,2541,610"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="2051,539,2271,581"/>
+<area shape="rect" id="node9" href="$namespace_g_b_emulator_1_1_instructions.html#a9b95023e241eefcdd02d93b781e5d002" title="GBEmulator::Instructions\l::executeBitInstruction" alt="" coords="789,1053,973,1094"/>
+<area shape="rect" id="node15" href="$namespace_g_b_emulator_1_1_instructions.html#a16ce0a6916842d6caf7b098128b35e31" title="GBEmulator::Instructions::CP" alt="" coords="777,364,986,391"/>
+<area shape="rect" id="node20" href="$namespace_g_b_emulator_1_1_instructions.html#a6a93b0eec1ba5e5517cfed6244fe59ff" title="GBEmulator::Instructions\l::INCPTR" alt="" coords="789,598,973,639"/>
+<area shape="rect" id="node22" href="$namespace_g_b_emulator_1_1_instructions.html#af9c606cc20d0becd92ef6a2edd12bc82" title="GBEmulator::Instructions\l::DECPTR" alt="" coords="789,715,973,757"/>
+<area shape="rect" id="node34" href="$namespace_g_b_emulator_1_1_instructions.html#add6c51173695689df24c4e7d1ef6f024" title="GBEmulator::Instructions::SLA" alt="" coords="507,1085,723,1112"/>
+<area shape="rect" id="node36" href="$namespace_g_b_emulator_1_1_instructions.html#abef21da002b846690aa33399f5a11428" title="GBEmulator::Instructions::SRA" alt="" coords="506,1253,723,1280"/>
+<area shape="rect" id="node37" href="$namespace_g_b_emulator_1_1_instructions.html#a12d26bac59c071b377e76176ac5cc3b0" title="GBEmulator::Instructions::SRL" alt="" coords="507,1203,723,1229"/>
 </map>

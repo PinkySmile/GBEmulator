@@ -1,3 +1,5 @@
 <map id="GBEmulator::Network::BGBProtocolCableInterface" name="GBEmulator::Network::BGBProtocolCableInterface">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html" title="GBEmulator::Network\l::CableInterface" alt="" coords="27,5,190,47"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html" title="GBEmulator::Network\l::CableInterface" alt="" coords="5,96,168,137"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html" title="GBEmulator::Network\l::BGBHandler" alt="" coords="192,96,355,137"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_protocol_handle.html" title="GBEmulator::Network\l::ProtocolHandle" alt="" coords="192,5,355,47"/>
 </map>

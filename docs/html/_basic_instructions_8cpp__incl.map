@@ -1,16 +1,20 @@
 <map id="src/ProcessingUnits/Instructions/BasicInstructions.cpp" name="src/ProcessingUnits/Instructions/BasicInstructions.cpp">
-<area shape="rect" id="node2" href="$_c_p_u_instructions_8hpp.html" title="CPUInstructions.hpp" alt="" coords="51,169,204,196"/>
-<area shape="rect" id="node24" href="$_instructions_8hpp.html" title="Instructions.hpp" alt="" coords="115,95,241,121"/>
-<area shape="rect" id="node5" href="$_c_p_u_8hpp.html" title="../CPU.hpp" alt="" coords="480,244,569,271"/>
-<area shape="rect" id="node7" href="$_a_p_u_8hpp.html" title="APU.hpp" alt="" coords="449,319,526,345"/>
-<area shape="rect" id="node11" href="$_sound_player_8hpp.html" title="../Sound/SoundPlayer.hpp" alt="" coords="601,319,787,345"/>
-<area shape="rect" id="node14" href="$_g_p_u_8hpp.html" title="GPU.hpp" alt="" coords="675,393,753,420"/>
-<area shape="rect" id="node19" href="$_cartridge_8hpp.html" title="../Memory/Cartridge.hpp" alt="" coords="195,319,374,345"/>
-<area shape="rect" id="node21" href="$_joypad_emulator_8hpp.html" title="../Joypad/JoypadEmulator.hpp" alt="" coords="812,319,1024,345"/>
-<area shape="rect" id="node22" href="$_cable_interface_8hpp.html" title="../Network/CableInterface.hpp" alt="" coords="1049,319,1265,345"/>
-<area shape="rect" id="node23" href="$_timer_8hpp.html" title="../Timing/Timer.hpp" alt="" coords="1289,319,1437,345"/>
-<area shape="rect" id="node8" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="371,468,542,495"/>
-<area shape="rect" id="node10" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="500,393,651,420"/>
-<area shape="rect" id="node17" href="$_i_l_c_d_8hpp.html" title="../LCD/ILCD.hpp" alt="" coords="617,468,739,495"/>
-<area shape="rect" id="node20" href="$_r_o_m_8hpp.html" title="ROM.hpp" alt="" coords="278,393,358,420"/>
+<area shape="rect" id="node2" href="$_c_p_u_instructions_8hpp.html" title="CPUInstructions.hpp" alt="" coords="1292,169,1445,196"/>
+<area shape="rect" id="node29" href="$_instructions_8hpp.html" title="Instructions.hpp" alt="" coords="1356,95,1483,121"/>
+<area shape="rect" id="node5" href="$_c_p_u_8hpp.html" title="../CPU.hpp" alt="" coords="1324,244,1413,271"/>
+<area shape="rect" id="node8" href="$_a_p_u_8hpp.html" title="APU.hpp" alt="" coords="758,319,835,345"/>
+<area shape="rect" id="node17" href="$_sound_player_8hpp.html" title="../Sound/SoundPlayer.hpp" alt="" coords="1173,319,1359,345"/>
+<area shape="rect" id="node20" href="$_g_p_u_8hpp.html" title="GPU.hpp" alt="" coords="1069,319,1148,345"/>
+<area shape="rect" id="node24" href="$_cartridge_8hpp.html" title="../Memory/Cartridge.hpp" alt="" coords="1383,319,1562,345"/>
+<area shape="rect" id="node26" href="$_joypad_emulator_8hpp.html" title="../Joypad/JoypadEmulator.hpp" alt="" coords="1587,319,1799,345"/>
+<area shape="rect" id="node27" href="$_cable_interface_8hpp.html" title="../CableLink/CableInterface.hpp" alt="" coords="1823,319,2048,345"/>
+<area shape="rect" id="node28" href="$_timer_8hpp.html" title="../Timing/Timer.hpp" alt="" coords="2072,319,2220,345"/>
+<area shape="rect" id="node10" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="931,483,1102,509"/>
+<area shape="rect" id="node12" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="683,557,833,584"/>
+<area shape="rect" id="node13" href="$_sound_channel_8hpp.html" title="SoundChannel/SoundChannel.hpp" alt="" coords="347,483,587,509"/>
+<area shape="rect" id="node14" href="$_square_wave_channel_8hpp.html" title="SoundChannel/SquareWaveChannel.hpp" alt="" coords="43,401,324,427"/>
+<area shape="rect" id="node15" href="$_noise_channel_8hpp.html" title="SoundChannel/NoiseChannel.hpp" alt="" coords="349,401,586,427"/>
+<area shape="rect" id="node16" href="$_modulable_wave_channel_8hpp.html" title="SoundChannel/ModulableWave\lChannel.hpp" alt="" coords="611,393,833,435"/>
+<area shape="rect" id="node22" href="$_i_l_c_d_8hpp.html" title="../LCD/ILCD.hpp" alt="" coords="1333,401,1455,427"/>
+<area shape="rect" id="node25" href="$_r_o_m_8hpp.html" title="ROM.hpp" alt="" coords="2010,401,2090,427"/>
 </map>

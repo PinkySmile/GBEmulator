@@ -1,4 +1,8 @@
 <map id="src/ProcessingUnits/APU.hpp" name="src/ProcessingUnits/APU.hpp">
-<area shape="rect" id="node2" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="5,95,176,121"/>
-<area shape="rect" id="node4" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="201,95,351,121"/>
+<area shape="rect" id="node3" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="184,184,355,211"/>
+<area shape="rect" id="node5" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="473,259,623,285"/>
+<area shape="rect" id="node6" href="$_sound_channel_8hpp.html" title="SoundChannel/SoundChannel.hpp" alt="" coords="428,184,668,211"/>
+<area shape="rect" id="node7" href="$_square_wave_channel_8hpp.html" title="SoundChannel/SquareWaveChannel.hpp" alt="" coords="457,102,738,129"/>
+<area shape="rect" id="node8" href="$_noise_channel_8hpp.html" title="SoundChannel/NoiseChannel.hpp" alt="" coords="763,102,1000,129"/>
+<area shape="rect" id="node9" href="$_modulable_wave_channel_8hpp.html" title="SoundChannel/ModulableWave\lChannel.hpp" alt="" coords="158,95,381,136"/>
 </map>

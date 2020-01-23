@@ -1,6 +1,8 @@
 <map id="GBEmulator::APU::channelNoiseWriting" name="GBEmulator::APU::channelNoiseWriting">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a4f63ad10f591080c92dda2535b65c9f7" title="GBEmulator::APU::Sound\l::setSoundLength" alt="" coords="248,5,431,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ad081a6af03da336dc42281667171c84d" title="GBEmulator::APU::Sound\l::setVolume" alt="" coords="248,71,431,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a3a6681460e7c71733b0e06af49bc7ad5" title="GBEmulator::APU::Sound\l::setPolynomialCounters" alt="" coords="248,136,431,177"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af7b973bb3d500f51c880c2f028cf51ad" title="GBEmulator::APU::Sound\l::setRestartOptions" alt="" coords="248,201,431,243"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a709515ba9744e223d92388a4cbaf63d3" title="GBEmulator::SoundChannel\l::NoiseChannel::setSoundLength" alt="" coords="271,5,503,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abcd9e6ea6cef641c33fc7799c9d1db89" title="GBEmulator::SoundChannel\l::SoundChannel::setVolume" alt="" coords="287,71,488,112"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a766859be945671fc46f9cb572512c39d" title="GBEmulator::SoundChannel\l::NoiseChannel::setPolynomialCounters" alt="" coords="248,136,527,177"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a7f546ff7e30635091607e303906376b4" title="GBEmulator::SoundChannel\l::SoundChannel::setRestartOptions" alt="" coords="264,201,511,243"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_i_sound.html#a61ff7b18438686d474c7db661db32ed7" title="GBEmulator::ISound\l::setVolume" alt="" coords="575,71,727,112"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_i_sound.html#a31e07f101d059a5c6f04c7dbd3710b67" title="GBEmulator::ISound\l::setPitch" alt="" coords="575,201,727,243"/>
 </map>

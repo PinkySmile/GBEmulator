@@ -1,8 +1,10 @@
 <map id="GBEmulator::APU::channelOneWriting" name="GBEmulator::APU::channelOneWriting">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a0291db5230053ca6dbeca1ac37764717" title="GBEmulator::APU::Sound\l::setSweep" alt="" coords="248,5,431,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a1e79621a4b84766da99fe246713d2298" title="GBEmulator::APU::Sound\l::setWave" alt="" coords="248,71,431,112"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#ad081a6af03da336dc42281667171c84d" title="GBEmulator::APU::Sound\l::setVolume" alt="" coords="248,136,431,177"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#a5b9eef6ccfc8b4416692f4fa1b86ecff" title="GBEmulator::APU::Sound\l::setLowFrequency" alt="" coords="248,201,431,243"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_a_p_u_1_1_sound.html#af7b973bb3d500f51c880c2f028cf51ad" title="GBEmulator::APU::Sound\l::setRestartOptions" alt="" coords="248,267,431,308"/>
-<area shape="rect" id="node4" href="$namespace_g_b_emulator.html#abeb01e92d770fb7e3df6a135a9943fc3" title="GBEmulator::getSquareWave" alt="" coords="479,78,689,105"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#ac33dcdbe1de3bafc49fcd2c91ff2cbc8" title="GBEmulator::SoundChannel\l::SoundChannel::setSweep" alt="" coords="271,5,472,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html#ac053eb30f8a4307133a7553b79e2e8b9" title="Change the wave duty. " alt="" coords="257,71,485,112"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#abcd9e6ea6cef641c33fc7799c9d1db89" title="GBEmulator::SoundChannel\l::SoundChannel::setVolume" alt="" coords="271,136,472,177"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a5d26badb18b2d8f21d10d48b386c6249" title="GBEmulator::SoundChannel\l::SoundChannel::setLowFrequency" alt="" coords="250,201,493,243"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a7f546ff7e30635091607e303906376b4" title="GBEmulator::SoundChannel\l::SoundChannel::setRestartOptions" alt="" coords="248,267,495,308"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_i_sound.html#a3e72f9bb47c8226e0d1e2cbe9a359017" title="GBEmulator::ISound\l::setWave" alt="" coords="543,71,695,112"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_i_sound.html#a61ff7b18438686d474c7db661db32ed7" title="GBEmulator::ISound\l::setVolume" alt="" coords="543,136,695,177"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_i_sound.html#a31e07f101d059a5c6f04c7dbd3710b67" title="GBEmulator::ISound\l::setPitch" alt="" coords="543,233,695,275"/>
 </map>

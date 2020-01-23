@@ -1,51 +1,51 @@
 <map id="GBEmulator::Debugger::Debugger::processCommandLine" name="GBEmulator::Debugger::Debugger::processCommandLine">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a140cb03de088f902c71456c6b8470812" title="Sépare la ligne de commande en respectant les quotes (comme un shell) " alt="" coords="317,401,520,443"/>
-<area shape="rect" id="node3" href="$namespace_g_b_emulator_1_1_instructions.html#a80a3ff5d0867ed0f39f5cf0cfe31707e" title="GBEmulator::Instructions\l::intToHex" alt="" coords="1707,825,1891,867"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_c_p_u.html#aa360299a4a8125f574ad0e0fc25c0add" title="Affiche sur la sortie standard un debug des registres. " alt="" coords="299,518,539,545"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_c_p_u.html#a332f41666adcef7b90886d044670c6b5" title="Lis la valeur pointé par l&#39;adresse passée. " alt="" coords="1173,623,1345,650"/>
-<area shape="rect" id="node27" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#adf35e91b03ceba764203229f02ce0ca9" title="Affiche le registre donné sur l&#39;entrée standard. " alt="" coords="333,792,504,833"/>
-<area shape="rect" id="node28" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ae40c8e131e3e2a49afd6b75afc93af23" title="Affiche l&#39;instruction en cours d&#39;éxecution. " alt="" coords="597,893,827,935"/>
-<area shape="rect" id="node29" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="333,909,504,951"/>
-<area shape="rect" id="node37" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="325,1101,513,1127"/>
-<area shape="rect" id="node38" href="$class_g_b_emulator_1_1_input_1_1_joypad_emulator.html#a07bd84256676d0b4b9ab6ca6b2400c10" title="GBEmulator::Input::\lJoypadEmulator::isButtonPressed" alt="" coords="593,1243,831,1284"/>
-<area shape="rect" id="node50" href="$class_g_b_emulator_1_1_c_p_u.html#a3aafaf0e61eab88feb6370a2fc91376e" title="Affiche sur la sortie standard un debug de la mémoire. " alt="" coords="302,467,535,494"/>
-<area shape="rect" id="node25" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a41e69371034b4bed49b8d5d0a6410a99" title="Récupère le numéro de la Banque de ROM en cours d&#39;utilisation. " alt="" coords="621,507,803,548"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a3e8170043e18e532dc81d40f858cda56" title="Lis la valeur à l&#39;adresse donnée dand la cartouche. " alt="" coords="1439,725,1601,767"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="1718,575,1879,616"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_g_p_u.html#a87dcf97b796c591985b4ce676f63d02c" title="GBEmulator::GPU::readVRAM" alt="" coords="1415,674,1625,701"/>
-<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_g_p_u.html#a029be15baa87b0b0dde63ebb6d68240e" title="GBEmulator::GPU::readOAM" alt="" coords="1419,623,1621,650"/>
-<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_c_p_u.html#abbf2b978a8f6489649255e6f494c9237" title="GBEmulator::CPU::_readIOPort" alt="" coords="1411,305,1629,331"/>
-<area shape="rect" id="node24" href="$class_g_b_emulator_1_1_a_p_u.html#a1000f0bd328abe6fced491668ee8dd67" title="GBEmulator::APU::read" alt="" coords="1434,573,1606,599"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac20d1a8824352c532dc8502f567ae5f5" title="Lis la valeur à l&#39;adresse de la mémoire en ignorant les banks. " alt="" coords="1718,743,1879,784"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a4bb0212d24f08c8a69e8dcbe8d34c7a1" title="renvoie la taille de la mémoire " alt="" coords="1718,937,1879,979"/>
-<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149" title="GBEmulator::GPU::getMode" alt="" coords="1968,666,2168,693"/>
-<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_g_p_u.html#a105d08c4bd708d99bd1cfed7af70354a" title="GBEmulator::GPU::getCurrentLine" alt="" coords="2216,523,2456,550"/>
-<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a4c78188060a634f8a46725b806b7023b" title="GBEmulator::Network\l::CableInterface::getControlByte" alt="" coords="1683,123,1914,164"/>
-<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_timing_1_1_timer.html#a5e5585528450f3bf7998ecb7df6fe844" title="GBEmulator::Timing\l::Timer::getCounter" alt="" coords="1722,188,1875,229"/>
-<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_g_p_u.html#a395744fdd9c03aa2440a353e6dd8a4f9" title="GBEmulator::GPU::getControlByte" alt="" coords="1677,254,1920,281"/>
-<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_g_p_u.html#aba448caa289deb6298d42fd253170f4f" title="GBEmulator::GPU::getStatByte" alt="" coords="1688,523,1909,550"/>
-<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_g_p_u.html#a132113f295d171ed4a8e344e89a0293d" title="GBEmulator::GPU::getLycByte" alt="" coords="1691,305,1907,331"/>
-<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_g_p_u.html#a2a658c9fcf4fee16650a1a1169af965b" title="GBEmulator::GPU::getBGPalette" alt="" coords="1684,355,1913,382"/>
-<area shape="rect" id="node21" href="$class_g_b_emulator_1_1_g_p_u.html#a2687b291cfcc8b33305ea6be4cad7dae" title="GBEmulator::GPU::getObject\lPalette0" alt="" coords="1695,407,1902,448"/>
-<area shape="rect" id="node22" href="$class_g_b_emulator_1_1_g_p_u.html#ad826918cbc37a5944a9c5cd4aa383cff" title="GBEmulator::GPU::getObject\lPalette1" alt="" coords="1695,5,1902,47"/>
-<area shape="rect" id="node23" href="$class_g_b_emulator_1_1_g_p_u.html#ae5c4b5f512fcc53d00774a897f445bf1" title="GBEmulator::GPU::getXScroll" alt="" coords="1693,71,1904,98"/>
-<area shape="rect" id="node26" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ada67ecf14d7a6777e17fffc762e9e2ce" title="Récupère le numéro de la banque en cours d&#39;utilisation. " alt="" coords="901,507,1093,548"/>
-<area shape="rect" id="node30" href="$class_g_b_emulator_1_1_c_p_u.html#a121d9852c3b16173125e53058a884820" title="Écrit la valeur sur la zone pointé par l&#39;adresse passée. " alt="" coords="624,1025,800,1051"/>
-<area shape="rect" id="node31" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a100a279ff03c092fa7a339b72c6506fb" title="Écrit la valeur à l&#39;adresse donnée dand la cartouche. " alt="" coords="1179,1015,1340,1056"/>
-<area shape="rect" id="node32" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a851453d49b6f43f12ff726376afe6acd" title="Écrit la valeur à l&#39;adresse de la mémoire. " alt="" coords="1439,908,1601,949"/>
-<area shape="rect" id="node33" href="$class_g_b_emulator_1_1_g_p_u.html#ab6d69ceb222ee30677dd1e2f18998d75" title="GBEmulator::GPU::writeVRAM" alt="" coords="889,1146,1104,1173"/>
-<area shape="rect" id="node34" href="$class_g_b_emulator_1_1_c_p_u.html#ac5a63c176262700c7a586bf29e2f0f2d" title="GBEmulator::CPU::_writeIOPort" alt="" coords="885,893,1108,919"/>
-<area shape="rect" id="node35" href="$class_g_b_emulator_1_1_g_p_u.html#ae234209a15ca28160516257f937d8c3c" title="GBEmulator::GPU::writeOAM" alt="" coords="1156,1081,1363,1107"/>
-<area shape="rect" id="node36" href="$class_g_b_emulator_1_1_a_p_u.html#a982ab0a257c874711186e69b63eab433" title="GBEmulator::APU::write" alt="" coords="909,994,1085,1021"/>
-<area shape="rect" id="node39" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a4dcad1d1589acac22194b2a043f073c5" title="Met à jour la fenetre du jeu. " alt="" coords="629,1177,795,1219"/>
-<area shape="rect" id="node40" href="$class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="587,1126,837,1153"/>
-<area shape="rect" id="node42" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="611,959,813,1000"/>
-<area shape="rect" id="node44" href="$class_g_b_emulator_1_1_c_p_u.html#abe06dc8fe4c7745b02af45e394128372" title="GBEmulator::CPU::_update\lComponents" alt="" coords="899,1209,1094,1251"/>
-<area shape="rect" id="node41" href="$class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="895,1275,1098,1316"/>
-<area shape="rect" id="node43" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="905,725,1089,767"/>
-<area shape="rect" id="node45" href="$class_g_b_emulator_1_1_g_p_u.html#a4713e9bd3715e433433611e8d3ba1320" title="GBEmulator::GPU::update" alt="" coords="1165,1417,1354,1443"/>
-<area shape="rect" id="node46" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a61279044e8d0daf70416396a25415b81" title="GBEmulator::Network\l::CableInterface::isTransfering" alt="" coords="1412,1212,1628,1253"/>
-<area shape="rect" id="node47" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a05c1594212bc6daa79743d1fc259051f" title="GBEmulator::Network\l::CableInterface::transfer" alt="" coords="1167,1183,1351,1224"/>
-<area shape="rect" id="node48" href="$class_g_b_emulator_1_1_timing_1_1_timer.html#a0f4406515774ae2a6ab4d2de5b50e216" title="GBEmulator::Timing\l::Timer::update" alt="" coords="1183,1300,1336,1341"/>
-<area shape="rect" id="node49" href="$class_g_b_emulator_1_1_a_p_u.html#ae673c87a7e7c4dcf2639abe396f9ea15" title="GBEmulator::APU::update" alt="" coords="1165,1366,1353,1393"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a140cb03de088f902c71456c6b8470812" title="Sépare la ligne de commande en respectant les quotes (comme un shell) " alt="" coords="317,484,520,525"/>
+<area shape="rect" id="node3" href="$namespace_g_b_emulator_1_1_instructions.html#a80a3ff5d0867ed0f39f5cf0cfe31707e" title="GBEmulator::Instructions\l::intToHex" alt="" coords="1725,972,1909,1013"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_c_p_u.html#aa360299a4a8125f574ad0e0fc25c0add" title="Affiche sur la sortie standard un debug des registres. " alt="" coords="299,550,539,576"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_c_p_u.html#a332f41666adcef7b90886d044670c6b5" title="Lis la valeur pointé par l&#39;adresse passée. " alt="" coords="1188,702,1360,728"/>
+<area shape="rect" id="node29" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#adf35e91b03ceba764203229f02ce0ca9" title="Affiche le registre donné sur l&#39;entrée standard. " alt="" coords="333,862,504,904"/>
+<area shape="rect" id="node30" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ae40c8e131e3e2a49afd6b75afc93af23" title="Affiche l&#39;instruction en cours d&#39;éxecution. " alt="" coords="597,921,827,962"/>
+<area shape="rect" id="node31" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="333,980,504,1021"/>
+<area shape="rect" id="node39" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="325,1351,513,1378"/>
+<area shape="rect" id="node40" href="$class_g_b_emulator_1_1_input_1_1_joypad_emulator.html#a07bd84256676d0b4b9ab6ca6b2400c10" title="GBEmulator::Input::\lJoypadEmulator::isButtonPressed" alt="" coords="593,1478,831,1520"/>
+<area shape="rect" id="node50" href="$class_g_b_emulator_1_1_c_p_u.html#a3aafaf0e61eab88feb6370a2fc91376e" title="Affiche sur la sortie standard un debug de la mémoire. " alt="" coords="885,600,1119,627"/>
+<area shape="rect" id="node27" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a41e69371034b4bed49b8d5d0a6410a99" title="Récupère le numéro de la Banque de ROM en cours d&#39;utilisation. " alt="" coords="621,484,803,525"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a3e8170043e18e532dc81d40f858cda56" title="Lis la valeur à l&#39;adresse donnée dand la cartouche. " alt="" coords="1458,804,1619,845"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="1737,724,1898,765"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_g_p_u.html#a87dcf97b796c591985b4ce676f63d02c" title="Lit la VRAM. " alt="" coords="1433,752,1644,779"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_g_p_u.html#a029be15baa87b0b0dde63ebb6d68240e" title="Lit l&#39;OAM. " alt="" coords="1437,651,1640,678"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_c_p_u.html#abbf2b978a8f6489649255e6f494c9237" title="GBEmulator::CPU::_readIOPort" alt="" coords="1429,338,1648,364"/>
+<area shape="rect" id="node26" href="$class_g_b_emulator_1_1_a_p_u.html#a1000f0bd328abe6fced491668ee8dd67" title="GBEmulator::APU::read" alt="" coords="1453,600,1625,627"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac20d1a8824352c532dc8502f567ae5f5" title="Lis la valeur à l&#39;adresse de la mémoire en ignorant les banks. " alt="" coords="1737,841,1898,882"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a4bb0212d24f08c8a69e8dcbe8d34c7a1" title="renvoie la taille de la mémoire " alt="" coords="1737,906,1898,948"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149" title="Obtient le mode actuel le mode peut être H&#45;Blank, V&#45;Blank, Searching OAM&#45;RAM ou Transfering Data to L..." alt="" coords="1987,1102,2187,1128"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_g_p_u.html#a105d08c4bd708d99bd1cfed7af70354a" title="Obtient la ligne d&#39;écriture de pixel sur le LCD. " alt="" coords="2235,1102,2475,1128"/>
+<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a4c78188060a634f8a46725b806b7023b" title="GBEmulator::Network\l::CableInterface::getControlByte" alt="" coords="1702,105,1933,146"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_timing_1_1_timer.html#a5e5585528450f3bf7998ecb7df6fe844" title="GBEmulator::Timing\l::Timer::getCounter" alt="" coords="1741,170,1894,212"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_g_p_u.html#a395744fdd9c03aa2440a353e6dd8a4f9" title="Obtient le LCD Control Register (FF40) " alt="" coords="1696,236,1939,263"/>
+<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_g_p_u.html#aba448caa289deb6298d42fd253170f4f" title="Obtient le STAT &#45; LCD Status (FF41) " alt="" coords="1707,54,1928,80"/>
+<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_g_p_u.html#a132113f295d171ed4a8e344e89a0293d" title="Obtient LYC &#45; LY Compare (FF45) " alt="" coords="1709,287,1925,314"/>
+<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_g_p_u.html#a2a658c9fcf4fee16650a1a1169af965b" title="Obtient la LCD Monochrome Palettes (FF47) " alt="" coords="1703,338,1932,364"/>
+<area shape="rect" id="node21" href="$class_g_b_emulator_1_1_g_p_u.html#a2687b291cfcc8b33305ea6be4cad7dae" title="Obtient Object Palette 0 Data (FF48) " alt="" coords="1714,389,1921,430"/>
+<area shape="rect" id="node22" href="$class_g_b_emulator_1_1_g_p_u.html#ad826918cbc37a5944a9c5cd4aa383cff" title="Obtient Object Palette 1 Data (FF49) " alt="" coords="1714,454,1921,496"/>
+<area shape="rect" id="node23" href="$class_g_b_emulator_1_1_g_p_u.html#ae5c4b5f512fcc53d00774a897f445bf1" title="Obtient le Scroll X (FF43) " alt="" coords="1712,520,1923,547"/>
+<area shape="rect" id="node24" href="$class_g_b_emulator_1_1_g_p_u.html#a1a0d42f7e4f785ca6d1686c122993285" title="Obtient le Scroll Y (FF42) " alt="" coords="1713,571,1922,598"/>
+<area shape="rect" id="node25" href="$class_g_b_emulator_1_1_g_p_u.html#a586ad6db9a7bc5e5e6f25df91f977c3e" title="Obtient Window X Position (FF4B) " alt="" coords="1704,622,1931,648"/>
+<area shape="rect" id="node28" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ada67ecf14d7a6777e17fffc762e9e2ce" title="Récupère le numéro de la banque en cours d&#39;utilisation. " alt="" coords="906,484,1098,525"/>
+<area shape="rect" id="node32" href="$class_g_b_emulator_1_1_c_p_u.html#a121d9852c3b16173125e53058a884820" title="Écrit la valeur sur la zone pointé par l&#39;adresse passée. " alt="" coords="624,1052,800,1079"/>
+<area shape="rect" id="node33" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a100a279ff03c092fa7a339b72c6506fb" title="Écrit la valeur à l&#39;adresse donnée dand la cartouche. " alt="" coords="1193,956,1355,997"/>
+<area shape="rect" id="node34" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a851453d49b6f43f12ff726376afe6acd" title="Écrit la valeur à l&#39;adresse de la mémoire. " alt="" coords="1458,1022,1619,1064"/>
+<area shape="rect" id="node35" href="$class_g_b_emulator_1_1_g_p_u.html#ab6d69ceb222ee30677dd1e2f18998d75" title="Ecrit sur la VRAM. " alt="" coords="1167,1123,1381,1150"/>
+<area shape="rect" id="node36" href="$class_g_b_emulator_1_1_c_p_u.html#ac5a63c176262700c7a586bf29e2f0f2d" title="GBEmulator::CPU::_writeIOPort" alt="" coords="891,1072,1113,1099"/>
+<area shape="rect" id="node37" href="$class_g_b_emulator_1_1_g_p_u.html#ae234209a15ca28160516257f937d8c3c" title="Ecrit sur l&#39;OAM. " alt="" coords="1171,1072,1377,1099"/>
+<area shape="rect" id="node38" href="$class_g_b_emulator_1_1_a_p_u.html#a982ab0a257c874711186e69b63eab433" title="GBEmulator::APU::write" alt="" coords="914,920,1090,947"/>
+<area shape="rect" id="node41" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a4dcad1d1589acac22194b2a043f073c5" title="Affiche l&#39;écran mis àa jour. " alt="" coords="2004,1344,2169,1385"/>
+<area shape="rect" id="node42" href="$class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="587,1427,837,1454"/>
+<area shape="rect" id="node44" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="611,986,813,1028"/>
+<area shape="rect" id="node46" href="$class_g_b_emulator_1_1_g_p_u.html#a4713e9bd3715e433433611e8d3ba1320" title="Met à jour le GPU Met à jour le GPU &#39;cycle&#39; nombre de fois. " alt="" coords="1444,1267,1633,1294"/>
+<area shape="rect" id="node43" href="$class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="901,1428,1103,1469"/>
+<area shape="rect" id="node45" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="910,804,1094,845"/>
+<area shape="rect" id="node47" href="$class_g_b_emulator_1_1_g_p_u.html#a99966fe776892464894284e414cd4293" title="Met à jour le GPU. " alt="" coords="1723,1326,1912,1352"/>
+<area shape="rect" id="node48" href="$class_g_b_emulator_1_1_g_p_u.html#ab875e43907d68eb6f0b834ad4ff362fa" title="Si VBLANK interrupt. " alt="" coords="1713,1194,1921,1236"/>
+<area shape="rect" id="node49" href="$class_g_b_emulator_1_1_g_p_u.html#a4848bd92cbd6a15b685b108ea5075577" title="Si Stat interrupt. " alt="" coords="1723,1260,1911,1301"/>
 </map>
