@@ -96,7 +96,7 @@ namespace GBEmulator::SoundChannel
 				this->_initialVolume = 0;
 				break;
 			default:
-				this->_initialVolume = 15 / (1U << this->_waveOutputLevel - 1);
+				this->_initialVolume = 15 / (1U << (this->_waveOutputLevel - 1));
 				break;
 		}
 		this->setVolume(this->_initialVolume * 100.f / 15);
