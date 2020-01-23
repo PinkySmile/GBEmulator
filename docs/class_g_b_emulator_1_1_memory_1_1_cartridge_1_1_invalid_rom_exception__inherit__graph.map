@@ -1,0 +1,5 @@
+<map id="GBEmulator::Memory::Cartridge::InvalidRomException" name="GBEmulator::Memory::Cartridge::InvalidRomException">
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_ram_size_exception.html" title="GBEmulator::Memory\l::Cartridge::InvalidRomRam\lSizeException" alt="" coords="444,5,645,61"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_size_exception.html" title="GBEmulator::Memory\l::Cartridge::InvalidRomSize\lException" alt="" coords="445,85,644,141"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_saving_failed_exception.html" title="GBEmulator::Memory\l::Cartridge::SavingFailedException" alt="" coords="423,166,667,207"/>
+</map>

@@ -120,9 +120,13 @@ namespace GBEmulator::Memory
 		void resetROM();
 		void loadROM(const std::string &rom);
 		void saveRAM();
+		//! Écrit la valeur à l'adresse donnée dand la cartouche
 		void write(unsigned short address, unsigned char value);
+		//! Lis la valeur à l'adresse donnée dand la cartouche
 		unsigned char read(unsigned short address) const;
+		//! Récupère le numéro de la Banque de ROM en cours d'utilisation
 		unsigned char getRomBank() const;
+		//! Récupère le numéro de la Banque de RAM en cours d'utilisation
 		unsigned char getRamBank() const;
 	};
 }

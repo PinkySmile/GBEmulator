@@ -45,28 +45,48 @@ namespace GBEmulator::Debugger
 
 		static const std::vector<unsigned char> _instrSize;
 
+		//! Affiche le registre donné sur l'entrée standard
 		void _dispVar(const std::string &name);
+		//! Change la valeur de force de la variable donnée dans le CPU
 		void _setVar(const std::string &name, unsigned short value);
+		//! Verifie si la commande est valide puis appelle processCommandLine
 		void _checkCommands(bool &dbg, std::istream &stream = std::cin);
+		//! Affiche l'instruction en cours d'éxecution
 		void _displayCurrentLine(std::ostream &stream = std::cout);
+		//! Affiche l'instruction en cours d'éxecution
 		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
+		//! Sépare la ligne de commande en respectant les quotes (comme un shell)
 		static std::vector<std::string> _splitCommand(const std::string& line);
+		//! Affiche l'instruction sur la fenetre du débugger
 		void _drawInstruction(sf::RenderWindow &_debugWindow);
+		//! Affiche l'état de la mémoire sur la fenetre du débugger
 		void _drawMemory(sf::RenderWindow &_debugWindow);
+		//! Affiche l'état des registres sur la fenetre du débugger
 		void _drawRegisters(sf::RenderWindow &_debugWindow);
+		//! Petmet d'utiliser les commandes en raccourcis de clavier sur le débugger
 		void _handleWindowCommands(sf::RenderWindow &_debugWindow);
+		//! Affiche le contenu de la Vram sur la fenetre du débugger
 		void _drawVram(sf::RenderWindow &_debugWindow);
+		//! Affiche l'état des palette sur la fenetre du débugger
 		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		//! Affiche la VRAM en utilisant la palette.
 		void _displayVRAMContent(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		//! Affiche l'état de la window sur la fenetre du débugger.
 		void _displayWindow(sf::RenderWindow &_debugWindow, float x, float y);
+		//! Affiche l'état du background sur la fenetre du débugger.
 		void _displayBackground(sf::RenderWindow &_debugWindow, float x, float y);
 
 	public:
+		//! Constructeur du debugger
 		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
+		//! Destructeur du debugger
 		~Debugger();
 
+		//! Lance la commande donnée en paramètre
 		bool processCommandLine(const std::string& line);
+		//! Renvoie true ou false si un breakpoint a été set
 		bool checkBreakPoints();
+		//! Lance la session de débuggage
 		int startDebugSession();
 	};
 }

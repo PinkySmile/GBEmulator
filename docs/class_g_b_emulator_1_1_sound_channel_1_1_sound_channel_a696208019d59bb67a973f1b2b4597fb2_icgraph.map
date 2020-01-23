@@ -1,0 +1,5 @@
+<map id="GBEmulator::SoundChannel::SoundChannel::_updateSweep" name="GBEmulator::SoundChannel::SoundChannel::_updateSweep">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a119d2e85059194de1becfe6fb95bec98" title="Update the channel. " alt="" coords="280,5,481,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u.html#ae673c87a7e7c4dcf2639abe396f9ea15" title="GBEmulator::APU::update" alt="" coords="529,13,717,39"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_c_p_u.html#abe06dc8fe4c7745b02af45e394128372" title="GBEmulator::CPU::_update\lComponents" alt="" coords="765,5,960,47"/>
+</map>

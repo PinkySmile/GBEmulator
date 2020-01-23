@@ -1,0 +1,5 @@
+<map id="GBEmulator::SoundChannel::NoiseChannel::_update" name="GBEmulator::SoundChannel::NoiseChannel::_update">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_i_sound.html#a3e72f9bb47c8226e0d1e2cbe9a359017" title="GBEmulator::ISound\l::setWave" alt="" coords="290,5,442,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#ae60fcff250627e57050af67a6ab1605c" title="GBEmulator::SoundChannel\l::NoiseChannel::getNoiseWave" alt="" coords="255,71,477,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#af2ee3f42276197e920bb3e77b5e05969" title="GBEmulator::SoundChannel\l::NoiseChannel::_updateLFSR" alt="" coords="525,71,736,112"/>
+</map>

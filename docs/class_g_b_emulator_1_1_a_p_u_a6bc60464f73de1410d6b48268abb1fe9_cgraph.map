@@ -1,0 +1,6 @@
+<map id="GBEmulator::APU::channelWaveReading" name="GBEmulator::APU::channelWaveReading">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a2a137159179326b65c80fdc41023354f" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getSoundOnOff" alt="" coords="271,5,473,61"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a6d5518f039e0728e2eaf0758bb46ad5d" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getSoundLength" alt="" coords="271,85,473,141"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#a387b000da709db527c34324628ae7beb" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getOutputLevel" alt="" coords="271,165,473,221"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a60ade2dee428de63b0273c5e1953b490" title="GBEmulator::SoundChannel\l::SoundChannel::getRestartOptions" alt="" coords="248,246,496,287"/>
+</map>
