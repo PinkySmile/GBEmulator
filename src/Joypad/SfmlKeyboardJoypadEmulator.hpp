@@ -28,7 +28,9 @@ namespace GBEmulator::Input
 		SFMLKeyboardJoypadEmulator &operator=(const SFMLKeyboardJoypadEmulator &) = delete;
 		explicit SFMLKeyboardJoypadEmulator(sf::RenderWindow &window, const std::map<Keys, sf::Keyboard::Key> &&keys);
 
+		//! Lie une touche du clavier à un bouton du Joypad
 		void setKey(Keys button, sf::Keyboard::Key key);
+		//! Renvoie True si le bouton donnée est appuyé
 		bool isButtonPressed(Keys button) const noexcept override;
 	};
 }

@@ -1,0 +1,24 @@
+<map id="src/main.cpp" name="src/main.cpp">
+<area shape="rect" id="node6" href="$_c_p_u_8hpp.html" title="ProcessingUnits/CPU.hpp" alt="" coords="2041,177,2226,203"/>
+<area shape="rect" id="node31" href="$_l_c_d_s_f_m_l_8hpp.html" title="LCD/LCDSFML.hpp" alt="" coords="1457,177,1596,203"/>
+<area shape="rect" id="node32" href="$_sfml_keyboard_joypad_emulator_8hpp.html" title="Joypad/SfmlKeyboardJoypad\lEmulator.hpp" alt="" coords="3397,169,3603,211"/>
+<area shape="rect" id="node35" href="$debugger_8hpp.html" title="debugger/debugger.hpp" alt="" coords="2366,87,2541,114"/>
+<area shape="rect" id="node36" href="$_bgb_protocol_network_interface_8hpp.html" title="CableLink/BgbProtocolNetwork\lInterface.hpp" alt="" coords="2633,80,2855,121"/>
+<area shape="rect" id="node9" href="$_a_p_u_8hpp.html" title="APU.hpp" alt="" coords="644,259,721,285"/>
+<area shape="rect" id="node18" href="$_sound_player_8hpp.html" title="../Sound/SoundPlayer.hpp" alt="" coords="1280,259,1467,285"/>
+<area shape="rect" id="node21" href="$_g_p_u_8hpp.html" title="GPU.hpp" alt="" coords="1646,259,1725,285"/>
+<area shape="rect" id="node25" href="$_cartridge_8hpp.html" title="../Memory/Cartridge.hpp" alt="" coords="1800,259,1979,285"/>
+<area shape="rect" id="node28" href="$_joypad_emulator_8hpp.html" title="../Joypad/JoypadEmulator.hpp" alt="" coords="2566,259,2778,285"/>
+<area shape="rect" id="node29" href="$_cable_interface_8hpp.html" title="../CableLink/CableInterface.hpp" alt="" coords="2227,259,2453,285"/>
+<area shape="rect" id="node30" href="$_timer_8hpp.html" title="../Timing/Timer.hpp" alt="" coords="2003,259,2151,285"/>
+<area shape="rect" id="node11" href="$_memory_8hpp.html" title="../Memory/Memory.hpp" alt="" coords="1333,423,1504,449"/>
+<area shape="rect" id="node13" href="$_i_sound_8hpp.html" title="../Sound/ISound.hpp" alt="" coords="762,497,913,524"/>
+<area shape="rect" id="node14" href="$_sound_channel_8hpp.html" title="SoundChannel/SoundChannel.hpp" alt="" coords="331,423,571,449"/>
+<area shape="rect" id="node15" href="$_square_wave_channel_8hpp.html" title="SoundChannel/SquareWaveChannel.hpp" alt="" coords="27,341,309,367"/>
+<area shape="rect" id="node16" href="$_noise_channel_8hpp.html" title="SoundChannel/NoiseChannel.hpp" alt="" coords="333,341,571,367"/>
+<area shape="rect" id="node17" href="$_modulable_wave_channel_8hpp.html" title="SoundChannel/ModulableWave\lChannel.hpp" alt="" coords="646,333,869,375"/>
+<area shape="rect" id="node23" href="$_i_l_c_d_8hpp.html" title="../LCD/ILCD.hpp" alt="" coords="944,341,1067,367"/>
+<area shape="rect" id="node27" href="$_r_o_m_8hpp.html" title="ROM.hpp" alt="" coords="1988,341,2068,367"/>
+<area shape="rect" id="node37" href="$_bgb_handler_8hpp.html" title="../Network/BgbHandler.hpp" alt="" coords="2881,177,3077,203"/>
+<area shape="rect" id="node39" href="$_protocol_handle_8hpp.html" title="ProtocolHandle.hpp" alt="" coords="2904,259,3053,285"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="GBEmulator::Network::BGBProtocolCableInterface::connect" name="GBEmulator::Network::BGBProtocolCableInterface::connect">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a891d76426d4c3818ac46943b9317e037" title="GBEmulator::Network\l::BGBHandler::connect" alt="" coords="260,39,428,80"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a155908c52258253a1af3defb6c8ea60e" title="GBEmulator::Network\l::BGBHandler::log" alt="" coords="747,5,909,47"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a205e4ee16c2ca932cb95bad27694751e" title="GBEmulator::Network\l::BGBHandler::_handshake" alt="" coords="476,68,671,109"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad714de8f1ddb3b10edf7f0cad5396019" title="GBEmulator::Network\l::BGBHandler::_sendPacket" alt="" coords="729,71,927,112"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad85ef34344f860ccd338d4ef97be5850" title="GBEmulator::Network\l::BGBHandler::_getNextPacket" alt="" coords="719,136,937,177"/>
+</map>

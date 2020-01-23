@@ -46,11 +46,17 @@ namespace GBEmulator
 			 * @param title: Titre de la fenêtre.
 			 */
 			LCDSFML(sf::VideoMode mode, const std::string &title);
+			//! Met à jour la fenetre du jeu
 			void display() override;
+			//! Nettoie la fenetre du jeu
 			void clear() override;
+			//! Change la taille maximale de l'écran
 			void setMaxSize(unsigned int x, unsigned y);
+			//! Change la couleur du pixel ciblé
 			void setPixel(unsigned int x, unsigned y, const RGBColor &color);
+			//! Renvoie True si la fenetre est fermée
 			bool isClosed() const override;
+			//! Ferme la fenetre
 			void close() override;
 			/*!
 			 * @brief Obtient les images par seconde

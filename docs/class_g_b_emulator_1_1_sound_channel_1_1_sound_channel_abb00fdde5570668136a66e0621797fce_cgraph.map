@@ -1,0 +1,4 @@
+<map id="GBEmulator::SoundChannel::SoundChannel::_updateVolume" name="GBEmulator::SoundChannel::SoundChannel::_updateVolume">
+<area shape="rect" id="node2" href="$namespace_g_b_emulator_1_1_timing.html#a881d2264075f81332f0d14e465b01dc9" title="GBEmulator::Timing\l::getCyclesPerSecondsFromFrequency" alt="" coords="285,5,552,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_i_sound.html#a61ff7b18438686d474c7db661db32ed7" title="GBEmulator::ISound\l::setVolume" alt="" coords="343,71,495,112"/>
+</map>

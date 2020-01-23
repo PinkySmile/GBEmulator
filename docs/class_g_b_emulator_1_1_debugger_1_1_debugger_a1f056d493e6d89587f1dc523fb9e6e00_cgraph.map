@@ -1,0 +1,51 @@
+<map id="GBEmulator::Debugger::Debugger::startDebugSession" name="GBEmulator::Debugger::Debugger::startDebugSession">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ae40c8e131e3e2a49afd6b75afc93af23" title="Affiche l&#39;instruction en cours d&#39;éxecution. " alt="" coords="1194,178,1425,219"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a87bd4b8eee97826d88f971d9701e27f5" title="Si la fenêtre est fermée. " alt="" coords="333,848,498,890"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a4b533cb672bea78b1c89c0d8c5cf024a" title="Affiche l&#39;instruction sur la fenetre du débugger. " alt="" coords="911,68,1121,110"/>
+<area shape="rect" id="node10" href="$namespace_g_b_emulator_1_1_instructions.html#a80a3ff5d0867ed0f39f5cf0cfe31707e" title="GBEmulator::Instructions\l::intToHex" alt="" coords="2316,267,2500,308"/>
+<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ada6efa4f1656d07b327a44396d293954" title="Affiche l&#39;état de la mémoire sur la fenetre du débugger. " alt="" coords="1213,642,1406,683"/>
+<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#abb23da2e8831e8bfd1822ba990a9a201" title="Affiche l&#39;état des registres sur la fenetre du débugger. " alt="" coords="916,688,1116,730"/>
+<area shape="rect" id="node23" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a91231528879ba7061340a9618a0347c6" title="Affiche le contenu de la Vram sur la fenetre du débugger. " alt="" coords="328,914,503,955"/>
+<area shape="rect" id="node29" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a12412155391fa90adec5c78bca61674d" title="Petmet d&#39;utiliser les commandes en raccourcis de clavier sur le débugger. " alt="" coords="276,979,555,1020"/>
+<area shape="rect" id="node30" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a892c5b3e0fccb44cad83e5401fe2e664" title="Verifie si la commande est valide puis appelle processCommandLine. " alt="" coords="305,470,525,511"/>
+<area shape="rect" id="node36" href="$class_g_b_emulator_1_1_c_p_u.html#a0b6f1f5713efba30f0430408b3506121" title="Éxécute un cycle. " alt="" coords="922,856,1110,882"/>
+<area shape="rect" id="node37" href="$class_g_b_emulator_1_1_input_1_1_joypad_emulator.html#a07bd84256676d0b4b9ab6ca6b2400c10" title="GBEmulator::Input::\lJoypadEmulator::isButtonPressed" alt="" coords="1190,759,1429,800"/>
+<area shape="rect" id="node49" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a9d434142bf0abdd36bc73d9bb7027477" title="Renvoie true ou false si un breakpoint a été set. " alt="" coords="307,1044,524,1086"/>
+<area shape="rect" id="node50" href="$class_g_b_emulator_1_1_c_p_u_1_1_invalid_opcode_exception.html#a4f3f6f479864dc7ebf660429581559c5" title="GBEmulator::CPU::Invalid\lOpcodeException::what" alt="" coords="322,1110,509,1151"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_c_p_u.html#a332f41666adcef7b90886d044670c6b5" title="Lis la valeur pointé par l&#39;adresse passée. " alt="" coords="1782,565,1954,592"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a3e8170043e18e532dc81d40f858cda56" title="Lis la valeur à l&#39;adresse donnée dand la cartouche. " alt="" coords="2049,442,2210,483"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="2327,507,2489,548"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_g_p_u.html#a87dcf97b796c591985b4ce676f63d02c" title="Lit la VRAM. " alt="" coords="2024,740,2235,766"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_g_p_u.html#a029be15baa87b0b0dde63ebb6d68240e" title="Lit l&#39;OAM. " alt="" coords="2028,666,2231,693"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_c_p_u.html#abbf2b978a8f6489649255e6f494c9237" title="GBEmulator::CPU::_readIOPort" alt="" coords="2020,616,2239,642"/>
+<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_a_p_u.html#a1000f0bd328abe6fced491668ee8dd67" title="GBEmulator::APU::read" alt="" coords="2043,565,2215,592"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac20d1a8824352c532dc8502f567ae5f5" title="Lis la valeur à l&#39;adresse de la mémoire en ignorant les banks. " alt="" coords="2327,376,2489,418"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a4bb0212d24f08c8a69e8dcbe8d34c7a1" title="renvoie la taille de la mémoire " alt="" coords="2327,442,2489,483"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149" title="Obtient le mode actuel le mode peut être H&#45;Blank, V&#45;Blank, Searching OAM&#45;RAM ou Transfering Data to L..." alt="" coords="2308,804,2508,830"/>
+<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a4c78188060a634f8a46725b806b7023b" title="GBEmulator::Network\l::CableInterface::getControlByte" alt="" coords="2293,690,2523,731"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_timing_1_1_timer.html#a5e5585528450f3bf7998ecb7df6fe844" title="GBEmulator::Timing\l::Timer::getCounter" alt="" coords="2331,572,2485,614"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_g_p_u.html#a395744fdd9c03aa2440a353e6dd8a4f9" title="Obtient le LCD Control Register (FF40) " alt="" coords="2287,638,2529,665"/>
+<area shape="rect" id="node21" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a41e69371034b4bed49b8d5d0a6410a99" title="Récupère le numéro de la Banque de ROM en cours d&#39;utilisation. " alt="" coords="1219,576,1400,618"/>
+<area shape="rect" id="node22" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ada67ecf14d7a6777e17fffc762e9e2ce" title="Récupère le numéro de la banque en cours d&#39;utilisation. " alt="" coords="1503,576,1695,618"/>
+<area shape="rect" id="node24" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a71dbc6943cf85347a5027d10f0e17b4e" title="Affiche la VRAM en utilisant la palette. " alt="" coords="604,914,847,955"/>
+<area shape="rect" id="node25" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a76a5dc82cfe9173ca600beed21cd09ab" title="Affiche l&#39;état des palette sur la fenetre du débugger. " alt="" coords="625,979,825,1020"/>
+<area shape="rect" id="node26" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#aad575ca0053db646be2d4fe8a1fc7bd8" title="Affiche l&#39;état du background sur la fenetre du débugger. " alt="" coords="609,848,841,890"/>
+<area shape="rect" id="node28" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a679defdc1766db326651533d7537b149" title="Affiche l&#39;état de la window sur la fenetre du débugger. " alt="" coords="622,1044,829,1086"/>
+<area shape="rect" id="node27" href="$class_g_b_emulator_1_1_g_p_u.html#ac87175264de42f813ebd7b94e1e50032" title="GBEmulator::GPU::_getTileMap" alt="" coords="905,978,1127,1005"/>
+<area shape="rect" id="node31" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a8c023f3585fe8c1fe94f5ea505009e09" title="Lance la commande donnée en paramètre. " alt="" coords="603,470,848,511"/>
+<area shape="rect" id="node48" href="$class_g_b_emulator_1_1_debugger_1_1_exception.html#ad9ca1f1b3f473b565b409ac2c5bc9f40" title="GBEmulator::Debugger\l::Exception::what" alt="" coords="640,404,811,446"/>
+<area shape="rect" id="node32" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a140cb03de088f902c71456c6b8470812" title="Sépare la ligne de commande en respectant les quotes (comme un shell) " alt="" coords="915,470,1117,511"/>
+<area shape="rect" id="node33" href="$class_g_b_emulator_1_1_c_p_u.html#aa360299a4a8125f574ad0e0fc25c0add" title="Affiche sur la sortie standard un debug des registres. " alt="" coords="896,586,1136,613"/>
+<area shape="rect" id="node34" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#adf35e91b03ceba764203229f02ce0ca9" title="Affiche le registre donné sur l&#39;entrée standard. " alt="" coords="931,302,1101,343"/>
+<area shape="rect" id="node35" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#ad14e6c07fd1aca0d669f2e89df7a1d5c" title="Change la valeur de force de la variable donnée dans le CPU. " alt="" coords="931,236,1101,278"/>
+<area shape="rect" id="node47" href="$class_g_b_emulator_1_1_c_p_u.html#a3aafaf0e61eab88feb6370a2fc91376e" title="Affiche sur la sortie standard un debug de la mémoire. " alt="" coords="1483,420,1716,446"/>
+<area shape="rect" id="node38" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html#a4dcad1d1589acac22194b2a043f073c5" title="Affiche l&#39;écran mis àa jour. " alt="" coords="2047,971,2212,1012"/>
+<area shape="rect" id="node39" href="$class_g_b_emulator_1_1_c_p_u.html#a21b21e24a373ce038339a604921a8474" title="GBEmulator::CPU::_checkInterrupts" alt="" coords="1184,941,1435,968"/>
+<area shape="rect" id="node41" href="$class_g_b_emulator_1_1_c_p_u.html#af32120b820fcb2b9b8a979fc99bc9a5a" title="GBEmulator::CPU::_execute\lNextInstruction" alt="" coords="1208,824,1411,866"/>
+<area shape="rect" id="node43" href="$class_g_b_emulator_1_1_g_p_u.html#a4713e9bd3715e433433611e8d3ba1320" title="Met à jour le GPU Met à jour le GPU &#39;cycle&#39; nombre de fois. " alt="" coords="1505,876,1694,902"/>
+<area shape="rect" id="node40" href="$class_g_b_emulator_1_1_c_p_u.html#a5796026041a3b835920fca376a73ec8e" title="GBEmulator::CPU::_execute\lInterrupt" alt="" coords="1498,927,1701,968"/>
+<area shape="rect" id="node42" href="$namespace_g_b_emulator_1_1_instructions.html#ab7afbe4dc80c366b5ece4573e34bec54" title="GBEmulator::Instructions\l::executeInstruction" alt="" coords="1507,810,1691,851"/>
+<area shape="rect" id="node44" href="$class_g_b_emulator_1_1_g_p_u.html#a99966fe776892464894284e414cd4293" title="Met à jour le GPU. " alt="" coords="1773,928,1963,954"/>
+<area shape="rect" id="node45" href="$class_g_b_emulator_1_1_g_p_u.html#ab875e43907d68eb6f0b834ad4ff362fa" title="Si VBLANK interrupt. " alt="" coords="1764,796,1972,838"/>
+<area shape="rect" id="node46" href="$class_g_b_emulator_1_1_g_p_u.html#a4848bd92cbd6a15b685b108ea5075577" title="Si Stat interrupt. " alt="" coords="1774,862,1962,903"/>
+</map>

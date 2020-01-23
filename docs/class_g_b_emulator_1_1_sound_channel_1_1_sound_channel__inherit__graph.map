@@ -1,0 +1,5 @@
+<map id="GBEmulator::SoundChannel::SoundChannel" name="GBEmulator::SoundChannel::SoundChannel">
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html" title="GBEmulator::SoundChannel\l::ModulableWaveChannel" alt="" coords="255,5,456,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html" title="GBEmulator::SoundChannel\l::NoiseChannel" alt="" coords="255,71,456,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html" title="GBEmulator::SoundChannel\l::SquareWaveChannel" alt="" coords="255,136,456,177"/>
+</map>
