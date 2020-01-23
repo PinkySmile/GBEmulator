@@ -10,7 +10,6 @@
 
 #define DIV_FREQUENCY 4194304
 
-#include <memory>
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
 #include "SoundChannel/SoundChannel.hpp"
