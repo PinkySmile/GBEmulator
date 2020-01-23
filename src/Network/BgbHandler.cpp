@@ -124,6 +124,22 @@ namespace GBEmulator::Network
 		this->_sendPacket({SYNC2_SIGNAL, byte, 0x80, 0, 0});
 	}
 
+	void BGBHandler::waitAnswer(unsigned timeout)
+	{
+		if (this->_disconnected)
+			return;
+
+		size_t t = timeout * 1000;
+
+		this->_received = false;
+		do {
+			if (this->_received)
+				return;
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		} while (!this->_disconnected && t--);
+		throw TimeOutException("Connection timed out");
+	}
+
 	void BGBHandler::_sendPacket(const BGBHandler::BGBPacket &packet)
 	{
 		char buffer[PACKET_SIZE];
@@ -214,6 +230,7 @@ namespace GBEmulator::Network
 		case SYNC1_SIGNAL:
 			this->log("Received one byte (" + charToHex(packet.b2) + ") as master");
 			this->_masterHandler(*this, packet.b2);
+			this->_received = true;
 			return true;
 
 		case SYNC2_SIGNAL:
@@ -222,6 +239,7 @@ namespace GBEmulator::Network
 				return true;
 			}
 			this->log("Received one byte (" + charToHex(packet.b2) + ") as slave");
+			this->_received = true;
 			this->_slaveHandler(*this, packet.b2);
 			return true;
 

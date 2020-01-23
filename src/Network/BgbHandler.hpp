@@ -18,6 +18,7 @@ namespace GBEmulator::Network
 	class BGBHandler : public ProtocolHandle {
 	private:
 		bool _log;
+		bool _received = true;
 		bool _logging = false;
 		sf::TcpListener _serv;
 		sf::TcpSocket _socket;
@@ -52,6 +53,7 @@ namespace GBEmulator::Network
 		void disconnect() override;
 		void sendByte(unsigned char byte) override;
 		void reply(unsigned char byte) override;
+		void waitAnswer(unsigned timeout = -1) override;
 		void tick(unsigned nb);
 
 		enum BGBCommand {

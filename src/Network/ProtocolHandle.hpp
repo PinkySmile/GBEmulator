@@ -41,6 +41,7 @@ namespace GBEmulator::Network
 		virtual void sendByte(unsigned char byte) = 0;
 		virtual void reply(unsigned char byte) = 0;
 		virtual void disconnect() = 0;
+		virtual void waitAnswer(unsigned timeout = -1) = 0;
 
 		bool isConnected()
 		{

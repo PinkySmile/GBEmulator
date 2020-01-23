@@ -24,9 +24,9 @@ namespace GBEmulator::Network
 	{
 		this->_isExternal = c_byte & 0x01U;
 		this->_isTransfering = c_byte & 0x80U;
-		std::cout << (this->_isTransfering ? "Set" : "Unset") << " transfering as " << (this->_isExternal ? "slave" : "master") << std::endl;
+		//std::cout << (this->_isTransfering ? "Set" : "Unset") << " transfering as " << (this->_isExternal ? "slave" : "master") << std::endl;
 		if (this->_isTransfering && !this->_isExternal)
-			transfer();
+			this->transfer();
 	}
 
 	unsigned char CableInterface::getControlByte() const
