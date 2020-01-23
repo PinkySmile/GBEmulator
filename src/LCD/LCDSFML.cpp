@@ -87,9 +87,6 @@ void GBEmulator::Graphics::LCDSFML::setMaxSize(unsigned int x, unsigned y)
 
 void GBEmulator::Graphics::LCDSFML::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 {
-	if (x > this->_view.getSize().x || y > this->_view.getSize().y)
-		throw std::out_of_range(std::to_string(x) + ", " + std::to_string(y) + " is out of range");
-
 	this->_screen[x + y * static_cast<unsigned>(this->_view.getSize().x)] = sf::Color{
 		color.r,
 		color.g,

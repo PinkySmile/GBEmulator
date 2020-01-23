@@ -288,8 +288,9 @@ namespace GBEmulator::Memory
 
 		else if (address < 0x4000) {
 			value &= 0b1111111U;
-			this->_rom.setBank(value + (value % 0x20 == 0 && value <= 0x60));
+			this->_rom.setBank(value);
 
+			//TODO: Implement timers
 		} else if (address < 0x6000)
 			this->_ram.setBank(value & 0b11U);
 	}

@@ -16,6 +16,10 @@ namespace GBEmulator
 		class Debugger;
 	}
 	namespace Graphics {
+		/*!
+		 * @class LCDSFML
+		 * @brief Implémentation de ILCD avec la SFML
+		 */
 		class LCDSFML : public ILCD, public sf::RenderWindow {
 		private:
 			unsigned char *_tiles;
@@ -31,8 +35,16 @@ namespace GBEmulator
 		public:
 			LCDSFML() = delete;
 			LCDSFML(const LCDSFML &) = delete;
+			/*!
+			 * @brief Destructeur
+			 */
 			~LCDSFML() override;
 			LCDSFML &operator =(const LCDSFML &) = delete;
+			/*!
+			 * @brief Constructeur
+			 * @param mode: VideoMode SFML.
+			 * @param title: Titre de la fenêtre.
+			 */
 			LCDSFML(sf::VideoMode mode, const std::string &title);
 			//! Met à jour la fenetre du jeu
 			void display() override;
@@ -46,7 +58,10 @@ namespace GBEmulator
 			bool isClosed() const override;
 			//! Ferme la fenetre
 			void close() override;
-			//! Récupère le nombre d'image par seconde affichées
+			/*!
+			 * @brief Obtient les images par seconde
+			 * @return le nombre d'ips
+			 */
 			double getFramerate();
 		};
 	}

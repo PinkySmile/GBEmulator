@@ -3,7 +3,7 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-W -Wall -Wextra -Wshadow -ofast)
+add_compile_options(-W -Wall -Wextra -Wshadow -o3)
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -22,14 +22,15 @@ add_executable(
         src/Memory/Memory.hpp
         src/Memory/ROM.cpp
         src/Memory/ROM.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
-        src/Network/CableInterface.cpp
-        src/Network/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.cpp
+        src/CableLink/CableInterface.hpp
         src/ProcessingUnits/APU.cpp
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
         src/ProcessingUnits/CPU.hpp
+        src/ProcessingUnits/Instructions/Instructions.hpp
         src/ProcessingUnits/Instructions/CPUInstructions.cpp
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp
@@ -42,7 +43,19 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
-        src/ProcessingUnits/Instructions/Instructions.hpp)
+        src/Network/BgbHandler.cpp
+        src/Network/BgbHandler.hpp
+        src/Network/Exception.hpp
+        src/Network/ProtocolHandle.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.hpp
+        src/ProcessingUnits/SoundChannel/SoundChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
+        src/ProcessingUnits/SoundChannel/NoiseChannel.hpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
+        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
+)
 
 if (WIN32)
         target_link_libraries(
@@ -52,6 +65,7 @@ if (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                sfml-network
                 pthread
         )
 else (WIN32)
@@ -61,6 +75,7 @@ else (WIN32)
                 sfml-window
                 sfml-system
                 sfml-audio
+                sfml-network
                 pthread
         )
 endif (WIN32)
@@ -81,12 +96,12 @@ add_executable(
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
         src/Joypad/JoypadEmulator.hpp
-        src/Network/CableInterface.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
         src/LCD/ILCD.hpp
         src/LCD/ILCD.cpp
-        src/Network/CableInterface.cpp
+        src/CableLink/CableInterface.cpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp
