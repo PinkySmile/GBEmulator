@@ -22,10 +22,10 @@ add_executable(
         src/Memory/Memory.hpp
         src/Memory/ROM.cpp
         src/Memory/ROM.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
-        src/Network/CableInterface.cpp
-        src/Network/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.cpp
+        src/CableLink/CableInterface.hpp
         src/ProcessingUnits/APU.cpp
         src/ProcessingUnits/APU.hpp
         src/ProcessingUnits/CPU.cpp
@@ -43,6 +43,10 @@ add_executable(
         src/Sound/SoundPlayer.hpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
+        src/Network/BgbHandler.cpp
+        src/Network/BgbHandler.hpp
+        src/Network/Exception.hpp
+        src/Network/ProtocolHandle.hpp
         src/ProcessingUnits/SoundChannel/SoundChannel.hpp
         src/ProcessingUnits/SoundChannel/SoundChannel.cpp
         src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
@@ -52,7 +56,7 @@ add_executable(
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
         src/LCD/LCDSDL.cpp src/LCD/LCDSDL.hpp src/Joypad/SDLKeyboardJoypadEmulator.cpp src/Joypad/SDLKeyboardJoypadEmulator.hpp
-	src/LCD/util/TimerSDL.cpp src/LCD/util/TimerSDL.hpp)
+	    src/LCD/util/TimerSDL.cpp src/LCD/util/TimerSDL.hpp)
 
 if (WIN32)
         target_link_libraries(
@@ -63,6 +67,7 @@ if (WIN32)
                 sfml-system
                 sfml-audio
                 SDL
+                sfml-network
                 pthread
         )
 else (WIN32)
@@ -73,6 +78,7 @@ else (WIN32)
                 sfml-system
                 sfml-audio
                 SDL
+                sfml-network
                 pthread
         )
 endif (WIN32)
@@ -93,12 +99,12 @@ add_executable(
         src/ProcessingUnits/Instructions/CPUInstructions.hpp
         src/ProcessingUnits/StartupCode.cpp
         src/Joypad/JoypadEmulator.hpp
-        src/Network/CableInterface.hpp
-        src/Network/BgbProtocolNetworkInterface.cpp
-        src/Network/BgbProtocolNetworkInterface.hpp
+        src/CableLink/CableInterface.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
         src/LCD/ILCD.hpp
         src/LCD/ILCD.cpp
-        src/Network/CableInterface.cpp
+        src/CableLink/CableInterface.cpp
         src/Timing/Timer.cpp
         src/Timing/Timer.hpp
         src/ProcessingUnits/Instructions/BasicInstructions.cpp

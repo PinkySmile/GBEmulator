@@ -9,7 +9,7 @@
 
 namespace GBEmulator::Graphics {
 	LCDSDL::LCDSDL() :
-			LCDSDL(SDLVideoMode({640, 576, 16, SDL_SWSURFACE}), "GBEmulator")
+			LCDSDL(SDLVideoMode({640, 576, 32, SDL_SWSURFACE}), "GBEmulator")
 	{}
 
 	LCDSDL::LCDSDL(SDLVideoMode mode, const std::string &title) :
@@ -61,8 +61,8 @@ namespace GBEmulator::Graphics {
 
 	void LCDSDL::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 	{
-		auto *pixels = static_cast<Uint16 *>(this->screen->pixels);
-		Uint16 col = RGBAColor(color);
+		Uint32 *pixels = static_cast<Uint32 *>(this->screen->pixels);
+		Uint32 col = RGBAColor(color);
 
 		x *= 4;
 		y *= 4;
