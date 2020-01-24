@@ -19,67 +19,67 @@
 #include "../CableLink/CableInterface.hpp"
 #include "../Timing/Timer.hpp"
 
-//The total size of the working RAM
+//! The total size of the working RAM
 #define RAM_SIZE 0x8000
 
-//The total size of te high RAM
+//! The total size of te high RAM
 #define HRAM_SIZE 0x7F
 
-//The number of interrupts
+//! The number of interrupts
 #define NB_INTERRUPT_BITS 5
 
-//The size of the interrupt code
+//! The size of the interrupt code
 #define INTERRUPT_CODE_SIZE 0x8
 
-//The address of the first interrupt
+//! The address of the first interrupt
 #define INTERRUPT_CODE_OFFSET 0x40
 
-//The startup code
+//! The startup code
 #define STARTUP_CODE_RANGE 0x0000 ... 0x00FF
 
-//The first bank of the ROM (ROM0)
+//! The first bank of the ROM (ROM0)
 #define ROM0_RANGE 0x0100 ... 0x3FFF
 
-//The switchable ROM bank (ROM1)
+//! The switchable ROM bank (ROM1)
 #define ROM1_RANGE 0x4000 ... 0x7FFF
 #define ROM1_STARTING_ADDRESS 0x4000
 
-//Video RAM
+//! Video RAM
 #define VRAM_RANGE 0x8000 ... 0x9FFF
 
-//Cartridge RAM
+//! Cartridge RAM
 #define SRAM_RANGE 0xA000 ... 0xBFFF
 
-//Working RAM
+//! Working RAM
 #define WRAM_RANGE 0xC000 ... 0xDFFF
 #define WRAM_STARTING_ADDRESS 0xC000
 
-//Echo RAM (Echoing the WRAM)
+//! Echo RAM (Echoing the WRAM)
 #define ECHO_RAM_RANGE 0xE000 ... 0xFDFF
 #define ECHO_RAM_STARTING_ADDRESS 0xE000
 
-//Object attributes matrix
+//! Object attributes matrix
 #define OAM_RANGE 0xFE00 ... 0xFE9F
 
-//The first range of I/O ports
+//! The first range of I/O ports
 #define IO_PORT1_RANGE 0xFF00 ... 0xFF0F
 #define IO_PORTS_STARTING_ADDRESS 0xFF00
 
-//The APU
+//! The APU
 #define APU_RANGE 0xFF10 ... 0xFF2F
 #define APU_STARTING_ADDRESS 0xFF10
 
-//The wave pattern RAM
+//! The wave pattern RAM
 #define WPRAM_RANGE 0xFF30 ... 0xFF3F
 
-//The second range of I/O ports
+//! The second range of I/O ports
 #define IO_PORT2_RANGE 0xFF40 ... 0xFF7F
 
-//High RAM
+//! High RAM
 #define HRAM_RANGE 0xFF80 ... 0xFFFE
 #define HRAM_STARTING_ADDRESS 0xFF80
 
-//Interrupt enable
+//! Interrupt enable
 #define INTERRUPT_ENABLE_ADDRESS 0xFFFF
 
 namespace GBEmulator
@@ -169,6 +169,7 @@ namespace GBEmulator
 			unsigned short sp;
 		};
 
+		//! @brief Un opcode est invalide.
 		class InvalidOpcodeException : public std::exception {
 		private:
 			char _buffer[40];
@@ -178,6 +179,16 @@ namespace GBEmulator
 			const char *what() const noexcept override;
 		};
 
+		/*!
+		 * Constructeur
+		 * @param channelOne Interface de son pour le canal 1
+		 * @param channelTwo Interface de son pour le canal 2
+		 * @param channelThree Interface de son pour le canal 3
+		 * @param channelFour Interface de son pour le canal 4
+		 * @param window Emulateur d'écran LCD du GPU
+		 * @param joypad Emulateur de Joypad
+		 * @param cable Emulateur de CableLink
+		 */
 		CPU(
 				ISound &channelOne,
 				ISound &channelTwo,
@@ -187,16 +198,14 @@ namespace GBEmulator
 				Input::JoypadEmulator &joypad,
 				Network::CableInterface &cable
 		);
-		CPU() = delete;
-		CPU(const CPU &) = delete;
-		~CPU() = default;
-		CPU &operator=(const CPU &) = delete;
 
-		//! set CPU in halted mode
+		//! Met le CPU en mode 'halted'
 		void halt();
-		//! set CPU in stoped mode
+		//! Met le CPU en mode 'stopped'
 		void stop();
 		//! Lis la valeur pointé par l'adresse passée
+		//! @param address Adresse à lire
+		//! @return Valeur pointé par adresse
 		unsigned char read(unsigned short address) const;
 		//! Récupère l'adresse pointé par pc et incrémente pc
 		unsigned char fetchArgument();
@@ -204,33 +213,43 @@ namespace GBEmulator
 		//! Renvoie les valeurs sous forme d'un nombre à 16 bits
 		unsigned short fetchArgument16();
 		//! fixe la valeur du flag interruptMaster à la valeur donnée
+		//! @param val Nouvelle valeur
 		void setInterruptMaster(bool val);
 		//! Écrit la valeur sur la zone pointé par l'adresse passée
+		//! @param address Adresse à écrire.
+		//! @param value Valeur à écrire.
 		void write(unsigned short address, unsigned char value);
 		//! Affiche sur la sortie standard un dump de la Mémoire et des registres
 		void dump() const;
 		//! renvoie True si le CPU a été halt
+		//! @return true sir le cpu est en mode 'halted'. Sinon, false.
 		bool isHalted() const;
 		//! renvoie True si le CPU a été stop
+		//! @return true sir le cpu est en mode 'stopped'. Sinon, false.
 		bool isStopped() const;
 		//! Affiche sur la sortie standard un debug de la mémoire
 		void dumpMemory() const;
 		//! Affiche sur la sortie standard un debug des registres
 		void dumpRegisters() const;
 		//! Récupère une copie des registres
+		//! @return Les registres du CPU.
 		Registers getRegisters() const;
 		//! Renvoie une référence vers la cartouche
+		//! @return La cartouche du CPU.
 		Memory::Cartridge &getCartridgeEmulator();
 		//! Renvoie une référence vers la cartouche
+		//! @return La cartouche du CPU.
 		const Memory::Cartridge &getCartridgeEmulator() const;
-		//! Éxécute un cycle
+		//! Éxécute un cycle Fetch+Execute
 		void update();
 
+		//! @brief Décremente pc et return sa valeur.
+		//! @return pc - 1
 		unsigned short getDecPc() noexcept;
 
 	private:
 		friend Debugger::Debugger;
-		//! Vecteur de données contenant les instructions de l'intro de la Gameboy.
+		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
 		static const std::vector<unsigned char> _startupCode;
 
 		//! APU de la Gameboy.
@@ -241,11 +260,15 @@ namespace GBEmulator
 		bool _buttonEnabled;
 		//! Si la croix directionnel est activée ou non.
 		bool _directionEnabled;
+		//! Est-ce que le CPU est en mode 'halted'
 		bool _halted;
+		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
+		//! RAM
 		Memory::Memory _ram;
+		//! High RAM
 		Memory::Memory _hram;
-		//! Registre (Registers) de la Gameboy.
+		//! Registres (Registers) de la Gameboy.
 		Registers _registers;
 		//! Timer de la Gameboy.
 		//! Permet de mesurer le temps des Instructions et de limiter les FPS.
@@ -269,12 +292,34 @@ namespace GBEmulator
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
 
+		//! @brief Met à jour les composents liés au CPU.
+		//! @param cycles Nombre de cycles PCU écoulés.
 		void _updateComponents(unsigned int cycles);
+		//! @brief Vérefie si des interuptions doivent être executer et les execute si besoin.
 		bool _checkInterrupts();
+		//! @brief Recupère et execute la prochaine instruction.
 		void _executeNextInstruction();
+		//! @brief Execute une interuption.
 		void _executeInterrupt(unsigned int id);
+		//! @brief Génère le byte de l'I/O port du joypad.
+		//! @return Le byte généré.
+		//! @details http://problemkaputt.de/pandocs.htm#joypadinput
+		//! Bit 7 - Non utilisé
+		//! Bit 6 - Non utilisé
+		//! Bit 5 - P15 Selection Button   (0=Selectionné)
+		//! Bit 4 - P14 Selection Direction(0=Selectionné)
+		//! Bit 3 - P13 Bas    or Start    (0=Appuyé) (Lecture seule)
+		//! Bit 2 - P12 Haut   or Select   (0=Appuyé) (Lecture seule)
+		//! Bit 1 - P11 Gauche or Bouton B (0=Appuyé) (Lecture seule)
+		//! Bit 0 - P10 Droite or Bouton A (0=Appuyé) (Lecture seule)
 		unsigned char _generateJoypadByte() const;
+		//! @brief Lis une valeur d'un port d'I/O.
+		//! @param address Adresse de lecture.
+		//! @return Le byte lu.
 		unsigned char _readIOPort(unsigned char address) const;
+		//! @brief Écrire une valeur d'un port d'I/O.
+		//! @param address Adresse d'écriture.
+		//! @param value Nouvelle valeur.
 		void _writeIOPort(unsigned char address, unsigned char value);
 	};
 }
