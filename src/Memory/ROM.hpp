@@ -15,12 +15,10 @@
 
 namespace GBEmulator::Memory
 {
+	//! @brief Mémoire en lecture seule.
 	class ROM : public Memory {
 	public:
 		ROM();
-		ROM(const ROM &) = delete;
-		~ROM() = default;
-		ROM &operator=(const ROM &) = delete;
 	};
 }
 

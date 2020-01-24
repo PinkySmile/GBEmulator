@@ -12,16 +12,18 @@
 #include <map>
 #include "ROM.hpp"
 
-//The default size of a ROM bank
+//! La taille d'une bank de ROM
 #define ROM_BANK_SIZE 0x4000
 
-//The size of a RAM bank in the cartridges
+//! La taille d'une bank de RAM
 #define RAM_BANKING_SIZE 0x2000
 
 namespace GBEmulator::Memory
 {
+	//! Répresente une cartouche de GameBoy.
 	class Cartridge {
 	private:
+		//! @brief La ROM donnée est invalide.
 		class InvalidRomException : public std::exception {
 		private:
 			std::string _msg;
@@ -31,21 +33,25 @@ namespace GBEmulator::Memory
 			const char *what() const noexcept override { return this->_msg.c_str(); };
 		};
 
+		//! @brief La taille de la rom renseigné n'est pas valide.
 		class InvalidRomSizeException : public InvalidRomException {
 		public:
 			InvalidRomSizeException(const std::string &msg) : InvalidRomException(msg) {};
 		};
 
+		//! @brief La taille de la ram renseigné n'est pas valide.
 		class InvalidRomRamSizeException : public InvalidRomException {
 		public:
 			InvalidRomRamSizeException(const std::string &msg) : InvalidRomException(msg) {};
 		};
 
+		//! @brief La sauvegarde a échoué.
 		class SavingFailedException : public InvalidRomException {
 		public:
 			SavingFailedException(const std::string &msg) : InvalidRomException(msg) {};
 		};
 
+		//! @brief Types de cartouches.
 		enum CartridgeType {
 			ROM_ONLY                = 0x00,
 			MBC1                    = 0x01,
@@ -75,6 +81,7 @@ namespace GBEmulator::Memory
 			HuC1_RAM_BATTERY        = 0xFF,
 		};
 
+		//! @brief Taille de ROM.
 		enum ROMSize
 		{
 			SIZE_32KByte  = 0x00,
@@ -90,43 +97,82 @@ namespace GBEmulator::Memory
 			SIZE_1_5MByte = 0x54,
 		};
 
+		//! @brief Lie une taille de fichier à son byte de taille en ROM.
+		//! http://problemkaputt.de/pandocs.htm#thecartridgeheader
 		static const std::map<size_t, ROMSize> _sizeBytes;
 
+		//! @brief Le fichier de ROM chargé.
 		ROM _rom;
-		unsigned char *_ramMem;
+		//! @brief La mémoire RAM de la cartouche.
+		unsigned char *_ramMem = nullptr;
+		//! @brief Le chemin de sauvegarde.
 		std::string _savePath;
+		//! @brief Est-ce que la RAM de la cartouche est activée.
 		bool _ramEnabled = false;
+		//! @brief Est-ce que la RAM est en mode étendue.
 		bool _ramExtended = false;
+		//! @brief La bank de ROM séléctionnée.
 		unsigned short _romBank = 1;
+		//! @brief La RAM de la cartouche.
 		Memory _ram{0, RAM_BANKING_SIZE};
+		//! @brief La type actuel de la cartouche.
 		CartridgeType _type = ROM_ONLY;
 
+		//! @brief Vérifie si la ROM est valide.
+		//! @throw InvalidRomException
 		void _checkROM();
+		//! @brief Trouve la taille valide d'une cartouche de GameBoy la
+		//! plus proche et plus grande de la taille du fichier.
+		//! @param path Le chemin d'accès au fichier.
+		//! @return La taille trouvée.
 		static size_t _getBestSizeForFile(const std::string &path);
 
+		//! @brief Appelée pour écrire si la cartouche est de type HuC.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleHuCWrite(unsigned short address, unsigned char value);
+		//! @brief Appelée pour écrire si la cartouche est de type MBC1.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleMBC1Write(unsigned short address, unsigned char value);
+		//! @brief Appelée pour écrire si la cartouche est de type MBC2.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleMBC2Write(unsigned short address, unsigned char value);
+		//! @brief Appelée pour écrire si la cartouche est de type MBC3.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleMBC3Write(unsigned short address, unsigned char value);
+		//! @brief Appelée pour écrire si la cartouche est de type MBC5.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleMBC5Write(unsigned short address, unsigned char value);
+		//! @brief Appelée pour écrire si la cartouche est de type rumble.
+		//! @param address Adresse d'écriture.
+		//! @param value Valeur écrite.
 		void _handleRumbleWrite(unsigned short address, unsigned char value);
 
 	public:
-		Cartridge() = default;
-		Cartridge(const Cartridge &) = delete;
-		~Cartridge() = default;
-		Cartridge &operator=(const Cartridge &) = delete;
-
+		//! @brief Réinitialise la ROM présente.
 		void resetROM();
+		//! @brief Charge une ROM.
+		//! @param rom Chemin d'accès vers le fichier de ROM.
 		void loadROM(const std::string &rom);
+		//! @brief Sauvegarde la RAM dans un fichier.
 		void saveRAM();
 		//! Écrit la valeur à l'adresse donnée dand la cartouche
+		//! @param address Adresse à laquelle écrire.
+		//! @param value La valeur à écrire.
 		void write(unsigned short address, unsigned char value);
 		//! Lis la valeur à l'adresse donnée dand la cartouche
+		//! @param address Adresse à lire.
+		//! @return Valeur lue.
 		unsigned char read(unsigned short address) const;
 		//! Récupère le numéro de la Banque de ROM en cours d'utilisation
+		//! @return Le numéro de la Banque de ROM en cours d'utilisation.
 		unsigned char getRomBank() const;
 		//! Récupère le numéro de la Banque de RAM en cours d'utilisation
+		//! @return Le numéro de la Banque de RAM en cours d'utilisation.
 		unsigned char getRamBank() const;
 	};
 }
