@@ -88,8 +88,10 @@ namespace GBEmulator
 		class Debugger;
 	}
 
+	//! Central Process Unit de la Gameboy
 	class CPU {
 	public:
+		//! @brief Enumération des type d'interruptions
 		enum InterruptsKind {
 			VBLANK_INTERRUPT =   1U << 0U,
 			LCD_STAT_INTERRUPT = 1U << 1U,
@@ -98,6 +100,7 @@ namespace GBEmulator
 			JOYPAD_INTERRUPT =   1U << 4U,
 		};
 
+		//! @brief Enumération des ports d'entré/sorti
 		enum IOPorts {
 			JOYPAD_REGISTER         = 0x00,
 			SERIAL_DATA             = 0x01,
@@ -122,6 +125,8 @@ namespace GBEmulator
 			INTERNAL_ROM_ENABLE     = 0x50,
 		};
 
+
+		//! @brief Représente les registres de la Gameboy
 		struct Registers {
 			union {
 				struct {
@@ -225,26 +230,43 @@ namespace GBEmulator
 
 	private:
 		friend Debugger::Debugger;
+		//! Vecteur de données contenant les instructions de l'intro de la Gameboy.
 		static const std::vector<unsigned char> _startupCode;
 
+		//! APU de la Gameboy.
 		APU _apu;
+		//! GPU de la Gameboy.
 		GPU _gpu;
+		//! Si les boutons sont activés ou non.
 		bool _buttonEnabled;
+		//! Si la croix directionnel est activée ou non.
 		bool _directionEnabled;
 		bool _halted;
 		bool _stopped;
 		Memory::Memory _ram;
 		Memory::Memory _hram;
+		//! Registre (Registers) de la Gameboy.
 		Registers _registers;
+		//! Timer de la Gameboy.
+		//! Permet de mesurer le temps des Instructions et de limiter les FPS.
 		Timing::Timer _timer;
+		//! Ecran de la Gameboy.
 		Graphics::ILCD &_window;
+		//! Données de la cartouche en cours de lecture.
 		Memory::Cartridge _rom;
+		//! renvoie True si le startupcode n'a pas fini d'être éxécuter.
 		bool _internalRomEnabled;
+		//! Devider Register
 		unsigned short _divRegister;
+		//! Entrée utilisateur
 		Input::JoypadEmulator &_joypad;
+		//! True si l'interrupt est activé
 		unsigned char _interruptEnabled;
+		//! True si l'interrupt est demandé
 		unsigned char _interruptRequest;
+		//! True si les interrupts sont activés
 		bool _interruptMasterEnableFlag;
+		//! Interface du Cable Link
 		Network::CableInterface &_cable;
 
 		void _updateComponents(unsigned int cycles);
