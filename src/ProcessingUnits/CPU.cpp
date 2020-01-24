@@ -223,7 +223,7 @@ namespace GBEmulator
 			return;
 		}
 
-		if (this->_interruptMasterEnableFlag && this->_checkInterrupts())
+		if (this->_checkInterrupts())
 			return;
 
 		if (!this->_halted)
@@ -255,7 +255,7 @@ namespace GBEmulator
 
 	bool CPU::_checkInterrupts()
 	{
-		unsigned char mask = this->_interruptRequest & this->_interruptEnabled;
+		unsigned char mask = this->_interruptRequest;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if (mask & (1U << i))
@@ -265,10 +265,14 @@ namespace GBEmulator
 
 	void CPU::_executeInterrupt(unsigned int id)
 	{
-		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
-		this->_interruptRequest &= ~(1U << id);
-		this->_interruptMasterEnableFlag = false;
 		this->_halted = false;
+		this->_interruptRequest &= ~(1U << id);
+
+		if (!this->_interruptMasterEnableFlag || !((1U << id) & this->_interruptEnabled))
+			return;
+
+		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
+		this->_interruptMasterEnableFlag = false;
 	}
 
 	unsigned char CPU::_generateJoypadByte() const

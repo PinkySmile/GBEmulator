@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 	GBEmulator::Debugger::Debugger debugger{cpu, window, joypad};
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
-	window.setFramerateLimit(60);
+//	window.setFramerateLimit(60);
 	window.setView(view);
 
 	try {

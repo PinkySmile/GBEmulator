@@ -292,6 +292,7 @@ namespace GBEmulator
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
 
+		void _handleInterrupts(unsigned char);
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
 		void _updateComponents(unsigned int cycles);
