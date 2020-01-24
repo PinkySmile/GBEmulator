@@ -11,6 +11,7 @@
 
 namespace GBEmulator::Input
 {
+	//! @brief Enumeration des touches possibles.
 	enum Keys {
 		JOYPAD_RIGHT,
 		JOYPAD_LEFT,
@@ -23,8 +24,14 @@ namespace GBEmulator::Input
 		ENABLE_DEBUGGING,
 	};
 
+	//! @brief Emulateur du Joypad de la GameBoy.
 	class JoypadEmulator {
 	public:
+		/*!
+		 * Vérifie si un bouton est appuyé.
+		 * @param button La Keys à verifier.
+		 * @return True si la touche est enfoncée. Sinon, false.
+		 */
 		virtual bool isButtonPressed(Keys button) const noexcept = 0;
 	};
 }
