@@ -5,13 +5,9 @@
 ** ModulableWaveChannel.cpp
 */
 
-#include <cmath>
-#include <cstdio>
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 #include "SquareWaveChannel.hpp"
-
-#define MEILLEUR 3
 
 namespace GBEmulator::SoundChannel
 {
