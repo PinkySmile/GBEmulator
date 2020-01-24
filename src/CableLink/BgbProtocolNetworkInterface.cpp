@@ -11,25 +11,30 @@ namespace GBEmulator::Network
 {
 	BGBProtocolCableInterface::BGBProtocolCableInterface() :
 		_handler([this](ProtocolHandle &handler, unsigned char rbyte){
-			if (this->isTransfering()) {
-				this->_isExternal = true;
-				this->_isTransfering = false;
+			if (this->isTransfering() && this->isExternal()) {
 				this->_needInterrupt = true;
+				this->_isTransfering = false;
+				//std::cout << "Successfully received 0x" << std::hex << static_cast<int>(rbyte) << std::dec << " as master (Replying 0x" << std::hex << static_cast<int>(this->byte) << std::dec << ")" << std::endl;
 				handler.reply(this->byte);
 				this->byte = rbyte;
-			} else {
-				std::cout << "Receive but not transfering" << std::endl;
-			}
+			} else
+				handler.reply(this->byte);
+				/* else if (!this->isExternal())
+				std::cout << "Receive 0x" << std::hex << static_cast<int>(rbyte) << std::dec << " but not external (master)" << std::endl;
+			else
+				std::cout << "Receive 0x" << std::hex << static_cast<int>(rbyte) << std::dec << " but not transfering (master)" << std::endl;*/
 		},
 		[this](ProtocolHandle &, unsigned char b){
-			if (this->isTransfering()) {
+			if (this->isTransfering() && !this->isExternal()) {
 				this->_isTransfering = false;
 				this->_needInterrupt = true;
 				this->byte = b;
-			} else {
-				std::cout << "Receive but not transfering" << std::endl;
-			}
-		}, true)
+				//std::cout << "Successfully received " << std::hex << static_cast<int>(b) << std::dec << " as slave" << std::endl;
+			}/* else if (this->isExternal())
+				std::cout << "Receive 0x" << std::hex << static_cast<int>(b) << std::dec << " but external (slave)" << std::endl;
+			else
+				std::cout << "Receive 0x" << std::hex << static_cast<int>(b) << std::dec << " but not transfering (master)" << std::endl;*/
+		})
 	{
 	}
 
@@ -45,7 +50,17 @@ namespace GBEmulator::Network
 
 	void BGBProtocolCableInterface::_sendByte(unsigned char sbyte)
 	{
-		this->_handler.sendByte(sbyte);
+		//std::cout << "Sending 0x" << std::hex << static_cast<int>(sbyte) << std::dec << std::endl;
+		if (this->isExternal())
+			this->_handler.reply(sbyte);
+		else {
+			this->_handler.sendByte(sbyte);
+			//this->_handler.waitAnswer(10);
+		}
+		if (!this->_handler.isConnected()) {
+			this->_isTransfering = false;
+			this->byte = 0xFF;
+		}
 	}
 
 	void BGBProtocolCableInterface::connect(const std::string &host, unsigned short port)
