@@ -259,8 +259,6 @@ namespace GBEmulator::Debugger
 
 	Debugger::~Debugger()
 	{
-		if (this->_displayThread.joinable())
-			this->_displayThread.join();
 	}
 
 	bool Debugger::checkBreakPoints()
@@ -380,9 +378,6 @@ namespace GBEmulator::Debugger
 				std::cout.flush();
 			}
 		}
-
-		if (this->_displayThread.joinable())
-			this->_displayThread.join();
 		return 0;
 	}
 
@@ -595,7 +590,7 @@ namespace GBEmulator::Debugger
 		}
 	}
 
-	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
+	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
 	{
 		auto colors = new sf::Color[16 * 24 * 8 * 8];
 		sf::Sprite sprite;
@@ -621,13 +616,13 @@ namespace GBEmulator::Debugger
 		}
 		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
 		sprite.setTexture(texture);
-		sprite.setPosition(x, y);
+		sprite.setPosition(posx, posy);
 		sprite.setScale(1.5, 1.5);
 		_debugWindow.draw(sprite);
 		delete[] colors;
 	}
 
-	void Debugger::_displayBackground(sf::RenderWindow &_debugWindow, float x, float y)
+	void Debugger::_displayBackground(sf::RenderWindow &_debugWindow, float posx, float posy)
 	{
 		auto colors = new sf::Color[32 * 32 * 8 * 8];
 		sf::Vector2u camPos = {this->_cpu._gpu._scrollX, this->_cpu._gpu._scrollY};
@@ -662,10 +657,10 @@ namespace GBEmulator::Debugger
 		}
 		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
 		sprite.setTexture(texture);
-		sprite.setPosition(x, y);
+		sprite.setPosition(posx, posy);
 		_debugWindow.draw(sprite);
 
-		cam.setPosition(camPos.x + x, camPos.y + y);
+		cam.setPosition(camPos.x + posx, camPos.y + posy);
 		if (camPos.x >= 96) {
 			cam.setSize({
 				cam.getSize().x - camPos.x + 96,
@@ -682,7 +677,7 @@ namespace GBEmulator::Debugger
 		delete[] colors;
 	}
 
-	void Debugger::_displayWindow(sf::RenderWindow &_debugWindow, float x, float y)
+	void Debugger::_displayWindow(sf::RenderWindow &_debugWindow, float posx, float posy)
 	{
 		auto colors = new sf::Color[20 * 18 * 8 * 8];
 		sf::Sprite sprite;
@@ -716,10 +711,10 @@ namespace GBEmulator::Debugger
 		}
 		texture.update(reinterpret_cast<sf::Uint8 *>(colors));
 		sprite.setTexture(texture);
-		sprite.setPosition(x + this->_cpu._gpu._windowX, y + this->_cpu._gpu._windowY);
+		sprite.setPosition(posx + this->_cpu._gpu._windowX, posy + this->_cpu._gpu._windowY);
 		_debugWindow.draw(sprite);
 
-		cam.setPosition(x, y);
+		cam.setPosition(posx, posy);
 		_debugWindow.draw(cam);
 		delete[] colors;
 	}
