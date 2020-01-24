@@ -243,7 +243,7 @@ namespace GBEmulator
 		//! Éxécute un cycle Fetch+Execute
 		void update();
 
-		//! @brief Décremente pc et return sa valeur.
+		//! @brief Décremente pc et retourne sa valeur.
 		//! @return pc - 1
 		unsigned short getDecPc() noexcept;
 
