@@ -970,9 +970,7 @@ namespace GBEmulator::Instructions {
 
 		//! F8; LD hl,sp+*: Load sp + the signed value * to hl.
 		case 0xF8:
-			return LD16(reg.hl, reg.sp), SPECIAL_ADD(reg, reg.hl, cpu.fetchArgument()), FETCH_ARGUMENT8_CYLCE_DURATION +
-																						LD_CYCLE_DURATION +
-																						ARITHMETIC_OPERATION_CYCLE_DURATION;
+			return LD16(reg.hl, reg.sp), SPECIAL_ADD(reg, reg.hl, cpu.fetchArgument()), FETCH_ARGUMENT8_CYLCE_DURATION + LD_CYCLE_DURATION + ARITHMETIC_OPERATION_CYCLE_DURATION;
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 		case 0xF9:

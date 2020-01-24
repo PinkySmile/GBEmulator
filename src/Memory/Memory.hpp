@@ -36,6 +36,8 @@ namespace GBEmulator::Memory
 		Memory(const Memory &) = delete;
 		//! @brief Assignement.
 		Memory &operator=(const Memory &) = delete;
+		//! @brief Destructor
+		~Memory();
 		//! @brief Constructeur.
 		//! @param size Taille totale.
 		//! @param bankSize Taille d'une bank.
