@@ -5,13 +5,9 @@
 ** ModulableWaveChannel.cpp
 */
 
-#include <cmath>
-#include <cstdio>
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 #include "SquareWaveChannel.hpp"
-
-#define MEILLEUR 3
 
 namespace GBEmulator::SoundChannel
 {
@@ -24,14 +20,14 @@ namespace GBEmulator::SoundChannel
 
 	std::vector<unsigned char> ModulableWaveChannel::getWavePattern() const
 	{
-		static std::vector<unsigned char>	raw(4096LLU * MEILLEUR);
+		static std::vector<unsigned char>	raw(4096LLU);
 
-		for (int i = 0; i < 2048 * MEILLEUR; i += MEILLEUR) {
+		for (int i = 0; i < 512; i += 1) {
 			unsigned char wpRam = this->_wpRAM.read(i % 16);
 
-			for (int j = 0; j < MEILLEUR; j++) {
-				raw[i * 2 + j] = (wpRam >> 4) / 15 * 254 - 127;
-				raw[i * 2 + MEILLEUR / 2 + j] = (wpRam & 0b00001111) / 15 * 254 - 127;
+			for (int j = 0; j < 4; j++) {
+				raw[i * 8 + j] = (wpRam >> 4) / 15 * 254 - 127;
+				raw[i * 8 + 4 + j] = (wpRam & 0b00001111) / 15 * 254 - 127;
 			}
 		}
 		return (raw);
@@ -96,7 +92,7 @@ namespace GBEmulator::SoundChannel
 				this->_initialVolume = 0;
 				break;
 			default:
-				this->_initialVolume = 15 / (1U << this->_waveOutputLevel - 1);
+				this->_initialVolume = 15 / (1U << (this->_waveOutputLevel - 1));
 				break;
 		}
 		this->setVolume(this->_initialVolume * 100.f / 15);
