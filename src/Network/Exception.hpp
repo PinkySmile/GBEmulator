@@ -57,7 +57,7 @@ namespace GBEmulator::Network
 		explicit AlreadyOpenedException(const std::string &msg) : BaseException(msg) {};
 	};
 
-	//! Exception levée quand une erreur pendant la connection occure
+	//! Exception levée quand une erreur pendant la connection arrive
 	class ConnectException : public BaseException {
 	public:
 		explicit ConnectException(const std::string &msg) : BaseException(msg) {};
