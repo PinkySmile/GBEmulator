@@ -27,7 +27,7 @@ namespace GBEmulator::SoundChannel
 		//! @brief Renvoie une onde carrée;
 		static std::vector<unsigned char> &getSquareWave(int frequency, float percentage);
 
-		//! @brief Constructeurr.
+		//! @brief Constructeur.
 		//! @param soundInterface L'interface de sortie du son..
 		SquareWaveChannel(ISound &soundInterface);
 		//! @brief Change la forme de l'onde.
