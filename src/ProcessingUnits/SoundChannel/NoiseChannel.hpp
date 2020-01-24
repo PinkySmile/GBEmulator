@@ -15,24 +15,28 @@
 
 namespace GBEmulator::SoundChannel
 {
+	//! @brief Class représentant le "Channel 3"
 	class NoiseChannel : public SoundChannel {
 	private:
-		//! @briif All 4 wave forms that can be played
+		//! @brief Les 4 formes d'ondes qui peuvent être jouées
 		std::vector<std::vector<unsigned char>> _waves;
-		//! @brief The dividing ratio of the noise.
+		//! @brief Le ratio de division du bruit.
 		unsigned char _dividingRatio = 0;
 		//! @brief Whether the noise wave needs to be updated.
 		bool _wroteInNoiseFrequency = false;
-		//! @brief The frequency of the clock.
+		//! @brief La fréquence de l'horloge.
 		unsigned char _shiftClockFrequency = 0;
-		//! @brief The step number of the noise.
+		//! @brief Compteur d'étape.
 		bool _polynomialCounterStep = false;
-		//! @brief Current LFSR state.
+		//! @brief L'état du LFSR.
 		unsigned short _lfsr = 0;
-		//! @brief The period in the noise wave.
+		//! @brief Période dans l'onde.
 		double _bitPeriod = 0;
 
+		//! @brief Met à jour le LFSR.
 		void _updateLFSR(unsigned char stepNumber, std::vector<unsigned char> &lfsrBit);
+		//! @brief Met à jour le canal.
+		//! @param cycles Nombre de cycles passés (non utilisé)
 		void _update(unsigned cycles) override;
 
 		static constexpr double dividingRatio[8] = {

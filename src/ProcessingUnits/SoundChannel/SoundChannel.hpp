@@ -14,8 +14,8 @@
 
 namespace GBEmulator::SoundChannel
 {
-	//! @brief Represent a sound channel.
-	//! For more information look at http://problemkaputt.de/pandocs.htm#soundcontroller.
+	//! @brief Représente un canal de son.
+	//! Pour plus d'information: http://problemkaputt.de/pandocs.htm#soundcontroller.
 	class SoundChannel {
 	protected:
 		enum Direction
@@ -25,43 +25,43 @@ namespace GBEmulator::SoundChannel
 		};
 
 		//State
-		//! @brief The sound interface used to output sound.
+		//! @brief L'interface utilisé pour la sortie son
 		ISound &_sound;
-		//! @brief The current frequency bytes of this channel.
+		//! @brief Octets de fréquence actuels de ce canal.
 		unsigned short _frequency = 0;
 		bool _restart = false;
-		//! @brief Whether this channel is not looping.
+		//! @brief Si ce canal ne boucle pas.
 		bool _restartType = false;
-		//! @brief Whether this sound is enabled.
+		//! @brief Si le son est activé.
 		bool _soundOn = false;
-		//! @brief The length the sound should last.
+		//! @brief La longeur du son.
 		unsigned char _soundLength = 0;
 
 		//Sweep
-		//! @brief The time remaining before the sweep is done.
+		//! @brief Le temps restant avant le balayage.
 		unsigned char _sweepTime = 0;
-		//! @brief The speed of the sweep.
+		//! @brief La vitesse du balayage.
 		unsigned char _sweepShiftNumber = 0;
-		//! @brief The direction of the sweep.
+		//! @brief La direction du balayage.
 		Direction _sweepDirection = INCREASE;
-		//! @brief The number of CPU cycles that elapsed since the start of the sweep.
+		//! @brief Nombre de cycles CPU écoulés depuis le début du balayage.
 		double _sweepCycles = 0;
 		unsigned char _shiftRemain = 0;
 		double _realFrequency = 0;
 
 
 		//Volume
-		//! @brief The Initial volume of the envelope.
+		//! @brief Le volume initial de l'enveloppe.
 		unsigned char _initialVolume = 0;
-		//! @brief The direction of the envelope.
+		//! @brief La direction de l'enveloppe.
 		Direction _volumeDirection = DECREASE;
-		//! @brief The speed of the volume envelope.
+		//! @brief La vitesse de l'enveloppe de volume.
 		unsigned char _volumeShiftNumber = 0;
-		//! @brief The number of CPU cycles that elapsed since the start of the envelope.
+		//! @brief Nombre de cycles CPU écoulés depuis le début de l'enveloppe.
 		unsigned _volumeCycles = 0;
 
-		//! @brief Update the channel.
-		//! @param The number of CPU cycles that elapsed.
+		//! @brief Met à jour le canal.
+		//! @param Le nombre de cycles CPU écoulés.
 		virtual void _update(unsigned cycles) = 0;
 
 		void _updateVolume(unsigned cycles);
@@ -69,8 +69,8 @@ namespace GBEmulator::SoundChannel
 		virtual void _checkRestart();
 
 	public:
-		//! @brief Constructor.
-		//! @param soundInterface The interface to output the sound to.
+		//! @brief Constructeur.
+		//! @param soundInterface L'interface de sortie du son vers.
 		SoundChannel(ISound &soundInterface);
 
 		void setSweep(unsigned char);
@@ -84,8 +84,8 @@ namespace GBEmulator::SoundChannel
 		unsigned char getVolume() const;
 		unsigned char getRestartOptions() const;
 
-		//! @brief Update the channel.
-		//! @param The number of CPU cycles that elapsed.
+		//! @brief Met à jour le canal.
+		//! @param Le nombre de cycles CPU écoulés.
 		void update(unsigned cycles);
 	};
 }

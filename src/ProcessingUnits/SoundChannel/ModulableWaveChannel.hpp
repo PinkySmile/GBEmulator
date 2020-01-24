@@ -16,13 +16,14 @@
 
 namespace GBEmulator::SoundChannel
 {
+	//! @brief Class représentant le "Channel 3" permettant de modifier la forme de l'onde.
 	class ModulableWaveChannel : public SoundChannel {
 	private:
-		//! @brief Wave pattern ram
+		//! @brief Mémoire du paterne de l'onde (Wave pattern ram)
 		Memory::Memory _wpRAM;
-		//! @brief The current wave output level
+		//! @brief Volume actuel de la sortie
 		unsigned char _waveOutputLevel = 0;
-		//! @brief Whether the waves needs to be generated again.
+		//! @brief Si les ondes doivent être générées à nouveau.
 		bool _genWave = true;
 
 		void _update(unsigned cycles) override;

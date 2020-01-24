@@ -13,25 +13,26 @@
 
 namespace GBEmulator::SoundChannel
 {
+	//! @brief Class représentant le "Channel 1" et le "Channel 2"
 	class SquareWaveChannel : public SoundChannel {
 	private:
-		//! @breif All 4 wave forms that can be played
+		//! @breif Les 4 formes d'onde qui peuvent être jouées
 		std::vector<std::vector<unsigned char>> _waves;
-		//! @breif The current wave form played.
+		//! @breif La forme d'onde actuelle a joué.
 		unsigned char _wavePattern = 0;
 
 		void _update(unsigned cycles) override;
 
 	public:
-		//! @brief Returns a square shaped wave;
+		//! @brief Renvoie une onde carrée;
 		static std::vector<unsigned char> &getSquareWave(int frequency, float percentage);
 
-		//! @brief Constructor.
-		//! @param soundInterface The interface to output the sound to.
+		//! @brief Constructeurr.
+		//! @param soundInterface L'interface de sortie du son..
 		SquareWaveChannel(ISound &soundInterface);
-		//! @brief Change the wave duty.
+		//! @brief Change la forme de l'onde.
 		void setWave(unsigned char value);
-		//! @brief Get the wave duty.
+		//! @brief Renvoie la forme de l'onde.
 		unsigned char getWave() const;
 	};
 }
