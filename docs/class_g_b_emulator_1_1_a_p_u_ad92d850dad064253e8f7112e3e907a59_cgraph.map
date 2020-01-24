@@ -1,5 +1,0 @@
-<map id="GBEmulator::APU::channelTwoReading" name="GBEmulator::APU::channelTwoReading">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html#aa5895301d43b79808595e9d4fe8829ac" title="Get the wave duty. " alt="" coords="257,5,487,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a246fe2b4a3ae6bac0702d04d55580178" title="GBEmulator::SoundChannel\l::SoundChannel::getVolume" alt="" coords="271,71,473,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a60ade2dee428de63b0273c5e1953b490" title="GBEmulator::SoundChannel\l::SoundChannel::getRestartOptions" alt="" coords="248,136,496,177"/>
-</map>

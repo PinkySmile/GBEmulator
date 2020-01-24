@@ -1,3 +1,5 @@
 <map id="GBEmulator::Network::DisconnectException" name="GBEmulator::Network::DisconnectException">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="GBEmulator::Network\l::BaseException" alt="" coords="7,80,170,121"/>
+<area shape="rect" id="node1" title="Exception levée quand l&#39;utilisateur est déconnecté" alt="" coords="5,169,172,211"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="Exception de base pour le module réseau de la GameBoy." alt="" coords="7,80,170,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="45,5,132,32"/>
 </map>

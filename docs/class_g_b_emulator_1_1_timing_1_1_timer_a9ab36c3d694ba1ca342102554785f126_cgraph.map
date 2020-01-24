@@ -1,4 +1,0 @@
-<map id="GBEmulator::Timing::Timer::setControlByte" name="GBEmulator::Timing::Timer::setControlByte">
-<area shape="rect" id="node2" href="$namespace_g_b_emulator_1_1_timing.html#a881d2264075f81332f0d14e465b01dc9" title="GBEmulator::Timing\l::getCyclesPerSecondsFromFrequency" alt="" coords="227,5,493,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_timing_1_1_timer.html#ab278b7829a2889bc3d9e5c2845070557" title="GBEmulator::Timing\l::Timer::getFrequency" alt="" coords="279,71,441,112"/>
-</map>

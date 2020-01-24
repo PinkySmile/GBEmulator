@@ -1,3 +1,5 @@
 <map id="GBEmulator::Debugger::Exception" name="GBEmulator::Debugger::Exception">
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_command_not_found_exception.html" title="GBEmulator::Debugger\l::CommandNotFoundException" alt="" coords="5,169,228,211"/>
+<area shape="rect" id="node1" title="Exception de base du Debugger." alt="" coords="31,80,202,121"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_command_not_found_exception.html" title="La commande saisie n&#39;a pas été reconnue." alt="" coords="5,169,228,211"/>
+<area shape="rect" id="node2" title=" " alt="" coords="73,5,160,32"/>
 </map>

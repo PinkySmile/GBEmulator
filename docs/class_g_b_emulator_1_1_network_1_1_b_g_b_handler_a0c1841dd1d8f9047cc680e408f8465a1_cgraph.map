@@ -1,7 +1,0 @@
-<map id="GBEmulator::Network::BGBHandler::_handleLoop" name="GBEmulator::Network::BGBHandler::_handleLoop">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad85ef34344f860ccd338d4ef97be5850" title="GBEmulator::Network\l::BGBHandler::_getNextPacket" alt="" coords="252,5,471,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a155908c52258253a1af3defb6c8ea60e" title="GBEmulator::Network\l::BGBHandler::log" alt="" coords="280,71,443,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html#a8f9811d4059d65079b194772b9aa0d3a" title="GBEmulator::Network\l::BaseException::what" alt="" coords="278,136,445,177"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad714de8f1ddb3b10edf7f0cad5396019" title="GBEmulator::Network\l::BGBHandler::_sendPacket" alt="" coords="519,224,717,265"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#abe75e727e16c893cdbf717c2472de672" title="GBEmulator::Network\l::BGBHandler::_sync" alt="" coords="280,253,443,295"/>
-</map>

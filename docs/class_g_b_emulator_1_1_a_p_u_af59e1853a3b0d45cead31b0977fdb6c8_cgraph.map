@@ -1,5 +1,0 @@
-<map id="GBEmulator::APU::setSOTS" name="GBEmulator::APU::setSOTS">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#aeba586640e3393477e42d856c515e044" title="GBEmulator::SoundChannel\l::SoundChannel::setSOTerminals\lVolumes" alt="" coords="251,31,483,87"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_i_sound.html#ab74d36bcdc570573b6a977f993977abb" title="GBEmulator::ISound\l::setSO1Volume" alt="" coords="531,5,683,47"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_i_sound.html#a3524962bf3a7c3af75f8087d64011a77" title="GBEmulator::ISound\l::setSO2Volume" alt="" coords="531,71,683,112"/>
-</map>

@@ -1,3 +1,4 @@
 <map id="GBEmulator::SoundChannel::ModulableWaveChannel" name="GBEmulator::SoundChannel::ModulableWaveChannel">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Represent a sound channel. For more information look at http://problemkaputt.de/pandocs.htm#soundcontroller. " alt="" coords="5,5,207,47"/>
+<area shape="rect" id="node1" title="Classe représentant le Channel Wave permettant de modifier la forme de l&#39;onde jouée." alt="" coords="5,95,207,136"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Représente un canal de son. Pour plus d&#39;information: http://problemkaputt.de/pandocs...." alt="" coords="5,5,207,47"/>
 </map>

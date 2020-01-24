@@ -1,5 +1,0 @@
-<map id="GBEmulator::SoundChannel::ModulableWaveChannel::ModulableWaveChannel" name="GBEmulator::SoundChannel::ModulableWaveChannel::ModulableWaveChannel">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_i_sound.html#a3e72f9bb47c8226e0d1e2cbe9a359017" title="GBEmulator::ISound\l::setWave" alt="" coords="279,5,431,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html#aaafdfdb7d8f7e371503088b066a9d202" title="GBEmulator::SoundChannel\l::ModulableWaveChannel\l::getWavePattern" alt="" coords="255,71,456,127"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac9a40f172de5b3d4fd565d55e70f95d8" title="Lis la valeur à l&#39;adresse de la mémoire. " alt="" coords="504,79,665,120"/>
-</map>

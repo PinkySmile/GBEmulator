@@ -1,3 +1,4 @@
 <map id="GBEmulator::Network::ProtocolHandle" name="GBEmulator::Network::ProtocolHandle">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html" title="GBEmulator::Network\l::BGBHandler" alt="" coords="5,95,168,136"/>
+<area shape="rect" id="node1" title="Une interface qui permet de recevoire des données et en envoyer pour GameBoy." alt="" coords="5,5,168,47"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html" title="Implementation du ProtocolHandle avec le protocole de BGB." alt="" coords="5,95,168,136"/>
 </map>

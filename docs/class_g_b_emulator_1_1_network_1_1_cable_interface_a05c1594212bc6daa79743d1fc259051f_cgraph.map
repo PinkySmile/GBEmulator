@@ -1,7 +1,0 @@
-<map id="GBEmulator::Network::CableInterface::transfer" name="GBEmulator::Network::CableInterface::transfer">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a0fef1d36a3fce1004a001930c55b067a" title="GBEmulator::Network\l::CableInterface::_sync" alt="" coords="261,5,432,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a61279044e8d0daf70416396a25415b81" title="GBEmulator::Network\l::CableInterface::isTransfering" alt="" coords="239,71,455,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a8e09922317906cfd3aae1f4ed22f7647" title="GBEmulator::Network\l::CableInterface::isExternal" alt="" coords="247,136,446,177"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a3a80732d339f0a6fcb371aec1149eccd" title="GBEmulator::Network\l::CableInterface::_receiveByte" alt="" coords="237,201,456,243"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html#a9bef1fc234c490b638505ee3cead3957" title="GBEmulator::Network\l::CableInterface::_sendByte" alt="" coords="246,267,447,308"/>
-</map>

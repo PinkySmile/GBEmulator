@@ -1,4 +1,5 @@
 <map id="GBEmulator::Memory::Cartridge" name="GBEmulator::Memory::Cartridge">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="GBEmulator::Memory\l::Memory" alt="" coords="5,5,167,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="GBEmulator::Memory::ROM" alt="" coords="132,96,331,123"/>
+<area shape="rect" id="node1" title="Répresente une cartouche de GameBoy." alt="" coords="11,185,173,227"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="Représente un morceau de mémoire." alt="" coords="5,5,168,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="Mémoire en lecture seule." alt="" coords="132,96,332,123"/>
 </map>

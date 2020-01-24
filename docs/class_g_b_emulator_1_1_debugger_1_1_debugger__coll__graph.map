@@ -1,18 +1,19 @@
 <map id="GBEmulator::Debugger::Debugger" name="GBEmulator::Debugger::Debugger">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran. " alt="" coords="582,83,747,125"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_c_p_u.html" title="GBEmulator::CPU" alt="" coords="1293,277,1428,304"/>
-<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_g_p_u.html" title="Classe représentant le GPU. Cette classe gère l&#39;écriture/lecture de la VRAM et de l&#39;OAM..." alt="" coords="1007,91,1143,117"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html" title="GBEmulator::Network\l::CableInterface" alt="" coords="993,205,1156,246"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_timing_1_1_timer.html" title="GBEmulator::Timing\l::Timer" alt="" coords="998,270,1151,311"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_a_p_u.html" title="GBEmulator::APU" alt="" coords="1007,463,1142,489"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html" title="GBEmulator::SoundChannel\l::NoiseChannel" alt="" coords="564,583,765,625"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Represent a sound channel. For more information look at http://problemkaputt.de/pandocs.htm#soundcontroller. " alt="" coords="256,518,457,559"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html" title="GBEmulator::SoundChannel\l::ModulableWaveChannel" alt="" coords="564,518,765,559"/>
-<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html" title="GBEmulator::SoundChannel\l::SquareWaveChannel" alt="" coords="564,453,765,494"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_i_sound.html" title="GBEmulator::ISound" alt="" coords="5,525,157,552"/>
-<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="GBEmulator::Memory\l::Memory" alt="" coords="276,343,437,385"/>
-<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html" title="GBEmulator::Memory\l::Cartridge" alt="" coords="994,335,1155,377"/>
-<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="GBEmulator::Memory::ROM" alt="" coords="565,351,764,377"/>
-<area shape="rect" id="node13" href="$struct_g_b_emulator_1_1_c_p_u_1_1_registers.html" title="GBEmulator::CPU::Registers" alt="" coords="973,40,1176,67"/>
-<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_input_1_1_joypad_emulator.html" title="GBEmulator::Input::\lJoypadEmulator" alt="" coords="1000,517,1149,558"/>
+<area shape="rect" id="node1" title="Debugger de CPU." alt="" coords="1515,270,1685,311"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran." alt="" coords="585,83,750,125"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_c_p_u.html" title="Central Process Unit de la Gameboy." alt="" coords="1297,277,1432,304"/>
+<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_g_p_u.html" title="Classe représentant le GPU. Cette classe gère l&#39;écriture/lecture de la VRAM et de l&#39;OAM...." alt="" coords="1010,91,1146,117"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_cable_interface.html" title="L&#39;interface émulant le CableLink. Pour plus d&#39;inforamtions: http://problemkaputt.de/pandocs...." alt="" coords="997,205,1159,246"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_timing_1_1_timer.html" title="Classe implémentant le Timer de la GameBoy Pour plus d&#39;informations : http://problemkaputt...." alt="" coords="1002,270,1154,311"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_a_p_u.html" title="Classe gérant l&#39;audio de la GameBoy. La classe utilise les classes :" alt="" coords="1011,463,1145,489"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html" title="Class représentant le &quot;Channel 3&quot;." alt="" coords="567,583,768,625"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Représente un canal de son. Pour plus d&#39;information: http://problemkaputt.de/pandocs...." alt="" coords="256,518,457,559"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html" title="Classe représentant le Channel Wave permettant de modifier la forme de l&#39;onde jouée." alt="" coords="567,518,768,559"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html" title="Class représentant le &quot;Channel 1&quot; et le &quot;Channel 2&quot;." alt="" coords="567,453,768,494"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_i_sound.html" title="L&#39;interface ISound implémente les fonctionnalités de lecture et de modification du son...." alt="" coords="5,525,157,552"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="Représente un morceau de mémoire." alt="" coords="275,343,438,385"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html" title="Répresente une cartouche de GameBoy." alt="" coords="997,335,1159,377"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="Mémoire en lecture seule." alt="" coords="567,351,767,377"/>
+<area shape="rect" id="node13" href="$struct_g_b_emulator_1_1_c_p_u_1_1_registers.html" title="Représente les registres de la Gameboy." alt="" coords="976,40,1180,67"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_input_1_1_joypad_emulator.html" title="Emulateur du Joypad de la GameBoy." alt="" coords="1003,517,1153,558"/>
 </map>

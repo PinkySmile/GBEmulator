@@ -1,4 +1,0 @@
-<map id="GBEmulator::SoundChannel::ModulableWaveChannel::write" name="GBEmulator::SoundChannel::ModulableWaveChannel::write">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a851453d49b6f43f12ff726376afe6acd" title="Écrit la valeur à l&#39;adresse de la mémoire. " alt="" coords="280,5,441,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a307f23d00250f9f0af622daaa10aa238" title="Écrit la valeur à l&#39;adresse de la mémoire en ignorant les permissions. " alt="" coords="489,5,651,47"/>
-</map>

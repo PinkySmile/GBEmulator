@@ -1,4 +1,5 @@
 <map id="GBEmulator::SoundChannel::SquareWaveChannel" name="GBEmulator::SoundChannel::SquareWaveChannel">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Represent a sound channel. For more information look at http://problemkaputt.de/pandocs.htm#soundcontroller. " alt="" coords="5,95,207,136"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_i_sound.html" title="GBEmulator::ISound" alt="" coords="30,5,182,32"/>
+<area shape="rect" id="node1" title="Class représentant le &quot;Channel 1&quot; et le &quot;Channel 2&quot;." alt="" coords="5,185,207,227"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html" title="Représente un canal de son. Pour plus d&#39;information: http://problemkaputt.de/pandocs...." alt="" coords="5,95,207,136"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_i_sound.html" title="L&#39;interface ISound implémente les fonctionnalités de lecture et de modification du son...." alt="" coords="30,5,182,32"/>
 </map>

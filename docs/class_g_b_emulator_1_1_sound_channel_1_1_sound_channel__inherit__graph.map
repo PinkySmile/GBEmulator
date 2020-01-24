@@ -1,5 +1,6 @@
 <map id="GBEmulator::SoundChannel::SoundChannel" name="GBEmulator::SoundChannel::SoundChannel">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html" title="GBEmulator::SoundChannel\l::ModulableWaveChannel" alt="" coords="255,5,456,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html" title="GBEmulator::SoundChannel\l::NoiseChannel" alt="" coords="255,71,456,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html" title="GBEmulator::SoundChannel\l::SquareWaveChannel" alt="" coords="255,136,456,177"/>
+<area shape="rect" id="node1" title="Représente un canal de son. Pour plus d&#39;information: http://problemkaputt.de/pandocs...." alt="" coords="5,71,207,112"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_modulable_wave_channel.html" title="Classe représentant le Channel Wave permettant de modifier la forme de l&#39;onde jouée." alt="" coords="255,5,456,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html" title="Class représentant le &quot;Channel 3&quot;." alt="" coords="255,71,456,112"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_square_wave_channel.html" title="Class représentant le &quot;Channel 1&quot; et le &quot;Channel 2&quot;." alt="" coords="255,136,456,177"/>
 </map>

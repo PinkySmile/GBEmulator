@@ -1,3 +1,4 @@
 <map id="GBEmulator::Input::JoypadEmulator" name="GBEmulator::Input::JoypadEmulator">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html" title="GBEmulator::Input::\lSFMLKeyboardJoypadEmulator" alt="" coords="5,95,224,136"/>
+<area shape="rect" id="node1" title="Emulateur du Joypad de la GameBoy." alt="" coords="41,5,191,47"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_input_1_1_s_f_m_l_keyboard_joypad_emulator.html" title="Implémentation du JoypadEmulator pour un clavier en utilisant la SFML." alt="" coords="5,95,227,136"/>
 </map>

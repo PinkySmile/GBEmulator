@@ -1,3 +1,5 @@
 <map id="GBEmulator::Network::EOFException" name="GBEmulator::Network::EOFException">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="GBEmulator::Network\l::BaseException" alt="" coords="5,80,168,121"/>
+<area shape="rect" id="node1" title="Exception levée quand le flux est terminé" alt="" coords="5,169,168,211"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="Exception de base pour le module réseau de la GameBoy." alt="" coords="5,80,168,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="43,5,130,32"/>
 </map>

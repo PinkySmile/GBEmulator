@@ -1,4 +1,5 @@
 <map id="GBEmulator::GPU" name="GBEmulator::GPU">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran. " alt="" coords="5,5,171,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="GBEmulator::Memory\l::Memory" alt="" coords="195,5,357,47"/>
+<area shape="rect" id="node1" title="Classe représentant le GPU. Cette classe gère l&#39;écriture/lecture de la VRAM et de l&#39;OAM...." alt="" coords="113,109,249,136"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran." alt="" coords="5,5,171,47"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="Représente un morceau de mémoire." alt="" coords="195,5,357,47"/>
 </map>

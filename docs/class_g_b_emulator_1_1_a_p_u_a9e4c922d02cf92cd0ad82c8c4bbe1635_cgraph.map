@@ -1,5 +1,0 @@
-<map id="GBEmulator::APU::controllerReading" name="GBEmulator::APU::controllerReading">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_a_p_u.html#ae9381444aa1d2f63d25891a6f698db33" title="GBEmulator::APU::getVin" alt="" coords="268,5,453,32"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_a_p_u.html#a96d7d9650a1d8697eed2649e49533a94" title="GBEmulator::APU::getSOTS" alt="" coords="261,56,460,83"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_a_p_u.html#ac40412d6724a0ef49af8856d5bbf15df" title="GBEmulator::APU::getSound\lOnOff" alt="" coords="259,107,463,149"/>
-</map>

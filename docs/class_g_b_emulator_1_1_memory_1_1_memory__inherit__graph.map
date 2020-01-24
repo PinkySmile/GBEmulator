@@ -1,3 +1,4 @@
 <map id="GBEmulator::Memory::Memory" name="GBEmulator::Memory::Memory">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="GBEmulator::Memory::ROM" alt="" coords="5,95,204,121"/>
+<area shape="rect" id="node1" title="Représente un morceau de mémoire." alt="" coords="24,5,187,47"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="Mémoire en lecture seule." alt="" coords="5,95,205,121"/>
 </map>

@@ -1,5 +1,0 @@
-<map id="GBEmulator::Network::BGBHandler::_handshake" name="GBEmulator::Network::BGBHandler::_handshake">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#a155908c52258253a1af3defb6c8ea60e" title="GBEmulator::Network\l::BGBHandler::log" alt="" coords="276,5,439,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad714de8f1ddb3b10edf7f0cad5396019" title="GBEmulator::Network\l::BGBHandler::_sendPacket" alt="" coords="258,71,457,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_network_1_1_b_g_b_handler.html#ad85ef34344f860ccd338d4ef97be5850" title="GBEmulator::Network\l::BGBHandler::_getNextPacket" alt="" coords="248,136,467,177"/>
-</map>

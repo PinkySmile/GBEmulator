@@ -1,3 +1,4 @@
 <map id="GBEmulator::SoundPlayer" name="GBEmulator::SoundPlayer">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_i_sound.html" title="GBEmulator::ISound" alt="" coords="24,5,176,32"/>
+<area shape="rect" id="node1" title="SoundPlayer implémente les fonctions de l&#39;interface ISound. La classe contient les fonctions qui perm..." alt="" coords="5,80,195,107"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_i_sound.html" title="L&#39;interface ISound implémente les fonctionnalités de lecture et de modification du son...." alt="" coords="24,5,176,32"/>
 </map>

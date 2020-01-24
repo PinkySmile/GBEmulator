@@ -1,6 +1,0 @@
-<map id="GBEmulator::APU::channelNoiseReading" name="GBEmulator::APU::channelNoiseReading">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a5f428bfe003a90b733a72c1da3874bf6" title="GBEmulator::SoundChannel\l::NoiseChannel::getSoundLength" alt="" coords="271,5,505,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a246fe2b4a3ae6bac0702d04d55580178" title="GBEmulator::SoundChannel\l::SoundChannel::getVolume" alt="" coords="287,71,489,112"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_sound_channel_1_1_noise_channel.html#a3273ef7e2780f615732a34bd3d33be1a" title="GBEmulator::SoundChannel\l::NoiseChannel::getPolynomialCounters" alt="" coords="248,136,528,177"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a60ade2dee428de63b0273c5e1953b490" title="GBEmulator::SoundChannel\l::SoundChannel::getRestartOptions" alt="" coords="264,201,512,243"/>
-</map>

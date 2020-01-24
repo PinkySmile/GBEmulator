@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['oam_5frange',['OAM_RANGE',['../_c_p_u_8hpp.html#a05b0231dc140497839bb1dbb2e939968',1,'CPU.hpp']]],
-  ['oam_5fsize',['OAM_SIZE',['../_g_p_u_8hpp.html#a66fdb2b0624111b109e271ee9f829df8',1,'GPU.hpp']]]
+  ['pop_5fcycle_5fduration_1425',['POP_CYCLE_DURATION',['../_c_p_u_instructions_8hpp.html#a8a1994d55fbf21ca940ff2df3bf17c47',1,'CPUInstructions.hpp']]],
+  ['push_5fcycle_5fduration_1426',['PUSH_CYCLE_DURATION',['../_c_p_u_instructions_8hpp.html#ad4a6da96118e686f1959fcdac4bd1cba',1,'CPUInstructions.hpp']]]
 ];

@@ -1,4 +1,0 @@
-<map id="GBEmulator::Memory::Cartridge::_checkROM" name="GBEmulator::Memory::Cartridge::_checkROM">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a4bb0212d24f08c8a69e8dcbe8d34c7a1" title="renvoie la taille de la mémoire " alt="" coords="227,5,388,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#ac20d1a8824352c532dc8502f567ae5f5" title="Lis la valeur à l&#39;adresse de la mémoire en ignorant les banks. " alt="" coords="227,71,388,112"/>
-</map>

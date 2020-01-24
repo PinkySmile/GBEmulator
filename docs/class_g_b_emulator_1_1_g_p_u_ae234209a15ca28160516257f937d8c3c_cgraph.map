@@ -1,6 +1,0 @@
-<map id="GBEmulator::GPU::writeOAM" name="GBEmulator::GPU::writeOAM">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149" title="Obtient le mode actuel le mode peut être H&#45;Blank, V&#45;Blank, Searching OAM&#45;RAM ou Transfering Data to L..." alt="" coords="260,5,460,32"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a851453d49b6f43f12ff726376afe6acd" title="Écrit la valeur à l&#39;adresse de la mémoire. " alt="" coords="279,57,441,98"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_g_p_u.html#a105d08c4bd708d99bd1cfed7af70354a" title="Obtient la ligne d&#39;écriture de pixel sur le LCD. " alt="" coords="508,5,748,32"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_memory_1_1_memory.html#a307f23d00250f9f0af622daaa10aa238" title="Écrit la valeur à l&#39;adresse de la mémoire en ignorant les permissions. " alt="" coords="547,57,709,98"/>
-</map>

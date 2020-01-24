@@ -1,3 +1,5 @@
 <map id="GBEmulator::Network::ListenFailedException" name="GBEmulator::Network::ListenFailedException">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="GBEmulator::Network\l::BaseException" alt="" coords="9,80,172,121"/>
+<area shape="rect" id="node1" title="Exception levée quand l&#39;écoute du socket a renvoyé une erreur." alt="" coords="5,169,177,211"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="Exception de base pour le module réseau de la GameBoy." alt="" coords="10,80,173,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="48,5,135,32"/>
 </map>

@@ -1,4 +1,0 @@
-<map id="GBEmulator::Debugger::Debugger::_displayWindow" name="GBEmulator::Debugger::Debugger::_displayWindow">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a91231528879ba7061340a9618a0347c6" title="Affiche le contenu de la Vram sur la fenetre du débugger. " alt="" coords="260,5,435,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_debugger_1_1_debugger.html#a1f056d493e6d89587f1dc523fb9e6e00" title="Lance la session de débuggage. " alt="" coords="483,5,705,47"/>
-</map>

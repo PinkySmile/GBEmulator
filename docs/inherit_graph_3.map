@@ -1,22 +1,23 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_c_p_u_1_1_invalid_opcode_exception.html" title="GBEmulator::CPU::Invalid\lOpcodeException" alt="" coords="164,17,351,59"/>
-<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_exception.html" title="GBEmulator::Debugger\l::Exception" alt="" coords="172,104,343,145"/>
-<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_exception.html" title="GBEmulator::Memory\l::Cartridge::InvalidRomException" alt="" coords="140,213,375,255"/>
-<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="GBEmulator::Network\l::BaseException" alt="" coords="176,656,339,697"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_instructions_1_1_invalid_s_t_o_p_exception.html" title="GBEmulator::Instructions\l::InvalidSTOPException" alt="" coords="453,5,637,47"/>
-<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_command_not_found_exception.html" title="GBEmulator::Debugger\l::CommandNotFoundException" alt="" coords="433,71,656,112"/>
-<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_ram_size_exception.html" title="GBEmulator::Memory\l::Cartridge::InvalidRomRam\lSizeException" alt="" coords="444,137,645,193"/>
-<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_size_exception.html" title="GBEmulator::Memory\l::Cartridge::InvalidRomSize\lException" alt="" coords="445,217,644,273"/>
-<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_saving_failed_exception.html" title="GBEmulator::Memory\l::Cartridge::SavingFailedException" alt="" coords="423,297,667,339"/>
-<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_network_1_1_already_opened_exception.html" title="GBEmulator::Network\l::AlreadyOpenedException" alt="" coords="447,363,642,404"/>
-<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_network_1_1_connect_exception.html" title="GBEmulator::Network\l::ConnectException" alt="" coords="463,428,626,469"/>
-<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_network_1_1_disconnect_exception.html" title="GBEmulator::Network\l::DisconnectException" alt="" coords="461,493,628,535"/>
-<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_network_1_1_e_o_f_exception.html" title="GBEmulator::Network\l::EOFException" alt="" coords="463,559,626,600"/>
-<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_network_1_1_host_not_found_exception.html" title="GBEmulator::Network\l::HostNotFoundException" alt="" coords="451,624,638,665"/>
-<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_network_1_1_invalid_version_exception.html" title="GBEmulator::Network\l::InvalidVersionException" alt="" coords="451,689,638,731"/>
-<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html" title="GBEmulator::Network\l::ListenFailedException" alt="" coords="459,755,630,796"/>
-<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_network_1_1_not_connected_exception.html" title="GBEmulator::Network\l::NotConnectedException" alt="" coords="451,820,638,861"/>
-<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_network_1_1_not_implemented_exception.html" title="GBEmulator::Network\l::NotImplementedException" alt="" coords="443,885,647,927"/>
-<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_network_1_1_socket_creation_error_exception.html" title="GBEmulator::Network\l::SocketCreationErrorException" alt="" coords="433,951,657,992"/>
-<area shape="rect" id="node21" href="$class_g_b_emulator_1_1_network_1_1_time_out_exception.html" title="GBEmulator::Network\l::TimeOutException" alt="" coords="463,1016,626,1057"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,189,92,215"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_c_p_u_1_1_invalid_opcode_exception.html" title="Un opcode est invalide." alt="" coords="165,17,351,59"/>
+<area shape="rect" id="node4" href="$class_g_b_emulator_1_1_debugger_1_1_exception.html" title="Exception de base du Debugger." alt="" coords="173,104,343,145"/>
+<area shape="rect" id="node6" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_exception.html" title="La ROM donnée est invalide." alt="" coords="140,213,376,255"/>
+<area shape="rect" id="node10" href="$class_g_b_emulator_1_1_network_1_1_base_exception.html" title="Exception de base pour le module réseau de la GameBoy." alt="" coords="177,656,339,697"/>
+<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_instructions_1_1_invalid_s_t_o_p_exception.html" title="L&#39;instruction STOP donnée est mal formée." alt="" coords="455,5,639,47"/>
+<area shape="rect" id="node5" href="$class_g_b_emulator_1_1_debugger_1_1_command_not_found_exception.html" title="La commande saisie n&#39;a pas été reconnue." alt="" coords="435,71,658,112"/>
+<area shape="rect" id="node7" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_ram_size_exception.html" title="La taille de la ram renseigné n&#39;est pas valide." alt="" coords="445,137,648,193"/>
+<area shape="rect" id="node8" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_invalid_rom_size_exception.html" title="La taille de la rom renseigné n&#39;est pas valide." alt="" coords="447,217,646,273"/>
+<area shape="rect" id="node9" href="$class_g_b_emulator_1_1_memory_1_1_cartridge_1_1_saving_failed_exception.html" title="La sauvegarde a échoué." alt="" coords="424,297,669,339"/>
+<area shape="rect" id="node11" href="$class_g_b_emulator_1_1_network_1_1_already_opened_exception.html" title="Exception levée quand le socket est déjà ouvert." alt="" coords="449,363,644,404"/>
+<area shape="rect" id="node12" href="$class_g_b_emulator_1_1_network_1_1_connect_exception.html" title="Exception levée quand une erreur pendant la connection arrive." alt="" coords="465,428,628,469"/>
+<area shape="rect" id="node13" href="$class_g_b_emulator_1_1_network_1_1_disconnect_exception.html" title="Exception levée quand l&#39;utilisateur est déconnecté" alt="" coords="463,493,630,535"/>
+<area shape="rect" id="node14" href="$class_g_b_emulator_1_1_network_1_1_e_o_f_exception.html" title="Exception levée quand le flux est terminé" alt="" coords="465,559,628,600"/>
+<area shape="rect" id="node15" href="$class_g_b_emulator_1_1_network_1_1_host_not_found_exception.html" title="Exception levée quand l&#39;hote n&#39;est pas trouvé" alt="" coords="453,624,640,665"/>
+<area shape="rect" id="node16" href="$class_g_b_emulator_1_1_network_1_1_invalid_version_exception.html" title="Exception levée quand le numéro de version n&#39;est pas valide." alt="" coords="453,689,640,731"/>
+<area shape="rect" id="node17" href="$class_g_b_emulator_1_1_network_1_1_listen_failed_exception.html" title="Exception levée quand l&#39;écoute du socket a renvoyé une erreur." alt="" coords="461,755,633,796"/>
+<area shape="rect" id="node18" href="$class_g_b_emulator_1_1_network_1_1_not_connected_exception.html" title="Exception levée quand l&#39;utilisateur n&#39;est pas connecté" alt="" coords="453,820,640,861"/>
+<area shape="rect" id="node19" href="$class_g_b_emulator_1_1_network_1_1_not_implemented_exception.html" title="Exception levée quand la fonction appellé n&#39;a pas été implémenté" alt="" coords="445,885,649,927"/>
+<area shape="rect" id="node20" href="$class_g_b_emulator_1_1_network_1_1_socket_creation_error_exception.html" title="Exception levée lorsque une erreur survient à la création d&#39;un socket." alt="" coords="435,951,658,992"/>
+<area shape="rect" id="node21" href="$class_g_b_emulator_1_1_network_1_1_time_out_exception.html" title="Exception levée quand le délai d&#39;attente à expiré" alt="" coords="465,1016,628,1057"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="GBEmulator::Memory\l::Memory" alt="" coords="5,5,167,47"/>
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="GBEmulator::Memory::ROM" alt="" coords="215,13,413,39"/>
+<area shape="rect" id="node1" href="$class_g_b_emulator_1_1_memory_1_1_memory.html" title="Représente un morceau de mémoire." alt="" coords="5,5,168,47"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_r_o_m.html" title="Mémoire en lecture seule." alt="" coords="216,13,416,39"/>
 </map>

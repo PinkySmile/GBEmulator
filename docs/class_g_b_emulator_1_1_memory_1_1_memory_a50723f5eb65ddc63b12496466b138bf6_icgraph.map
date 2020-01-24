@@ -1,4 +1,0 @@
-<map id="GBEmulator::Memory::Memory::setBankSize" name="GBEmulator::Memory::Memory::setBankSize">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#adf4f6e4fa8c1687e5bf3418ef8c22b82" title="GBEmulator::Memory\l::Cartridge::resetROM" alt="" coords="224,5,385,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_memory_1_1_cartridge.html#a8e724bf32b716472aea4f43fb4e625a1" title="GBEmulator::Memory\l::Cartridge::loadROM" alt="" coords="433,35,595,76"/>
-</map>

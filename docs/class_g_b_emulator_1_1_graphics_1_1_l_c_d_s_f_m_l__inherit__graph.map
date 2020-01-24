@@ -1,3 +1,5 @@
 <map id="GBEmulator::Graphics::LCDSFML" name="GBEmulator::Graphics::LCDSFML">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran. " alt="" coords="5,5,171,47"/>
+<area shape="rect" id="node1" title="Implémentation de ILCD avec la SFML." alt="" coords="93,95,259,136"/>
+<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_graphics_1_1_i_l_c_d.html" title="Interface ILCD qui représente l&#39;écran." alt="" coords="5,5,171,47"/>
+<area shape="rect" id="node3" title=" " alt="" coords="195,13,333,39"/>
 </map>

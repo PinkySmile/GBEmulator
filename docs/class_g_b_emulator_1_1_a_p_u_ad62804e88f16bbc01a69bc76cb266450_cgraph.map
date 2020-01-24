@@ -1,4 +1,0 @@
-<map id="GBEmulator::APU::setSoundOnOff" name="GBEmulator::APU::setSoundOnOff">
-<area shape="rect" id="node2" href="$class_g_b_emulator_1_1_sound_channel_1_1_sound_channel.html#a90bff2c08aef69a53779dce5f414aa1e" title="GBEmulator::SoundChannel\l::SoundChannel::disable" alt="" coords="256,5,457,47"/>
-<area shape="rect" id="node3" href="$class_g_b_emulator_1_1_i_sound.html#a61ff7b18438686d474c7db661db32ed7" title="GBEmulator::ISound\l::setVolume" alt="" coords="505,5,657,47"/>
-</map>
