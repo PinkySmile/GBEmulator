@@ -5,9 +5,9 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = GBEmulator
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = 
 PROJECT_BRIEF          = "Émulateur de GameBoy™ classique"
-PROJECT_LOGO           =
+PROJECT_LOGO           = 
 OUTPUT_DIRECTORY       = /home/Elden/GBEmulator/docs
 CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
@@ -352,8 +352,8 @@ UML_LIMIT_NUM_FIELDS   = 10
 TEMPLATE_RELATIONS     = NO
 INCLUDE_GRAPH          = YES
 INCLUDED_BY_GRAPH      = YES
-CALL_GRAPH             = YES
-CALLER_GRAPH           = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
 GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 DOT_IMAGE_FORMAT       = png
