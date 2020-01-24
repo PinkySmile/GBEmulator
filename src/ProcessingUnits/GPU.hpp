@@ -30,6 +30,7 @@ namespace GBEmulator
 	/*!@class GPU
 	 * @brief Classe représentant le GPU.
 	 * Cette classe gère l'écriture/lecture de la VRAM et de l'OAM.
+	 * Lien vers le Pan Docs: http://problemkaputt.de/pandocs.htm
 	 */
 	class GPU {
 	private:
@@ -38,19 +39,21 @@ namespace GBEmulator
 		Memory::Memory _oam;
 		Graphics::ILCD &_screen;
 
-		//! Palettes default value
+		//! Palettes de couleurs par default pour le Background.
 		std::vector<Graphics::RGBColor> _bgPalette{
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
 			Graphics::RGBColor::DGray,
 			Graphics::RGBColor::Black
 		};
+		//! Palettes numéro 0 de couleurs par default pour les Sprites.
 		std::vector<Graphics::RGBColor> _objectPalette0{
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
 			Graphics::RGBColor::DGray,
 			Graphics::RGBColor::Black
 		};
+		//! Palettes numéro 1 de couleurs par default pour les Sprites.
 		std::vector<Graphics::RGBColor> _objectPalette1{
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
@@ -58,40 +61,89 @@ namespace GBEmulator
 			Graphics::RGBColor::Black
 		};
 
-		//! I/O ports
+		/*! Byte correspondant au registre contenant le statut du LCD. (FF41)
+		 * 	Bit 6 - LYC=LY Coincidence Interrupt (1=Activé) (Lecture/Ecriture)
+  		 *	Bit 5 - Mode 2 OAM Interrupt         (1=Activé) (Lecture/Ecriture)
+  		 *	Bit 4 - Mode 1 V-Blank Interrupt     (1=Activé) (Lecture/Ecriture)
+  		 *	Bit 3 - Mode 0 H-Blank Interrupt     (1=Activé) (Lecture/Ecriture)
+  		 *	Bit 2 - Flag de coincidence  (0:LYC<>LY, 1:LYC=LY) (Lecture/Ecriture)
+  		 *	Bit 1-0 - Mode Flag       (Mode 0-3, see below) (Lecture/Ecriture)
+         *   	0: Pendant le H-Blank
+         *   	1: Pendant le V-Blank
+         *   	2: Pendant la recherche dans l'OAM ou la RAM
+         *   	3: Pendant le transfert de données vers le LCD
+		 */
 		unsigned char _stat = 0;
+		//! Byte correspondant à la comparaison entre les valeurs des registre LYC et LY. (FF45)
 		unsigned char _lyc = 0;
+		/*! Byte correspondant au registre de control du LCD. (FF40)
+		 * 		Bit 7 - Ecran LCD activé             												(0=Non, 1=Oui)
+		 *   	Bit 6 - Selection de la zone de tile a afficher pour la fenêtre						(0=9800-9BFF, 1=9C00-9FFF)
+		 *   	Bit 5 - Affichage de la fenêtre activé          									(0=Non, 1=Oui)
+		 *   	Bit 4 - Selection de la zone de donnée de tiles pour la fenêtre et le Background	(0=8800-97FF, 1=8000-8FFF)
+		 *   	Bit 3 - Selection de la zone de tile a afficher pour le Background					(0=9800-9BFF, 1=9C00-9FFF)
+		 *   	Bit 2 - Taille des Sprites              											(0=8x8, 1=8x16)
+		 *   	Bit 1 - Affichage des Sprites activé    											(0=Non, 1=Oui)
+		 *   	Bit 0 - Affichage du Background 													(0=Non, 1=Oui)
+		 */
 		unsigned char _control = 0;
+		//! Byte specifiant la position (sur l'axe des abscisses) de l'écran à partir du coin superieur/gauche sur le BG de 256x256 pixels (32x32 tiles). (FF43)
 		unsigned char _scrollX = 0;
+		//! Byte specifiant la position (sur l'axe des ordonnées) de l'écran sur le BG. (FF42)
 		unsigned char _scrollY = 0;
+		//! Byte specifiant la position (sur l'axe des abscisses) de la fenêtre à partir du coin superieur/gauche sur le BG. (FF4B)
 		signed short _windowX = 0;
+		//! Byte specifiant la position (sur l'axe des ordonnées) de la fenêtre  sur le BG. (FF4A)
 		unsigned char _windowY = 0;
+		/*! Byte représentant la palette de couleur pour le background (BGP). (FF47)
+		 * 	Ce registre assigne des couleurs (teintes de gris) a leurs numéros pour les tiles du Background et de la fenêtre.
+		 *  	Bit 7-6 - Couleur numéro 3
+		 *  	Bit 5-4 - Couleur numéro 2
+		 *   	Bit 3-2 - Couleur numéro 1
+		 *   	Bit 1-0 - Couleur numéro 0
+		 * 	Les 4 couleur par defaut:
+		 *   	0  Blanc
+		 *   	1  Gris clair
+		 *		2  Gris foncé
+		 *     	3  Noir
+		 */
 		unsigned char _bgPaletteValue = 0b00011011;
+		//! Byte représentant la palette de couleurs (0) pour les Sprites. (FF48)
+		//! Même fonctionnement que la BGP mais la couleur numéro 0 est transparente.
 		unsigned char _objectPalette0Value = 0b00011011;
+		//! Byte représentant la palette de couleurs (1) pour les Sprites. (FF49)
+		//! Même fonctionnement que la BGP mais la couleur numéro 0 est transparente.
 		unsigned char _objectPalette1Value = 0b00011011;
 
+		//! Tableau de bytes représentant les tiles présente dans la VRAM.
 		unsigned char *_tiles = nullptr;
+		//! Tableau de bytes représentant des sprites présents à l'écran.
 		unsigned char *_spritesMap = nullptr;
+		//! Tableau de bytes représentant le Background de l'écran.
 		unsigned char *_backgroundMap = nullptr;
 
+		//! Cycles GPU.
 		unsigned _cycles = 0;
+
+		//! Tableau de tiles a mettre à jour sur l'écran.
 		std::vector<unsigned> _tilesToUpdate;
 
 		/*! @struct Sprite
 		 *  @brief struct représentant un sprite dans l'OAM.
 		 */
 		struct Sprite {
-			unsigned char x;
-			unsigned char y;
-			unsigned char texture_id;
+			unsigned char x;				//! Position du sprite sur l'axe des abscisses.
+			unsigned char y;				//! Position du sprite sur l'axe des ordonnées.
+			unsigned char texture_id;		//! ID de texture utilisé par le sprite.
 			union {
 				struct {
-					unsigned char cgb_palette_number:3;
-					bool tile_bank:1;
-					bool palette_number:1;
-					bool x_flip:1;
-					bool y_flip:1;
-					bool priority:1;
+					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
+					bool tile_bank:1; 						//! CGB uniquement (non utilisé).
+					bool palette_number:1;					//! Palette de couleurs utilisé par le sprite (0 ou 1).
+					bool x_flip:1;							//! Symetrie horizontal.
+					bool y_flip:1;							//! Symetrie Vertical.
+					bool priority:1;						//! Si 1 le sprite est afficher par dessus le Background.
+															//! Si 0 le sprite est afficher en dessous du Background.
 				};
 				unsigned char flags;
 			};
@@ -152,19 +204,19 @@ namespace GBEmulator
 		 */
 		unsigned char getMode() const;
 		/*!
-		 * @brief Obtient la ligne d'écriture de pixel sur le LCD.
-		 * @return le numero de la ligne (0-153)
+		 * @brief Obtient la ligne à laquelle le GPU écrit sur le LCD.
+		 * @return le numéro de la ligne (entre 0 et 153)
 		 */
 		unsigned char getCurrentLine() const;
 		/*!
 		 * @brief Lit la VRAM
-		 * @param address: position du byte lu.
+		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
 		unsigned char readVRAM(unsigned short address) const;
 		/*!
 		 * @brief Lit l'OAM
-		 * @param address: position du byte lu.
+		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
 		unsigned char readOAM(unsigned short address) const;
@@ -225,13 +277,13 @@ namespace GBEmulator
 		void updateOAM();
 		/*!
 		 * @brief Ecrit sur la VRAM
-		 * @param address: position du byte à écrire.
+		 * @param address: position à laquelle écrire.
 		 * @param value: valeur à écrire.
 		 */
 		void writeVRAM(unsigned short address, unsigned char value);
 		/*!
 		 * @brief Ecrit sur l'OAM
-		 * @param address: position du byte à écrire?
+		 * @param address: position à laquelle écrire.
 		 * @param value: valeur à écrire.
 		 */
 		void writeOAM(unsigned short address, unsigned char value);
