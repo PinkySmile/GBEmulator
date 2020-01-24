@@ -44,27 +44,36 @@ namespace GBEmulator::Timing
 		 * @return La fréquence en Hertz en fonction des bits 1 et 0 de l'input clock du Timer Control
 		 */
 		unsigned getFrequency() const;
-		/*! @brief Retourne l'octet Timer Control
-		 * @return La valeur de l'octet Timer Control
-		 */
+		//! @brief Retourne l'octet Timer Control
+		//!@return La valeur de l'octet Timer Control
+		//! @details
+		//! Bit 2    - Timer Stop  (0=Arrêté, 1=Démarré)
+		//! Bits 1-0 - Fréquence de l'horloge
+		//!           00:   4096 Hz    (~4194 Hz SGB)
+		//!           01: 262144 Hz  (~268400 Hz SGB)
+		//!           10:  65536 Hz   (~67110 Hz SGB)
+		//!           11:  16384 Hz   (~16780 Hz SGB)
 		unsigned char getControlByte() const;
-		/*! @brief Retourne le compteur du Timer Counter
-		 * @return La valeur de l'octet Timer Counter
-		 */
+		//! @brief Retourne le compteur du Timer Counter
+		//! @return La valeur de l'octet Timer Counter
 		unsigned char getCounter() const;
 
 		/*! @brief Permet de renseigner la nouvelle valeur dans _counter.
 		 * @param byte Nouvelle valeur du _counter.
 		 */
 		void setCounter(unsigned char byte);
-		/*! @brief Permet de renseigner la nouvelle valeur dans _byte.
-		 *
-		 * @param byte Nouvelle valeur du _byte.
-		 */
+		//! @brief Permet de renseigner la nouvelle valeur dans _byte.
+		//!@param byte Nouvelle valeur du _byte.
+		//! @details
+		//! Bit 2    - Timer Stop  (0=Arrêté, 1=Démarré)
+		//! Bits 1-0 - Fréquence de l'horloge
+		//!           00:   4096 Hz    (~4194 Hz SGB)
+		//!           01: 262144 Hz  (~268400 Hz SGB)
+		//!           10:  65536 Hz   (~67110 Hz SGB)
+		//!           11:  16384 Hz   (~16780 Hz SGB)
 		void setControlByte(unsigned char byte);
 		/*!@brief Permet de mettre à jour _cycles et _counter.
-		 *
-		 * @param cycles Le nombre de cycles actuel
+		 * @param cycles Le nombre de cycles CPU écoulés
 		 * @return Si le counter tombe à 0, retourne True, sinon False.
 		 */
 		bool update(unsigned cycles);
