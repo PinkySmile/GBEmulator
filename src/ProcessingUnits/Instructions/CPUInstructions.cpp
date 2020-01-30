@@ -200,7 +200,7 @@ namespace GBEmulator::Instructions
 			);
 		}
 		value1 += value2;
-		return ARITHMETIC_OPERATION_CYCLE_DURATION * 4;
+		return ARITHMETIC_OPERATION_CYCLE_DURATION * 3;
 	}
 
 	unsigned char ADD16(CPU::Registers &reg, unsigned short &value1, unsigned short value2)

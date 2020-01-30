@@ -246,7 +246,7 @@ namespace GBEmulator::Instructions {
 
 		//! 3A; LDD a,(hl): Load the value pointed to by hl to a and decrements hl
 		case 0x3A:
-			return LD8fromPTR(cpu, reg.a, reg.hl--) + FETCH_ARGUMENT8_CYLCE_DURATION;
+			return LD8fromPTR(cpu, reg.a, reg.hl--);
 
 		//! 3B; DEC sp: Subtracts one from sp.
 		case 0x3B:
@@ -262,7 +262,7 @@ namespace GBEmulator::Instructions {
 
 		//! 3E; LD a,*: Loads * into a.
 		case 0x3E:
-			return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT16_CYLCE_DURATION;
+			return LD8(reg.a, cpu.fetchArgument()) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
 		//! 3F; CCF: Inverts the carry flag.
 		case 0x3F:
@@ -898,7 +898,7 @@ namespace GBEmulator::Instructions {
 
 		//! E0; LD (FF00+*),a: Load a to the address $FF00+*
 		case 0xE0:
-			return LD8toPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a);
+			return LD8toPTR(cpu, 0xFF00 + cpu.fetchArgument(), reg.a) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
 		//! E1; POP hl: The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again.
 		case 0xE1:
@@ -974,7 +974,8 @@ namespace GBEmulator::Instructions {
 
 		//! F9; LD sp,hl: Loads the value of hl into sp.
 		case 0xF9:
-			return LD16(reg.sp, reg.hl);
+			LD16(reg.sp, reg.hl);
+			return 8; // Fix à l'arache
 
 		//! FA; LD a,(**): Load the value pointed to by address ** to a
 		case 0xFA:
