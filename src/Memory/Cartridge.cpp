@@ -160,7 +160,7 @@ namespace GBEmulator::Memory
 		case HuC3:
 			if (address >= 0xA000 && this->_ram.getSize())
 				return this->_ram.read(address - 0xA000);
-			else if (address < 0x7FFF)
+			else if (address < 0x8000)
 				return this->_rom.read(address - 0x4000);
 			return 0xFF;
 		default:

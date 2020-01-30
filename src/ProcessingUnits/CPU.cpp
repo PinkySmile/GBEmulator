@@ -236,26 +236,23 @@ namespace GBEmulator
 	{
 		unsigned gpuInts = this->_gpu.update(cycles);
 
-		this->_interruptRequest |= gpuInts;
-		this->_interruptRequest &= (0b11111100U | gpuInts);
+		this->_hardwareInterruptRequests = 0;
+
+		this->_hardwareInterruptRequests |= gpuInts;
 
 		if (this->_cable.triggerInterrupt())
-			this->_interruptRequest |= SERIAL_INTERRUPT;
-		else
-			this->_interruptRequest &= ~SERIAL_INTERRUPT;
+			this->_hardwareInterruptRequests |= SERIAL_INTERRUPT;
 		this->_cable.update(cycles);
 
 		if (this->_timer.update(cycles))
 			this->_interruptRequest |= TIMER_INTERRUPT;
-		else
-			this->_interruptRequest &= ~TIMER_INTERRUPT;
 
 		this->_apu.update(cycles);
 	}
 
 	bool CPU::_checkInterrupts()
 	{
-		unsigned char mask = this->_interruptRequest;
+		unsigned char mask = this->_interruptRequest | this->_hardwareInterruptRequests;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if (mask & (1U << i))
@@ -267,6 +264,7 @@ namespace GBEmulator
 	{
 		this->_halted = false;
 		this->_interruptRequest &= ~(1U << id);
+		this->_hardwareInterruptRequests &= ~(1U << id);
 
 		if (!this->_interruptMasterEnableFlag || !((1U << id) & this->_interruptEnabled))
 			return;
