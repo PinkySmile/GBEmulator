@@ -224,10 +224,10 @@ namespace GBEmulator
 		if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
-		} else if (this->_cycles % 456 == 0 && (this->_control & 0b00000010U)) {
+		} else if (this->_cycles % DEVIDER == 0 && (this->_control & 0b00000010U)) {
 			this->updateOAM();
 		} else if (this->getMode() == 3)
-			this->_drawPixel(this->_cycles % 456 - 83, this->getCurrentLine());
+			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
 
 		this->_cycles++;
 
@@ -324,9 +324,9 @@ namespace GBEmulator
 			return 0;
 		if (this->getCurrentLine() >= 144)
 			return 1;
-		if (this->_cycles % 456 < 83)
+		if (this->_cycles % DEVIDER < DEVIDER - 373)
 			return 2;
-		if (this->_cycles % 456 < 243)
+		if (this->_cycles % DEVIDER < DEVIDER - 213)
 			return 3;
 		return 0;
 	}
