@@ -345,6 +345,18 @@ namespace GBEmulator
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 
+		case BGPI:
+			return this->_bgpi | (this->_autoIncrementBgpi << 7U);
+
+		case BGPD:
+			return this->_gpu.readBGPD(this->_bgpi);
+
+		case OBPI:
+			return this->_obpi | (this->_autoIncrementObpi << 7U);
+
+		case OBPD:
+			return this->_gpu.readOBPD(this->_bgpi);
+
 		case TIMER_CONTROL:
 			return this->_timer.getControlByte();
 
@@ -384,6 +396,7 @@ namespace GBEmulator
 				this->_halted = true;
 			else
 				this->_internalRomEnabled = false;
+			this->_registers.a = 11;
 			break;
 
 		case TIMER_CONTROL:
@@ -394,6 +407,26 @@ namespace GBEmulator
 
 		case LCDC_STAT:
 			return this->_gpu.setStatByte(value);
+
+		case BGPI:
+			this->_bgpi = value & 0x3FU;
+			this->_autoIncrementBgpi = value >> 7U;
+			break;
+
+		case BGPD:
+			this->_gpu.writeBGPD(this->_bgpi, value);
+			this->_bgpi += this->_autoIncrementBgpi;
+			return;
+
+		case OBPI:
+			this->_obpi = value & 0x3FU;
+			this->_autoIncrementObpi = value >> 7U;
+			break;
+
+		case OBPD:
+			this->_gpu.writeBGPD(this->_obpi, value);
+			this->_obpi += this->_autoIncrementObpi;
+			return;
 
 		//TODO: Add inaccessibility of everything but HRAM during DMA and copy only when OAM is accessible
 		case OAM_DMA:

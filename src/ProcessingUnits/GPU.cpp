@@ -27,16 +27,20 @@ namespace GBEmulator
 		_screen(screen),
 		_tiles(new unsigned char [NB_TILES]),
 		_spritesMap(new unsigned char [256 * 256]),
-		_backgroundMap(new unsigned char [BG_MAP_SIZE])
+		_backgroundMap(new unsigned char [BG_MAP_SIZE]),
+		_bgpd(0x40, 0x7FFF),
+		_obpd(0x40)
 	{
 		std::memset(this->_spritesMap, 0, 256 * 256);
 		screen.setMaxSize(160, 144);
 		screen.clear();
 		screen.display();
 		for (int i = 0; i < NB_TILES; i++)
-			this->_tiles[i] = rand() & 0b11;
+			this->_tiles[i] = rand() & 0b11U;
 		for (int i = 0; i < BG_MAP_SIZE; i++)
-			this->_backgroundMap[i] = rand() & 0xFF;
+			this->_backgroundMap[i] = rand() & 0xFFU;
+		for (int i = 0; i < 0x40; i++)
+			this->_obpd[i] = rand() & 0xFFFFU;
 	}
 
 	GPU::~GPU()
@@ -120,6 +124,36 @@ namespace GBEmulator
 			return;
 
 		this->_oam.write(address, value);
+	}
+
+	unsigned char GPU::readBGPD(unsigned short address) const
+	{
+		if (address % 2)
+			return this->_bgpd[address / 2] & 0xFFU;
+		return this->_bgpd[address / 2] >> 8U;
+	}
+
+	void GPU::writeBGPD(unsigned short address, unsigned char value)
+	{
+		if (address % 2)
+			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0xFF00U) | value;
+		else
+			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0x00FFU) | (value << 8U);
+	}
+
+	unsigned char GPU::readOBPD(unsigned short address) const
+	{
+		if (address % 2)
+			return this->_obpd[address / 2] & 0xFFU;
+		return this->_obpd[address / 2] >> 8U;
+	}
+
+	void GPU::writeOBPD(unsigned short address, unsigned char value)
+	{
+		if (address % 2)
+			this->_bgpd[address / 2] = (this->_obpd[address / 2] & 0xFF00U) | value;
+		else
+			this->_bgpd[address / 2] = (this->_obpd[address / 2] & 0x00FFU) | (value << 8U);
 	}
 
 	unsigned char GPU::_getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y)

@@ -123,6 +123,10 @@ namespace GBEmulator
 			LCD_WINDOW_Y            = 0x4A,
 			LCD_WINDOW_X            = 0x4B,
 			INTERNAL_ROM_ENABLE     = 0x50,
+			BGPI                    = 0x68,
+			BGPD                    = 0x69,
+			OBPI                    = 0x6A,
+			OBPD                    = 0x6B,
 		};
 
 
@@ -190,13 +194,13 @@ namespace GBEmulator
 		 * @param cable Emulateur de CableLink
 		 */
 		CPU(
-				ISound &channelOne,
-				ISound &channelTwo,
-				ISound &channelThree,
-				ISound &channelFour,
-				Graphics::ILCD &window,
-				Input::JoypadEmulator &joypad,
-				Network::CableInterface &cable
+			ISound &channelOne,
+			ISound &channelTwo,
+			ISound &channelThree,
+			ISound &channelFour,
+			Graphics::ILCD &window,
+			Input::JoypadEmulator &joypad,
+			Network::CableInterface &cable
 		);
 
 		//! Met le CPU en mode 'halted'
@@ -293,8 +297,15 @@ namespace GBEmulator
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
+		//! L'index de la palette de couleur du fond (BGPI)
+		unsigned char _bgpi = 0;
+		//! True si l'index de la palette de couleur du fond (BGPI) doit être incrémenté après chaque écriture
+		bool _autoIncrementBgpi = false;
+		//! L'index de la palette de couleur des sprites (OBPI)
+		unsigned char _obpi = 0;
+		//! True si l'index de la palette de couleur des sprites (OBPI) doit être incrémenté après chaque écriture
+		bool _autoIncrementObpi = false;
 
-		void _handleInterrupts(unsigned char);
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
 		void _updateComponents(unsigned int cycles);

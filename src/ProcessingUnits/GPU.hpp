@@ -68,12 +68,12 @@ namespace GBEmulator
   		 *	Bit 5 - Mode 2 OAM Interrupt         (1=Activé) (Lecture/Ecriture)
   		 *	Bit 4 - Mode 1 V-Blank Interrupt     (1=Activé) (Lecture/Ecriture)
   		 *	Bit 3 - Mode 0 H-Blank Interrupt     (1=Activé) (Lecture/Ecriture)
-  		 *	Bit 2 - Flag de coincidence  (0:LYC<>LY, 1:LYC=LY) (Lecture/Ecriture)
+		 *	Bit 2 - Flag de coincidence  (0:LYC<>LY, 1:LYC=LY) (Lecture/Ecriture)
   		 *	Bit 1-0 - Mode Flag       (Mode 0-3, see below) (Lecture/Ecriture)
-         *   	0: Pendant le H-Blank
-         *   	1: Pendant le V-Blank
-         *   	2: Pendant la recherche dans l'OAM ou la RAM
-         *   	3: Pendant le transfert de données vers le LCD
+		 *   	0: Pendant le H-Blank
+		 *   	1: Pendant le V-Blank
+		 *   	2: Pendant la recherche dans l'OAM ou la RAM
+		 *   	3: Pendant le transfert de données vers le LCD
 		 */
 		unsigned char _stat = 0;
 		//! Byte correspondant à la comparaison entre les valeurs des registre LYC et LY. (FF45)
@@ -106,7 +106,7 @@ namespace GBEmulator
 		 * 	Les 4 couleur par defaut:
 		 *   	0  Blanc
 		 *   	1  Gris clair
-		 *		2  Gris foncé
+		 *      2  Gris foncé
 		 *     	3  Noir
 		 */
 		unsigned char _bgPaletteValue = 0b00011011;
@@ -127,6 +127,12 @@ namespace GBEmulator
 		//! Cycles GPU.
 		unsigned _cycles = 0;
 
+		//! Palette de couleur du background.
+		std::vector<unsigned short> _bgpd;
+
+		//! Palette de couleur des sprites.
+		std::vector<unsigned short> _obpd;
+
 		//! Tableau de tiles a mettre à jour sur l'écran.
 		std::vector<unsigned> _tilesToUpdate;
 
@@ -134,18 +140,18 @@ namespace GBEmulator
 		 *  @brief struct représentant un sprite dans l'OAM.
 		 */
 		struct Sprite {
-			unsigned char x;				//! Position du sprite sur l'axe des abscisses.
-			unsigned char y;				//! Position du sprite sur l'axe des ordonnées.
-			unsigned char texture_id;		//! ID de texture utilisé par le sprite.
+			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
+			unsigned char y;                //! Position du sprite sur l'axe des ordonnées.
+			unsigned char texture_id;       //! ID de texture utilisé par le sprite.
 			union {
 				struct {
 					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
-					bool tile_bank:1; 						//! CGB uniquement (non utilisé).
-					bool palette_number:1;					//! Palette de couleurs utilisé par le sprite (0 ou 1).
-					bool x_flip:1;							//! Symetrie horizontal.
-					bool y_flip:1;							//! Symetrie Vertical.
-					bool priority:1;						//! Si 1 le sprite est afficher par dessus le Background.
-															//! Si 0 le sprite est afficher en dessous du Background.
+					bool tile_bank:1;                       //! CGB uniquement (non utilisé).
+					bool palette_number:1;                  //! Palette de couleurs utilisé par le sprite (0 ou 1).
+					bool x_flip:1;                          //! Symetrie horizontal.
+					bool y_flip:1;                          //! Symetrie Vertical.
+					bool priority:1;                        //! Si 1 le sprite est afficher par dessus le Background.
+					                                        //! Si 0 le sprite est afficher en dessous du Background.
 				};
 				unsigned char flags;
 			};
@@ -223,6 +229,18 @@ namespace GBEmulator
 		 */
 		unsigned char readOAM(unsigned short address) const;
 		/*!
+		 * @brief Lit la palette de couleur du fond (BackGround Palette Data)
+		 * @param address: position du byte a lire.
+		 * @return la valeur du byte lu.
+		 */
+		unsigned char readBGPD(unsigned short address) const;
+		/*!
+		 * @brief Lit la palette de couleur dues sprites (OBjects Palette Data)
+		 * @param address: position du byte a lire.
+		 * @return la valeur du byte lu.
+		 */
+		unsigned char readOBPD(unsigned short address) const;
+		/*!
 		 * @brief Obtient le LCD Control Register (FF40)
 		 * @return la valeur byte
 		 */
@@ -289,6 +307,18 @@ namespace GBEmulator
 		 * @param value: valeur à écrire.
 		 */
 		void writeOAM(unsigned short address, unsigned char value);
+		/*!
+		 * @brief Ecrit sur la palette de couleur du fond (BackGround Palette Data)
+		 * @param address: position à laquelle écrire.
+		 * @param value: valeur à écrire.
+		 */
+		void writeBGPD(unsigned short address, unsigned char value);
+		/*!
+		 * @brief Lit la palette de couleur dues sprites (OBjects Palette Data)
+		 * @param address: position du byte a lire.
+		 * @return la valeur du byte lu.
+		 */
+		void writeOBPD(unsigned short address, unsigned char value);
 		/*!
 		 * @brief Ecrit le byte LCD Monochrome Palettes (FF47)
 		 * @param value: la valeur à écrire.
