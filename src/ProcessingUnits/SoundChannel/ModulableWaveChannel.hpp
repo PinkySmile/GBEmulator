@@ -12,7 +12,7 @@
 #include "SoundChannel.hpp"
 #include "../../Memory/Memory.hpp"
 
-#define CHANSIZE_WPRAM 0xF
+#define CHANSIZE_WPRAM 16
 
 namespace GBEmulator::SoundChannel
 {

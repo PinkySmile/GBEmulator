@@ -121,6 +121,8 @@ int main(int argc, char **argv)
 	window.setFramerateLimit(60);
 	window.setView(view);
 
+//	channel3.setDisabled(true);
+
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
 

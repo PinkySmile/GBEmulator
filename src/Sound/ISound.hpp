@@ -18,6 +18,7 @@ namespace GBEmulator {
      */
     class ISound {
     public:
+    	virtual ~ISound() = default;
         /*!
          * @brief Permet d'arrêter ou de reprendre la lecture du son d'un channel de son.
          * @param disabled True -> Arrêter / False -> Reprendre

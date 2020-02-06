@@ -42,6 +42,7 @@ namespace GBEmulator
 	GPU::~GPU()
 	{
 		delete[] this->_tiles;
+		delete[] this->_spritesMap;
 		delete[] this->_backgroundMap;
 	}
 

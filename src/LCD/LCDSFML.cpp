@@ -11,7 +11,6 @@
 
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
 	sf::RenderWindow(mode, title),
-	_tiles(nullptr),
 	_screen(new sf::Color[160 * 144]),
 	_title(title),
 	_view({80, 72}, {160, 144})

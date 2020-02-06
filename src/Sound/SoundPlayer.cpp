@@ -56,14 +56,14 @@ namespace GBEmulator
 		this->_soundSO2.setBuffer(this->_soundBuffer);
 		this->_soundSO1.setVolume(this->_volume * this->_volumeSO1 / 100);
 		this->_soundSO2.setVolume(this->_volume * this->_volumeSO2 / 100);
-		if (!this->_disabled) {
-			this->_soundSO1.play();
-			this->_soundSO2.play();
-		}
 		this->_soundSO1.setLoop(true);
 		this->_soundSO2.setLoop(true);
 		this->_soundSO1.setPosition(1, 0, 0);
 		this->_soundSO2.setPosition(-1, 0, 0);
+		if (!this->_disabled) {
+			this->_soundSO1.play();
+			this->_soundSO2.play();
+		}
 	}
 
 	void SoundPlayer::setVolume(float volume)

@@ -286,9 +286,9 @@ namespace GBEmulator
 		//! True si l'interrupt est activé
 		unsigned char _interruptEnabled;
 		//! True si l'interrupt est demandé
-		unsigned char _interruptRequest;
+		unsigned char _interruptRequest = 0;
 		//! True si l'interrupt est demandé
-		unsigned char _hardwareInterruptRequests;
+		unsigned char _hardwareInterruptRequests = 0;
 		//! True si les interrupts sont activés
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link

@@ -22,7 +22,6 @@ namespace GBEmulator
 		 */
 		class LCDSFML : public ILCD, public sf::RenderWindow {
 		private:
-			unsigned char *_tiles;
 			sf::Color     *_screen;
 			std::string   _title;
 			sf::Clock     _fpsClock;

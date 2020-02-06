@@ -26,6 +26,7 @@ namespace GBEmulator {
 		 * Lance la lecture d'un son sur deux sorties différentes (SO1 et SO2) en volume 0.
 		 */
 		SoundPlayer();
+		~SoundPlayer() override = default;
 
 		void setDisabled(bool disabled) override;
 		void setPitch(float frequency) override;

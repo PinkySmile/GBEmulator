@@ -38,6 +38,7 @@ namespace GBEmulator::Graphics
 	 */
 	class ILCD {
 	public:
+		virtual ~ILCD() = default;
 		friend Debugger::Debugger;
 		/*!
 		 * @brief Définie la taille de l'écran
