@@ -179,8 +179,6 @@ namespace GBEmulator
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
 
 		case APU_RANGE:
-			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
-
 		case WPRAM_RANGE:
 			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
 
@@ -237,7 +235,6 @@ namespace GBEmulator
 		unsigned gpuInts = this->_gpu.update(cycles);
 
 		this->_hardwareInterruptRequests = 0;
-
 		this->_hardwareInterruptRequests |= gpuInts;
 
 		if (this->_cable.triggerInterrupt())
@@ -255,22 +252,22 @@ namespace GBEmulator
 		unsigned char mask = this->_interruptRequest | this->_hardwareInterruptRequests;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
-			if (mask & (1U << i))
-				return this->_executeInterrupt(i), true;
+			if ((mask & (1U << i)) && this->_executeInterrupt(i))
+				return true;
 		return false;
 	}
 
-	void CPU::_executeInterrupt(unsigned int id)
+	bool CPU::_executeInterrupt(unsigned int id)
 	{
 		this->_halted = false;
-		this->_interruptRequest &= ~(1U << id);
-		this->_hardwareInterruptRequests &= ~(1U << id);
 
 		if (!this->_interruptMasterEnableFlag || !((1U << id) & this->_interruptEnabled))
-			return;
+			return false;
 
+		this->_interruptRequest &= ~(1U << id);
 		Instructions::CALL(*this, this->_registers, INTERRUPT_CODE_OFFSET + id * INTERRUPT_CODE_SIZE);
 		this->_interruptMasterEnableFlag = false;
+		return true;
 	}
 
 	unsigned char CPU::_generateJoypadByte() const
@@ -355,7 +352,7 @@ namespace GBEmulator
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
-			return this->_interruptRequest | 0b11100000U;
+			return this->_interruptRequest | this->_hardwareInterruptRequests | 0b11100000U;
 
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;

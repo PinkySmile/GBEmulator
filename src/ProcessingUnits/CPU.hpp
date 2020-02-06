@@ -303,7 +303,7 @@ namespace GBEmulator
 		//! @brief Recupère et execute la prochaine instruction.
 		void _executeNextInstruction();
 		//! @brief Execute une interuption.
-		void _executeInterrupt(unsigned int id);
+		bool _executeInterrupt(unsigned int id);
 		//! @brief Génère le byte de l'I/O port du joypad.
 		//! @return Le byte généré.
 		//! @details http://problemkaputt.de/pandocs.htm#joypadinput
