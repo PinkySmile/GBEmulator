@@ -9,29 +9,15 @@
 ;    de -> Not preserved
 ;    hl -> Not preserved
 init::
-	push af
+	call waitVBLANK
+	reset LCD_CONTROL
+	ei
+	reg INTERRUPT_ENABLED, SERIAL_INTERRUPT | VBLANK_INTERRUPT
 	xor a
 	ld bc, $2000
 	ld de, $C000
 	call fillMemory
-	pop af
-	ret
-
-; Setups the GBC palette data
-; Params:
-;    None
-; Return:
-;    None
-; Registers:
-;    af -> Not preserved
-;    bc -> Preserved
-;    de -> Preserved
-;    hl -> Not preserved
-setupGBCPalette::
-	ld a, $86;
-	ld hl, BGPI
-	ld [hli], a
-	xor a
-	ld [hl], a
-	ld [hl], a
+	ld bc, $2000
+	ld de, $8000
+	call fillMemory
 	ret

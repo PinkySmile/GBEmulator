@@ -6,7 +6,7 @@ LD = rgblink
 
 FIX = rgbfix
 
-FIXFLAGS = -Cjsv -k 01 -l 0x33 -m 0x1f -p 0 -r 00 -t "`echo "$(NAME)" | tr a-z A-Z | tr "_" " "`"
+FIXFLAGS = -jsv -k 01 -l 0x33 -m 0x01 -p 0 -r 00 -t "`echo "$(NAME)" | tr a-z A-Z | tr "_" " "`"
 
 ASMFLAGS =
 
@@ -25,16 +25,16 @@ IMGSFX = $(IMGS:%.png=%.fx)
 
 OBJS = $(SRCS:%.asm=%.o)
 
-all:	tools/compressor $(NAME).gbc
+all:	tools/compressor $(NAME).gb
 
 tools/compressor:
 	$(MAKE) -C tools compressor
 
 run:	re
-	wine "$(BGB_PATH)" ./$(NAME).gbc
+	wine "$(BGB_PATH)" ./$(NAME).gb
 
 runw:	re
-	"$(BGB_PATH)" ./$(NAME).gbc
+	"$(BGB_PATH)" ./$(NAME).gb
 
 %.fx : %.png
 	$(FX) $(FXFLAGS) -o $@ $<
@@ -43,7 +43,7 @@ runw:	re
 %.o : %.asm
 	$(ASM) -o $@ $(ASMFLAGS) $<
 
-$(NAME).gbc:	$(IMGSFX) $(OBJS)
+$(NAME).gb:	$(IMGSFX) $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 	$(FIX) $(FIXFLAGS) $@
 
@@ -53,6 +53,6 @@ clean:
 
 fclean:	clean
 	$(MAKE) -C tools fclean
-	$(RM) $(NAME).gbc
+	$(RM) $(NAME).gb
 
 re:	fclean all

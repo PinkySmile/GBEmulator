@@ -58,6 +58,9 @@ timer_interrupt::
 ;    de -> Preserved
 ;    hl -> Preserved
 serial_interrupt::
+	push af
+	reg INTERUPT_OCCURED, $05
+	pop af
 	reti
 
 ; Joypad interrupt handler

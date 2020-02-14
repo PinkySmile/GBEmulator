@@ -335,3 +335,42 @@ typeText::
 
 	ret
 
+getKeys::
+	ld hl, $FF00
+	ld a, %00010000
+	ld [hl], a
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	and a, $F
+	ld b, a
+	swap b
+
+	ld a, %00100000
+	ld [hl], a
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	ld a, [hl]
+	and a, $F
+	or b
+	ret
+
+my_put_nbr::
+	ld b, a
+
+	swap a
+	and a, $F
+	add a, $30
+	ld [de], a
+	inc de
+
+	ld a, b
+	and a, $F
+	add a, $30
+	ld [de], a
+	inc de
+	ret
