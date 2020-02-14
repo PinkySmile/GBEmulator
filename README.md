@@ -29,11 +29,11 @@ When the Gameboy™ Emulator is launched with a ``-d`` argument, a new window op
 You can enter some commands in this prompt:
 
     help: Display all commands
-    jump \<addr>: make the Gameboy™ just to a specific adress.
+    jump <addr>: make the Gameboy™ just to a specific adress.
     next: continue the instruction flow until the next line.
     step: execute the current instruction.
     continue: continue the instruction flow until the next breakpoint.
-    ram [\<border1> \<border2>]: dump ram content from \<border 1> to \<border 2>.
-    print \<value>: if a register is passed, print value in this register, if an address is passed, print value at this address.
+    ram [<border1> <border2>]: dump ram content from <border 1> to <border 2>.
+    print <value>: if a register is passed, print value in this register, if an address is passed, print value at this address.
     registers: dump all registers value.
-    break \<addr>: set breakpoint at the given address
+    break <addr>: set breakpoint at the given address
