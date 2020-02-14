@@ -133,7 +133,7 @@ namespace GBEmulator::Debugger
 
 	public:
 		//! Constructeur du debugger
-		Debugger(CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
+		Debugger(const std::string &programPath, CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
 		//! Destructeur du debugger
 		~Debugger();
 

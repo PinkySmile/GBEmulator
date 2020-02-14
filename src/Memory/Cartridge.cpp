@@ -101,7 +101,7 @@ namespace GBEmulator::Memory
 				mem[i] = rand() % 0x100;
 			this->_ramMem = mem;
 
-			this->_savePath = rom.substr(0, rom.find('.')) + ".sav";
+			this->_savePath = rom.substr(0, rom.find_last_of('.')) + ".sav";
 			stream = fopen(this->_savePath.c_str(), "rb");
 			if (stream) {
 				fread(mem, 1, size, stream);

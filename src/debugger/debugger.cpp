@@ -39,14 +39,14 @@ namespace GBEmulator::Debugger
 		2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 1, 1, 2, 1
 	};
 
-	Debugger::Debugger(GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
+	Debugger::Debugger(const std::string &programPath, GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
 		_cpu(cpu),
 		_window(window),
 		_input(input)
 	{
 		this->_memBeg = 0x0000;
 
-		this->_font.loadFromFile("../courier.ttf");
+		this->_font.loadFromFile(programPath + "/courier.ttf");
 
 		this->_memory.setFont(this->_font);
 		this->_memory.setCharacterSize(14);
@@ -271,12 +271,12 @@ namespace GBEmulator::Debugger
 		stream << "$" << Instructions::intToHex(address, 4) << ": ";
 		stream << Instructions::_instructionsString[this->_cpu.read(address)](this->_cpu, address + 1) << std::endl;
 	}
-	
+
 	void Debugger::_displayCurrentLine(std::ostream &stream)
 	{
 		this->_displayCurrentLine(this->_cpu._registers.pc, stream);
 	}
-	
+
 	void Debugger::_checkCommands(bool &dbg, std::istream &inputStream)
 	{
 		std::string line;
