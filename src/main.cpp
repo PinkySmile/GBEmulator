@@ -54,7 +54,8 @@ Args parseArguments(int argc, char **argv)
 	struct option long_options[] = {
 		{"debug",   no_argument,       nullptr, 'd'},
 		{"listen",  required_argument, nullptr, 'l'},
-		{"connect", required_argument, nullptr, 'c'}
+		{"connect", required_argument, nullptr, 'c'},
+		{nullptr,   no_argument,       nullptr, 0}
 	};
 
 	while (true) {
