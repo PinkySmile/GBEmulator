@@ -37,3 +37,7 @@ You can enter some commands in this prompt:
     print <value>: if a register is passed, print value in this register, if an address is passed, print value at this address.
     registers: dump all registers value.
     break <addr>: set breakpoint at the given address
+
+## Documentation
+
+You can see the whole documentation here: https://gegel85.github.io/GBEmulator/annotated.html
