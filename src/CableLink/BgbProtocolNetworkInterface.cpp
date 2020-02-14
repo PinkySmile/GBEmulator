@@ -50,12 +50,12 @@ namespace GBEmulator::Network
 
 	void BGBProtocolCableInterface::_sendByte(unsigned char sbyte)
 	{
-		//std::cout << "Sending 0x" << std::hex << static_cast<int>(sbyte) << std::dec << std::endl;
+		std::cout << "Sending 0x" << std::hex << static_cast<int>(sbyte) << std::dec << std::endl;
 		if (this->isExternal())
 			this->_handler.reply(sbyte);
 		else {
 			this->_handler.sendByte(sbyte);
-			//this->_handler.waitAnswer(10);
+			this->_handler.waitAnswer(10);
 		}
 		if (!this->_handler.isConnected()) {
 			this->_isTransfering = false;

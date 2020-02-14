@@ -15,6 +15,7 @@
 
 #define TILE_DATA_SIZE 0x1800
 #define NB_TILES TILE_DATA_SIZE * 4
+#define NB_VRAM_BANK 2
 #define BG_MAP_SIZE 0x800
 #define OAM_SIZE 0xA0
 #define DEVIDER 457
@@ -97,6 +98,8 @@ namespace GBEmulator
 		signed short _windowX = 0;
 		//! Byte specifiant la position (sur l'axe des ordonnées) de la fenêtre  sur le BG. (FF4A)
 		unsigned char _windowY = 0;
+		//! Byte specifiant la bank de VRAM a utilisé.
+		bool _vramBankSwitch = false;
 		/*! Byte représentant la palette de couleur pour le background (BGP). (FF47)
 		 * 	Ce registre assigne des couleurs (teintes de gris) a leurs numéros pour les tiles du Background et de la fenêtre.
 		 *  	Bit 7-6 - Couleur numéro 3
@@ -118,11 +121,13 @@ namespace GBEmulator
 		unsigned char _objectPalette1Value = 0b00011011;
 
 		//! Tableau de bytes représentant les tiles présente dans la VRAM.
-		unsigned char *_tiles = nullptr;
+		unsigned char **_tiles = nullptr;
+		/*//! Tableau de bytes représentant les tiles présente dans la Bank 1 de la VRAM.
+		unsigned char *_tilesBank1 = nullptr;*/
 		//! Tableau de bytes représentant des sprites présents à l'écran.
 		unsigned char *_spritesMap = nullptr;
 		//! Tableau de bytes représentant le Background de l'écran.
-		unsigned char *_backgroundMap = nullptr;
+		unsigned char **_backgroundMap = nullptr;
 
 		//! Cycles GPU.
 		unsigned _cycles = 0;
@@ -241,6 +246,11 @@ namespace GBEmulator
 		 */
 		unsigned char readOBPD(unsigned short address) const;
 		/*!
+		 * @brief Obtient le byte indiquant la bank de VRAM utilisé.
+		 * @return false si bank 0 - true si bank 1.
+		 */
+		bool getVBK() const;
+		/*!
 		 * @brief Obtient le LCD Control Register (FF40)
 		 * @return la valeur byte
 		 */
@@ -319,6 +329,11 @@ namespace GBEmulator
 		 * @return la valeur du byte lu.
 		 */
 		void writeOBPD(unsigned short address, unsigned char value);
+		/*!
+		 * @brief Ecrit le byte indiquant la bank de VRAM utilisé.
+		 * @param value: la valeur à écrire.
+		 */
+		void setVBK(bool value);
 		/*!
 		 * @brief Ecrit le byte LCD Monochrome Palettes (FF47)
 		 * @param value: la valeur à écrire.

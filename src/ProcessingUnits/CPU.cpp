@@ -44,9 +44,9 @@ namespace GBEmulator
 		_directionEnabled(false),
 		_halted(false),
 		_stopped(false),
-		_ram(RAM_SIZE, RAM_SIZE),
+		_ram(RAM_SIZE, RAM_BANK_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{
+		_registers {
 			.af = 0,
 			.bc = 0,
 			.de = 0,
@@ -63,6 +63,7 @@ namespace GBEmulator
 		_interruptMasterEnableFlag(false),
 		_cable(cable)
 	{
+		this->_ram.setBank(1);
 	}
 
 	Memory::Cartridge& CPU::getCartridgeEmulator()
@@ -94,7 +95,10 @@ namespace GBEmulator
 			return this->_rom.read(address);
 
 		case WRAM_RANGE:
-			return this->_ram.read(address - WRAM_STARTING_ADDRESS);
+			return this->_ram.rawRead(address - WRAM_STARTING_ADDRESS);
+
+		case WRAMBX_RANGE:
+			return this->_ram.read(address - WRAMBX_STARTING_ADDRESS);
 
 		case ECHO_RAM_RANGE:
 			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
@@ -147,7 +151,10 @@ namespace GBEmulator
 
 	void CPU::stop()
 	{
-		this->_stopped = true;
+		this->_stopped = !this->_speedSwitch;
+		this->_speedSwitch = false;
+		this->_isDoubleSpeed = !this->_isDoubleSpeed;
+		//TODO: Implement double speed mode
 	}
 
 	bool CPU::isStopped() const
@@ -170,7 +177,10 @@ namespace GBEmulator
 			return this->_rom.write(address, value);
 
 		case WRAM_RANGE:
-			return this->_ram.write(address - WRAM_STARTING_ADDRESS, value);
+			return this->_ram.rawWrite(address - WRAM_STARTING_ADDRESS, value);
+
+		case WRAMBX_RANGE:
+			return this->_ram.write(address - WRAMBX_STARTING_ADDRESS, value);
 
 		case ECHO_RAM_RANGE:
 			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
@@ -369,6 +379,15 @@ namespace GBEmulator
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
 
+		case SVBK:
+			return this->_WRAMBank;
+
+		case KEY1:
+			return (0b01111110U | this->_speedSwitch) | (this->_isDoubleSpeed << 7U);
+
+		case VBK:
+			return this->_gpu.getVBK();
+
 		default:
 			return 0xFF;
 		}
@@ -396,7 +415,7 @@ namespace GBEmulator
 				this->_halted = true;
 			else
 				this->_internalRomEnabled = false;
-			this->_registers.a = 11;
+			this->_registers.a = 0x11;
 			break;
 
 		case TIMER_CONTROL:
@@ -476,6 +495,18 @@ namespace GBEmulator
 		case DIVIDER_REGISTER:
 			this->_divRegister = 0;
 			break;
+
+		case SVBK:
+			this->_WRAMBank = value & 7U;
+			this->_WRAMBank += this->_WRAMBank == 0;
+			this->_ram.setBank(this->_WRAMBank);
+			break;
+
+		case KEY1:
+			this->_speedSwitch = value & 0b00000001;
+
+		case VBK:
+			this->_gpu.setVBK(value & 0b00000001);
 
 		default:
 			break;

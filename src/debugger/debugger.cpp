@@ -601,7 +601,7 @@ namespace GBEmulator::Debugger
 			for (int yPos = 0; yPos < 24; yPos++) {
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[x + y * 8 + xPos * 64 + yPos * 8 * 8 * 16];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][x + y * 8 + xPos * 64 + yPos * 8 * 8 * 16];
 						auto &color = palette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 16 + y * 16 * 8] = {
@@ -642,7 +642,7 @@ namespace GBEmulator::Debugger
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][id * 64 + x + y * 8];
 						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 32 + y * 32 * 8] = {
@@ -696,7 +696,7 @@ namespace GBEmulator::Debugger
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][id * 64 + x + y * 8];
 						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 20 + y * 20 * 8] = {

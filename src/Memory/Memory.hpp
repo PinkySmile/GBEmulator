@@ -78,6 +78,11 @@ namespace GBEmulator::Memory
 		//! @param address Adresse à laquelle écrire.
 		//! @param value Valeur à écrire.
 		void write(unsigned short address,unsigned char value);
+		//! Écris la valeur à l'adresse de la mémoire en ignorant les banks et les permissions.
+		//! @param address Adresse à écrire.
+		//! @param value Valeur à écrire.
+		//! @return La valeur à l'adresse.
+		void rawWrite(unsigned short address,unsigned char value);
 		//! Écrit la valeur à l'adresse de la mémoire en ignorant les permissions
 		//! @param address Adresse à laquelle écrire.
 		//! @param value Valeur à écrire.

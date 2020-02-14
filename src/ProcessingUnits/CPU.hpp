@@ -21,6 +21,7 @@
 
 //! The total size of the working RAM
 #define RAM_SIZE 0x8000
+#define RAM_BANK_SIZE 0x1000
 
 //! The total size of te high RAM
 #define HRAM_SIZE 0x7F
@@ -51,8 +52,12 @@
 #define SRAM_RANGE 0xA000 ... 0xBFFF
 
 //! Working RAM
-#define WRAM_RANGE 0xC000 ... 0xDFFF
+#define WRAM_RANGE 0xC000 ... 0xCFFF
 #define WRAM_STARTING_ADDRESS 0xC000
+
+//! Working RAM
+#define WRAMBX_RANGE 0xD000 ... 0xDFFF
+#define WRAMBX_STARTING_ADDRESS 0xD000
 
 //! Echo RAM (Echoing the WRAM)
 #define ECHO_RAM_RANGE 0xE000 ... 0xFDFF
@@ -122,11 +127,14 @@ namespace GBEmulator
 			OBJECT_PALETTE_1        = 0x49,
 			LCD_WINDOW_Y            = 0x4A,
 			LCD_WINDOW_X            = 0x4B,
+			KEY1					= 0x4D,
+			VBK						= 0x4F,
 			INTERNAL_ROM_ENABLE     = 0x50,
 			BGPI                    = 0x68,
 			BGPD                    = 0x69,
 			OBPI                    = 0x6A,
 			OBPD                    = 0x6B,
+			SVBK					= 0x70,
 		};
 
 
@@ -305,6 +313,12 @@ namespace GBEmulator
 		unsigned char _obpi = 0;
 		//! True si l'index de la palette de couleur des sprites (OBPI) doit être incrémenté après chaque écriture
 		bool _autoIncrementObpi = false;
+		//! Bank utilisé dans la WRAM.
+		unsigned char _WRAMBank = 0;
+		//! Byte que permet de préparer un SpeedSwitch.
+		bool _speedSwitch = false;
+		//! Permet de retenir la vitesse actuelle.
+		bool _isDoubleSpeed = false;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
