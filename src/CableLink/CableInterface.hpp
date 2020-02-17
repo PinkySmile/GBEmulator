@@ -27,13 +27,13 @@ namespace GBEmulator::Network
 		//! @brief Est-ce qu'une interruption doit être envoyé.
 		bool _needInterrupt = false;
 		//! @brief Est-ce que l'horloge utilisée est celle de la console distante.
-		bool _isExternal = false;
+		bool _isExternal = true;
 		//! @brief Est-ce qu'un transfert est actif.
 		bool _isTransfering = false;
 
 	public:
 		//! @brief Le byte utilisé pour l'I/O ($FF01)
-		unsigned char byte = 0xFF;
+		unsigned char byte = 0x00;
 
 		//! @brief Change le byte de controle.
 		//! @param c_byte Le nouveau byte de controle
