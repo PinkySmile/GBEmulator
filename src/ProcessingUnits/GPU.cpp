@@ -94,8 +94,10 @@ namespace GBEmulator
 
 	void GPU::writeVRAM(unsigned short address, unsigned char value)
 	{
-		//if (this->getMode() == 3)
-		//	return;
+		//std::cout << std::hex << (int)value << " --> " << (int)address << std::endl;
+
+		if (this->getMode() == 3)
+			return;
 
 		if (address >= TILE_DATA_SIZE) {
 			this->_backgroundMap[this->_vramBankSwitch][address - TILE_DATA_SIZE] = value;
@@ -270,6 +272,9 @@ namespace GBEmulator
 			this->updateOAM();
 		} else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
+		else if ((this->_cycles % DEVIDER == 244) && this->_isTransferring) {
+		}
+
 
 		this->_cycles++;
 
@@ -464,5 +469,10 @@ namespace GBEmulator
 	void GPU::setVBK(bool value)
 	{
 		this->_vramBankSwitch = value & 0b1U;
+	}
+
+	void GPU::setIsTransferring(bool value)
+	{
+		this->_isTransferring = value;
 	}
 }

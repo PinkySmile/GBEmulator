@@ -385,6 +385,8 @@ namespace GBEmulator
 		 */
 		void setObjectPalette1(unsigned char value);
 
+		void setIsTransferring(bool value);
+
 		/*!
 		 * @brief Met à jour le GPU
 		 * Met à jour le GPU 'cycle' nombre de fois.
@@ -411,6 +413,9 @@ namespace GBEmulator
 		 * @return la tile map
 		 */
 		unsigned char *_getTileMap(bool alt);
+
+		//! Si HDMA transfert.
+		bool _isTransferring = false;
 
 		//Interrupts
 		/*!

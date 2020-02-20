@@ -388,6 +388,21 @@ namespace GBEmulator
 		case VBK:
 			return this->_gpu.getVBK();
 
+		case HDMA1:
+			return this->HDMASrc >> 8U;
+
+		case HDMA2:
+			return this->HDMASrc;
+
+		case HDMA3:
+			return this->HDMADest >> 8U;
+
+		case HDMA4:
+			return this->HDMADest;
+
+		case HDMA5:
+			return this->HDMAStart;
+
 		default:
 			return 0xFF;
 		}
@@ -504,9 +519,39 @@ namespace GBEmulator
 
 		case KEY1:
 			this->_speedSwitch = value & 0b00000001;
+			break;
 
 		case VBK:
 			this->_gpu.setVBK(value & 0b00000001);
+			break;
+
+		case HDMA1:
+			this->HDMASrc = (this->HDMASrc & 0xFFU) | (value << 8U);
+			break;
+
+		case HDMA2:
+			this->HDMASrc = (this->HDMASrc & 0xFF00U) | value;
+			break;
+
+		case HDMA3:
+			this->HDMADest = (this->HDMADest & 0xFFU) | (value << 8U);
+			break;
+
+		case HDMA4:
+			this->HDMADest = (this->HDMADest & 0xFF00U) | value;
+			break;
+
+		case HDMA5:
+			this->HDMAStart = value;
+			if (!(this->HDMAStart & 0b00000001U)) {
+				unsigned char len = (this->HDMAStart >> 1U) / 16 - 1;
+				std::cout << "index= " << std::hex << (int)(this->HDMADest) << std::endl;
+				for (unsigned char i = 0; i < len; i++) {
+					this->write(i + this->HDMADest, this->read(i + this->HDMASrc));
+				}
+			} else
+				this->_gpu.setIsTransferring(true);
+			break;
 
 		default:
 			break;

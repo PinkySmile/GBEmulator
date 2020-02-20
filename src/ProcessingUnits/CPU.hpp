@@ -130,11 +130,16 @@ namespace GBEmulator
 			KEY1					= 0x4D,
 			VBK						= 0x4F,
 			INTERNAL_ROM_ENABLE     = 0x50,
+			HDMA1                   = 0x51,
+			HDMA2                   = 0x52,
+			HDMA3                   = 0x53,
+			HDMA4                   = 0x54,
+			HDMA5                   = 0x55,
 			BGPI                    = 0x68,
 			BGPD                    = 0x69,
 			OBPI                    = 0x6A,
 			OBPD                    = 0x6B,
-			SVBK					= 0x70,
+			SVBK                    = 0x70,
 		};
 
 
@@ -319,6 +324,12 @@ namespace GBEmulator
 		bool _speedSwitch = false;
 		//! Permet de retenir la vitesse actuelle.
 		bool _isDoubleSpeed = false;
+		//! HDMA transfert destination.
+		unsigned short HDMADest = 0;
+		//! HDMA transfert source.
+		unsigned short HDMASrc = 0;
+		//! HDMA transfert taille, mode, debut.
+		unsigned char HDMAStart = 0;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
