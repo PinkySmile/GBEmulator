@@ -32,6 +32,7 @@ namespace GBEmulator::Debugger
 	//! @brief Debugger de CPU.
 	class Debugger {
 	private:
+		std::vector<unsigned short> _oldpcs{64};
 		//! @brief Le CPU à débugger.
 		CPU &_cpu;
 		//! @brief Utilisé pour ralentir la vitesse du CPU.

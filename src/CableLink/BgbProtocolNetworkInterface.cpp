@@ -14,6 +14,8 @@ namespace GBEmulator::Network
 			if (this->isTransfering() && this->isExternal()) {
 				//std::cout << "Successfully received 0x" << std::hex << static_cast<int>(rbyte) << std::dec << " as master (Replying 0x" << std::hex << static_cast<int>(this->byte) << std::dec << ")" << std::endl;
 				handler.reply(this->byte);
+				this->_isTransfering = false;
+				this->_needInterrupt = true;
 				this->byte = rbyte;
 			} else
 				handler.reply(0xFF);
@@ -51,7 +53,11 @@ namespace GBEmulator::Network
 		//std::cout << "Sending 0x" << std::hex << static_cast<int>(sbyte) << std::dec << std::endl;
 		if (this->_handler.isConnected()) {
 			this->_handler.sendByte(sbyte);
-			this->_handler.waitAnswer(1);
+			try {
+				this->_handler.waitAnswer(1);
+			} catch (std::exception &) {
+				this->byte = 0xFF;
+			}
 		} else
 			this->byte = 0xFF;
 		this->_isTransfering = false;

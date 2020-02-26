@@ -45,6 +45,7 @@ namespace GBEmulator::Debugger
 		_input(input)
 	{
 		this->_memBeg = 0x0000;
+		this->_oldpcs.resize(64, 00);
 
 		this->_font.loadFromFile(programPath + "/courier.ttf");
 
@@ -199,13 +200,18 @@ namespace GBEmulator::Debugger
 			std::cout << "break <addr>" << std::endl;
 		} else if (args[0] == "registers")
 			this->_cpu.dumpRegisters();
-		else if (args[0] == "print")
+		else if (args[0] == "oldpc") {
+			for (auto pc : this->_oldpcs)
+				std::cout << "$" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << pc << std::endl;
+		} else if (args[0] == "print")
 			this->_dispVar(args.at(1));
 		else if (args[0] == "set") {
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
 			this->_cpu.update();
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			this->_baseTimer = -1000;
 			return true;
 		} else if (args[0] == "ram") {
@@ -238,6 +244,8 @@ namespace GBEmulator::Debugger
 
 			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints()) {
 				this->_cpu.update();
+				this->_oldpcs.erase(this->_oldpcs.begin());
+				this->_oldpcs.push_back(this->_cpu._registers.pc);
 				if (this->_timer++ == 30)
 					this->_timer = 0;
 				if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
@@ -248,9 +256,13 @@ namespace GBEmulator::Debugger
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
 			this->_cpu.update();
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			this->_displayCurrentLine();
 		} else if (args[0] == "continue") {
 			this->_cpu.update();
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			return true;
 		} else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
@@ -350,6 +362,8 @@ namespace GBEmulator::Debugger
 
 				if (!dbg) {
 					this->_cpu.update();
+					this->_oldpcs.erase(this->_oldpcs.begin());
+					this->_oldpcs.push_back(this->_cpu._registers.pc);
 					if (++this->_timer > this->_baseTimer) {
 						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
 							this->_timer = 0;
