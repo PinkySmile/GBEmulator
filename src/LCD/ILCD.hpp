@@ -70,6 +70,10 @@ namespace GBEmulator::Graphics
 		 * @brief Ferme la fenêtre
 		 */
 		virtual void close() = 0;
+		/*!
+		 * @brief Affiche le buffer interne à l'écran
+		 */
+		virtual void render() = 0;
 	};
 }
 

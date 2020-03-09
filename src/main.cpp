@@ -11,6 +11,7 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <getopt.h>
+#include <X11/Xlib.h>
 
 #endif
 
@@ -86,6 +87,8 @@ Args parseArguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+	XInitThreads();
+
 	GBEmulator::Network::BGBProtocolCableInterface network;
 	Args args;
 
@@ -146,14 +149,25 @@ int main(int argc, char **argv)
 	if (args.debug)
 		return debugger.startDebugSession();
 
+	bool end = false;
+	std::thread thread{
+		[&cpu, &end]{
+			while (!end)
+				cpu.update();
+		}
+	};
+
 	try {
-		while (!window.isClosed())
-			cpu.update();
+		while (!end) {
+			window.render();
+			end = window.isClosed();
+		}
 	} catch (std::exception &e) {
 		cpu.dump();
 		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
 	}
 
+	thread.join();
 	cpu.getCartridgeEmulator().saveRAM();
 
 	return EXIT_SUCCESS;

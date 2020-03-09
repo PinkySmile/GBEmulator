@@ -77,6 +77,7 @@ else (WIN32)
                 sfml-audio
                 sfml-network
                 pthread
+                X11
         )
 endif (WIN32)
 
