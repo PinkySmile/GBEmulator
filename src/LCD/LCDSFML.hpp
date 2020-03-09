@@ -22,6 +22,7 @@ namespace GBEmulator
 		 */
 		class LCDSFML : public ILCD, public sf::RenderWindow {
 		private:
+			float         _lastFrameTime;
 			sf::Vector2u  _size;
 			sf::Color     *_screen;
 			sf::Color     *_framebuffer;

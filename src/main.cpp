@@ -87,9 +87,6 @@ Args parseArguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	XInitThreads();
-
-	GBEmulator::Network::BGBProtocolCableInterface network;
 	Args args;
 
 	try {
@@ -102,6 +99,9 @@ int main(int argc, char **argv)
 
 	srand(time(nullptr));
 
+	XInitThreads();
+
+	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::SoundPlayer channel1;
 	GBEmulator::SoundPlayer channel2;
 	GBEmulator::SoundPlayer channel3;

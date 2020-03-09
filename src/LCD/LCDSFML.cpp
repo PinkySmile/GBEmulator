@@ -29,11 +29,10 @@ void GBEmulator::Graphics::LCDSFML::render()
 	this->_texture.update(reinterpret_cast<sf::Uint8 *>(this->_framebuffer));
 	sprite.setTexture(this->_texture);
 	this->draw(sprite);
-	if (this->_clock.getElapsedTime().asMilliseconds() > 1000) {
-		this->setTitle(this->_title + " (" + std::to_string(this->getFramerate()) + ") FPS");
+	if (this->_clock.getElapsedTime().asMilliseconds() > 500) {
+		this->setTitle(this->_title + " " + std::to_string(static_cast<int>(this->getFramerate() / 0.6)) + " %");
 		this->_clock.restart();
 	}
-	this->_fpsClock.restart();
 	sf::RenderWindow::display();
 	while (this->pollEvent(event)) {
 		if (event.type == sf::Event::Closed)
@@ -44,11 +43,13 @@ void GBEmulator::Graphics::LCDSFML::render()
 void GBEmulator::Graphics::LCDSFML::display()
 {
 	std::memcpy(this->_framebuffer, this->_screen, this->_size.x * this->_size.y * sizeof(sf::Color));
+	this->_lastFrameTime = this->_fpsClock.getElapsedTime().asSeconds();
+	this->_fpsClock.restart();
 }
 
 double GBEmulator::Graphics::LCDSFML::getFramerate()
 {
-	return 1 / this->_fpsClock.getElapsedTime().asSeconds();
+	return 1 / this->_lastFrameTime;
 }
 
 void GBEmulator::Graphics::LCDSFML::clear()
