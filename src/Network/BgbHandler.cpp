@@ -149,10 +149,10 @@ namespace GBEmulator::Network
 		buffer[1] = packet.b2;
 		buffer[2] = packet.b3;
 		buffer[3] = packet.b4;
-		buffer[4] = (static_cast<unsigned char>(packet.i1) >> 0LU);
-		buffer[5] = (static_cast<unsigned char>(packet.i1) >> 8LU);
-		buffer[6] = (static_cast<unsigned char>(packet.i1) >> 16LU);
-		buffer[7] = (static_cast<unsigned char>(packet.i1) >> 24LU);
+		buffer[4] = static_cast<unsigned char>(packet.i1 >> 0LU);
+		buffer[5] = static_cast<unsigned char>(packet.i1 >> 8LU);
+		buffer[6] = static_cast<unsigned char>(packet.i1 >> 16LU);
+		buffer[7] = static_cast<unsigned char>(packet.i1 >> 24LU);
 		this->_socket.send(buffer, sizeof(buffer));
 	}
 
@@ -185,10 +185,15 @@ namespace GBEmulator::Network
 			)
 		};
 	}
-
+	
 	void BGBHandler::tick(unsigned nb)
 	{
+		this->_syncInitiated = true;
+		if ((this->_ticks >> 8U) > (this->_ticks + nb >> 8U))
+			this->_sync();
 		this->_ticks += nb;
+		while (this->_ticks + 0x200 > this->_peerTicks && this->isConnected());
+			//std::this_thread::sleep_for(std::chrono::nanoseconds(10));
 	}
 
 	void BGBHandler::_sync()
@@ -198,7 +203,8 @@ namespace GBEmulator::Network
 
 	bool BGBHandler::_handleLoop()
 	{
-		if (this->_disconnected || !this->_socket.getLocalPort())
+		this->_disconnected = !this->_socket.getLocalPort();
+		if (this->_disconnected)
 			return false;
 
 		BGBPacket packet;
@@ -244,7 +250,10 @@ namespace GBEmulator::Network
 			return true;
 
 		case SYNC3_SIGNAL:
-			this->_sync();
+			this->_peerTicks = packet.i1;
+			if (!this->_syncInitiated)
+				this->_sync();
+			this->_syncInitiated = false;
 			return true;
 
 		case STATUS:

@@ -30,8 +30,11 @@ namespace GBEmulator::Network
 		sf::TcpSocket _socket;
 		//! @brief Thread qui gère les connections.
 		std::unique_ptr<sf::Thread> _mainThread;
+		bool _syncInitiated = false;
 		//! @brief Nombre de cycles CPU écoulés.
 		unsigned _ticks = 0;
+		//! @brief Nombre de cycles CPU écoulés du pair.
+		unsigned _peerTicks = 0;
 		//! @brief Handler qui gère les connections.
 		std::function<void ()> _mainHandler;
 
