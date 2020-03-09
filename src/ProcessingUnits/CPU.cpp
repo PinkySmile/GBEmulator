@@ -211,23 +211,23 @@ namespace GBEmulator
 		return this->_halted;
 	}
 
-	void CPU::update()
+	int CPU::update()
 	{
 		if (this->_stopped) {
 			for (unsigned i = 0; i < Input::ENABLE_DEBUGGING; i++)
 				if (this->_joypad.isButtonPressed(static_cast<Input::Keys>(i)))
 					this->_stopped = false;
 			this->_window.display();
-			return;
+			return 4;
 		}
 
 		if (this->_checkInterrupts())
-			return;
+			return 12;
 
 		if (!this->_halted)
-			this->_executeNextInstruction();
+			return this->_executeNextInstruction();
 		else
-			this->_updateComponents(16);
+			return this->_updateComponents(16), 16;
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
@@ -449,7 +449,7 @@ namespace GBEmulator
 		}
 	}
 
-	void CPU::_executeNextInstruction()
+	int CPU::_executeNextInstruction()
 	{
 		unsigned char opcode = this->read(this->_registers.pc++);
 
@@ -458,6 +458,7 @@ namespace GBEmulator
 		this->_registers._ = 0;
 		this->_divRegister += cycles;
 		this->_updateComponents(cycles);
+		return cycles;
 	}
 
 	void CPU::dumpRegisters() const

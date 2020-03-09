@@ -212,7 +212,7 @@ namespace GBEmulator::Debugger
 			this->_cpu.update();
 			this->_oldpcs.erase(this->_oldpcs.begin());
 			this->_oldpcs.push_back(this->_cpu._registers.pc);
-			this->_baseTimer = -1000;
+			this->_rate = 0.001;
 			return true;
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
@@ -271,6 +271,8 @@ namespace GBEmulator::Debugger
 
 	Debugger::~Debugger()
 	{
+		if (this->_cpuThread.joinable())
+			this->_cpuThread.join();
 	}
 
 	bool Debugger::checkBreakPoints()
@@ -314,6 +316,20 @@ namespace GBEmulator::Debugger
 		bool dbg = true;
 		sf::RenderWindow _debugWindow{sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar};
 
+		this->_cpuThread = std::thread([&dbg, this]{
+			sf::Clock _clock;
+			while (!this->_window.isClosed()) {
+				while (dbg)
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				_clock.restart();
+				this->_oldpcs.erase(this->_oldpcs.begin());
+				this->_oldpcs.push_back(this->_cpu._registers.pc);
+				long long t = (this->_cpu.update() / GB_CPU_FREQUENCY / this->_rate - _clock.getElapsedTime().asSeconds()) * 1000000;
+
+				while (t-- > 0)
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			}
+		});
 		this->_displayCurrentLine();
 		std::cout << "gdbgb> ";
 		std::cout.flush();
@@ -336,6 +352,7 @@ namespace GBEmulator::Debugger
 						this->_drawRegisters(_debugWindow);
 						this->_drawVram(_debugWindow);
 						_debugWindow.display();
+						this->_window.render();
 						this->_handleWindowCommands(_debugWindow);
 					} else {
 						this->_checkCommands(dbg);
@@ -361,27 +378,19 @@ namespace GBEmulator::Debugger
 				}
 
 				if (!dbg) {
-					this->_cpu.update();
-					this->_oldpcs.erase(this->_oldpcs.begin());
-					this->_oldpcs.push_back(this->_cpu._registers.pc);
-					if (++this->_timer > this->_baseTimer) {
-						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
-							this->_timer = 0;
-
-							_debugWindow.clear(sf::Color::White);
-							this->_drawInstruction(_debugWindow);
-							this->_drawMemory(_debugWindow);
-							this->_drawRegisters(_debugWindow);
-							this->_drawVram(_debugWindow);
-							_debugWindow.display();
-							this->_handleWindowCommands(_debugWindow);
-							if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
-								dbg = true;
-								this->_displayCurrentLine();
-								std::cout << "gdbgb> ";
-								std::cout.flush();
-							}
-						}
+					_debugWindow.clear(sf::Color::White);
+					this->_drawInstruction(_debugWindow);
+					this->_drawMemory(_debugWindow);
+					this->_drawRegisters(_debugWindow);
+					this->_drawVram(_debugWindow);
+					_debugWindow.display();
+					this->_window.render();
+					this->_handleWindowCommands(_debugWindow);
+					if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+						dbg = true;
+						this->_displayCurrentLine();
+						std::cout << "gdbgb> ";
+						std::cout.flush();
 					}
 				}
 			} catch (CPU::InvalidOpcodeException &e) {
@@ -531,22 +540,22 @@ namespace GBEmulator::Debugger
 					this->_memBeg = 0xF000;
 					break;
 				case sf::Keyboard::P:
-					this->_baseTimer += 1;
+					this->_rate *= 1.5;
 					break;
 				case sf::Keyboard::M:
-					this->_baseTimer -= 1;
+					this->_rate /= 1.5;
 					break;
 				case sf::Keyboard::O:
-					this->_baseTimer += 10;
+					this->_rate *= 10;
 					break;
 				case sf::Keyboard::L:
-					this->_baseTimer -= 10;
+					this->_rate /= 10;
 					break;
 				case sf::Keyboard::K:
-					this->_baseTimer = -1000;
+					this->_rate = 0.001;
 					break;
 				case sf::Keyboard::I:
-					this->_baseTimer = 1500;
+					this->_rate = 1;
 					break;
 				default:
 					break;
@@ -583,6 +592,7 @@ namespace GBEmulator::Debugger
 		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
 		ss << "Next instruction: " << Instructions::_instructionsString[this->_cpu.read(this->_cpu._registers.pc)](this->_cpu, this->_cpu._registers.pc + 1);
 		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
+		ss << "Maximum CPU speed: " << this->_rate * 100 << "%";
 
 		this->_registers.setString(ss.str());
 		_debugWindow.draw(this->_registers);

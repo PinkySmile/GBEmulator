@@ -36,9 +36,7 @@ namespace GBEmulator::Debugger
 		//! @brief Le CPU à débugger.
 		CPU &_cpu;
 		//! @brief Utilisé pour ralentir la vitesse du CPU.
-		int _timer = 0;
-		//! @brief La vitesse actuelle d'execution.
-		int _baseTimer = 0;
+		float _rate = 1;
 		//! @brief La fenêtre sur laquelle le GPU affiche.
 		Graphics::ILCD &_window;
 		//! @brief Le joypad utilisé par le CPU.
@@ -55,6 +53,8 @@ namespace GBEmulator::Debugger
 		unsigned short _memBeg;
 		//! @brief Registres du CPU transformé en text.
 		sf::Text _registers;
+		std::thread _cpuThread;
+		unsigned _timer = 0;
 
 		//! @brief Taille en byte des opcodes.
 		static const std::vector<unsigned char> _instrSize;
