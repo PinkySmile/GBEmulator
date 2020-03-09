@@ -29,6 +29,7 @@ namespace GBEmulator
 			std::string   _title;
 			sf::Clock     _fpsClock;
 			sf::Clock     _clock;
+			sf::Clock     _emulatorSpeed;
 			sf::Texture   _texture;
 			sf::View      _view;
 			bool          _closed = false;
