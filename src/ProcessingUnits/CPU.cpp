@@ -211,14 +211,14 @@ namespace GBEmulator
 		return this->_halted;
 	}
 
-	int CPU::update()
+	int CPU::_executeNextAction()
 	{
 		if (this->_stopped) {
 			for (unsigned i = 0; i < Input::ENABLE_DEBUGGING; i++)
 				if (this->_joypad.isButtonPressed(static_cast<Input::Keys>(i)))
 					this->_stopped = false;
 			this->_window.display();
-			return 4;
+			return 0;
 		}
 
 		if (this->_checkInterrupts())
@@ -227,7 +227,33 @@ namespace GBEmulator
 		if (!this->_halted)
 			return this->_executeNextInstruction();
 		else
-			return this->_updateComponents(16), 16;
+			return 16;
+	}
+
+	int CPU::update()
+	{
+		this->_clock.restart();
+
+		int cycles = this->_executeNextAction();
+
+		if (cycles) {
+//			auto time = _clock.getElapsedTime().asMicroseconds();
+//			long long t = cycles * 1000000 / this->_speed / GB_CPU_FREQUENCY - time;
+
+//			if (t > 0)
+//				std::this_thread::sleep_for(std::chrono::milliseconds(t));
+
+			this->_divRegister += cycles;
+			this->_updateComponents(cycles);
+		} else {
+
+		}
+		return cycles;
+	}
+
+	void CPU::setSpeed(float speed)
+	{
+		this->_speed = speed;
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
@@ -456,8 +482,6 @@ namespace GBEmulator
 		unsigned cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 
 		this->_registers._ = 0;
-		this->_divRegister += cycles;
-		this->_updateComponents(cycles);
 		return cycles;
 	}
 

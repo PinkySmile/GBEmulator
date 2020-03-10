@@ -247,6 +247,8 @@ namespace GBEmulator
 		//! @return pc - 1
 		unsigned short getDecPc() noexcept;
 
+		void setSpeed(float);
+
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
@@ -264,6 +266,7 @@ namespace GBEmulator
 		bool _halted;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
+		float _speed = 1;
 		//! RAM
 		Memory::Memory _ram;
 		//! High RAM
@@ -294,6 +297,7 @@ namespace GBEmulator
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
 		unsigned _joypadCache = 0xFF;
+		sf::Clock _clock;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
@@ -302,6 +306,7 @@ namespace GBEmulator
 		bool _checkInterrupts();
 		//! @brief Recupère et execute la prochaine instruction.
 		int _executeNextInstruction();
+		int _executeNextAction();
 		//! @brief Execute une interuption.
 		bool _executeInterrupt(unsigned int id);
 		//! @brief Génère le byte de l'I/O port du joypad.

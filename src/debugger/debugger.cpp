@@ -303,7 +303,7 @@ namespace GBEmulator::Debugger
 
 		try {
 			std::getline(inputStream, line);
-			if (this->processCommandLine(line))
+			if ((std::cin.eof() && line.empty()) || this->processCommandLine(line))
 				dbg = false;
 		} catch (CommandNotFoundException &e) {
 			std::cout << e.what() << std::endl;
@@ -320,18 +320,17 @@ namespace GBEmulator::Debugger
 		sf::RenderWindow _debugWindow{sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar};
 
 		this->_cpuThread = std::thread([&dbg, this]{
-			sf::Clock _clock;
 			while (!this->_window.isClosed()) {
 				while (dbg)
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				_clock.restart();
-				this->_oldpcs.erase(this->_oldpcs.begin());
-				this->_oldpcs.push_back(this->_cpu._registers.pc);
-				try {
-					long long t = (this->_cpu.update() / GB_CPU_FREQUENCY / this->_rate - _clock.getElapsedTime().asSeconds()) * 1000000;
 
-					while (t-- > 0)
-						std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				if (this->_oldpcs.back() != this->_cpu._registers.pc) {
+					this->_oldpcs.erase(this->_oldpcs.begin());
+					this->_oldpcs.push_back(this->_cpu._registers.pc);
+				}
+
+				try {
+					this->_cpu.update();
 				} catch (CPU::InvalidOpcodeException &e) {
 					dbg = true;
 					std::cout << e.what() << std::endl;
@@ -341,6 +340,7 @@ namespace GBEmulator::Debugger
 				}
 			}
 		});
+
 		this->_displayCurrentLine();
 		std::cout << "gdbgb> ";
 		std::cout.flush();
@@ -564,6 +564,7 @@ namespace GBEmulator::Debugger
 					break;
 				}
 		}
+		this->_cpu.setSpeed(this->_rate);
 	}
 
 	void Debugger::_drawRegisters(sf::RenderWindow &_debugWindow)
