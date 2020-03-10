@@ -271,6 +271,7 @@ namespace GBEmulator::Debugger
 
 	Debugger::~Debugger()
 	{
+		this->_window.close();
 		if (this->_cpuThread.joinable())
 			this->_cpuThread.join();
 	}
@@ -324,60 +325,35 @@ namespace GBEmulator::Debugger
 				_clock.restart();
 				this->_oldpcs.erase(this->_oldpcs.begin());
 				this->_oldpcs.push_back(this->_cpu._registers.pc);
-				long long t = (this->_cpu.update() / GB_CPU_FREQUENCY / this->_rate - _clock.getElapsedTime().asSeconds()) * 1000000;
+				try {
+					long long t = (this->_cpu.update() / GB_CPU_FREQUENCY / this->_rate - _clock.getElapsedTime().asSeconds()) * 1000000;
 
-				while (t-- > 0)
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+					while (t-- > 0)
+						std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				} catch (CPU::InvalidOpcodeException &e) {
+					dbg = true;
+					std::cout << e.what() << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
+				}
 			}
 		});
 		this->_displayCurrentLine();
 		std::cout << "gdbgb> ";
 		std::cout.flush();
 		while (!this->_window.isClosed()) {
-			try {
-				if (dbg) {
-					FD_SET	set;
-					timeval time = {0, 0};
+			if (dbg) {
+				FD_SET	set;
+				timeval time = {0, 0};
 
-					FD_ZERO(&set);
-					FD_SET(0, &set);
+				FD_ZERO(&set);
+				FD_SET(0, &set);
 
-					//TODO: Check WSAEventSelect and WaitForMultipleObjectsEx for Windows
-					int found = select(FD_SETSIZE, &set, nullptr, nullptr, &time);
+				//TODO: Check WSAEventSelect and WaitForMultipleObjectsEx for Windows
+				int found = select(FD_SETSIZE, &set, nullptr, nullptr, &time);
 
-					if (!found) {
-						_debugWindow.clear(sf::Color::White);
-						this->_drawInstruction(_debugWindow);
-						this->_drawMemory(_debugWindow);
-						this->_drawRegisters(_debugWindow);
-						this->_drawVram(_debugWindow);
-						_debugWindow.display();
-						this->_window.render();
-						this->_handleWindowCommands(_debugWindow);
-					} else {
-						this->_checkCommands(dbg);
-
-						if (std::cin.eof())
-							return 0;
-
-						if (dbg) {
-							std::cout << "gdbgb> ";
-							std::cout.flush();
-						}
-					}
-				}
-
-				if (!dbg && this->checkBreakPoints()) {
-					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
-
-					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
-					this->_displayCurrentLine();
-					std::cout << "gdbgb> ";
-					std::cout.flush();
-					dbg = true;
-				}
-
-				if (!dbg) {
+				if (!found) {
 					_debugWindow.clear(sf::Color::White);
 					this->_drawInstruction(_debugWindow);
 					this->_drawMemory(_debugWindow);
@@ -386,19 +362,44 @@ namespace GBEmulator::Debugger
 					_debugWindow.display();
 					this->_window.render();
 					this->_handleWindowCommands(_debugWindow);
-					if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
-						dbg = true;
-						this->_displayCurrentLine();
+				} else {
+					this->_checkCommands(dbg);
+
+					if (std::cin.eof())
+						return 0;
+
+					if (dbg) {
 						std::cout << "gdbgb> ";
 						std::cout.flush();
 					}
 				}
-			} catch (CPU::InvalidOpcodeException &e) {
-				dbg = true;
-				std::cout << e.what() << std::endl;
+			}
+
+			if (!dbg && this->checkBreakPoints()) {
+				auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
+
+				std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
 				this->_displayCurrentLine();
 				std::cout << "gdbgb> ";
 				std::cout.flush();
+				dbg = true;
+			}
+
+			if (!dbg) {
+				_debugWindow.clear(sf::Color::White);
+				this->_drawInstruction(_debugWindow);
+				this->_drawMemory(_debugWindow);
+				this->_drawRegisters(_debugWindow);
+				this->_drawVram(_debugWindow);
+				_debugWindow.display();
+				this->_window.render();
+				this->_handleWindowCommands(_debugWindow);
+				if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+					dbg = true;
+					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
+				}
 			}
 		}
 		return 0;
