@@ -190,15 +190,14 @@ namespace GBEmulator
 		 * @param cable Emulateur de CableLink
 		 */
 		CPU(
-			ISound &channelOne,
-			ISound &channelTwo,
-			ISound &channelThree,
-			ISound &channelFour,
-			Graphics::ILCD &window,
-			Input::JoypadEmulator &joypad,
-			Network::CableInterface &cable
+				ISound &channelOne,
+				ISound &channelTwo,
+				ISound &channelThree,
+				ISound &channelFour,
+				Graphics::ILCD &window,
+				Input::JoypadEmulator &joypad,
+				Network::CableInterface &cable
 		);
-		~CPU();
 
 		//! Met le CPU en mode 'halted'
 		void halt();
@@ -257,6 +256,10 @@ namespace GBEmulator
 		APU _apu;
 		//! GPU de la Gameboy.
 		GPU _gpu;
+		//! Si les boutons sont activés ou non.
+		bool _buttonEnabled;
+		//! Si la croix directionnel est activée ou non.
+		bool _directionEnabled;
 		//! Est-ce que le CPU est en mode 'halted'
 		bool _halted;
 		//! Est-ce que le CPU est en mode 'stopped'
@@ -290,9 +293,6 @@ namespace GBEmulator
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
-		bool _end;
-		std::thread _joypadThread;
-		unsigned char _joypadCache;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.

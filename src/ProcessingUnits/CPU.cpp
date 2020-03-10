@@ -40,6 +40,8 @@ namespace GBEmulator
 	) :
 		_apu(channelOne, channelTwo, channelThree, channelFour),
 		_gpu(window),
+		_buttonEnabled(false),
+		_directionEnabled(false),
 		_halted(false),
 		_stopped(false),
 		_ram(RAM_SIZE, RAM_SIZE),
@@ -59,23 +61,8 @@ namespace GBEmulator
 		_interruptEnabled(0x00),
 		_interruptRequest(0x00),
 		_interruptMasterEnableFlag(false),
-		_cable(cable),
-		_end(false),
-		_joypadThread([this]{
-			while (!this->_end) {
-				this->_joypadCache = this->_generateJoypadByte();
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			}
-		}),
-		_joypadCache(0xFF)
+		_cable(cable)
 	{
-	}
-
-	CPU::~CPU()
-	{
-		this->_end = true;
-		if (this->_joypadThread.joinable())
-			this->_joypadThread.join();
 	}
 
 	Memory::Cartridge& CPU::getCartridgeEmulator()
@@ -285,27 +272,29 @@ namespace GBEmulator
 
 	unsigned char CPU::_generateJoypadByte() const
 	{
-		unsigned byte = this->_joypadCache | 0x0FU;
+		unsigned char dirs = (0b11110000U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) << 3U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_UP)   << 2U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) << 1U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT)<< 0U
+		);
+		unsigned char buts = (0b11110000U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_START) << 3U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_SELECT)<< 2U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_B)     << 1U |
+			this->_joypad.isButtonPressed(Input::JOYPAD_A)     << 0U
+		);
+		unsigned char common = 0b11000000U | (this->_buttonEnabled * 0b100000U) | (this->_directionEnabled * 0b010000U);
 
-		if (byte & 0x20U)
-			byte &= (
-				0b11110000U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_START) << 3U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_SELECT)<< 2U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_B)     << 1U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_A)     << 0U
-			);
-
-		if (byte & 0x10U)
-			byte &= (
-				0b11110000U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) << 3U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_UP)   << 2U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) << 1U |
-				!this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT)<< 0U
-			);
-
-		return byte;
+		return (
+			common | (
+				this->_buttonEnabled * ~dirs
+			) | (
+				this->_directionEnabled * ~buts
+			) | (
+				!this->_directionEnabled * !this->_buttonEnabled * 0b1111
+			)
+		);
 	}
 
 	unsigned char CPU::_readIOPort(unsigned char address) const
@@ -360,7 +349,7 @@ namespace GBEmulator
 			return this->_timer.getControlByte();
 
 		case JOYPAD_REGISTER:
-			return this->_joypadCache;
+			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
 			return this->_interruptRequest | this->_hardwareInterruptRequests | 0b11100000U;
@@ -443,8 +432,8 @@ namespace GBEmulator
 			return this->_gpu.setWindowY(value);
 
 		case JOYPAD_REGISTER:
-			this->_joypadCache &= ~0x30U;
-			this->_joypadCache |= value & 0x30U;
+			this->_directionEnabled = (value & 0b10000U) != 0;
+			this->_buttonEnabled =    (value & 0b100000U)!= 0;
 			break;
 
 		case INTERRUPT_REQUESTS:
