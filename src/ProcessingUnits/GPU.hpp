@@ -26,6 +26,7 @@
 
 namespace GBEmulator
 {
+	class CPU;
 	namespace Debugger {
 		class Debugger;
 	}
@@ -159,6 +160,20 @@ namespace GBEmulator
 					                                        //! Si 0 le sprite est afficher en dessous du Background.
 				};
 				unsigned char flags;
+			};
+		};
+
+		/*! @struct Sprite
+		 *  @brief struct représentant un sprite dans l'OAM.
+		 */
+		struct BGData {
+			union {
+				unsigned char palette:2;                //! Palette de couleurs utilisé.
+				unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
+				unsigned char not_used:1;
+				bool x_flip:1;                          //! Symetrie horizontal.
+				bool y_flip:1;                          //! Symetrie Vertical.
+				bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
 			};
 		};
 
@@ -339,6 +354,10 @@ namespace GBEmulator
 		 * @param value: la valeur à écrire.
 		 */
 		void setControlByte(unsigned char value);
+
+		unsigned short getTransferLength() const;
+
+		bool isTransfering() const;
 		/*!
 		 * @brief Ecrit le byte LCD Status (FF41)
 		 * @param value: la valeur à écrire.
@@ -385,7 +404,7 @@ namespace GBEmulator
 		 */
 		void setObjectPalette1(unsigned char value);
 
-		void setIsTransferring(bool value);
+		void startHDMA(unsigned short len, unsigned short src, unsigned short dest);
 
 		/*!
 		 * @brief Met à jour le GPU
@@ -393,11 +412,11 @@ namespace GBEmulator
 		 * @param cycle: cycle GPU à un instant T.
 		 * @return 0 ou un interrupt.
 		 */
-		unsigned char update(int cycle);
+		unsigned char update(CPU &cpu, int cycle);
 		/*!
 		 * @brief Met à jour le GPU
 		 */
-		void update();
+		void update(CPU &cpu);
 
 	private:
 		friend Debugger::Debugger;
@@ -413,6 +432,13 @@ namespace GBEmulator
 		 * @return la tile map
 		 */
 		unsigned char *_getTileMap(bool alt);
+
+		//! HDMA transfert destination.
+		unsigned short _HDMADest = 0x8000;
+		//! HDMA transfert source.
+		unsigned short _HDMASrc = 0;
+		//! HDMA transfert taille.
+		unsigned char _transfertLen = 0;
 
 		//! Si HDMA transfert.
 		bool _isTransferring = false;

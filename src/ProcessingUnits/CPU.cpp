@@ -242,7 +242,7 @@ namespace GBEmulator
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		unsigned gpuInts = this->_gpu.update(cycles);
+		unsigned gpuInts = this->_gpu.update(*this, cycles);
 
 		this->_hardwareInterruptRequests = 0;
 		this->_hardwareInterruptRequests |= gpuInts;
@@ -389,19 +389,19 @@ namespace GBEmulator
 			return this->_gpu.getVBK();
 
 		case HDMA1:
-			return this->HDMASrc >> 8U;
+			return this->_HDMASrc >> 8U;
 
 		case HDMA2:
-			return this->HDMASrc;
+			return this->_HDMASrc;
 
 		case HDMA3:
-			return this->HDMADest >> 8U;
+			return this->_HDMADest >> 8U;
 
 		case HDMA4:
-			return this->HDMADest;
+			return this->_HDMADest;
 
 		case HDMA5:
-			return this->HDMAStart;
+			return (this->_gpu.getTransferLength() / 16 - 1) | (!this->_gpu.isTransfering() << 7U);
 
 		default:
 			return 0xFF;
@@ -458,7 +458,7 @@ namespace GBEmulator
 			break;
 
 		case OBPD:
-			this->_gpu.writeBGPD(this->_obpi, value);
+			this->_gpu.writeOBPD(this->_obpi, value);
 			this->_obpi += this->_autoIncrementObpi;
 			return;
 
@@ -526,31 +526,32 @@ namespace GBEmulator
 			break;
 
 		case HDMA1:
-			this->HDMASrc = (this->HDMASrc & 0xFFU) | (value << 8U);
+			this->_HDMASrc = (this->_HDMASrc & 0xFFU) | (value << 8U);
 			break;
 
 		case HDMA2:
-			this->HDMASrc = (this->HDMASrc & 0xFF00U) | value;
+			this->_HDMASrc = (this->_HDMASrc & 0xFF00U) | (value & 0xF0);
 			break;
 
 		case HDMA3:
-			this->HDMADest = (this->HDMADest & 0xFFU) | (value << 8U);
+			this->_HDMADest = (this->_HDMADest & 0xFFU) | ((value << 8U) & 0x1F00) | 0x8000;
 			break;
 
 		case HDMA4:
-			this->HDMADest = (this->HDMADest & 0xFF00U) | value;
+			this->_HDMADest = (this->_HDMADest & 0xFF00U) | (value & 0xF0);
 			break;
 
 		case HDMA5:
-			this->HDMAStart = value;
-			if (!(this->HDMAStart & 0b00000001U)) {
-				unsigned char len = (this->HDMAStart >> 1U) / 16 - 1;
-				std::cout << "index= " << std::hex << (int)(this->HDMADest) << std::endl;
-				for (unsigned char i = 0; i < len; i++) {
-					this->write(i + this->HDMADest, this->read(i + this->HDMASrc));
+			this->_HDMAStart = value;
+			if (!(this->_HDMAStart >> 7U)) {
+				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
+				for (unsigned short i = 0; i < len; i++) {
+					this->write(i + this->_HDMADest, this->read(i + this->_HDMASrc));
 				}
-			} else
-				this->_gpu.setIsTransferring(true);
+			} else {
+				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
+				this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
+			}
 			break;
 
 		default:

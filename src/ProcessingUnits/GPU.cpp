@@ -94,10 +94,10 @@ namespace GBEmulator
 
 	void GPU::writeVRAM(unsigned short address, unsigned char value)
 	{
-		//std::cout << std::hex << (int)value << " --> " << (int)address << std::endl;
-
-		if (this->getMode() == 3)
+		if (this->getMode() == 3) {
+			std::cout << "Invalid !" << std::endl;
 			return;
+		}
 
 		if (address >= TILE_DATA_SIZE) {
 			this->_backgroundMap[this->_vramBankSwitch][address - TILE_DATA_SIZE] = value;
@@ -139,31 +139,31 @@ namespace GBEmulator
 	unsigned char GPU::readBGPD(unsigned short address) const
 	{
 		if (address % 2)
-			return this->_bgpd[address / 2] & 0xFFU;
-		return this->_bgpd[address / 2] >> 8U;
+			return this->_bgpd[address / 2] >> 8U;
+		return this->_bgpd[address / 2] & 0xFFU;
 	}
 
 	void GPU::writeBGPD(unsigned short address, unsigned char value)
 	{
 		if (address % 2)
-			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0xFF00U) | value;
-		else
 			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0x00FFU) | (value << 8U);
+		else
+			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0xFF00U) | value;
 	}
 
 	unsigned char GPU::readOBPD(unsigned short address) const
 	{
 		if (address % 2)
-			return this->_obpd[address / 2] & 0xFFU;
-		return this->_obpd[address / 2] >> 8U;
+			return this->_obpd[address / 2] >> 8U;
+		return this->_obpd[address / 2] & 0xFFU;
 	}
 
 	void GPU::writeOBPD(unsigned short address, unsigned char value)
 	{
 		if (address % 2)
-			this->_bgpd[address / 2] = (this->_obpd[address / 2] & 0xFF00U) | value;
+			this->_obpd[address / 2] = (this->_obpd[address / 2] & 0x00FFU) | (value << 8U);
 		else
-			this->_bgpd[address / 2] = (this->_obpd[address / 2] & 0x00FFU) | (value << 8U);
+			this->_obpd[address / 2] = (this->_obpd[address / 2] & 0xFF00U) | value;
 	}
 
 	unsigned char GPU::_getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y)
@@ -178,7 +178,9 @@ namespace GBEmulator
 		if (id < 0 || id > 1024)
 			return 0;
 
-		const unsigned char *tile = this->_tiles[this->_vramBankSwitch] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
+		//BGData *data = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
+
+		const unsigned char *tile = this->_tiles[0] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
 
 		return tile[x % 8 + (y % 8) * 8];
 	}
@@ -190,7 +192,12 @@ namespace GBEmulator
 
 	void GPU::_drawPixel(unsigned x, unsigned y)
 	{
+		int id = static_cast<int>(x / 8 % 32) + 32 * static_cast<int>(y / 8 % 32);
+
+		BGData *bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
+
 		unsigned char color = 0;
+		unsigned char paletteIndex = bgData->palette + 1;
 		bool bgZero = false;
 
 		if (this->_control & 0b00000001U) {
@@ -222,9 +229,17 @@ namespace GBEmulator
 		}
 
 		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8)
-			if (((this->_spritesMap[x + y * 256] & 0b100) == 0) || bgZero)
+			if (((this->_spritesMap[x + y * 256] & 0b100) == 0) || bgZero) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
-		this->_screen.setPixel(x, y, defaultColors[color]);
+				paletteIndex = 0;
+			}
+		if (paletteIndex > 0) {
+			paletteIndex--;
+			//if ((int)this->_bgpd[paletteIndex * 4 + color] != 32767)
+			//	std::cout << "palette= " << (int)paletteIndex << " index= " << paletteIndex * 4 + color << " color= " << (int)color << " value= " << (int)this->_bgpd[paletteIndex * 4 + color] << std::endl;
+			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_bgpd[paletteIndex * 4 + color]));
+		} else
+			this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
 	void GPU::updateOAM()
@@ -260,7 +275,7 @@ namespace GBEmulator
 		}
 	}
 
-	void GPU::update()
+	void GPU::update(CPU &cpu)
 	{
 		if ((this->_control & 0x80U) == 0)
 			return;
@@ -272,7 +287,17 @@ namespace GBEmulator
 			this->updateOAM();
 		} else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
-		else if ((this->_cycles % DEVIDER == 244) && this->_isTransferring) {
+		else if ((this->_cycles % DEVIDER == DEVIDER - 213) && this->_isTransferring) {
+			for (unsigned char i = 0; i < 16; i++) {
+				this->writeVRAM(this->_HDMADest, cpu.read(this->_HDMASrc));
+				this->_transfertLen--;
+				this->_HDMADest++;
+				this->_HDMASrc++;
+				if (this->_transfertLen == 0) {
+					this->_isTransferring = false;
+					break;
+				}
+			}
 		}
 
 
@@ -282,10 +307,15 @@ namespace GBEmulator
 			this->_cycles = 0;
 	}
 
-	unsigned char GPU::update(int cycle)
+	bool GPU::isTransfering() const
+	{
+		return this->_isTransferring;
+	}
+
+	unsigned char GPU::update(CPU &cpu, int cycle)
 	{
 		while (cycle-- > 0)
-			this->update();
+			this->update(cpu);
 
 		if (this->_isVBlankInterrupt()) {
 			if (this->_isStatInterrupt())
@@ -471,8 +501,15 @@ namespace GBEmulator
 		this->_vramBankSwitch = value & 0b1U;
 	}
 
-	void GPU::setIsTransferring(bool value)
+	void GPU::startHDMA(unsigned short len, unsigned short src, unsigned short dest) {
+		this->_HDMASrc = src;
+		this->_HDMADest = dest & 0x1FFF;
+		this->_transfertLen = len;
+		this->_isTransferring = true;
+	}
+
+	unsigned short GPU::getTransferLength() const
 	{
-		this->_isTransferring = value;
+		return this->_transfertLen;
 	}
 }

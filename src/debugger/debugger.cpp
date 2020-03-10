@@ -749,5 +749,13 @@ namespace GBEmulator::Debugger
 
 		this->_displayBackground(_debugWindow, 1200, 340);
 		this->_displayWindow(_debugWindow, 1500, 340);
+
+		for (int j = 0; j < 8; j++) {
+			std::vector<Graphics::RGBColor> colorBG;
+			for (int i = 0; i < 4; i++) {
+				colorBG.emplace_back(this->_cpu._gpu._bgpd[j * 4 + i]);
+			}
+			this->_displayPalette(_debugWindow, 1500, 600 + j * 20, colorBG, false);
+		}
 	}
 }

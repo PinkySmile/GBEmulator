@@ -325,11 +325,11 @@ namespace GBEmulator
 		//! Permet de retenir la vitesse actuelle.
 		bool _isDoubleSpeed = false;
 		//! HDMA transfert destination.
-		unsigned short HDMADest = 0;
+		unsigned short _HDMADest = 0x8000;
 		//! HDMA transfert source.
-		unsigned short HDMASrc = 0;
+		unsigned short _HDMASrc = 0;
 		//! HDMA transfert taille, mode, debut.
-		unsigned char HDMAStart = 0;
+		unsigned char _HDMAStart = 0;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.

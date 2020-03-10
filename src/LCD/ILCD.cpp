@@ -23,9 +23,9 @@ namespace GBEmulator::Graphics
 	}
 
 	RGBColor::RGBColor(unsigned short gbc_color) noexcept :
-		r((gbc_color >> 0U)  & 0x1FU),
-		g((gbc_color >> 5U)  & 0x1FU),
-		b((gbc_color >> 10U) & 0x1FU)
+		r(((gbc_color >> 0U)  & 0x1FU) * 255 / 31),
+		g(((gbc_color >> 5U)  & 0x1FU) * 255 / 31),
+		b(((gbc_color >> 10U) & 0x1FU) * 255 / 31)
 	{
 	}
 
