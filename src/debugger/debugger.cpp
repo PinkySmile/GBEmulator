@@ -264,9 +264,9 @@ namespace GBEmulator::Debugger
 			this->_oldpcs.erase(this->_oldpcs.begin());
 			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			return true;
-		else if (args[0] == "where")
+		} else if (args[0] == "where")
 			this->_displayCurrentLine();
-		} else
+		else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
 		return false;
 	}
