@@ -24,9 +24,7 @@ namespace GBEmulator::Input
 		std::map<Keys, sf::Keyboard::Key> _keys;
 		//! @brief Fenêtre liée au joypad.
 		sf::RenderWindow &_window;
-		bool _end;
 		std::vector<bool> _state;
-		std::thread _thread;
 
 	public:
 		/*!
