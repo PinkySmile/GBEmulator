@@ -190,13 +190,13 @@ namespace GBEmulator
 		 * @param cable Emulateur de CableLink
 		 */
 		CPU(
-				ISound &channelOne,
-				ISound &channelTwo,
-				ISound &channelThree,
-				ISound &channelFour,
-				Graphics::ILCD &window,
-				Input::JoypadEmulator &joypad,
-				Network::CableInterface &cable
+			ISound &channelOne,
+			ISound &channelTwo,
+			ISound &channelThree,
+			ISound &channelFour,
+			Graphics::ILCD &window,
+			Input::JoypadEmulator &joypad,
+			Network::CableInterface &cable
 		);
 
 		//! Met le CPU en mode 'halted'
@@ -293,6 +293,7 @@ namespace GBEmulator
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
+		unsigned _joypadCache = 0xFF;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
