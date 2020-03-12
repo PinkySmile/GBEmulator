@@ -178,7 +178,7 @@ namespace GBEmulator
 		if (id < 0 || id > 1024)
 			return 0;
 
-		//BGData *data = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
+		BGData *data = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
 
 		const unsigned char *tile = this->_tiles[0] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
 
@@ -192,7 +192,7 @@ namespace GBEmulator
 
 	void GPU::_drawPixel(unsigned x, unsigned y)
 	{
-		int id = static_cast<int>(x / 8 % 32) + 32 * static_cast<int>(y / 8 % 32);
+		int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
 
 		BGData *bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
 
@@ -208,7 +208,7 @@ namespace GBEmulator
 				!(this->_control & 0b00010000U)
 			);
 
-			color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
+			color = (this->_bgPaletteValue >> DUCT_TAPE(val)) & 0b11U;
 			bgZero = val == 0;
 		}
 
@@ -235,8 +235,6 @@ namespace GBEmulator
 			}
 		if (paletteIndex > 0) {
 			paletteIndex--;
-			//if ((int)this->_bgpd[paletteIndex * 4 + color] != 32767)
-			//	std::cout << "palette= " << (int)paletteIndex << " index= " << paletteIndex * 4 + color << " color= " << (int)color << " value= " << (int)this->_bgpd[paletteIndex * 4 + color] << std::endl;
 			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_bgpd[paletteIndex * 4 + color]));
 		} else
 			this->_screen.setPixel(x, y, defaultColors[color]);
@@ -366,8 +364,8 @@ namespace GBEmulator
 	unsigned char *GPU::_getTileMap(bool alt)
 	{
 		if (alt)
-			return this->_backgroundMap[this->_vramBankSwitch] + 0x400;
-		return this->_backgroundMap[this->_vramBankSwitch];
+			return this->_backgroundMap[0] + 0x400;
+		return this->_backgroundMap[0];
 	}
 
 	unsigned char *GPU::_getTile(std::size_t id)
