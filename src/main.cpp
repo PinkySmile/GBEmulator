@@ -11,8 +11,10 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <getopt.h>
-#include <X11/Xlib.h>
+#endif
 
+#ifndef _WIN32
+#include <X11/Xlib.h>
 #endif
 
 struct Args
@@ -99,7 +101,9 @@ int main(int argc, char **argv)
 
 	srand(time(nullptr));
 
+#ifndef _WIN32
 	XInitThreads();
+#endif
 
 	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::SoundPlayer channel1;
