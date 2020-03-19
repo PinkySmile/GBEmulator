@@ -338,6 +338,16 @@ namespace GBEmulator::Debugger
 					std::cout << "gdbgb> ";
 					std::cout.flush();
 				}
+
+				if (this->checkBreakPoints()) {
+					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
+
+					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
+					dbg = true;
+				}
 			}
 		});
 
@@ -375,16 +385,6 @@ namespace GBEmulator::Debugger
 						std::cout.flush();
 					}
 				}
-			}
-
-			if (!dbg && this->checkBreakPoints()) {
-				auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
-
-				std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
-				this->_displayCurrentLine();
-				std::cout << "gdbgb> ";
-				std::cout.flush();
-				dbg = true;
 			}
 
 			if (!dbg) {
