@@ -285,9 +285,12 @@ namespace GBEmulator
 
 	bool CPU::_executeInterrupt(unsigned int id)
 	{
+		if (!((1U << id) & this->_interruptEnabled))
+			return false;
+
 		this->_halted = false;
 
-		if (!this->_interruptMasterEnableFlag || !((1U << id) & this->_interruptEnabled))
+		if (!this->_interruptMasterEnableFlag)
 			return false;
 
 		this->_interruptRequest &= ~(1U << id);
@@ -404,9 +407,10 @@ namespace GBEmulator
 			break;
 
 		case INTERNAL_ROM_ENABLE:
-			if (value != 1)
+			if (value != 1) {
 				this->_halted = true;
-			else
+				this->_interruptEnabled = 0;
+			} else
 				this->_internalRomEnabled = false;
 			break;
 
