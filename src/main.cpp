@@ -123,7 +123,11 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
 	std::string path = argv[0];
+#ifdef _WIN32
+	size_t occurence = path.find_last_of('\\');
+#else
 	size_t occurence = path.find_last_of('/');
+#endif
 	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, window, joypad};
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
