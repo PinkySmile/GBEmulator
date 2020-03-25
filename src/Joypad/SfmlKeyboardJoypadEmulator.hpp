@@ -12,6 +12,7 @@
 #include <map>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <thread>
 #include "JoypadEmulator.hpp"
 
 namespace GBEmulator::Input
@@ -23,6 +24,9 @@ namespace GBEmulator::Input
 		std::map<Keys, sf::Keyboard::Key> _keys;
 		//! @brief Fenêtre liée au joypad.
 		sf::RenderWindow &_window;
+		bool _end;
+		std::vector<bool> _state;
+		std::thread _thread;
 
 	public:
 		/*!
@@ -31,6 +35,7 @@ namespace GBEmulator::Input
 		 * @param keys Touches configurées.
 		 */
 		explicit SFMLKeyboardJoypadEmulator(sf::RenderWindow &window, const std::map<Keys, sf::Keyboard::Key> &&keys);
+		~SFMLKeyboardJoypadEmulator() override;
 
 		/*!
 		 * Lie une touche du clavier à un bouton du Joypad

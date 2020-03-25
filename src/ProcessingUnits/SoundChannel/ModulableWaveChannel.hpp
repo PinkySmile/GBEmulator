@@ -82,6 +82,16 @@ namespace GBEmulator::SoundChannel
 		 * @param value Valeur à écrire dans le channel wave.
 		 */
 		void write(unsigned char address, unsigned char value);
+		/*!
+		 * @brief Permet de changer la fréquence basse du son joué.
+		 * @param frequency Fréquence sur 8 bits.
+		 */
+		void setLowFrequency(unsigned char frequency) override;
+		/*!
+		 * @brief Permet de changer les options pour rejouer le son, ainsi que les trois bits de fréquence haute.
+		 * @param byte Octet du registre Restart Options.
+		 */
+		void setRestartOptions(unsigned char byte) override;
 	};
 }
 

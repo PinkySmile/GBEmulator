@@ -10,7 +10,7 @@
 
 #include "../../Sound/ISound.hpp"
 
-#define BASE_FREQU (1360)
+#define BASE_FREQU (440)
 
 namespace GBEmulator::SoundChannel
 {
@@ -98,12 +98,12 @@ namespace GBEmulator::SoundChannel
 		 * @brief Permet de changer la fréquence basse du son joué.
 		 * @param frequency Fréquence sur 8 bits.
 		 */
-		void setLowFrequency(unsigned char frequency);
+		virtual void setLowFrequency(unsigned char frequency);
 		/*!
 		 * @brief Permet de changer les options pour rejouer le son, ainsi que les trois bits de fréquence haute.
 		 * @param byte Octet du registre Restart Options.
 		 */
-		void setRestartOptions(unsigned char byte);
+		virtual void setRestartOptions(unsigned char byte);
 		/*!
 		 * @brief Permet de changer les volumes des sorties sons SO1 et SO2 de volume.
 		 * @param SO1 Volume de la sortie son SO1.

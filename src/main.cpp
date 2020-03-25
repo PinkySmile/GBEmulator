@@ -11,7 +11,10 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <getopt.h>
+#endif
 
+#ifndef _WIN32
+#include <X11/Xlib.h>
 #endif
 
 struct Args
@@ -54,7 +57,8 @@ Args parseArguments(int argc, char **argv)
 	struct option long_options[] = {
 		{"debug",   no_argument,       nullptr, 'd'},
 		{"listen",  required_argument, nullptr, 'l'},
-		{"connect", required_argument, nullptr, 'c'}
+		{"connect", required_argument, nullptr, 'c'},
+		{nullptr,   no_argument,       nullptr, 0}
 	};
 
 	while (true) {
@@ -85,7 +89,6 @@ Args parseArguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	GBEmulator::Network::BGBProtocolCableInterface network;
 	Args args;
 
 	try {
@@ -98,6 +101,11 @@ int main(int argc, char **argv)
 
 	srand(time(nullptr));
 
+#ifndef _WIN32
+	XInitThreads();
+#endif
+
+	GBEmulator::Network::BGBProtocolCableInterface network;
 	GBEmulator::SoundPlayer channel1;
 	GBEmulator::SoundPlayer channel2;
 	GBEmulator::SoundPlayer channel3;
@@ -115,7 +123,11 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
 	std::string path = argv[0];
+#ifdef _WIN32
+	size_t occurence = path.find_last_of('\\');
+#else
 	size_t occurence = path.find_last_of('/');
+#endif
 	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, window, joypad};
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
@@ -145,14 +157,25 @@ int main(int argc, char **argv)
 	if (args.debug)
 		return debugger.startDebugSession();
 
+	bool end = false;
+	std::thread thread{
+		[&cpu, &end]{
+			while (!end)
+				cpu.update();
+		}
+	};
+
 	try {
-		while (!window.isClosed())
-			cpu.update();
+		while (!end) {
+			window.render();
+			end = window.isClosed();
+		}
 	} catch (std::exception &e) {
 		cpu.dump();
 		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
 	}
 
+	thread.join();
 	cpu.getCartridgeEmulator().saveRAM();
 
 	return EXIT_SUCCESS;

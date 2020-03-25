@@ -23,7 +23,6 @@ namespace GBEmulator::SoundChannel
 		this->_sweepTime = (value & 0b01110000U) >> 4U;
 		this->_sweepDirection = (value & 0b00001000U) ? DECREASE : INCREASE;
 		this->_sweepShiftNumber = (value & 0b00000111U);
-		this->_shiftRemain = this->_sweepShiftNumber;
 		this->_sweepCycles = 0;
 	}
 
@@ -33,7 +32,7 @@ namespace GBEmulator::SoundChannel
 		this->_volumeDirection = (value & 0b00001000U) ? INCREASE : DECREASE;
 		this->_volumeShiftNumber = value & 0b00000111U;
 		this->_volumeCycles = 0;
-		this->_sound.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
+		this->_sound.setVolume(this->_soundOn * this->_initialVolume * 100.f / 31);
 	}
 
 	void SoundChannel::setLowFrequency(unsigned char value)
@@ -63,7 +62,7 @@ namespace GBEmulator::SoundChannel
 	void SoundChannel::disable(bool disabled)
 	{
 		this->_soundOn = !disabled && this->_restart;
-		this->_sound.setVolume(this->_soundOn * this->_initialVolume * 100.f / 15);
+		this->_sound.setVolume(this->_soundOn * this->_initialVolume * 100.f / 31);
 	}
 
 	void SoundChannel::_updateVolume(unsigned cycles)
@@ -76,19 +75,19 @@ namespace GBEmulator::SoundChannel
 				(this->_volumeDirection * 2 - 1) + this->_initialVolume
 			);
 
-			this->_sound.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100 / 15);
+			this->_sound.setVolume((volume > 0 ? (volume > 15 ? 15 : volume) : 0) * 100 / 31);
 		}
 	}
 
 	void SoundChannel::_updateSweep(unsigned cycles)
 	{
-		this->_sweepCycles += cycles;
+		this->_sweepCycles += cycles * 4;
 
-		if (this->_sweepTime && this->_shiftRemain && this->_sweepCycles > Timing::getCyclesPerSecondsFromFrequency(this->_sweepTime / 128.)) {
-			this->_sweepCycles -= Timing::getCyclesPerSecondsFromFrequency(this->_sweepTime / 128.);
-			this->_shiftRemain--;
+		if (this->_sweepTime && this->_sweepCycles > Timing::getCyclesPerSecondsFromFrequency(128. / this->_sweepTime)) {
+			this->_sweepCycles -= Timing::getCyclesPerSecondsFromFrequency(128. / this->_sweepTime);
 			this->_realFrequency += this->_realFrequency / std::pow(2, this->_sweepShiftNumber) * (this->_sweepDirection * 2 - 1);
-			this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
+			if (this->_realFrequency > 0)
+				this->_sound.setPitch(this->_realFrequency / BASE_FREQU);
 		}
 	}
 
@@ -108,7 +107,7 @@ namespace GBEmulator::SoundChannel
 	{
 		if (!this->_soundOn && this->_restart) {
 			this->_soundOn = true;
-			this->_sound.setVolume(this->_initialVolume * 100.f / 15);
+			this->_sound.setVolume(this->_initialVolume * 100.f / 31);
 		}
 
 		this->_checkRestart();

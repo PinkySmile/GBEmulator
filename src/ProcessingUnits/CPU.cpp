@@ -221,23 +221,49 @@ namespace GBEmulator
 		return this->_halted;
 	}
 
-	void CPU::update()
+	int CPU::_executeNextAction()
 	{
 		if (this->_stopped) {
 			for (unsigned i = 0; i < Input::ENABLE_DEBUGGING; i++)
 				if (this->_joypad.isButtonPressed(static_cast<Input::Keys>(i)))
 					this->_stopped = false;
 			this->_window.display();
-			return;
+			return 0;
 		}
 
 		if (this->_checkInterrupts())
-			return;
+			return 12;
 
 		if (!this->_halted)
-			this->_executeNextInstruction();
+			return this->_executeNextInstruction();
 		else
-			this->_updateComponents(16);
+			return 16;
+	}
+
+	int CPU::update()
+	{
+		this->_clock.restart();
+
+		int cycles = this->_executeNextAction();
+
+		if (cycles) {
+//			auto time = _clock.getElapsedTime().asMicroseconds();
+//			long long t = cycles * 1000000 / this->_speed / GB_CPU_FREQUENCY - time;
+
+//			if (t > 0)
+//				std::this_thread::sleep_for(std::chrono::milliseconds(t));
+
+			this->_divRegister += cycles;
+			this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
+		} else {
+
+		}
+		return cycles;
+	}
+
+	void CPU::setSpeed(float speed)
+	{
+		this->_speed = speed;
 	}
 
 	void CPU::_updateComponents(unsigned int cycles)
@@ -269,9 +295,12 @@ namespace GBEmulator
 
 	bool CPU::_executeInterrupt(unsigned int id)
 	{
+		if (!((1U << id) & this->_interruptEnabled))
+			return false;
+
 		this->_halted = false;
 
-		if (!this->_interruptMasterEnableFlag || !((1U << id) & this->_interruptEnabled))
+		if (!this->_interruptMasterEnableFlag)
 			return false;
 
 		this->_interruptRequest &= ~(1U << id);
@@ -282,29 +311,27 @@ namespace GBEmulator
 
 	unsigned char CPU::_generateJoypadByte() const
 	{
-		unsigned char dirs = (0b11110000U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) << 3U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_UP)   << 2U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) << 1U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT)<< 0U
-		);
-		unsigned char buts = (0b11110000U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_START) << 3U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_SELECT)<< 2U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_B)     << 1U |
-			this->_joypad.isButtonPressed(Input::JOYPAD_A)     << 0U
-		);
-		unsigned char common = 0b11000000U | (this->_buttonEnabled * 0b100000U) | (this->_directionEnabled * 0b010000U);
+		unsigned byte = this->_joypadCache | 0x0FU;
 
-		return (
-			common | (
-				this->_buttonEnabled * ~dirs
-			) | (
-				this->_directionEnabled * ~buts
-			) | (
-				!this->_directionEnabled * !this->_buttonEnabled * 0b1111
-			)
-		);
+		if (this->_buttonEnabled)
+			byte &= (
+				0b11110000U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_START) << 3U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_SELECT)<< 2U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_B)     << 1U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_A)     << 0U
+			);
+
+		if (this->_directionEnabled)
+			byte &= (
+				0b11110000U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_DOWN) << 3U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_UP)   << 2U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_LEFT) << 1U |
+				!this->_joypad.isButtonPressed(Input::JOYPAD_RIGHT)<< 0U
+			);
+
+		return byte;
 	}
 
 	unsigned char CPU::_readIOPort(unsigned char address) const
@@ -426,9 +453,10 @@ namespace GBEmulator
 			break;
 
 		case INTERNAL_ROM_ENABLE:
-			if (value != 1)
+			if (value != 1) {
 				this->_halted = true;
-			else
+				this->_interruptEnabled = 0;
+			} else
 				this->_internalRomEnabled = false;
 			this->_registers.a = 0x11;
 			break;
@@ -499,8 +527,10 @@ namespace GBEmulator
 			return this->_gpu.setWindowY(value);
 
 		case JOYPAD_REGISTER:
-			this->_directionEnabled = (value & 0b10000U) != 0;
-			this->_buttonEnabled =    (value & 0b100000U)!= 0;
+			this->_directionEnabled = (value & 0b010000U) == 0;
+			this->_buttonEnabled =    (value & 0b100000U) == 0;
+			this->_joypadCache &= 0xC0U;
+			this->_joypadCache |= value;
 			break;
 
 		case INTERRUPT_REQUESTS:
@@ -559,15 +589,14 @@ namespace GBEmulator
 		}
 	}
 
-	void CPU::_executeNextInstruction()
+	int CPU::_executeNextInstruction()
 	{
 		unsigned char opcode = this->read(this->_registers.pc++);
 
 		unsigned cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 
 		this->_registers._ = 0;
-		this->_divRegister += cycles;
-		this->_updateComponents(cycles);
+		return cycles;
 	}
 
 	void CPU::dumpRegisters() const

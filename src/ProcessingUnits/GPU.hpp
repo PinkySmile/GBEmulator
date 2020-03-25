@@ -168,7 +168,7 @@ namespace GBEmulator
 		 */
 		struct BGData {
 			union {
-				unsigned char palette:2;                //! Palette de couleurs utilisé.
+				unsigned char palette:3;                //! Palette de couleurs utilisé.
 				unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
 				unsigned char not_used:1;
 				bool x_flip:1;                          //! Symetrie horizontal.
@@ -196,18 +196,10 @@ namespace GBEmulator
 		 * @param tile: la tile map
 		 * @param x: position du pixel sur l'axe des abscisses.
 		 * @param y: position du pixel sur l'axe des ordonnées.
-		 * @return le pixel
-		 */
-		unsigned char _getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y);
-		/*!
-		 * @brief Obtient le pixel à la position x, y d'une tile map.
-		 * @param tile: la tile map
-		 * @param x: position du pixel sur l'axe des abscisses.
-		 * @param y: position du pixel sur l'axe des ordonnées.
 		 * @param signedMode: mode signé
 		 * @return le pixel
 		 */
-		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode);
+		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y);
 
 	public:
 		/*!
@@ -421,17 +413,11 @@ namespace GBEmulator
 	private:
 		friend Debugger::Debugger;
 		/*!
-		 * @brief Obtient une tile par son id
-		 * @param id: nombre identifiant la tile.
-		 * @return la tile
-		 */
-		unsigned char *_getTile(std::size_t id);
-		/*!
 		 * Obtient une tile map
 		 * @param alt: mode signé
 		 * @return la tile map
 		 */
-		unsigned char *_getTileMap(bool alt);
+		unsigned char *_getTileMap(unsigned char bank, bool alt);
 
 		//! HDMA transfert destination.
 		unsigned short _HDMADest = 0x8000;

@@ -22,12 +22,17 @@ namespace GBEmulator
 		 */
 		class LCDSFML : public ILCD, public sf::RenderWindow {
 		private:
+			float         _lastFrameTime;
+			sf::Vector2u  _size;
 			sf::Color     *_screen;
+			sf::Color     *_framebuffer;
 			std::string   _title;
 			sf::Clock     _fpsClock;
 			sf::Clock     _clock;
+			sf::Clock     _emulatorSpeed;
 			sf::Texture   _texture;
 			sf::View      _view;
+			bool          _closed = false;
 
 			friend Debugger::Debugger;
 
@@ -57,6 +62,7 @@ namespace GBEmulator
 			bool isClosed() const override;
 			//! Ferme la fenetre
 			void close() override;
+			void render() override;
 			/*!
 			 * @brief Obtient les images par seconde
 			 * @return le nombre d'ips

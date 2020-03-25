@@ -22,6 +22,7 @@ namespace GBEmulator::Input
 		JOYPAD_SELECT,
 		JOYPAD_START,
 		ENABLE_DEBUGGING,
+		NB_KEYS
 	};
 
 	//! @brief Emulateur du Joypad de la GameBoy.
@@ -33,6 +34,7 @@ namespace GBEmulator::Input
 		 * @return True si la touche est enfoncée. Sinon, false.
 		 */
 		virtual bool isButtonPressed(Keys button) const noexcept = 0;
+		virtual ~JoypadEmulator() = default;
 	};
 }
 

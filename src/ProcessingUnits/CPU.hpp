@@ -258,11 +258,13 @@ namespace GBEmulator
 		//! @return La cartouche du CPU.
 		const Memory::Cartridge &getCartridgeEmulator() const;
 		//! Éxécute un cycle Fetch+Execute
-		void update();
+		int update();
 
 		//! @brief Décremente pc et retourne sa valeur.
 		//! @return pc - 1
 		unsigned short getDecPc() noexcept;
+
+		void setSpeed(float);
 
 	private:
 		friend Debugger::Debugger;
@@ -281,6 +283,7 @@ namespace GBEmulator
 		bool _halted;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
+		float _speed = 1;
 		//! RAM
 		Memory::Memory _ram;
 		//! High RAM
@@ -330,6 +333,8 @@ namespace GBEmulator
 		unsigned short _HDMASrc = 0;
 		//! HDMA transfert taille, mode, debut.
 		unsigned char _HDMAStart = 0;
+		unsigned _joypadCache = 0xFF;
+		sf::Clock _clock;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
@@ -337,7 +342,8 @@ namespace GBEmulator
 		//! @brief Vérefie si des interuptions doivent être executer et les execute si besoin.
 		bool _checkInterrupts();
 		//! @brief Recupère et execute la prochaine instruction.
-		void _executeNextInstruction();
+		int _executeNextInstruction();
+		int _executeNextAction();
 		//! @brief Execute une interuption.
 		bool _executeInterrupt(unsigned int id);
 		//! @brief Génère le byte de l'I/O port du joypad.

@@ -45,6 +45,7 @@ namespace GBEmulator::Debugger
 		_input(input)
 	{
 		this->_memBeg = 0x0000;
+		this->_oldpcs.resize(64, 00);
 
 		this->_font.loadFromFile(programPath + "/courier.ttf");
 
@@ -199,14 +200,19 @@ namespace GBEmulator::Debugger
 			std::cout << "break <addr>" << std::endl;
 		} else if (args[0] == "registers")
 			this->_cpu.dumpRegisters();
-		else if (args[0] == "print")
+		else if (args[0] == "oldpc") {
+			for (auto pc : this->_oldpcs)
+				std::cout << "$" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << pc << std::endl;
+		} else if (args[0] == "print")
 			this->_dispVar(args.at(1));
 		else if (args[0] == "set") {
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
 			this->_cpu.update();
-			this->_baseTimer = -1000;
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
+			this->_rate = 0.001;
 			return true;
 		} else if (args[0] == "ram") {
 			if (args.size() == 1)
@@ -238,6 +244,8 @@ namespace GBEmulator::Debugger
 
 			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints()) {
 				this->_cpu.update();
+				this->_oldpcs.erase(this->_oldpcs.begin());
+				this->_oldpcs.push_back(this->_cpu._registers.pc);
 				if (this->_timer++ == 30)
 					this->_timer = 0;
 				if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
@@ -248,17 +256,26 @@ namespace GBEmulator::Debugger
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
 			this->_cpu.update();
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			this->_displayCurrentLine();
 		} else if (args[0] == "continue") {
 			this->_cpu.update();
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
 			return true;
-		} else
+		} else if (args[0] == "where")
+			this->_displayCurrentLine();
+		else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
 		return false;
 	}
 
 	Debugger::~Debugger()
 	{
+		this->_window.close();
+		if (this->_cpuThread.joinable())
+			this->_cpuThread.join();
 	}
 
 	bool Debugger::checkBreakPoints()
@@ -286,7 +303,7 @@ namespace GBEmulator::Debugger
 
 		try {
 			std::getline(inputStream, line);
-			if (this->processCommandLine(line))
+			if ((std::cin.eof() && line.empty()) || this->processCommandLine(line))
 				dbg = false;
 		} catch (CommandNotFoundException &e) {
 			std::cout << e.what() << std::endl;
@@ -302,43 +319,27 @@ namespace GBEmulator::Debugger
 		bool dbg = true;
 		sf::RenderWindow _debugWindow{sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar};
 
-		this->_displayCurrentLine();
-		std::cout << "gdbgb> ";
-		std::cout.flush();
-		while (!this->_window.isClosed()) {
-			try {
-				if (dbg) {
-					FD_SET	set;
-					timeval time = {0, 0};
+		this->_cpuThread = std::thread([&dbg, this]{
+			while (!this->_window.isClosed()) {
+				while (dbg)
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-					FD_ZERO(&set);
-					FD_SET(0, &set);
-
-					//TODO: Check WSAEventSelect and WaitForMultipleObjectsEx for Windows
-					int found = select(FD_SETSIZE, &set, nullptr, nullptr, &time);
-
-					if (!found) {
-						_debugWindow.clear(sf::Color::White);
-						this->_drawInstruction(_debugWindow);
-						this->_drawMemory(_debugWindow);
-						this->_drawRegisters(_debugWindow);
-						this->_drawVram(_debugWindow);
-						_debugWindow.display();
-						this->_handleWindowCommands(_debugWindow);
-					} else {
-						this->_checkCommands(dbg);
-
-						if (std::cin.eof())
-							return 0;
-
-						if (dbg) {
-							std::cout << "gdbgb> ";
-							std::cout.flush();
-						}
-					}
+				if (this->_oldpcs.back() != this->_cpu._registers.pc) {
+					this->_oldpcs.erase(this->_oldpcs.begin());
+					this->_oldpcs.push_back(this->_cpu._registers.pc);
 				}
 
-				if (!dbg && this->checkBreakPoints()) {
+				try {
+					this->_cpu.update();
+				} catch (CPU::InvalidOpcodeException &e) {
+					dbg = true;
+					std::cout << e.what() << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
+				}
+
+				if (this->checkBreakPoints()) {
 					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 
 					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
@@ -347,35 +348,60 @@ namespace GBEmulator::Debugger
 					std::cout.flush();
 					dbg = true;
 				}
+			}
+		});
 
-				if (!dbg) {
-					this->_cpu.update();
-					if (++this->_timer > this->_baseTimer) {
-						for (int i = 0; i == 0 || i > this->_baseTimer; i--) {
-							this->_timer = 0;
+		this->_displayCurrentLine();
+		std::cout << "gdbgb> ";
+		std::cout.flush();
+		while (!this->_window.isClosed()) {
+			if (dbg) {
+				FD_SET	set;
+				timeval time = {0, 0};
 
-							_debugWindow.clear(sf::Color::White);
-							this->_drawInstruction(_debugWindow);
-							this->_drawMemory(_debugWindow);
-							this->_drawRegisters(_debugWindow);
-							this->_drawVram(_debugWindow);
-							_debugWindow.display();
-							this->_handleWindowCommands(_debugWindow);
-							if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
-								dbg = true;
-								this->_displayCurrentLine();
-								std::cout << "gdbgb> ";
-								std::cout.flush();
-							}
-						}
+				FD_ZERO(&set);
+				FD_SET(0, &set);
+
+				//TODO: Check WSAEventSelect and WaitForMultipleObjectsEx for Windows
+				int found = select(FD_SETSIZE, &set, nullptr, nullptr, &time);
+
+				if (!found) {
+					_debugWindow.clear(sf::Color::White);
+					this->_drawInstruction(_debugWindow);
+					this->_drawMemory(_debugWindow);
+					this->_drawRegisters(_debugWindow);
+					this->_drawVram(_debugWindow);
+					_debugWindow.display();
+					this->_window.render();
+					this->_handleWindowCommands(_debugWindow);
+				} else {
+					this->_checkCommands(dbg);
+
+					if (std::cin.eof())
+						return 0;
+
+					if (dbg) {
+						std::cout << "gdbgb> ";
+						std::cout.flush();
 					}
 				}
-			} catch (CPU::InvalidOpcodeException &e) {
-				dbg = true;
-				std::cout << e.what() << std::endl;
-				this->_displayCurrentLine();
-				std::cout << "gdbgb> ";
-				std::cout.flush();
+			}
+
+			if (!dbg) {
+				_debugWindow.clear(sf::Color::White);
+				this->_drawInstruction(_debugWindow);
+				this->_drawMemory(_debugWindow);
+				this->_drawRegisters(_debugWindow);
+				this->_drawVram(_debugWindow);
+				_debugWindow.display();
+				this->_window.render();
+				this->_handleWindowCommands(_debugWindow);
+				if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
+					dbg = true;
+					this->_displayCurrentLine();
+					std::cout << "gdbgb> ";
+					std::cout.flush();
+				}
 			}
 		}
 		return 0;
@@ -517,27 +543,28 @@ namespace GBEmulator::Debugger
 					this->_memBeg = 0xF000;
 					break;
 				case sf::Keyboard::P:
-					this->_baseTimer += 1;
+					this->_rate *= 1.5;
 					break;
 				case sf::Keyboard::M:
-					this->_baseTimer -= 1;
+					this->_rate /= 1.5;
 					break;
 				case sf::Keyboard::O:
-					this->_baseTimer += 10;
+					this->_rate *= 10;
 					break;
 				case sf::Keyboard::L:
-					this->_baseTimer -= 10;
+					this->_rate /= 10;
 					break;
 				case sf::Keyboard::K:
-					this->_baseTimer = -1000;
+					this->_rate = 0.001;
 					break;
 				case sf::Keyboard::I:
-					this->_baseTimer = 1500;
+					this->_rate = 1;
 					break;
 				default:
 					break;
 				}
 		}
+		this->_cpu.setSpeed(this->_rate);
 	}
 
 	void Debugger::_drawRegisters(sf::RenderWindow &_debugWindow)
@@ -569,6 +596,7 @@ namespace GBEmulator::Debugger
 		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
 		ss << "Next instruction: " << Instructions::_instructionsString[this->_cpu.read(this->_cpu._registers.pc)](this->_cpu, this->_cpu._registers.pc + 1);
 		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
+		ss << "Maximum CPU speed: " << this->_rate * 100 << "%";
 
 		this->_registers.setString(ss.str());
 		_debugWindow.draw(this->_registers);
@@ -629,7 +657,7 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control & 0b00001000U);
 
 		cam.setFillColor(sf::Color::Transparent);
 		cam.setOutlineColor((this->_cpu._gpu._control & 0b10000001U) != 0b10000001U ? sf::Color::Red : sf::Color::Green);
@@ -683,7 +711,7 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b01000000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control & 0b01000000U);
 
 		cam.setFillColor(sf::Color::Transparent);
 		cam.setOutlineColor((this->_cpu._gpu._control & 0b10100000U) != 0b10100000U ? sf::Color::Red : sf::Color::Green);

@@ -17,8 +17,8 @@ namespace GBEmulator
 {
 	const std::vector<Graphics::RGBColor> GPU::defaultColors{
 		Graphics::RGBColor::White,
-		Graphics::RGBColor::LGray,
 		Graphics::RGBColor::DGray,
+		Graphics::RGBColor::LGray,
 		Graphics::RGBColor::Black,
 	};
 
@@ -94,10 +94,8 @@ namespace GBEmulator
 
 	void GPU::writeVRAM(unsigned short address, unsigned char value)
 	{
-		if (this->getMode() == 3) {
-			std::cout << "Invalid !" << std::endl;
+		if (this->getMode() == 3)
 			return;
-		}
 
 		if (address >= TILE_DATA_SIZE) {
 			this->_backgroundMap[this->_vramBankSwitch][address - TILE_DATA_SIZE] = value;
@@ -166,23 +164,18 @@ namespace GBEmulator
 			this->_obpd[address / 2] = (this->_obpd[address / 2] & 0xFF00U) | value;
 	}
 
-	unsigned char GPU::_getPixelAt(const unsigned char *tile, unsigned int x, unsigned int y)
-	{
-		return tile[x + y * 8];
-	}
-
-	unsigned char GPU::_getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode)
+	unsigned char GPU::_getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y)
 	{
 		int id = static_cast<int>(x / 8 % 32) + 32 * static_cast<int>(y / 8 % 32);
 
 		if (id < 0 || id > 1024)
 			return 0;
 
-		BGData *data = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
-
 		const unsigned char *tile = this->_tiles[0] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
+		unsigned int realX = (flipped_x ? 7 - (x % 8) : (x % 8));
+		unsigned int realY = (flipped_y ? 7 - (y % 8) : (y % 8));
 
-		return tile[x % 8 + (y % 8) * 8];
+		return tile[realX + realY * 8];
 	}
 
 	unsigned char GPU::_getSpritePixel(const Sprite &sprite, unsigned int x, unsigned int y)
@@ -194,21 +187,24 @@ namespace GBEmulator
 	{
 		int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
 
-		BGData *bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
+		//auto bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
 
+		auto value = this->_backgroundMap[1][id];
 		unsigned char color = 0;
-		unsigned char paletteIndex = bgData->palette + 1;
+		unsigned char paletteIndex = (value & 0b111) + 1;//bgData->palette + 1;
 		bool bgZero = false;
 
 		if (this->_control & 0b00000001U) {
 			unsigned char val = this->_getPixelAt(
-				this->_getTileMap(this->_control & 0b00001000U),
+				this->_getTileMap(value & 0b1000, this->_control & 0b00001000U),
 				x + this->_scrollX,
 				y + this->_scrollY,
-				!(this->_control & 0b00010000U)
+				!(this->_control & 0b00010000U),
+				value & 0b00100000,
+				value & 0b01000000
 			);
 
-			color = (this->_bgPaletteValue >> DUCT_TAPE(val)) & 0b11U;
+			color = DUCT_TAPE(val) & 0b11U;
 			bgZero = val == 0;
 		}
 
@@ -219,13 +215,15 @@ namespace GBEmulator
 			static_cast<int>(y) - this->_windowY >= 0
 		) {
 			unsigned val = this->_getPixelAt(
-				this->_getTileMap(this->_control & 0b01000000U),
+				this->_getTileMap(value & 0b1000, this->_control & 0b01000000U),
 				x - this->_windowX,
 				y - this->_windowY,
-				!(this->_control & 0b00010000U)
+				!(this->_control & 0b00010000U),
+				value & 0b00100000,
+				value & 0b01000000
 			);
 
-			color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
+			color = DUCT_TAPE(val) & 0b11U;
 		}
 
 		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8)
@@ -262,7 +260,7 @@ namespace GBEmulator
 					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
 
 					if (realX < 160 && realY < 144) {
-						unsigned char newColor = DUCT_TAPE(tile[x + y * 8]);
+						unsigned char newColor = tile[x + y * 8];
 						unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
 						if (newColor)
@@ -361,16 +359,11 @@ namespace GBEmulator
 		this->_scrollY = value;
 	}
 
-	unsigned char *GPU::_getTileMap(bool alt)
+	unsigned char *GPU::_getTileMap(unsigned char bank, bool alt)
 	{
 		if (alt)
-			return this->_backgroundMap[0] + 0x400;
-		return this->_backgroundMap[0];
-	}
-
-	unsigned char *GPU::_getTile(std::size_t id)
-	{
-		return this->_tiles[this->_vramBankSwitch] + id * 64;
+			return this->_backgroundMap[bank] + 0x400;
+		return this->_backgroundMap[bank];
 	}
 
 	unsigned char GPU::getStatByte() const
