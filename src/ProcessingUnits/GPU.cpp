@@ -215,7 +215,7 @@ namespace GBEmulator
 			static_cast<int>(y) - this->_windowY >= 0
 		) {
 			unsigned val = this->_getPixelAt(
-				this->_getTileMap(value & 0b1000, this->_control & 0b01000000U),
+				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b01000000U),
 				x - this->_windowX,
 				y - this->_windowY,
 				!(this->_control & 0b00010000U),
