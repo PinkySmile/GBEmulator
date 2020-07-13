@@ -185,25 +185,26 @@ namespace GBEmulator
 
 	void GPU::_drawPixel(unsigned x, unsigned y)
 	{
-		int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
 
 		//auto bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
 
-		auto value = this->_getTileMap(1, this->_control & 0b00001000U)[id];
 		unsigned char color = 0;
-		unsigned char paletteIndex = (value & 0b111) + 1;//bgData->palette + 1;
+		unsigned char paletteIndex = 0;//bgData->palette + 1;
 		bool bgZero = false;
 
 		if (this->_control & 0b00000001U) {
+			int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
+			auto value = this->_backgroundMap[1][id];
 			unsigned char val = this->_getPixelAt(
 				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b00001000U),
 				x + this->_scrollX,
 				y + this->_scrollY,
 				!(this->_control & 0b00010000U),
-				value & 0b00100000,
-				value & 0b01000000
+				value & 0b00100000U,
+				value & 0b01000000U
 			);
 
+			paletteIndex = (value & 0b111U) + 1;
 			color = DUCT_TAPE(val) & 0b11U;
 			bgZero = val == 0;
 		}
@@ -214,25 +215,28 @@ namespace GBEmulator
 			static_cast<int>(x) - this->_windowX < 160 &&
 			static_cast<int>(y) - this->_windowY >= 0
 		) {
+			int id = static_cast<int>((x - this->_windowX) / 8 % 32) + 32 * static_cast<int>((y - this->_windowY) / 8 % 32);
+			auto value = this->_backgroundMap[1][id];
 			unsigned val = this->_getPixelAt(
 				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b01000000U),
 				x - this->_windowX,
 				y - this->_windowY,
 				!(this->_control & 0b00010000U),
-				value & 0b00100000,
-				value & 0b01000000
+				value & 0b00100000U,
+				value & 0b01000000U
 			);
 
+			paletteIndex = (value & 0b111U) + 1;
 			color = DUCT_TAPE(val) & 0b11U;
 		}
 
 		if (this->_control & 0b00000010U && !(this->_spritesMap[x + y * 256] & 0x80))
 			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) /*|| bgZero*/) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
-				paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 5;
+				paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
 			}
-		if (paletteIndex > 4)
-			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_obpd[(paletteIndex - 5) * 4 + color]));
+		if (paletteIndex > 8)
+			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_obpd[(paletteIndex - 9) * 4 + color]));
 		else if (paletteIndex > 0)
 			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_bgpd[(paletteIndex - 1) * 4 + color]));
 		else
