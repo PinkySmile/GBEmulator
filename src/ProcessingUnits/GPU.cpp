@@ -252,14 +252,16 @@ namespace GBEmulator
 		for (int i = 0; i < OAM_SIZE; i += 4) {
 			Sprite sprite;
 
-			sprite.y = this->_oam.read(i) - 16;
-			sprite.x = this->_oam.read(i + 1) - 8;
+			sprite.y = this->_oam.read(i);
+			sprite.x = this->_oam.read(i + 1);
 
 			if (sprite.x == 0 || sprite.x >= 168 || sprite.y == 0 || sprite.y >= 160)
 				continue;
 
 			sprite.texture_id = this->_oam.read(i + 2);
 			sprite.flags = this->_oam.read(i + 3);
+			sprite.y -= 16;
+			sprite.x -= 8;
 
 			if (this->_control & 0b00000100U)
 				sprite.texture_id &= 0xFEU;
