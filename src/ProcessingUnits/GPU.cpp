@@ -189,14 +189,14 @@ namespace GBEmulator
 
 		//auto bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
 
-		auto value = this->_backgroundMap[1][id];
+		auto value = this->_getTileMap(1, this->_control & 0b00001000U)[id];
 		unsigned char color = 0;
 		unsigned char paletteIndex = (value & 0b111) + 1;//bgData->palette + 1;
 		bool bgZero = false;
 
 		if (this->_control & 0b00000001U) {
 			unsigned char val = this->_getPixelAt(
-				this->_getTileMap(value & 0b1000, this->_control & 0b00001000U),
+				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b00001000U),
 				x + this->_scrollX,
 				y + this->_scrollY,
 				!(this->_control & 0b00010000U),
@@ -226,15 +226,16 @@ namespace GBEmulator
 			color = DUCT_TAPE(val) & 0b11U;
 		}
 
-		if (this->_control & 0b00000010U && this->_spritesMap[x + y * 256] < 8)
-			if (((this->_spritesMap[x + y * 256] & 0b100) == 0) || bgZero) {
+		if (this->_control & 0b00000010U && !(this->_spritesMap[x + y * 256] & 0x80))
+			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) /*|| bgZero*/) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
-				paletteIndex = 0;
+				paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 5;
 			}
-		if (paletteIndex > 0) {
-			paletteIndex--;
-			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_bgpd[paletteIndex * 4 + color]));
-		} else
+		if (paletteIndex > 4)
+			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_obpd[(paletteIndex - 5) * 4 + color]));
+		else if (paletteIndex > 0)
+			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_bgpd[(paletteIndex - 1) * 4 + color]));
+		else
 			this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
@@ -252,7 +253,8 @@ namespace GBEmulator
 			sprite.texture_id = this->_oam.read(i + 2);
 			sprite.flags = this->_oam.read(i + 3);
 
-			unsigned char *tile = this->_tiles[this->_vramBankSwitch] + sprite.texture_id * 64;
+			unsigned char *tile1 = this->_tiles[0] + sprite.texture_id * 64;
+			unsigned char *tile2 = this->_tiles[1] + sprite.texture_id * 64;
 
 			for (int x = 0; x < 8; x += 1) {
 				for (int y = 0; y < v; y += 1) {
@@ -260,11 +262,11 @@ namespace GBEmulator
 					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
 
 					if (realX < 160 && realY < 144) {
-						unsigned char newColor = tile[x + y * 8];
-						unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
+						unsigned char newColor = sprite.tile_bank ? DUCT_TAPE(tile2[x + y * 8]) : DUCT_TAPE(tile1[x + y * 8]);
+						//unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
 						if (newColor)
-							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+							this->_spritesMap[realX + realY * 256] = newColor | (sprite.priority * 0b100) | (sprite.cgb_palette_number << 3U);
 					}
 				}
 			}
