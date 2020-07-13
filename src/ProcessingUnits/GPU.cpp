@@ -254,8 +254,15 @@ namespace GBEmulator
 
 			sprite.y = this->_oam.read(i) - 16;
 			sprite.x = this->_oam.read(i + 1) - 8;
+
+			if (sprite.x == 0 || sprite.x >= 168 || sprite.y == 0 || sprite.y >= 160)
+				continue;
+
 			sprite.texture_id = this->_oam.read(i + 2);
 			sprite.flags = this->_oam.read(i + 3);
+
+			if (this->_control & 0b00000100U)
+				sprite.texture_id &= 0xFEU;
 
 			unsigned char *tile1 = this->_tiles[0] + sprite.texture_id * 64;
 			unsigned char *tile2 = this->_tiles[1] + sprite.texture_id * 64;
