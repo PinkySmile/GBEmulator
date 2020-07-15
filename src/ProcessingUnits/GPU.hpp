@@ -38,6 +38,53 @@ namespace GBEmulator
 	 */
 	class GPU {
 	private:
+		/*! @struct Sprite
+		 *  @brief struct représentant un sprite dans l'OAM.
+		 */
+		struct Sprite {
+			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
+			unsigned char y;                //! Position du sprite sur l'axe des ordonnées.
+			unsigned char texture_id;       //! ID de texture utilisé par le sprite.
+			union {
+				struct {
+					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
+					bool tile_bank:1;                       //! CGB uniquement (non utilisé).
+					bool palette_number:1;                  //! Palette de couleurs utilisé par le sprite (0 ou 1).
+					bool x_flip:1;                          //! Symetrie horizontal.
+					bool y_flip:1;                          //! Symetrie Vertical.
+					bool priority:1;                        //! Si 1 le sprite est afficher par dessus le Background.
+					//! Si 0 le sprite est afficher en dessous du Background.
+				};
+				unsigned char flags;
+			};
+		};
+
+		/*! @struct BGData
+		 *  @brief struct représentant les paramètre de background.
+		 */
+		struct BGData {
+			unsigned char palette:3;                //! Palette de couleurs utilisé.
+			unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
+			unsigned char not_used:1;
+			bool x_flip:1;                          //! Symetrie horizontal.
+			bool y_flip:1;                          //! Symetrie Vertical.
+			bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
+		};
+
+		/*! @struct Control
+		 *  @brief struct représentant le byte de controle.
+		 */
+		struct ControlByte {
+			bool bgDisplayEnabled:1;          //! Is background enabled.
+			bool spriteDisplayEnabled:1;      //! Are sprites enabled.
+			bool spriteSizeSelect:1;          //! Sprite size (false -> 8x8, true -> 8x16).
+			bool bgTileMapSelect:1;           //! Background tile map select (false -> $9800-$9BFF, true -> $9C00-$9FFF).
+			bool bgAndWindowTileDataSelect:1; //! Background and window tile data select (false -> $8800-$97FF, true - > $8000-$8FFF).
+			bool windowEnabled:1;             //! Is window enabled.
+			bool windowTileMapSelect:1;       //! Window tile map select (false -> $9800-$9BFF, true -> $9C00-$9FFF).
+			bool enabled:1;                   //! Is display enabled.
+		};
+
 		bool _gbMode = false;
 		bool _triggeredStatInterrupt = false;
 		bool _triggeredVBlankInterrupt = false;
@@ -81,17 +128,8 @@ namespace GBEmulator
 		unsigned char _stat = 0;
 		//! Byte correspondant à la comparaison entre les valeurs des registre LYC et LY. (FF45)
 		unsigned char _lyc = 0;
-		/*! Byte correspondant au registre de control du LCD. (FF40)
-		 * 		Bit 7 - Ecran LCD activé             												(0=Non, 1=Oui)
-		 *   	Bit 6 - Selection de la zone de tile a afficher pour la fenêtre						(0=9800-9BFF, 1=9C00-9FFF)
-		 *   	Bit 5 - Affichage de la fenêtre activé          									(0=Non, 1=Oui)
-		 *   	Bit 4 - Selection de la zone de donnée de tiles pour la fenêtre et le Background	(0=8800-97FF, 1=8000-8FFF)
-		 *   	Bit 3 - Selection de la zone de tile a afficher pour le Background					(0=9800-9BFF, 1=9C00-9FFF)
-		 *   	Bit 2 - Taille des Sprites              											(0=8x8, 1=8x16)
-		 *   	Bit 1 - Affichage des Sprites activé    											(0=Non, 1=Oui)
-		 *   	Bit 0 - Affichage du Background 													(0=Non, 1=Oui)
-		 */
-		unsigned char _control = 0;
+		//! Byte correspondant au registre de control du LCD. (FF40)
+		ControlByte _control = {false, false, false, false, false, false, false, false};
 		//! Byte specifiant la position (sur l'axe des abscisses) de l'écran à partir du coin superieur/gauche sur le BG de 256x256 pixels (32x32 tiles). (FF43)
 		unsigned char _scrollX = 0;
 		//! Byte specifiant la position (sur l'axe des ordonnées) de l'écran sur le BG. (FF42)
@@ -142,39 +180,6 @@ namespace GBEmulator
 
 		//! Tableau de tiles a mettre à jour sur l'écran.
 		std::vector<unsigned> _tilesToUpdate;
-
-		/*! @struct Sprite
-		 *  @brief struct représentant un sprite dans l'OAM.
-		 */
-		struct Sprite {
-			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
-			unsigned char y;                //! Position du sprite sur l'axe des ordonnées.
-			unsigned char texture_id;       //! ID de texture utilisé par le sprite.
-			union {
-				struct {
-					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
-					bool tile_bank:1;                       //! CGB uniquement (non utilisé).
-					bool palette_number:1;                  //! Palette de couleurs utilisé par le sprite (0 ou 1).
-					bool x_flip:1;                          //! Symetrie horizontal.
-					bool y_flip:1;                          //! Symetrie Vertical.
-					bool priority:1;                        //! Si 1 le sprite est afficher par dessus le Background.
-					                                        //! Si 0 le sprite est afficher en dessous du Background.
-				};
-				unsigned char flags;
-			};
-		};
-
-		/*! @struct Sprite
-		 *  @brief struct représentant un sprite dans l'OAM.
-		 */
-		struct BGData {
-			unsigned char palette:3;                //! Palette de couleurs utilisé.
-			unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
-			unsigned char not_used:1;
-			bool x_flip:1;                          //! Symetrie horizontal.
-			bool y_flip:1;                          //! Symetrie Vertical.
-			bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
-		};
 
 		/*!
 		 * @brief Dessine un pixel à la position x, y

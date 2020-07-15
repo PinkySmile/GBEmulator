@@ -657,16 +657,16 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control & 0b00001000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control.bgTileMapSelect);
 
 		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineColor((this->_cpu._gpu._control & 0b10000001U) != 0b10000001U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineColor(!this->_cpu._gpu._control.enabled || !this->_cpu._gpu._control.bgDisplayEnabled ? sf::Color::Red : sf::Color::Green);
 		cam.setOutlineThickness(4);
 
 		texture.create(32 * 8, 32 * 8);
 		for (int xPos = 0; xPos < 32; xPos++) {
 			for (int yPos = 0; yPos < 32; yPos++) {
-				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+				auto id = this->_cpu._gpu._control.bgAndWindowTileDataSelect ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
@@ -711,16 +711,16 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control & 0b01000000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control.windowTileMapSelect);
 
 		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineColor((this->_cpu._gpu._control & 0b10100000U) != 0b10100000U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineColor(!this->_cpu._gpu._control.enabled || !this->_cpu._gpu._control.windowEnabled ? sf::Color::Red : sf::Color::Green);
 		cam.setOutlineThickness(4);
 
 		texture.create(20 * 8, 18 * 8);
 		for (int xPos = 0; xPos < 20; xPos++) {
 			for (int yPos = 0; yPos < 18; yPos++) {
-				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+				auto id = this->_cpu._gpu._control.bgAndWindowTileDataSelect ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {

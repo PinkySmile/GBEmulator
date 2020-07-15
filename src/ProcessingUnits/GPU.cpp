@@ -189,21 +189,18 @@ namespace GBEmulator
 
 	void GPU::_drawPixel(unsigned x, unsigned y)
 	{
-
-		//auto bgData = reinterpret_cast<BGData*>(&this->_backgroundMap[1][id]);
-
 		unsigned char color = 0;
-		unsigned char paletteIndex = 0;//bgData->palette + 1;
+		unsigned char paletteIndex = 0;
 		bool bgZero = false;
 
-		if (this->_control & 0b00000001U) {
+		if (this->_control.bgDisplayEnabled) {
 			int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
 			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
 			unsigned char val = this->_getPixelAt(
-				this->_getTileMap(0, this->_control & 0b00001000U),
+				this->_getTileMap(0, this->_control.bgTileMapSelect),
 				x + this->_scrollX,
 				y + this->_scrollY,
-				!(this->_control & 0b00010000U),
+				!this->_control.bgAndWindowTileDataSelect,
 				bgData->x_flip,
 				bgData->y_flip,
 				bgData->tile_bank
@@ -215,7 +212,7 @@ namespace GBEmulator
 		}
 
 		if (
-			(this->_control & 0b00100000U) &&
+			this->_control.windowEnabled &&
 			static_cast<int>(x) - this->_windowX >= 0 &&
 			static_cast<int>(x) - this->_windowX < 160 &&
 			static_cast<int>(y) - this->_windowY >= 0
@@ -223,10 +220,10 @@ namespace GBEmulator
 			int id = static_cast<int>((x - this->_windowX) / 8 % 32) + 32 * static_cast<int>((y - this->_windowY) / 8 % 32);
 			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
 			unsigned val = this->_getPixelAt(
-				this->_getTileMap(0, this->_control & 0b01000000U),
+				this->_getTileMap(0, this->_control.windowTileMapSelect),
 				x - this->_windowX,
 				y - this->_windowY,
-				!(this->_control & 0b00010000U),
+				!this->_control.bgAndWindowTileDataSelect,
 				bgData->x_flip,
 				bgData->y_flip,
 				bgData->tile_bank
@@ -251,7 +248,7 @@ namespace GBEmulator
 
 	void GPU::updateOAM(unsigned int line)
 	{
-		unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
+		unsigned char v = 8 * (1 + this->_control.spriteSizeSelect);
 
 		for (int i = 0; i < OAM_SIZE; i += 4) {
 			Sprite sprite;
@@ -267,7 +264,7 @@ namespace GBEmulator
 			sprite.y -= 16;
 			sprite.x -= 8;
 
-			if (this->_control & 0b00000100U)
+			if (this->_control.spriteSizeSelect)
 				sprite.texture_id &= 0xFEU;
 
 			for (int x = 0; x < 8; x += 1) {
@@ -290,7 +287,7 @@ namespace GBEmulator
 
 	void GPU::update(CPU &cpu)
 	{
-		if ((this->_control & 0x80U) == 0)
+		if (!this->_control.enabled)
 			return;
 
 		if (this->_cycles == 0)
@@ -298,7 +295,7 @@ namespace GBEmulator
 		else if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
-		} else if (this->_cycles % DEVIDER == 0 && (this->_control & 0b00000010U))
+		} else if (this->_cycles % DEVIDER == 0 && this->_control.spriteDisplayEnabled)
 			this->updateOAM(this->_cycles / DEVIDER);
 		else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
@@ -348,14 +345,14 @@ namespace GBEmulator
 
 	void GPU::setControlByte(unsigned char value)
 	{
-		if ((this->_control & 0x80U) == 0x80 && (value & 0x80U) == 0)
+		if (this->_control.enabled && (value & 0x80U) == 0)
 			this->_cycles = 0;
-		this->_control = value;
+		this->_control = *reinterpret_cast<const ControlByte *>(&value);
 	}
 
 	unsigned char GPU::getControlByte() const
 	{
-		return this->_control;
+		return *reinterpret_cast<const unsigned char *>(&this->_control);
 	}
 
 	unsigned char GPU::getXScroll() const
@@ -387,7 +384,7 @@ namespace GBEmulator
 
 	unsigned char GPU::getStatByte() const
 	{
-		return (this->_stat & 0b01111000U) | 0x80U | ((this->getCurrentLine() == this->_lyc && (this->_control & 0x80U)) << 2U) | this->getMode();
+		return (this->_stat & 0b01111000U) | 0x80U | ((this->getCurrentLine() == this->_lyc && this->_control.enabled) << 2U) | this->getMode();
 	}
 
 	void GPU::setStatByte(unsigned char value)
@@ -407,7 +404,7 @@ namespace GBEmulator
 
 	unsigned char GPU::getMode() const
 	{
-		if ((this->_control & 0x80U) == 0)
+		if (!this->_control.enabled)
 			return 0;
 		if (this->getCurrentLine() >= 144)
 			return 1;
@@ -420,7 +417,7 @@ namespace GBEmulator
 
 	bool GPU::_isStatInterrupt()
 	{
-		bool needInterrupt = (this->_control & 0x80U) && (
+		bool needInterrupt = this->_control.enabled && (
 			((this->_stat & 0b01000000U) && this->_lyc == this->getCurrentLine()) ||
 			((this->_stat & 0b00100000U) && this->getMode() == 2) ||
 			((this->_stat & 0b00010000U) && this->getMode() == 1) ||
@@ -469,13 +466,11 @@ namespace GBEmulator
 
 	unsigned char GPU::getObjectPalette0() const
 	{
-
 		return this->_objectPalette0Value;
 	}
 
 	unsigned char GPU::getObjectPalette1() const
 	{
-
 		return this->_objectPalette1Value;
 	}
 
@@ -510,11 +505,17 @@ namespace GBEmulator
 
 	void GPU::setVBK(bool value)
 	{
+		if (this->_gbMode)
+			return;
+
 		this->_vramBankSwitch = value & 0b1U;
 	}
 
 	void GPU::startHDMA(unsigned short len, unsigned short src, unsigned short dest)
 	{
+		if (this->_gbMode)
+			return;
+
 		this->_HDMASrc = src;
 		this->_HDMADest = dest & 0x1FFF;
 		this->_transfertLen = len;
@@ -532,6 +533,7 @@ namespace GBEmulator
 
 		if (isGb) {
 			this->_vramBankSwitch = false;
+			this->_isTransferring = false;
 		}
 	}
 }
