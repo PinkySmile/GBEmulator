@@ -247,13 +247,8 @@ namespace GBEmulator
 			this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
-	void GPU::updateOAM()
+	void GPU::updateOAM(unsigned int line)
 	{
-		std::memset(this->_spritesMap, 0xFF, 256 * 256);
-
-		if (!(this->_control & 0b00000010U))
-			return;
-
 		unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
 
 		for (int i = 0; i < OAM_SIZE; i += 4) {
@@ -281,7 +276,7 @@ namespace GBEmulator
 					int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
 					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
 
-					if (realX < 160 && realY < 144) {
+					if (realX < 160 && static_cast<unsigned>(realY) == line/*< 144*/) {
 						unsigned char newColor = sprite.tile_bank ? DUCT_TAPE(tile2[x + y * 8]) : DUCT_TAPE(tile1[x + y * 8]);
 						//unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
@@ -298,11 +293,13 @@ namespace GBEmulator
 		if ((this->_control & 0x80U) == 0)
 			return;
 
-		if (this->_cycles == VBLANK_CYCLE_PT) {
+		if (this->_cycles == 0) {
+			std::memset(this->_spritesMap, 0xFF, 256 * 256);
+		} else if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
 		} else if (this->_cycles % DEVIDER == 0 && (this->_control & 0b00000010U)) {
-			this->updateOAM();
+			this->updateOAM(this->_cycles / DEVIDER);
 		} else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
 		else if ((this->_cycles % DEVIDER == DEVIDER - 213) && this->_isTransferring) {

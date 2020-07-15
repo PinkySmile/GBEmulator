@@ -314,7 +314,7 @@ namespace GBEmulator
 		/*!
 		 * @brief Met à jour l'OAM.
 		 */
-		void updateOAM();
+		void updateOAM(unsigned int line);
 		/*!
 		 * @brief Ecrit sur la VRAM
 		 * @param address: position à laquelle écrire.
