@@ -33,20 +33,24 @@ namespace GBEmulator
 		screen.setMaxSize(160, 144);
 		screen.clear();
 		screen.display();
-		this->_tiles = new unsigned char* [NB_VRAM_BANK];
+
+		this->_tiles = new unsigned char *[NB_VRAM_BANK];
 		for (int j = 0; j < NB_VRAM_BANK; j++) {
-			this->_tiles[j] = new unsigned char [NB_TILES];
+			this->_tiles[j] = new unsigned char[NB_TILES];
 			for (int i = 0; i < NB_TILES; i++)
 				this->_tiles[j][i] = rand() & 0b11U;
+			std::memset(this->_tiles[j], 0, NB_TILES);
 		}
-		this->_backgroundMap = new unsigned char* [NB_VRAM_BANK];
+
+		this->_backgroundMap = new unsigned char *[NB_VRAM_BANK];
 		for (int j = 0; j < NB_VRAM_BANK; j++) {
-			this->_backgroundMap[j] = new unsigned char [BG_MAP_SIZE];
+			this->_backgroundMap[j] = new unsigned char[BG_MAP_SIZE];
 			for (int i = 0; i < BG_MAP_SIZE; i++)
 				this->_backgroundMap[j][i] = rand() & 0xFFU;
 		}
+
 		for (int i = 0; i < 0x40; i++)
-			this->_obpd[i] = rand() & 0xFFFFU;
+			this->_obpd[i] = rand() & 0x7FFFU;
 	}
 
 	GPU::~GPU()
@@ -230,8 +234,8 @@ namespace GBEmulator
 			color = DUCT_TAPE(val) & 0b11U;
 		}
 
-		if (this->_control & 0b00000010U && !(this->_spritesMap[x + y * 256] & 0x80))
-			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) /*|| bgZero*/) {
+		if (!(this->_spritesMap[x + y * 256] & 0x80))
+			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) || bgZero) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
 				paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
 			}
@@ -246,6 +250,9 @@ namespace GBEmulator
 	void GPU::updateOAM()
 	{
 		std::memset(this->_spritesMap, 0xFF, 256 * 256);
+
+		if (!(this->_control & 0b00000010U))
+			return;
 
 		unsigned char v = 8 * (1 + ((this->_control & 0b00000100U) != 0));
 
@@ -517,5 +524,23 @@ namespace GBEmulator
 	unsigned short GPU::getTransferLength() const
 	{
 		return this->_transfertLen;
+	}
+
+	void GPU::setToGBMode()
+	{
+		this->_gbMode = true;
+		for (int j = 0; j < NB_VRAM_BANK; j++) {
+			std::memset(this->_tiles[j], 0, NB_TILES);
+			std::memset(this->_backgroundMap[j], 0, BG_MAP_SIZE);
+		}
+
+		for (int i = 0; i < 0x40; i += 4) {
+			this->_bgpd[i    ] = this->_obpd[i    ] = 0x7FFF;
+			this->_bgpd[i + 1] = this->_obpd[i + 1] = 0x5294;
+			this->_bgpd[i + 2] = this->_obpd[i + 2] = 0x294a;
+			this->_bgpd[i + 3] = this->_obpd[i + 3] = 0x0000;
+		}
+
+		this->_vramBankSwitch = 0;
 	}
 }

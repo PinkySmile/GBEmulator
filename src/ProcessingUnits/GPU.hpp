@@ -38,6 +38,7 @@ namespace GBEmulator
 	 */
 	class GPU {
 	private:
+		bool _gbMode = false;
 		bool _triggeredStatInterrupt = false;
 		bool _triggeredVBlankInterrupt = false;
 		Memory::Memory _oam;
@@ -216,6 +217,8 @@ namespace GBEmulator
 		GPU &operator=(const GPU &) = delete;
 
 		static const std::vector<Graphics::RGBColor> defaultColors;
+
+		void setToGBMode();
 
 		/*!
 		 * @brief Obtient le mode actuel
