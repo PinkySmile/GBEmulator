@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
+		cpu.init();
 
 		if (!args.connectIp.empty() && !args.listenPort.empty())
 			throw std::invalid_argument("Cannot connect and listen at the same time");

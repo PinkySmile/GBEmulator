@@ -168,14 +168,14 @@ namespace GBEmulator
 			this->_obpd[address / 2] = (this->_obpd[address / 2] & 0xFF00U) | value;
 	}
 
-	unsigned char GPU::_getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y)
+	unsigned char GPU::_getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y, bool bank)
 	{
 		int id = static_cast<int>(x / 8 % 32) + 32 * static_cast<int>(y / 8 % 32);
 
 		if (id < 0 || id > 1024)
 			return 0;
 
-		const unsigned char *tile = this->_tiles[0] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
+		const unsigned char *tile = this->_tiles[bank] + (signedMode ? static_cast<char>(tiles[id]) + 0x100 : tiles[id]) * 64;
 		unsigned int realX = (flipped_x ? 7 - (x % 8) : (x % 8));
 		unsigned int realY = (flipped_y ? 7 - (y % 8) : (y % 8));
 
@@ -198,17 +198,18 @@ namespace GBEmulator
 
 		if (this->_control & 0b00000001U) {
 			int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
-			auto value = this->_backgroundMap[1][id];
+			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
 			unsigned char val = this->_getPixelAt(
-				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b00001000U),
+				this->_getTileMap(0, this->_control & 0b00001000U),
 				x + this->_scrollX,
 				y + this->_scrollY,
 				!(this->_control & 0b00010000U),
-				value & 0b00100000U,
-				value & 0b01000000U
+				bgData->x_flip,
+				bgData->y_flip,
+				bgData->tile_bank
 			);
 
-			paletteIndex = (value & 0b111U) + 1;
+			paletteIndex = bgData->palette + 1;
 			color = DUCT_TAPE(val) & 0b11U;
 			bgZero = val == 0;
 		}
@@ -220,17 +221,18 @@ namespace GBEmulator
 			static_cast<int>(y) - this->_windowY >= 0
 		) {
 			int id = static_cast<int>((x - this->_windowX) / 8 % 32) + 32 * static_cast<int>((y - this->_windowY) / 8 % 32);
-			auto value = this->_backgroundMap[1][id];
+			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
 			unsigned val = this->_getPixelAt(
-				this->_getTileMap((value & 0b1000) != 0, this->_control & 0b01000000U),
+				this->_getTileMap(0, this->_control & 0b01000000U),
 				x - this->_windowX,
 				y - this->_windowY,
 				!(this->_control & 0b00010000U),
-				value & 0b00100000U,
-				value & 0b01000000U
+				bgData->x_flip,
+				bgData->y_flip,
+				bgData->tile_bank
 			);
 
-			paletteIndex = (value & 0b111U) + 1;
+			paletteIndex = bgData->palette + 1;
 			color = DUCT_TAPE(val) & 0b11U;
 		}
 
@@ -268,16 +270,14 @@ namespace GBEmulator
 			if (this->_control & 0b00000100U)
 				sprite.texture_id &= 0xFEU;
 
-			unsigned char *tile1 = this->_tiles[0] + sprite.texture_id * 64;
-			unsigned char *tile2 = this->_tiles[1] + sprite.texture_id * 64;
-
 			for (int x = 0; x < 8; x += 1) {
 				for (int y = 0; y < v; y += 1) {
 					int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
 					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
 
 					if (realX < 160 && static_cast<unsigned>(realY) == line/*< 144*/) {
-						unsigned char newColor = sprite.tile_bank ? DUCT_TAPE(tile2[x + y * 8]) : DUCT_TAPE(tile1[x + y * 8]);
+						unsigned char val = (this->_tiles[sprite.tile_bank] + sprite.texture_id * 64)[x + y * 8];
+						unsigned char newColor = DUCT_TAPE(val);
 						//unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
 						if (newColor)
@@ -293,14 +293,14 @@ namespace GBEmulator
 		if ((this->_control & 0x80U) == 0)
 			return;
 
-		if (this->_cycles == 0) {
+		if (this->_cycles == 0)
 			std::memset(this->_spritesMap, 0xFF, 256 * 256);
-		} else if (this->_cycles == VBLANK_CYCLE_PT) {
+		else if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
-		} else if (this->_cycles % DEVIDER == 0 && (this->_control & 0b00000010U)) {
+		} else if (this->_cycles % DEVIDER == 0 && (this->_control & 0b00000010U))
 			this->updateOAM(this->_cycles / DEVIDER);
-		} else if (this->getMode() == 3)
+		else if (this->getMode() == 3)
 			this->_drawPixel(this->_cycles % DEVIDER - (DEVIDER - 373), this->getCurrentLine());
 		else if ((this->_cycles % DEVIDER == DEVIDER - 213) && this->_isTransferring) {
 			for (unsigned char i = 0; i < 16; i++) {
@@ -447,8 +447,8 @@ namespace GBEmulator
 		this->_windowX = value - 7;
 	}
 
-	unsigned char GPU::getWindowX() const {
-
+	unsigned char GPU::getWindowX() const
+	{
 		return this->_windowX + 7;
 	}
 
@@ -457,8 +457,8 @@ namespace GBEmulator
 		this->_windowY = value;
 	}
 
-	unsigned char GPU::getWindowY() const {
-
+	unsigned char GPU::getWindowY() const
+	{
 		return this->_windowY;
 	}
 
@@ -467,12 +467,14 @@ namespace GBEmulator
 		return this->_bgPaletteValue;
 	}
 
-	unsigned char GPU::getObjectPalette0() const {
+	unsigned char GPU::getObjectPalette0() const
+	{
 
 		return this->_objectPalette0Value;
 	}
 
-	unsigned char GPU::getObjectPalette1() const {
+	unsigned char GPU::getObjectPalette1() const
+	{
 
 		return this->_objectPalette1Value;
 	}
@@ -511,7 +513,8 @@ namespace GBEmulator
 		this->_vramBankSwitch = value & 0b1U;
 	}
 
-	void GPU::startHDMA(unsigned short len, unsigned short src, unsigned short dest) {
+	void GPU::startHDMA(unsigned short len, unsigned short src, unsigned short dest)
+	{
 		this->_HDMASrc = src;
 		this->_HDMADest = dest & 0x1FFF;
 		this->_transfertLen = len;
@@ -523,21 +526,12 @@ namespace GBEmulator
 		return this->_transfertLen;
 	}
 
-	void GPU::setToGBMode()
+	void GPU::setToGBMode(bool isGb)
 	{
-		this->_gbMode = true;
-		for (int j = 0; j < NB_VRAM_BANK; j++) {
-			std::memset(this->_tiles[j], 0, NB_TILES);
-			std::memset(this->_backgroundMap[j], 0, BG_MAP_SIZE);
-		}
+		this->_gbMode = isGb;
 
-		for (int i = 0; i < 0x40; i += 4) {
-			this->_bgpd[i    ] = this->_obpd[i    ] = 0x7FFF;
-			this->_bgpd[i + 1] = this->_obpd[i + 1] = 0x5294;
-			this->_bgpd[i + 2] = this->_obpd[i + 2] = 0x294a;
-			this->_bgpd[i + 3] = this->_obpd[i + 3] = 0x0000;
+		if (isGb) {
+			this->_vramBankSwitch = false;
 		}
-
-		this->_vramBankSwitch = 0;
 	}
 }

@@ -168,14 +168,12 @@ namespace GBEmulator
 		 *  @brief struct représentant un sprite dans l'OAM.
 		 */
 		struct BGData {
-			union {
-				unsigned char palette:3;                //! Palette de couleurs utilisé.
-				unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
-				unsigned char not_used:1;
-				bool x_flip:1;                          //! Symetrie horizontal.
-				bool y_flip:1;                          //! Symetrie Vertical.
-				bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
-			};
+			unsigned char palette:3;                //! Palette de couleurs utilisé.
+			unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
+			unsigned char not_used:1;
+			bool x_flip:1;                          //! Symetrie horizontal.
+			bool y_flip:1;                          //! Symetrie Vertical.
+			bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
 		};
 
 		/*!
@@ -200,7 +198,7 @@ namespace GBEmulator
 		 * @param signedMode: mode signé
 		 * @return le pixel
 		 */
-		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y);
+		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y, bool bank);
 
 	public:
 		/*!
@@ -218,7 +216,7 @@ namespace GBEmulator
 
 		static const std::vector<Graphics::RGBColor> defaultColors;
 
-		void setToGBMode();
+		void setToGBMode(bool gb);
 
 		/*!
 		 * @brief Obtient le mode actuel

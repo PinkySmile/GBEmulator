@@ -266,6 +266,8 @@ namespace GBEmulator
 
 		void setSpeed(float);
 
+		void init();
+
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.

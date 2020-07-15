@@ -667,4 +667,9 @@ namespace GBEmulator
 		this->_registers.pc--;
 		return this->_registers.pc;
 	}
+
+	void CPU::init()
+	{
+		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
+	}
 }
