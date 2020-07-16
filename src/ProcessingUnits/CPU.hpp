@@ -349,6 +349,7 @@ namespace GBEmulator
 		//! @brief Recupère et execute la prochaine instruction.
 		int _executeNextInstruction();
 		int _executeNextAction();
+		void _startDMA();
 		//! @brief Execute une interuption.
 		bool _executeInterrupt(unsigned int id);
 		//! @brief Génère le byte de l'I/O port du joypad.

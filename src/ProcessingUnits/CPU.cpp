@@ -575,15 +575,7 @@ namespace GBEmulator
 
 		case HDMA5:
 			this->_HDMAStart = value;
-			if (!(this->_HDMAStart >> 7U)) {
-				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
-				for (unsigned short i = 0; i < len; i++) {
-					this->write(i + this->_HDMADest, this->read(i + this->_HDMASrc));
-				}
-			} else {
-				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
-				this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
-			}
+			this->_startDMA();
 			break;
 
 		default:
@@ -673,5 +665,19 @@ namespace GBEmulator
 	void CPU::init()
 	{
 		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
+	}
+
+	void CPU::_startDMA()
+	{
+		unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 0x10;
+
+		if (!(this->_HDMAStart & 0x80)) {
+			for (unsigned short i = 0; i < len; i++) {
+				this->write(i + this->_HDMADest, this->read(i + this->_HDMASrc));
+				if (i % 0x10 == 0xF)
+					this->_updateComponents(8);
+			}
+		} else
+			this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
 	}
 }
