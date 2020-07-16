@@ -46,9 +46,9 @@ namespace GBEmulator
 		_halted(false),
 		_stopped(false),
 		_errorReport(errorReport),
-		_ram(RAM_SIZE, RAM_SIZE),
+		_ram(RAM_SIZE, RAM_BANK_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers{
+		_registers {
 			.af = 0,
 			.bc = 0,
 			.de = 0,
@@ -65,6 +65,7 @@ namespace GBEmulator
 		_interruptMasterEnableFlag(false),
 		_cable(cable)
 	{
+		this->_ram.setBank(1);
 	}
 
 	Memory::Cartridge& CPU::getCartridgeEmulator()
@@ -96,7 +97,10 @@ namespace GBEmulator
 			return this->_rom.read(address);
 
 		case WRAM_RANGE:
-			return this->_ram.read(address - WRAM_STARTING_ADDRESS);
+			return this->_ram.rawRead(address - WRAM_STARTING_ADDRESS);
+
+		case WRAMBX_RANGE:
+			return this->_ram.read(address - WRAMBX_STARTING_ADDRESS);
 
 		case ECHO_RAM_RANGE:
 			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
@@ -149,7 +153,10 @@ namespace GBEmulator
 
 	void CPU::stop()
 	{
-		this->_stopped = true;
+		this->_stopped = !this->_speedSwitch;
+		this->_speedSwitch = false;
+		this->_isDoubleSpeed = !this->_isDoubleSpeed;
+		//TODO: Implement double speed mode
 	}
 
 	bool CPU::isStopped() const
@@ -172,7 +179,10 @@ namespace GBEmulator
 			return this->_rom.write(address, value);
 
 		case WRAM_RANGE:
-			return this->_ram.write(address - WRAM_STARTING_ADDRESS, value);
+			return this->_ram.rawWrite(address - WRAM_STARTING_ADDRESS, value);
+
+		case WRAMBX_RANGE:
+			return this->_ram.write(address - WRAMBX_STARTING_ADDRESS, value);
 
 		case ECHO_RAM_RANGE:
 			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
@@ -246,7 +256,7 @@ namespace GBEmulator
 //				std::this_thread::sleep_for(std::chrono::milliseconds(t));
 
 			this->_divRegister += cycles;
-			this->_updateComponents(cycles);
+			this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
 		} else {
 
 		}
@@ -260,7 +270,7 @@ namespace GBEmulator
 
 	void CPU::_updateComponents(unsigned int cycles)
 	{
-		unsigned gpuInts = this->_gpu.update(cycles);
+		unsigned gpuInts = this->_gpu.update(*this, cycles);
 
 		this->_hardwareInterruptRequests = 0;
 		this->_hardwareInterruptRequests |= gpuInts;
@@ -374,6 +384,18 @@ namespace GBEmulator
 		case TIMER_MODULO:
 			return this->_timer.modulo;
 
+		case BGPI:
+			return this->_bgpi | (this->_autoIncrementBgpi << 7U);
+
+		case BGPD:
+			return this->_gpu.readBGPD(this->_bgpi);
+
+		case OBPI:
+			return this->_obpi | (this->_autoIncrementObpi << 7U);
+
+		case OBPD:
+			return this->_gpu.readOBPD(this->_bgpi);
+
 		case TIMER_CONTROL:
 			return this->_timer.getControlByte();
 
@@ -385,6 +407,30 @@ namespace GBEmulator
 
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
+
+		case SVBK:
+			return this->_WRAMBank;
+
+		case KEY1:
+			return (0b01111110U | this->_speedSwitch) | (this->_isDoubleSpeed << 7U);
+
+		case VBK:
+			return this->_gpu.getVBK();
+
+		case HDMA1:
+			return this->_HDMASrc >> 8U;
+
+		case HDMA2:
+			return this->_HDMASrc;
+
+		case HDMA3:
+			return this->_HDMADest >> 8U;
+
+		case HDMA4:
+			return this->_HDMADest;
+
+		case HDMA5:
+			return (this->_gpu.getTransferLength() / 16 - 1) | (!this->_gpu.isTransfering() << 7U);
 
 		default:
 			return 0xFF;
@@ -414,6 +460,7 @@ namespace GBEmulator
 				this->_interruptEnabled = 0;
 			} else
 				this->_internalRomEnabled = false;
+			this->_registers.a = 0x11;
 			break;
 
 		case TIMER_CONTROL:
@@ -424,6 +471,26 @@ namespace GBEmulator
 
 		case LCDC_STAT:
 			return this->_gpu.setStatByte(value);
+
+		case BGPI:
+			this->_bgpi = value & 0x3FU;
+			this->_autoIncrementBgpi = value >> 7U;
+			break;
+
+		case BGPD:
+			this->_gpu.writeBGPD(this->_bgpi, value);
+			this->_bgpi += this->_autoIncrementBgpi;
+			return;
+
+		case OBPI:
+			this->_obpi = value & 0x3FU;
+			this->_autoIncrementObpi = value >> 7U;
+			break;
+
+		case OBPD:
+			this->_gpu.writeOBPD(this->_obpi, value);
+			this->_obpi += this->_autoIncrementObpi;
+			return;
 
 		//TODO: Add inaccessibility of everything but HRAM during DMA and copy only when OAM is accessible
 		case OAM_DMA:
@@ -474,6 +541,49 @@ namespace GBEmulator
 
 		case DIVIDER_REGISTER:
 			this->_divRegister = 0;
+			break;
+
+		case SVBK:
+			this->_WRAMBank = value & 7U;
+			this->_WRAMBank += this->_WRAMBank == 0;
+			this->_ram.setBank(this->_WRAMBank);
+			break;
+
+		case KEY1:
+			this->_speedSwitch = value & 0b00000001;
+			break;
+
+		case VBK:
+			this->_gpu.setVBK(value & 0b00000001);
+			break;
+
+		case HDMA1:
+			this->_HDMASrc = (this->_HDMASrc & 0xFFU) | (value << 8U);
+			break;
+
+		case HDMA2:
+			this->_HDMASrc = (this->_HDMASrc & 0xFF00U) | (value & 0xF0);
+			break;
+
+		case HDMA3:
+			this->_HDMADest = (this->_HDMADest & 0xFFU) | ((value << 8U) & 0x1F00) | 0x8000;
+			break;
+
+		case HDMA4:
+			this->_HDMADest = (this->_HDMADest & 0xFF00U) | (value & 0xF0);
+			break;
+
+		case HDMA5:
+			this->_HDMAStart = value;
+			if (!(this->_HDMAStart >> 7U)) {
+				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
+				for (unsigned short i = 0; i < len; i++) {
+					this->write(i + this->_HDMADest, this->read(i + this->_HDMASrc));
+				}
+			} else {
+				unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 16;
+				this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
+			}
 			break;
 
 		default:
@@ -558,5 +668,10 @@ namespace GBEmulator
 	{
 		this->_registers.pc--;
 		return this->_registers.pc;
+	}
+
+	void CPU::init()
+	{
+		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
 	}
 }

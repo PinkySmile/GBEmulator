@@ -123,6 +123,9 @@ int main(int argc, char **argv)
 		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 	});
 	std::string path = argv[0];
+#ifdef _WIN32
+	size_t occurence = path.find_last_of('\\');
+#else
 	size_t occurence = path.find_last_of('/');
 	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network, args.error);
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, window, joypad};
@@ -135,6 +138,7 @@ int main(int argc, char **argv)
 
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
+		cpu.init();
 
 		if (!args.connectIp.empty() && !args.listenPort.empty())
 			throw std::invalid_argument("Cannot connect and listen at the same time");

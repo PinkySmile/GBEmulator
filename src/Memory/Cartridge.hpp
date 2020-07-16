@@ -174,6 +174,8 @@ namespace GBEmulator::Memory
 		//! Récupère le numéro de la Banque de RAM en cours d'utilisation
 		//! @return Le numéro de la Banque de RAM en cours d'utilisation.
 		unsigned char getRamBank() const;
+
+		bool isGameBoyOnly() const;
 	};
 }
 

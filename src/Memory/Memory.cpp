@@ -86,6 +86,11 @@ namespace GBEmulator::Memory
 		this->forceWrite(address, value);
 	}
 
+	void Memory::rawWrite(unsigned short address,unsigned char value)
+	{
+		this->_memory[address] = value;
+	}
+
 	void Memory::forceWrite(unsigned short address,unsigned char value)
 	{
 		this->_bankPtr[address] = value;

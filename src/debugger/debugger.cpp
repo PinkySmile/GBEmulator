@@ -629,7 +629,7 @@ namespace GBEmulator::Debugger
 			for (int yPos = 0; yPos < 24; yPos++) {
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[x + y * 8 + xPos * 64 + yPos * 8 * 8 * 16];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][x + y * 8 + xPos * 64 + yPos * 8 * 8 * 16];
 						auto &color = palette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 16 + y * 16 * 8] = {
@@ -657,20 +657,20 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b00001000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control.bgTileMapSelect);
 
 		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineColor((this->_cpu._gpu._control & 0b10000001U) != 0b10000001U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineColor(!this->_cpu._gpu._control.enabled || !this->_cpu._gpu._control.bgDisplayEnabled ? sf::Color::Red : sf::Color::Green);
 		cam.setOutlineThickness(4);
 
 		texture.create(32 * 8, 32 * 8);
 		for (int xPos = 0; xPos < 32; xPos++) {
 			for (int yPos = 0; yPos < 32; yPos++) {
-				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+				auto id = this->_cpu._gpu._control.bgAndWindowTileDataSelect ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][id * 64 + x + y * 8];
 						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 32 + y * 32 * 8] = {
@@ -711,20 +711,20 @@ namespace GBEmulator::Debugger
 		sf::Sprite sprite;
 		sf::Texture texture;
 		sf::RectangleShape cam{sf::Vector2f{160, 144}};
-		auto map = this->_cpu._gpu._getTileMap(this->_cpu._gpu._control & 0b01000000U);
+		auto map = this->_cpu._gpu._getTileMap(0, this->_cpu._gpu._control.windowTileMapSelect);
 
 		cam.setFillColor(sf::Color::Transparent);
-		cam.setOutlineColor((this->_cpu._gpu._control & 0b10100000U) != 0b10100000U ? sf::Color::Red : sf::Color::Green);
+		cam.setOutlineColor(!this->_cpu._gpu._control.enabled || !this->_cpu._gpu._control.windowEnabled ? sf::Color::Red : sf::Color::Green);
 		cam.setOutlineThickness(4);
 
 		texture.create(20 * 8, 18 * 8);
 		for (int xPos = 0; xPos < 20; xPos++) {
 			for (int yPos = 0; yPos < 18; yPos++) {
-				auto id = (this->_cpu._gpu._control & 0b00010000U) ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
+				auto id = this->_cpu._gpu._control.bgAndWindowTileDataSelect ? map[xPos + yPos * 32] : 0x100 + static_cast<char>(map[xPos + yPos * 32]);
 
 				for (int x = 0; x < 8; x++) {
 					for (int y = 0; y < 8; y++) {
-						auto index = this->_cpu._gpu._tiles[id * 64 + x + y * 8];
+						auto index = this->_cpu._gpu._tiles[this->_cpu._gpu._vramBankSwitch][id * 64 + x + y * 8];
 						auto &color = this->_cpu._gpu._bgPalette[((index & 1U) << 1U) | (index >> 1U)];
 
 						colors[x + xPos * 8 + yPos * 8 * 8 * 20 + y * 20 * 8] = {
@@ -777,5 +777,13 @@ namespace GBEmulator::Debugger
 
 		this->_displayBackground(_debugWindow, 1200, 340);
 		this->_displayWindow(_debugWindow, 1500, 340);
+
+		for (int j = 0; j < 8; j++) {
+			std::vector<Graphics::RGBColor> colorBG;
+			for (int i = 0; i < 4; i++) {
+				colorBG.emplace_back(this->_cpu._gpu._bgpd[j * 4 + i]);
+			}
+			this->_displayPalette(_debugWindow, 1500, 600 + j * 20, colorBG, false);
+		}
 	}
 }

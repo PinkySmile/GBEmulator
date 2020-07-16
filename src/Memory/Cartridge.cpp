@@ -333,4 +333,9 @@ namespace GBEmulator::Memory
 		else if (address < 0x6000)
 			this->_ram.setBank(value & 0b111U);
 	}
+
+	bool Cartridge::isGameBoyOnly() const
+	{
+		return !(this->read(0x0143) & 0x80U);
+	}
 }

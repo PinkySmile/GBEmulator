@@ -121,7 +121,7 @@ namespace GBEmulator::Network
 	void BGBHandler::reply(unsigned char byte)
 	{
 		this->log("Replying " + charToHex(byte));
-		this->_sendPacket({SYNC2_SIGNAL, byte, 0x80, 0, 0});
+		this->_sendPacket({SYNC2_SIGNAL, byte, 0x80, 0, this->_ticks});
 	}
 
 	void BGBHandler::waitAnswer(unsigned timeout)

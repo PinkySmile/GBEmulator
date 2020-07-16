@@ -30,6 +30,9 @@ namespace GBEmulator::Graphics
 		unsigned char r;
 		unsigned char g;
 		unsigned char b;
+		RGBColor(unsigned char r, unsigned char g, unsigned char b) noexcept;
+		RGBColor(unsigned short gbc_color) noexcept;
+		RGBColor(unsigned rgba_color) noexcept;
 	};
 
 	/*!
