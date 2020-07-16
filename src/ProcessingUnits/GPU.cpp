@@ -195,7 +195,7 @@ namespace GBEmulator
 
 		if (this->_control.bgDisplayEnabled) {
 			int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
-			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
+			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, this->_control.bgTileMapSelect)[id]);
 			unsigned char val = this->_getPixelAt(
 				this->_getTileMap(0, this->_control.bgTileMapSelect),
 				x + this->_scrollX,
@@ -222,7 +222,7 @@ namespace GBEmulator
 			static_cast<int>(y) - this->_windowY >= 0
 		) {
 			int id = static_cast<int>((x - this->_windowX) / 8 % 32) + 32 * static_cast<int>((y - this->_windowY) / 8 % 32);
-			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, false)[id]);
+			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, this->_control.windowTileMapSelect)[id]);
 			unsigned val = this->_getPixelAt(
 				this->_getTileMap(0, this->_control.windowTileMapSelect),
 				x - this->_windowX,
