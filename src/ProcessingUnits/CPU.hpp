@@ -196,7 +196,8 @@ namespace GBEmulator
 			ISound &channelFour,
 			Graphics::ILCD &window,
 			Input::JoypadEmulator &joypad,
-			Network::CableInterface &cable
+			Network::CableInterface &cable,
+			bool errorReport
 		);
 
 		//! Met le CPU en mode 'halted'
@@ -267,6 +268,8 @@ namespace GBEmulator
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
 		float _speed = 1;
+		//! Est-ce que le CPU doit lock si la boot rom reporte une erreur
+		bool _errorReport;
 		//! RAM
 		Memory::Memory _ram;
 		//! High RAM

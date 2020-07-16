@@ -36,7 +36,8 @@ namespace GBEmulator
 		ISound &channelFour,
 		Graphics::ILCD &window,
 		Input::JoypadEmulator &joypad,
-		Network::CableInterface &cable
+		Network::CableInterface &cable,
+		bool errorReport
 	) :
 		_apu(channelOne, channelTwo, channelThree, channelFour),
 		_gpu(window),
@@ -44,6 +45,7 @@ namespace GBEmulator
 		_directionEnabled(false),
 		_halted(false),
 		_stopped(false),
+		_errorReport(errorReport),
 		_ram(RAM_SIZE, RAM_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
 		_registers{
@@ -407,7 +409,7 @@ namespace GBEmulator
 			break;
 
 		case INTERNAL_ROM_ENABLE:
-			if (value != 1) {
+			if (value != 1 && this->_errorReport) {
 				this->_halted = true;
 				this->_interruptEnabled = 0;
 			} else

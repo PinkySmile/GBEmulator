@@ -23,6 +23,7 @@ struct Args
 	std::string listenPort;
 	std::string connectIp;
 	bool debug = false;
+	bool error = true;
 };
 
 std::string getLastExceptionName()
@@ -48,21 +49,17 @@ std::string getLastExceptionName()
 
 Args parseArguments(int argc, char **argv)
 {
-	Args args{
-		"",
-		"",
-		"",
-		false
-	};
+	Args args;
 	struct option long_options[] = {
 		{"debug",   no_argument,       nullptr, 'd'},
 		{"listen",  required_argument, nullptr, 'l'},
 		{"connect", required_argument, nullptr, 'c'},
+		{"no-error",required_argument, nullptr, 'n'},
 		{nullptr,   no_argument,       nullptr, 0}
 	};
 
 	while (true) {
-		int c = getopt_long(argc, argv, "l:c:d", long_options, nullptr);
+		int c = getopt_long(argc, argv, "l:c:dn", long_options, nullptr);
 
 		if (c == -1)
 			break;
@@ -76,6 +73,9 @@ Args parseArguments(int argc, char **argv)
 			break;
 		case 'l':
 			args.listenPort = optarg;
+			break;
+		case 'n':
+			args.error = false;
 			break;
 		default:
 			throw std::invalid_argument("Invalid argument");
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 		args = parseArguments(argc, argv);
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		std::cerr << "Usage: " << argv[0] << " rom.gb [-d] [-l <port>] [-c <ip:port>]" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " rom.gb [-dn] [-l <port>] [-c <ip:port>]" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 	});
 	std::string path = argv[0];
 	size_t occurence = path.find_last_of('/');
-	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network);
+	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network, args.error);
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, window, joypad};
 	sf::View view{sf::FloatRect{0, 0, 160, 144}};
 
