@@ -15,11 +15,11 @@
 
 namespace GBEmulator
 {
-	const std::vector<Graphics::RGBColor> GPU::defaultColors{
-		Graphics::RGBColor::White,
-		Graphics::RGBColor::DGray,
-		Graphics::RGBColor::LGray,
-		Graphics::RGBColor::Black,
+	std::vector<Graphics::RGBColor> GPU::defaultColors{
+		{255, 255, 255},
+		{190, 190, 190},
+		{120, 120, 120},
+		{0,   0,   0},
 	};
 
 	GPU::GPU(Graphics::ILCD &screen) :
@@ -201,13 +201,17 @@ namespace GBEmulator
 				x + this->_scrollX,
 				y + this->_scrollY,
 				!this->_control.bgAndWindowTileDataSelect,
-				bgData->x_flip,
-				bgData->y_flip,
-				bgData->tile_bank
+				bgData->x_flip && !this->_gbMode,
+				bgData->y_flip && !this->_gbMode,
+				bgData->tile_bank && !this->_gbMode
 			);
 
-			paletteIndex = bgData->palette + 1;
-			color = DUCT_TAPE(val) & 0b11U;
+			if (this->_gbMode)
+				color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
+			else {
+				paletteIndex = bgData->palette + 1;
+				color = DUCT_TAPE(val) & 0b11U;
+			}
 			bgZero = val == 0;
 		}
 
@@ -224,20 +228,26 @@ namespace GBEmulator
 				x - this->_windowX,
 				y - this->_windowY,
 				!this->_control.bgAndWindowTileDataSelect,
-				bgData->x_flip,
-				bgData->y_flip,
-				bgData->tile_bank
+				bgData->x_flip && !this->_gbMode,
+				bgData->y_flip && !this->_gbMode,
+				bgData->tile_bank && !this->_gbMode
 			);
 
-			paletteIndex = bgData->palette + 1;
-			color = DUCT_TAPE(val) & 0b11U;
+			if (this->_gbMode)
+				color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
+			else {
+				paletteIndex = bgData->palette + 1;
+				color = DUCT_TAPE(val) & 0b11U;
+			}
 		}
 
 		if (!(this->_spritesMap[x + y * 256] & 0x80))
 			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) || bgZero) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
-				paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
+				if (!this->_gbMode)
+					paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
 			}
+
 		if (paletteIndex > 8)
 			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_obpd[(paletteIndex - 9) * 4 + color]));
 		else if (paletteIndex > 0)
@@ -275,10 +285,12 @@ namespace GBEmulator
 					if (realX < 160 && static_cast<unsigned>(realY) == line/*< 144*/) {
 						unsigned char val = (this->_tiles[sprite.tile_bank] + sprite.texture_id * 64)[x + y * 8];
 						unsigned char newColor = DUCT_TAPE(val);
-						//unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
+						unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
-						if (newColor)
+						if (newColor && !this->_gbMode)
 							this->_spritesMap[realX + realY * 256] = newColor | (sprite.priority * 0b100) | (sprite.cgb_palette_number << 3U);
+						else if (newColor)
+							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
 					}
 				}
 			}

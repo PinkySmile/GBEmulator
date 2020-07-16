@@ -219,7 +219,7 @@ namespace GBEmulator
 		GPU(const GPU &) = delete;
 		GPU &operator=(const GPU &) = delete;
 
-		static const std::vector<Graphics::RGBColor> defaultColors;
+		static std::vector<Graphics::RGBColor> defaultColors;
 
 		void setToGBMode(bool gb);
 
