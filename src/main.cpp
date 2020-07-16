@@ -54,7 +54,7 @@ Args parseArguments(int argc, char **argv)
 		{"debug",   no_argument,       nullptr, 'd'},
 		{"listen",  required_argument, nullptr, 'l'},
 		{"connect", required_argument, nullptr, 'c'},
-		{"no-error",required_argument, nullptr, 'n'},
+		{"no-error",no_argument,       nullptr, 'n'},
 		{nullptr,   no_argument,       nullptr, 0}
 	};
 
