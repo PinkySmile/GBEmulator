@@ -529,7 +529,7 @@ namespace GBEmulator
 			return;
 
 		this->_HDMASrc = src;
-		this->_HDMADest = dest & 0x1FFF;
+		this->_HDMADest = dest & 0x1FFFU;
 		this->_transfertLen = len;
 		this->_isTransferring = true;
 	}
