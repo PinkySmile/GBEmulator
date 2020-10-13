@@ -8,6 +8,7 @@
 #ifndef GBEMULATOR_DEBUGGER_HPP
 #define GBEMULATOR_DEBUGGER_HPP
 
+#include <stack>
 #include <thread>
 #include "../ProcessingUnits/CPU.hpp"
 #include "CompiledCondition.hpp"
@@ -33,6 +34,11 @@ namespace GBEmulator::Debugger
 	//! @brief Debugger de CPU.
 	class Debugger {
 	private:
+		bool _checkForStackCorruption = false;
+		std::stack<unsigned short> _latest;
+		std::stack<unsigned short> _expectedPcAtRet;
+		std::vector<unsigned short> _jumpList;
+		std::vector<unsigned short> _ignoredCorruptedStackAddress;
 		std::vector<std::shared_ptr<Operation>> _condBreakPoints;
 		std::vector<unsigned short> _oldpcs{64};
 		//! @brief Le CPU à débugger.
@@ -133,6 +139,8 @@ namespace GBEmulator::Debugger
 		//! @param posx Position de la boîte en abcisses.
 		//! @param posy Position de la boîte en ordonnées
 		void _displayBackground(sf::RenderWindow &_debugWindow, float posx, float posy);
+
+		void _executeNextInstruction();
 
 	public:
 		//! Constructeur du debugger

@@ -46,6 +46,7 @@ namespace GBEmulator::Debugger
 	{
 		this->_memBeg = 0x0000;
 		this->_oldpcs.resize(64, 00);
+		this->_jumpList.resize(64, 00);
 
 		this->_font.loadFromFile(programPath + "/courier.ttf");
 
@@ -222,7 +223,7 @@ namespace GBEmulator::Debugger
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
-				std::cout << "Added breakpoint #" << this->_breakPoints.size() << " when (" << op->tostring() << ") != 0" << std::endl;
+				std::cout << "Added conditional breakpoint #" << this->_condBreakPoints.size() << " when (" << op->tostring() << ") != 0" << std::endl;
 				this->_condBreakPoints.push_back(op);
 			} catch (std::exception &e) {
 				std::cout << e.what() << std::endl;
@@ -240,8 +241,27 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "registers")
 			this->_cpu.dumpRegisters();
 		else if (args[0] == "oldpc") {
+			std::cout << "Showing the " << this->_oldpcs.size() << " latest pc values" << std::endl;
 			for (auto pc : this->_oldpcs)
-				std::cout << "$" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << pc << std::endl;
+				this->_displayCurrentLine(pc);
+		} else if (args[0] == "oldpcres") {
+			auto newSize = std::stoul(args.at(1));
+
+			if (newSize < this->_oldpcs.size())
+				this->_oldpcs.erase(this->_oldpcs.begin(), this->_oldpcs.begin() + this->_oldpcs.size() - newSize);
+			this->_oldpcs.resize(newSize);
+			std::cout << "oldpc will now display " << this->_oldpcs.size() << " elements" << std::endl;
+		} else if (args[0] == "jmplistres") {
+			auto newSize = std::stoul(args.at(1));
+
+			if (newSize < this->_jumpList.size())
+				this->_jumpList.erase(this->_jumpList.begin(), this->_jumpList.begin() + this->_jumpList.size() - newSize);
+			this->_jumpList.resize(newSize);
+			std::cout << "jmplist will now display " << this->_jumpList.size() << " elements" << std::endl;
+		} else if (args[0] == "jmplist") {
+			std::cout << "Showing the " << this->_jumpList.size() << " latest jumps" << std::endl;
+			for (auto pc : this->_jumpList)
+				this->_displayCurrentLine(pc);
 		} else if (args[0] == "print") {
 			std::string cmd = line.substr(args[0].size());
 
@@ -262,6 +282,16 @@ namespace GBEmulator::Debugger
 			} catch (std::exception &e) {
 				std::cout << e.what() << std::endl;
 			}
+		} else if (args[0] == "printi") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+
+				this->_displayCurrentLine(static_cast<unsigned>(op->getValue(this->_cpu)));
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
 		} else if (args[0] == "printo") {
 			std::string cmd = line.substr(args[0].size());
 
@@ -269,6 +299,23 @@ namespace GBEmulator::Debugger
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
 				std::cout << "&" << std::oct << static_cast<unsigned>(op->getValue(this->_cpu)) << std::endl;
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
+		} else if (args[0] == "ignore") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				unsigned op = compileCondition(this->_cpu._registers, this->_cpu, cmd)->getValue(this->_cpu);
+				auto it = std::find(this->_ignoredCorruptedStackAddress.begin(), this->_ignoredCorruptedStackAddress.end(), op);
+
+				if (it == this->_ignoredCorruptedStackAddress.end()) {
+					this->_ignoredCorruptedStackAddress.push_back(op);
+					std::cout << "Ignored address $" << std::hex << op << " for stack corruption" << std::endl;
+				} else {
+					this->_ignoredCorruptedStackAddress.erase(it);
+					std::cout << "Address $" << std::hex << op << " is no longer ignored for stack corruption" << std::endl;
+				}
 			} catch (std::exception &e) {
 				std::cout << e.what() << std::endl;
 			}
@@ -298,9 +345,7 @@ namespace GBEmulator::Debugger
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
-			this->_cpu.update();
-			this->_oldpcs.erase(this->_oldpcs.begin());
-			this->_oldpcs.push_back(this->_cpu._registers.pc);
+			this->_executeNextInstruction();
 			this->_rate = 0.001;
 			return true;
 		} else if (args[0] == "ram") {
@@ -325,6 +370,9 @@ namespace GBEmulator::Debugger
 					std::cout << " ";
 				std::cout << std::endl;
 			}
+		} else if (args[0] == "checkStack") {
+			this->_checkForStackCorruption = !this->_checkForStackCorruption;
+			std::cout << "Stack corruption check is " << (this->_checkForStackCorruption ? "en" : "dis") << "abled" << std::endl;
 		} else if (args[0] == "jump") {
 			this->_cpu._registers.pc = std::stoul(args.at(1), nullptr, 16);
 			this->_displayCurrentLine();
@@ -332,9 +380,7 @@ namespace GBEmulator::Debugger
 			unsigned short address = this->_cpu._registers.pc;
 
 			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints() && !this->checkConditionalBreakPoints()) {
-				this->_cpu.update();
-				this->_oldpcs.erase(this->_oldpcs.begin());
-				this->_oldpcs.push_back(this->_cpu._registers.pc);
+				this->_executeNextInstruction();
 				if (this->_timer++ == 30)
 					this->_timer = 0;
 				if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
@@ -344,14 +390,10 @@ namespace GBEmulator::Debugger
 			}
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
-			this->_cpu.update();
-			this->_oldpcs.erase(this->_oldpcs.begin());
-			this->_oldpcs.push_back(this->_cpu._registers.pc);
+			this->_executeNextInstruction();
 			this->_displayCurrentLine();
 		} else if (args[0] == "continue") {
-			this->_cpu.update();
-			this->_oldpcs.erase(this->_oldpcs.begin());
-			this->_oldpcs.push_back(this->_cpu._registers.pc);
+			this->_executeNextInstruction();
 			return true;
 		} else if (args[0] == "where")
 			this->_displayCurrentLine();
@@ -413,13 +455,8 @@ namespace GBEmulator::Debugger
 				while (dbg)
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-				if (this->_oldpcs.back() != this->_cpu._registers.pc) {
-					this->_oldpcs.erase(this->_oldpcs.begin());
-					this->_oldpcs.push_back(this->_cpu._registers.pc);
-				}
-
 				try {
-					this->_cpu.update();
+					this->_executeNextInstruction();
 				} catch (CPU::InvalidOpcodeException &e) {
 					dbg = true;
 					std::cout << e.what() << std::endl;
@@ -427,6 +464,116 @@ namespace GBEmulator::Debugger
 					std::cout << "gbdb> ";
 					std::cout.flush();
 				}
+
+				auto nextOpcode = this->_cpu.read(this->_cpu._registers.pc);
+
+				if (
+					this->_checkForStackCorruption &&
+					(
+						(this->_cpu._registers.sp <= 0xFF80 && this->_cpu._registers.sp > 0xE000) ||
+						(this->_cpu._registers.sp <= 0xC000 && this->_cpu._registers.sp > 0x0000)
+					)
+				) {
+					dbg = true;
+					std::cout << "Probably corrupted stack after function return." << std::endl;
+					std::cout << "Stack is at an invalid location $" << this->_cpu._registers.sp << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gbdb> ";
+					std::cout.flush();
+				}
+
+				if (
+					nextOpcode == 0xC7 ||
+					nextOpcode == 0xCF ||
+					nextOpcode == 0xD7 ||
+					nextOpcode == 0xDF ||
+					nextOpcode == 0xE7 ||
+					nextOpcode == 0xEF ||
+					nextOpcode == 0xF7 ||
+					nextOpcode == 0xFF ||
+					nextOpcode == 0xC9 ||
+					nextOpcode == 0xD9 ||
+					nextOpcode == 0xC3 ||
+					nextOpcode == 0x18 ||
+					nextOpcode == 0xE9 ||
+					(nextOpcode == 0xC2 && !this->_cpu._registers.fz) ||
+					(nextOpcode == 0xC0 && !this->_cpu._registers.fz) ||
+					(nextOpcode == 0x20 && !this->_cpu._registers.fz) ||
+					(nextOpcode == 0xC8 && this->_cpu._registers.fz) ||
+					(nextOpcode == 0xCA && this->_cpu._registers.fz) ||
+					(nextOpcode == 0x28 && this->_cpu._registers.fz) ||
+					(nextOpcode == 0xD0 && !this->_cpu._registers.fc) ||
+					(nextOpcode == 0xD2 && !this->_cpu._registers.fc) ||
+					(nextOpcode == 0x30 && !this->_cpu._registers.fc) ||
+					(nextOpcode == 0x38 && this->_cpu._registers.fc) ||
+					(nextOpcode == 0xD8 && this->_cpu._registers.fc) ||
+					(nextOpcode == 0xDA && this->_cpu._registers.fc)
+				) {
+					this->_jumpList.erase(this->_jumpList.begin());
+					this->_jumpList.push_back(this->_cpu._registers.pc);
+				}
+
+				if (
+					nextOpcode == 0xC7 ||
+					nextOpcode == 0xCF ||
+					nextOpcode == 0xD7 ||
+					nextOpcode == 0xDF ||
+					nextOpcode == 0xE7 ||
+					nextOpcode == 0xEF ||
+					nextOpcode == 0xF7 ||
+					nextOpcode == 0xFF ||
+					nextOpcode == 0xC9 ||
+					(nextOpcode == 0xC0 && !this->_cpu._registers.fz) ||
+					(nextOpcode == 0xC8 && this->_cpu._registers.fz) ||
+					//nextOpcode == 0xD9 ||
+					(nextOpcode == 0xD0 && !this->_cpu._registers.fc) ||
+					(nextOpcode == 0xD8 && this->_cpu._registers.fc)
+				) {
+					if (!this->_expectedPcAtRet.empty()) {
+						auto expected = this->_expectedPcAtRet.top();
+
+						if (this->_cpu._registers.sp == expected)
+							this->_expectedPcAtRet.pop();
+						else if (
+							std::find(
+								this->_ignoredCorruptedStackAddress.begin(),
+								this->_ignoredCorruptedStackAddress.end(),
+								this->_cpu._registers.pc
+							) == this->_ignoredCorruptedStackAddress.end() &&
+							this->_checkForStackCorruption
+						) {
+							dbg = true;
+							std::cout << "Probably corrupted stack after function return." << std::endl;
+							std::cout << "Stack is expected to be at $" << std::hex << expected << " but is at $" << this->_cpu._registers.sp << std::endl;
+							this->_displayCurrentLine();
+							std::cout << "gbdb> ";
+							std::cout.flush();
+						}
+					} else if (
+						std::find(
+							this->_ignoredCorruptedStackAddress.begin(),
+							this->_ignoredCorruptedStackAddress.end(),
+							this->_cpu._registers.pc
+						) == this->_ignoredCorruptedStackAddress.end() &&
+						this->_checkForStackCorruption
+					){
+						dbg = true;
+						std::cout << "Probably corrupted stack after function return." << std::endl;
+						std::cout << "Stack is at $" << std::hex << this->_cpu._registers.sp << " but the call stack is empty." << std::endl;
+						this->_displayCurrentLine();
+						std::cout << "gbdb> ";
+						std::cout.flush();
+					}
+				}
+
+				if (
+					nextOpcode == 0xCD ||
+					(nextOpcode == 0xC4 && !this->_cpu._registers.fz) ||
+					(nextOpcode == 0xCC && this->_cpu._registers.fz) ||
+					(nextOpcode == 0xD4 && !this->_cpu._registers.fc) ||
+					(nextOpcode == 0xDC && this->_cpu._registers.fc)
+				)
+					this->_expectedPcAtRet.push(this->_cpu._registers.sp - 2);
 
 				if (this->checkBreakPoints()) {
 					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
@@ -608,12 +755,14 @@ namespace GBEmulator::Debugger
 				case sf::Keyboard::Num3:
 					this->_memBeg = 0x3000;
 					break;
+				case sf::Keyboard::Num4:
 				case sf::Keyboard::Quote:
 					this->_memBeg = 0x4000;
 					break;
 				case sf::Keyboard::Num5:
 					this->_memBeg = 0x5000;
 					break;
+				case sf::Keyboard::Num6:
 				case sf::Keyboard::Dash:
 					this->_memBeg = 0x6000;
 					break;
@@ -895,5 +1044,15 @@ namespace GBEmulator::Debugger
 			if (this->_condBreakPoints[i]->getValue(this->_cpu) != 0)
 				return i;
 		return -1;
+	}
+
+	void Debugger::_executeNextInstruction()
+	{
+		if (this->_oldpcs.back() != this->_cpu._registers.pc) {
+			this->_oldpcs.erase(this->_oldpcs.begin());
+			this->_oldpcs.push_back(this->_cpu._registers.pc);
+		}
+
+		this->_cpu.update();
 	}
 }
