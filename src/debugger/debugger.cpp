@@ -235,9 +235,18 @@ namespace GBEmulator::Debugger
 			std::cout << "step" << std::endl;
 			std::cout << "continue" << std::endl;
 			std::cout << "ram [<border1> <border2>]" << std::endl;
-			std::cout << "print <value>" << std::endl;
 			std::cout << "registers" << std::endl;
 			std::cout << "break <addr>" << std::endl;
+			std::cout << "cbreak <expression>" << std::endl;
+			std::cout << "print <expression>" << std::endl;
+			std::cout << "printi <expression>" << std::endl;
+			std::cout << "printx <expression>" << std::endl;
+			std::cout << "printo <expression>" << std::endl;
+			std::cout << "printb <expression>" << std::endl;
+			std::cout << "oldpcres <nb>" << std::endl;
+			std::cout << "oldpc" << std::endl;
+			std::cout << "jmplistres <nb>" << std::endl;
+			std::cout << "jmplist" << std::endl;
 		} else if (args[0] == "registers")
 			this->_cpu.dumpRegisters();
 		else if (args[0] == "oldpc") {
@@ -311,10 +320,10 @@ namespace GBEmulator::Debugger
 
 				if (it == this->_ignoredCorruptedStackAddress.end()) {
 					this->_ignoredCorruptedStackAddress.push_back(op);
-					std::cout << "Ignored address $" << std::hex << op << " for stack corruption" << std::endl;
+					std::cout << "Ignored address $" << std::hex << op << " for stack corruption and source code break points" << std::endl;
 				} else {
 					this->_ignoredCorruptedStackAddress.erase(it);
-					std::cout << "Address $" << std::hex << op << " is no longer ignored for stack corruption" << std::endl;
+					std::cout << "Address $" << std::hex << op << " is no longer ignored for stack corruption and source code break points" << std::endl;
 				}
 			} catch (std::exception &e) {
 				std::cout << e.what() << std::endl;
@@ -511,6 +520,21 @@ namespace GBEmulator::Debugger
 				) {
 					this->_jumpList.erase(this->_jumpList.begin());
 					this->_jumpList.push_back(this->_cpu._registers.pc);
+				}
+
+				if (
+					std::find(
+						this->_ignoredCorruptedStackAddress.begin(),
+						this->_ignoredCorruptedStackAddress.end(),
+						this->_cpu._registers.pc
+					) == this->_ignoredCorruptedStackAddress.end() &&
+					nextOpcode == 0x40
+				) {
+					dbg = true;
+					std::cout << "Hit source code breakpoint" << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gbdb> ";
+					std::cout.flush();
 				}
 
 				if (
