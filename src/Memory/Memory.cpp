@@ -36,6 +36,8 @@ namespace GBEmulator::Memory
 
 	unsigned char Memory::read(unsigned short address) const
 	{
+		if (!this->_size)
+			return 0xFF;
 		return this->_bankPtr[address];
 	}
 
@@ -98,6 +100,9 @@ namespace GBEmulator::Memory
 
 	void Memory::setBank(unsigned char bank)
 	{
+		if (!this->_size)
+			return;
+
 		this->_currentBank = bank % (this->_size / this->_bankSize);
 		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 	}

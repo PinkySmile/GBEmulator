@@ -188,6 +188,45 @@ namespace GBEmulator::Debugger
 				std::cout << "Added breakpoint #" << this->_breakPoints.size() << " at $" << Instructions::intToHex(add, 4) << std::endl;
 				this->_breakPoints.push_back(add);
 			}
+		} else if (args[0] == "cbreak") {
+			if (args.size() == 1) {
+				std::cout << "There are " << this->_condBreakPoints.size() << " conditional breakpoint(s)" << std::endl;
+				for (unsigned i = 0; i < this->_condBreakPoints.size(); i++)
+					std::cout << "Conditional breakpoint #" << i << " when (" << this->_condBreakPoints[i]->tostring() << ") != 0" << std::endl;
+				return false;
+			}
+
+			if (args[1] == "remove") {
+				if (args.size() != 3) {
+					std::cout << "Expected 2 arguments" << std::endl;
+					return false;
+				}
+
+				auto add = std::stoul(args.at(2), nullptr, 16);
+
+				if (add >= this->_condBreakPoints.size()) {
+					std::cout << "Invalid conditional breakpoints id." << std::endl;
+					std::cout << add << " is greater than the number of conditional breakpoints (" << add << " >= " << this->_condBreakPoints.size() << ")" << std::endl;
+					return false;
+				}
+
+				auto it = this->_condBreakPoints.begin() + add;
+
+				std::cout << "Removed conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << " when (" << (*it)->tostring() << ") != 0" << std::endl;
+				this->_condBreakPoints.erase(it);
+				return false;
+			}
+
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+
+				std::cout << "Added breakpoint #" << this->_breakPoints.size() << " when (" << op->tostring() << ") != 0" << std::endl;
+				this->_condBreakPoints.push_back(op);
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
 		} else if (args[0] == "help") {
 			std::cout << "help" << std::endl;
 			std::cout << "jump <addr>" << std::endl;
@@ -203,9 +242,59 @@ namespace GBEmulator::Debugger
 		else if (args[0] == "oldpc") {
 			for (auto pc : this->_oldpcs)
 				std::cout << "$" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << pc << std::endl;
-		} else if (args[0] == "print")
-			this->_dispVar(args.at(1));
-		else if (args[0] == "set") {
+		} else if (args[0] == "print") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+
+				std::cout << std::dec << op->getValue(this->_cpu) << std::endl;
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
+		} else if (args[0] == "printx") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+
+				std::cout << "$" << std::hex << static_cast<unsigned>(op->getValue(this->_cpu)) << std::endl;
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
+		} else if (args[0] == "printo") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+
+				std::cout << "&" << std::oct << static_cast<unsigned>(op->getValue(this->_cpu)) << std::endl;
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
+		} else if (args[0] == "printb") {
+			std::string cmd = line.substr(args[0].size());
+
+			try {
+				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
+				auto val = static_cast<unsigned>(op->getValue(this->_cpu));
+				std::stringstream s;
+
+				std::cout << "%";
+				do {
+					s << (val & 1U);
+					val >>= 1U;
+				} while (val);
+
+				auto str = s.str();
+
+				for (int i = str.length()-1; i>=0; i--)
+					std::cout << str[i];
+				std::cout << std::endl;
+			} catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+			}
+		} else if (args[0] == "set") {
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
@@ -242,7 +331,7 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "next") {
 			unsigned short address = this->_cpu._registers.pc;
 
-			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints()) {
+			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints() && !this->checkConditionalBreakPoints()) {
 				this->_cpu.update();
 				this->_oldpcs.erase(this->_oldpcs.begin());
 				this->_oldpcs.push_back(this->_cpu._registers.pc);
@@ -335,7 +424,7 @@ namespace GBEmulator::Debugger
 					dbg = true;
 					std::cout << e.what() << std::endl;
 					this->_displayCurrentLine();
-					std::cout << "gdbgb> ";
+					std::cout << "gbdb> ";
 					std::cout.flush();
 				}
 
@@ -344,7 +433,20 @@ namespace GBEmulator::Debugger
 
 					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
 					this->_displayCurrentLine();
-					std::cout << "gdbgb> ";
+					std::cout << "gbdb> ";
+					std::cout.flush();
+					dbg = true;
+				}
+
+				auto cb = this->checkConditionalBreakPoints();
+
+				if (cb >= 0) {
+					auto it = this->_condBreakPoints.begin() + cb;
+
+					std::cout << "Hit conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << std::endl;
+					std::cout << "Expression " << (*it)->tostring() << " resolved to " << (*it)->getValue(this->_cpu) << std::endl;
+					this->_displayCurrentLine();
+					std::cout << "gbdb> ";
 					std::cout.flush();
 					dbg = true;
 				}
@@ -352,7 +454,7 @@ namespace GBEmulator::Debugger
 		});
 
 		this->_displayCurrentLine();
-		std::cout << "gdbgb> ";
+		std::cout << "gbdb> ";
 		std::cout.flush();
 		while (!this->_window.isClosed()) {
 			if (dbg) {
@@ -381,7 +483,7 @@ namespace GBEmulator::Debugger
 						return 0;
 
 					if (dbg) {
-						std::cout << "gdbgb> ";
+						std::cout << "gbdb> ";
 						std::cout.flush();
 					}
 				}
@@ -399,7 +501,7 @@ namespace GBEmulator::Debugger
 				if (this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
 					dbg = true;
 					this->_displayCurrentLine();
-					std::cout << "gdbgb> ";
+					std::cout << "gbdb> ";
 					std::cout.flush();
 				}
 			}
@@ -785,5 +887,13 @@ namespace GBEmulator::Debugger
 			}
 			this->_displayPalette(_debugWindow, 1500, 600 + j * 20, colorBG, false);
 		}
+	}
+
+	int Debugger::checkConditionalBreakPoints()
+	{
+		for (size_t i = 0; i < this->_condBreakPoints.size(); i++)
+			if (this->_condBreakPoints[i]->getValue(this->_cpu) != 0)
+				return i;
+		return -1;
 	}
 }

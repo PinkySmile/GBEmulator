@@ -10,6 +10,7 @@
 
 #include <thread>
 #include "../ProcessingUnits/CPU.hpp"
+#include "CompiledCondition.hpp"
 
 namespace GBEmulator::Debugger
 {
@@ -32,6 +33,7 @@ namespace GBEmulator::Debugger
 	//! @brief Debugger de CPU.
 	class Debugger {
 	private:
+		std::vector<std::shared_ptr<Operation>> _condBreakPoints;
 		std::vector<unsigned short> _oldpcs{64};
 		//! @brief Le CPU à débugger.
 		CPU &_cpu;
@@ -145,6 +147,9 @@ namespace GBEmulator::Debugger
 		//! @brief Vérifie si un point d'arrêt a été atteint
 		//! @return true si un point d'arrêt a été atteint. Sinon, false.
 		bool checkBreakPoints();
+		//! @brief Vérifie si un point d'arrêt conditionel a été atteint
+		//! @return L'index du point d'arrêt atteint. Si aucun point d'arrêt n'est atteint, -1.
+		int checkConditionalBreakPoints();
 		//! Lance la session de débuggage
 		int startDebugSession();
 	};

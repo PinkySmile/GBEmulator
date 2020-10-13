@@ -46,6 +46,7 @@ namespace GBEmulator::SoundChannel
 	{
 		unsigned short val = (value & 0b00000111U) << 8U;
 
+		this->_volumeCycles = 0;
 		this->_restart = value >> 7U;
 		this->_restartType = (value & 0b01000000U) >> 6U;
 		this->_frequency = (this->_frequency & 0b00011111111U) | val;

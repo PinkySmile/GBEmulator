@@ -55,6 +55,8 @@ add_executable(
         src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
         src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
+	src/debugger/CompiledCondition.cpp
+	src/debugger/CompiledCondition.hpp
 )
 
 if (WIN32)
