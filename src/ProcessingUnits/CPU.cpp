@@ -244,6 +244,10 @@ namespace GBEmulator
 
 	int CPU::update()
 	{
+		if (this->_joypad.isButtonPressed(Input::RESET)) {
+			this->init();
+			return 0;
+		}
 		this->_clock.restart();
 
 		int cycles = this->_executeNextAction();
@@ -664,6 +668,37 @@ namespace GBEmulator
 
 	void CPU::init()
 	{
+		this->_gpu.setControlByte(0);
+		this->_interruptRequest = 0;
+		this->_hardwareInterruptRequests = 0;
+		this->_bgpi = 0;
+		this->_autoIncrementBgpi = false;
+		this->_obpi = 0;
+		this->_autoIncrementObpi = false;
+		this->_WRAMBank = 0;
+		this->_speedSwitch = false;
+		this->_isDoubleSpeed = false;
+		this->_HDMADest = 0x8000;
+		this->_HDMASrc = 0;
+		this->_HDMAStart = 0;
+		this->_joypadCache = 0xFF;
+		this->_buttonEnabled = false;
+		this->_directionEnabled = false;
+		this->_halted = false;
+		this->_stopped = false;
+		this->_registers = {
+			.af = 0,
+			.bc = 0,
+			.de = 0,
+			.hl = 0,
+			.pc = 0,
+			.sp = 0
+		};
+		this->_internalRomEnabled = true;
+		this->_divRegister = 0;
+		this->_interruptEnabled = 0x00;
+		this->_interruptRequest = 0x00;
+		this->_interruptMasterEnableFlag = false;
 		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
 	}
 
