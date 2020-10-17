@@ -14,6 +14,7 @@ typedef fd_set FD_SET;
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../LCD/LCDSFML.hpp"
@@ -379,7 +380,7 @@ namespace GBEmulator::Debugger
 					std::cout << " ";
 				std::cout << std::endl;
 			}
-		} else if (args[0] == "checkStack") {
+		} else if (args[0] == "checkstack") {
 			this->_checkForStackCorruption = !this->_checkForStackCorruption;
 			std::cout << "Stack corruption check is " << (this->_checkForStackCorruption ? "en" : "dis") << "abled" << std::endl;
 		} else if (args[0] == "jump") {
@@ -624,9 +625,28 @@ namespace GBEmulator::Debugger
 			}
 		});
 
-		this->_displayCurrentLine();
-		std::cout << "gbdb> ";
-		std::cout.flush();
+		std::ifstream stream{".emudbgbrc"};
+		int currentLine = 0;
+
+		if (!stream.fail()) {
+			std::string line;
+
+			std::cout << "Executing commands in .emudbgbrc." << std::endl;
+			while (std::getline(stream, line)) {
+				currentLine++;
+				try {
+					dbg &= !processCommandLine(line);
+				} catch (std::exception &e) {
+					std::cout << "Error line " << currentLine << ": " << line << std::endl;
+					std::cout << e.what() << std::endl;
+				}
+			}
+		}
+		if (dbg) {
+			this->_displayCurrentLine();
+			std::cout << "gbdb> ";
+			std::cout.flush();
+		}
 		while (!this->_window.isClosed()) {
 			if (dbg) {
 				FD_SET	set;
