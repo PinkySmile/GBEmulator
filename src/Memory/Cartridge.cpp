@@ -97,6 +97,8 @@ namespace GBEmulator::Memory
 			this->_ram.setMemory(mem, size);
 			if (size > RAM_BANKING_SIZE)
 				this->_ram.setBank(0);
+			else
+				this->_ram.setBankSize(size);
 			for (size_t i = 0; i < size; i++)
 				mem[i] = rand() % 0x100;
 			this->_ramMem = mem;

@@ -31,7 +31,7 @@ namespace GBEmulator::Memory
 
 	unsigned char Memory::rawRead(unsigned short address) const
 	{
-		return this->_memory[address];
+		return this->_memory[address % this->_bankSize];
 	}
 
 	unsigned char Memory::read(unsigned short address) const
@@ -95,7 +95,7 @@ namespace GBEmulator::Memory
 
 	void Memory::forceWrite(unsigned short address,unsigned char value)
 	{
-		this->_bankPtr[address] = value;
+		this->_bankPtr[address % this->_bankSize] = value;
 	}
 
 	void Memory::setBank(unsigned char bank)
