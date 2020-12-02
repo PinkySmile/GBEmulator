@@ -706,6 +706,8 @@ namespace GBEmulator
 	{
 		unsigned short len = ((this->_HDMAStart & 0x7F) + 1) * 0x10;
 
+		if (this->_gpu.isTransfering())
+			return;
 		if (!(this->_HDMAStart & 0x80)) {
 			for (unsigned short i = 0; i < len; i++) {
 				this->write(i + this->_HDMADest, this->read(i + this->_HDMASrc));

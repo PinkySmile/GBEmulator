@@ -317,11 +317,8 @@ namespace GBEmulator
 				this->_transfertLen--;
 				this->_HDMADest++;
 				this->_HDMASrc++;
-				if (this->_transfertLen == 0) {
-					this->_isTransferring = false;
-					break;
-				}
 			}
+			this->_isTransferring = this->_transfertLen;
 		}
 
 

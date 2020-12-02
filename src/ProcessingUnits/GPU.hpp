@@ -430,7 +430,7 @@ namespace GBEmulator
 		//! HDMA transfert source.
 		unsigned short _HDMASrc = 0;
 		//! HDMA transfert taille.
-		unsigned char _transfertLen = 0;
+		unsigned short _transfertLen = 0;
 
 		//! Si HDMA transfert.
 		bool _isTransferring = false;
