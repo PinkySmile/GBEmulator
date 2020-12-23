@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <cstring>
-#include <cmath>
+#undef _stat
 #include "GPU.hpp"
 #include "CPU.hpp"
 
@@ -260,39 +260,50 @@ namespace GBEmulator
 
 	void GPU::updateOAM(unsigned int line)
 	{
+		unsigned nbPixels = 0;
 		unsigned char v = 8 * (1 + this->_control.spriteSizeSelect);
-
-		for (int i = 0; i < OAM_SIZE; i += 4) {
+		struct sss {
 			Sprite sprite;
+			unsigned index;
+		} sprites[OAM_SIZE / 4];
+		auto buf = reinterpret_cast<Sprite *>(this->_oam.getBuffer());
 
-			sprite.y = this->_oam.read(i);
-			sprite.x = this->_oam.read(i + 1);
-
-			if (sprite.x == 0 || sprite.x >= 168 || sprite.y == 0 || sprite.y >= 160)
+		for (unsigned i = 0; i < OAM_SIZE / 4; i++) {
+			sprites[i].index = i;
+			sprites[i].sprite = buf[i];
+		}
+		std::sort(sprites, sprites + OAM_SIZE / 4, [](sss &s1, sss &s2){
+			if (s1.sprite.x == s2.sprite.x)
+				return s1.index > s2.index;
+			return s1.sprite.x < s2.sprite.x;
+		});
+		for (auto &sprite : sprites) {
+			if (nbPixels == 80)
+				break;
+			if (sprite.sprite.x == 0 || sprite.sprite.x >= 168 || sprite.sprite.y == 0 || sprite.sprite.y >= 160)
 				continue;
 
-			sprite.texture_id = this->_oam.read(i + 2);
-			sprite.flags = this->_oam.read(i + 3);
-			sprite.y -= 16;
-			sprite.x -= 8;
+			sprite.sprite.y -= 16;
+			sprite.sprite.x -= 8;
 
 			if (this->_control.spriteSizeSelect)
-				sprite.texture_id &= 0xFEU;
+				sprite.sprite.texture_id &= 0xFEU;
 
 			for (int x = 0; x < 8; x += 1) {
 				for (int y = 0; y < v; y += 1) {
-					int realX = ((sprite.x_flip ? 7 - x : x) + sprite.x) % 256;
-					int realY = ((sprite.y_flip ? v - 1 - y : y) + sprite.y) % 256;
+					int realX = ((sprite.sprite.x_flip ? 7 - x : x) + sprite.sprite.x) % 256;
+					int realY = ((sprite.sprite.y_flip ? v - 1 - y : y) + sprite.sprite.y) % 256;
 
-					if (realX < 160 && static_cast<unsigned>(realY) == line/*< 144*/) {
-						unsigned char val = (this->_tiles[sprite.tile_bank] + sprite.texture_id * 64)[x + y * 8];
+					if (static_cast<unsigned>(realY) == line/*< 144*/) {
+						unsigned char val = (this->_tiles[sprite.sprite.tile_bank] + sprite.sprite.texture_id * 64)[x + y * 8];
 						unsigned char newColor = DUCT_TAPE(val);
-						unsigned char palette = sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
+						unsigned char palette = sprite.sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
 						if (newColor && !this->_gbMode)
-							this->_spritesMap[realX + realY * 256] = newColor | (sprite.priority * 0b100) | (sprite.cgb_palette_number << 3U);
+							this->_spritesMap[realX + realY * 256] = newColor | (sprite.sprite.priority * 0b100) | (sprite.sprite.cgb_palette_number << 3U);
 						else if (newColor)
-							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.priority * 0b100);
+							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.sprite.priority * 0b100);
+						nbPixels += newColor != 0;
 					}
 				}
 			}

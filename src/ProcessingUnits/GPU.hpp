@@ -42,8 +42,8 @@ namespace GBEmulator
 		 *  @brief struct représentant un sprite dans l'OAM.
 		 */
 		struct Sprite {
-			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
 			unsigned char y;                //! Position du sprite sur l'axe des ordonnées.
+			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
 			unsigned char texture_id;       //! ID de texture utilisé par le sprite.
 			union {
 				struct {

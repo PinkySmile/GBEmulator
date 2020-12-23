@@ -124,4 +124,9 @@ namespace GBEmulator::Memory
 			std::cout << std::endl;
 		}
 	}
+
+	unsigned char *Memory::getBuffer()
+	{
+		return this->_memory;
+	}
 }

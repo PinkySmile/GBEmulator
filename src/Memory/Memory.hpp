@@ -89,6 +89,7 @@ namespace GBEmulator::Memory
 		void forceWrite(unsigned short address, unsigned char value);
 		//! Écrit dans la sortie standard un debug de la mémoire
 		void dump(unsigned short offset = 0) const;
+		unsigned char *getBuffer();
 	};
 }
 
