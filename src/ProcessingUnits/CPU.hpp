@@ -309,6 +309,9 @@ namespace GBEmulator
 		bool _directionEnabled;
 		//! Est-ce que le CPU est en mode 'halted'
 		bool _halted;
+		double _oldTime;
+		double _newTime;
+		sf::Clock _clock;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
 		float _speed = 1;
@@ -364,7 +367,6 @@ namespace GBEmulator
 		//! HDMA transfert taille, mode, debut.
 		unsigned char _HDMAStart = 0;
 		unsigned _joypadCache = 0xFF;
-		sf::Clock _clock;
 
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.

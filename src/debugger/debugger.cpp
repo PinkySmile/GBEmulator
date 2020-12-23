@@ -461,6 +461,15 @@ namespace GBEmulator::Debugger
 		bool dbg = true;
 		sf::RenderWindow _debugWindow{sf::VideoMode{1920, 1000}, "Debug", sf::Style::Titlebar};
 
+#ifdef _WIN32
+		if (!GetConsoleWindow()) {
+			FILE *_;
+
+			AllocConsole();
+			freopen_s(&_, "CONOUT$", "w", stdout);
+			freopen_s(&_, "CONIN$", "r", stdin);
+		}
+#endif
 		this->_cpuThread = std::thread([&dbg, this]{
 			while (!this->_window.isClosed()) {
 				while (dbg)

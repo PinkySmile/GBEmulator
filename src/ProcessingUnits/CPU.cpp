@@ -330,21 +330,20 @@ namespace GBEmulator
 			this->init();
 			return 0;
 		}
-		this->_clock.restart();
+		this->_newTime = this->_clock.getElapsedTime().asSeconds();
+		if (this->_newTime < this->_oldTime)
+			return -1;
+
+		if ( this->_newTime > 20) {
+			this->_clock.restart();
+			this->_newTime = 0;
+		}
 
 		int cycles = this->_executeNextAction();
 
 		if (cycles) {
-//			auto time = _clock.getElapsedTime().asMicroseconds();
-//			long long t = cycles * 1000000 / this->_speed / GB_CPU_FREQUENCY - time;
-
-//			if (t > 0)
-//				std::this_thread::sleep_for(std::chrono::milliseconds(t));
-
 			this->_divRegister += cycles;
 			this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
-		} else {
-
 		}
 		return cycles;
 	}
@@ -358,6 +357,7 @@ namespace GBEmulator
 	{
 		unsigned gpuInts = this->_gpu.update(*this, cycles);
 
+		this->_oldTime = this->_newTime + cycles * 1. / GB_CPU_FREQUENCY / this->_speed;
 		this->_hardwareInterruptRequests = 0;
 		this->_hardwareInterruptRequests |= gpuInts;
 
@@ -775,6 +775,9 @@ namespace GBEmulator
 		this->_interruptRequest = 0x00;
 		this->_interruptMasterEnableFlag = false;
 		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
+		this->_oldTime = 0;
+		this->_newTime = 0;
+		this->_clock.restart();
 	}
 
 	void CPU::_startDMA()
