@@ -48,14 +48,7 @@ namespace GBEmulator
 		_errorReport(errorReport),
 		_ram(RAM_SIZE, RAM_BANK_SIZE),
 		_hram(HRAM_SIZE, HRAM_SIZE),
-		_registers {
-			.af = 0,
-			.bc = 0,
-			.de = 0,
-			.hl = 0,
-			.pc = 0,
-			.sp = 0
-		},
+		_registers{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		_window(window),
 		_internalRomEnabled(true),
 		_divRegister(0),
@@ -80,6 +73,7 @@ namespace GBEmulator
 
 	unsigned char CPU::read(unsigned short address) const
 	{
+#ifdef __GNUG__
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
@@ -129,6 +123,55 @@ namespace GBEmulator
 		default:
 			return 0x00;
 		}
+#else
+		if STARTUP_CODE_RANGE(address)
+			if (this->_internalRomEnabled)
+				return CPU::_startupCode[address];
+
+		if ROM0_RANGE(address)
+			return this->_rom.read(address);
+
+		if ROM1_RANGE(address)
+			return this->_rom.read(address);
+
+		if VRAM_RANGE(address)
+			return this->_gpu.readVRAM(address - 0x8000);
+
+		if SRAM_RANGE(address)
+			return this->_rom.read(address);
+
+		if WRAM_RANGE(address)
+			return this->_ram.rawRead(address - WRAM_STARTING_ADDRESS);
+
+		if WRAMBX_RANGE(address)
+			return this->_ram.read(address - WRAMBX_STARTING_ADDRESS);
+
+		if ECHO_RAM_RANGE(address)
+			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
+
+		if OAM_RANGE(address)
+			return this->_gpu.readOAM(address - 0xFE00);
+
+		if IO_PORT1_RANGE(address)
+			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
+
+		if APU_RANGE(address)
+			return this->_apu.read(address - APU_STARTING_ADDRESS);
+
+		if WPRAM_RANGE(address)
+			return this->_apu.read(address - APU_STARTING_ADDRESS);
+
+		if IO_PORT2_RANGE(address)
+			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
+
+		if HRAM_RANGE(address)
+			return this->_hram.read(address - HRAM_STARTING_ADDRESS);
+
+		if INTERRUPT_ENABLE_ADDRESS(address)
+			return this->_interruptEnabled;
+
+		return 0x00;
+#endif
 	}
 
 	unsigned char CPU::fetchArgument()
@@ -166,6 +209,7 @@ namespace GBEmulator
 
 	void CPU::write(unsigned short address, unsigned char value)
 	{
+#ifdef __GNUG__
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 		case ROM0_RANGE:
@@ -211,6 +255,49 @@ namespace GBEmulator
 		default:
 			break;
 		}
+#else
+		if STARTUP_CODE_RANGE(address)
+			return this->_rom.write(address, value);
+		if ROM0_RANGE(address)
+			return this->_rom.write(address, value);
+		if ROM1_RANGE(address)
+			return this->_rom.write(address, value);
+
+		if VRAM_RANGE(address)
+			return this->_gpu.writeVRAM(address - 0x8000, value);
+
+		if SRAM_RANGE(address)
+			return this->_rom.write(address, value);
+
+		if WRAM_RANGE(address)
+			return this->_ram.rawWrite(address - WRAM_STARTING_ADDRESS, value);
+
+		if WRAMBX_RANGE(address)
+			return this->_ram.write(address - WRAMBX_STARTING_ADDRESS, value);
+
+		if ECHO_RAM_RANGE(address)
+			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
+
+		if IO_PORT1_RANGE(address)
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		if APU_RANGE(address)
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
+		if WPRAM_RANGE(address)
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
+
+		if IO_PORT2_RANGE(address)
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		if OAM_RANGE(address)
+			return this->_gpu.writeOAM(address - 0xFE00, value);
+
+		if HRAM_RANGE(address)
+			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
+
+		if INTERRUPT_ENABLE_ADDRESS(address)
+			this->_interruptEnabled = value;
+#endif
 	}
 
 	void CPU::setInterruptMaster(bool val)
@@ -626,7 +713,7 @@ namespace GBEmulator
 		std::cout << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCD_CONTROL)) << std::endl;
 		std::cout << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_STAT)) << std::endl;
 		std::cout << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_Y_COORD)) << std::endl;
-		std::cout << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(INTERRUPT_ENABLE_ADDRESS)) << std::endl;
+		std::cout << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_ENABLED)) << std::endl;
 		std::cout << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_REQUESTS)) << std::endl;
 		std::cout << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_rom.getRomBank()) << std::endl;
 
@@ -686,14 +773,7 @@ namespace GBEmulator
 		this->_directionEnabled = false;
 		this->_halted = false;
 		this->_stopped = false;
-		this->_registers = {
-			.af = 0,
-			.bc = 0,
-			.de = 0,
-			.hl = 0,
-			.pc = 0,
-			.sp = 0
-		};
+		this->_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		this->_internalRomEnabled = true;
 		this->_divRegister = 0;
 		this->_interruptEnabled = 0x00;

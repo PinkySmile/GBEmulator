@@ -32,49 +32,79 @@ namespace GBEmulator
 
 	void APU::write(unsigned short address, unsigned char value)
 	{
+#ifdef __GNUG__
 		switch (address) {
-			case FF10 ... FF14 :
-				channelOneWriting(address, value);
-				break;
-			case FF16 ... FF19 :
-				channelTwoWriting(address - FF16, value);
-				break;
-			case FF1A ... FF1E :
-				channelWaveWriting(address - FF1A, value);
-				break;
-			case FF20 ... FF23 :
-				channelNoiseWriting(address - FF20, value);
-				break;
-			case FF24 ... FF26 :
-				controllerWriting(address - FF24, value);
-				break;
-			case WPRAM_START ... WPRAM_END :
-				this->_managerChannelWave.write(address - WPRAM_START, value);
-				break;
-			default :
-				break;
+		case FF10 ... FF14 :
+			channelOneWriting(address, value);
+			break;
+		case FF16 ... FF19 :
+			channelTwoWriting(address - FF16, value);
+			break;
+		case FF1A ... FF1E :
+			channelWaveWriting(address - FF1A, value);
+			break;
+		case FF20 ... FF23 :
+			channelNoiseWriting(address - FF20, value);
+			break;
+		case FF24 ... FF26 :
+			controllerWriting(address - FF24, value);
+			break;
+		case WPRAM_START ... WPRAM_END :
+			this->_managerChannelWave.write(address - WPRAM_START, value);
+			break;
+		default :
+			break;
 		}
+#else
+		if (address >= FF10 && address <= FF14)
+			return channelOneWriting(address, value);
+		if (address >= FF16 && address <= FF19)
+			return channelTwoWriting(address - FF16, value);
+		if (address >= FF1A && address <= FF1E)
+			return channelWaveWriting(address - FF1A, value);
+		if (address >= FF20 && address <= FF23)
+			return channelNoiseWriting(address - FF20, value);
+		if (address >= FF24 && address <= FF26)
+			return controllerWriting(address - FF24, value);
+		if (address >= WPRAM_START && address <= WPRAM_END)
+			return this->_managerChannelWave.write(address - WPRAM_START, value);
+#endif
 	}
 
 	unsigned char APU::read(unsigned short address) const
 	{
+#ifdef __GNUG__
 		switch (address) {
-			case FF10 ... FF14 :
-				return channelOneReading(address);
-			case FF16 ... FF19 :
-				return channelTwoReading(address - FF16);
-			case FF1A ... FF1E :
-				return channelWaveReading(address - FF1A);
-			case FF20 ... FF23 :
-				return channelNoiseReading(address - FF20);
-			case FF24 ... FF26 :
-				return controllerReading(address - FF24);
-			case WPRAM_START ... WPRAM_END :
-				return this->_managerChannelWave.read(address);
-			default :
-				return 0xFF;
-
+		case FF10 ... FF14 :
+			return channelOneReading(address);
+		case FF16 ... FF19 :
+			return channelTwoReading(address - FF16);
+		case FF1A ... FF1E :
+			return channelWaveReading(address - FF1A);
+		case FF20 ... FF23 :
+			return channelNoiseReading(address - FF20);
+		case FF24 ... FF26 :
+			return controllerReading(address - FF24);
+		case WPRAM_START ... WPRAM_END :
+			return this->_managerChannelWave.read(address);
+		default :
+			return 0xFF;
 		}
+#else
+		if (address >= FF10 && address <= FF14)
+			return channelOneReading(address);
+		if (address >= FF16 && address <= FF19)
+			return channelTwoReading(address - FF16);
+		if (address >= FF1A && address <= FF1E)
+			return channelWaveReading(address - FF1A);
+		if (address >= FF20 && address <= FF23)
+			return channelNoiseReading(address - FF20);
+		if (address >= FF24 && address <= FF26)
+			return controllerReading(address - FF24);
+		if (address >= WPRAM_START && address <= WPRAM_END)
+			return this->_managerChannelWave.read(address);
+		return 0xFF;
+#endif
 	}
 
 	//

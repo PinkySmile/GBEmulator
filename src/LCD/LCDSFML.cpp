@@ -10,7 +10,7 @@
 #include "LCDSFML.hpp"
 
 GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &title) :
-	sf::RenderWindow(mode, title),
+	sf::RenderWindow(mode, title.c_str()),
 	_size(160, 144),
 	_screen(new sf::Color[this->_size.x * this->_size.y]),
 	_framebuffer(new sf::Color[this->_size.x * this->_size.y]),
@@ -30,7 +30,7 @@ void GBEmulator::Graphics::LCDSFML::render()
 	sprite.setTexture(this->_texture);
 	this->draw(sprite);
 	if (this->_clock.getElapsedTime().asMilliseconds() > 500) {
-		this->setTitle(this->_title + " " + std::to_string(static_cast<int>(100 / this->_lastFrameTime / 60)) + "% (" + std::to_string(this->getFramerate()) + " FPS)");
+		this->setTitle((this->_title + " " + std::to_string(static_cast<int>(100 / this->_lastFrameTime / 60)) + "% (" + std::to_string(this->getFramerate()) + " FPS)").c_str());
 		this->_clock.restart();
 	}
 	this->_fpsClock.restart();

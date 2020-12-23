@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cstring>
+#include <cctype>
 #include "Memory.hpp"
 
 namespace GBEmulator::Memory

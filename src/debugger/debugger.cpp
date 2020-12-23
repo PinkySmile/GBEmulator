@@ -15,6 +15,7 @@ typedef fd_set FD_SET;
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../LCD/LCDSFML.hpp"
@@ -649,6 +650,17 @@ namespace GBEmulator::Debugger
 		}
 		while (!this->_window.isClosed()) {
 			if (dbg) {
+#ifdef _WIN32
+				this->_checkCommands(dbg);
+
+				if (std::cin.eof())
+					return 0;
+
+				if (dbg) {
+					std::cout << "gbdb> ";
+					std::cout.flush();
+				}
+#else
 				FD_SET	set;
 				timeval time = {0, 0};
 
@@ -678,6 +690,7 @@ namespace GBEmulator::Debugger
 						std::cout.flush();
 					}
 				}
+#endif
 			}
 
 			if (!dbg) {
@@ -721,7 +734,7 @@ namespace GBEmulator::Debugger
 				continue;
 			this->_displayCurrentLine(address, ss);
 			shift += this->_instrSize[this->_cpu.read(address)] - 1;
-			text.setString(ss.str());
+			text.setString(ss.str().c_str());
 			text.move(0, 25);
 			if (this->_cpu._registers.pc == address)
 				text.setFillColor(sf::Color::Red);
@@ -754,7 +767,7 @@ namespace GBEmulator::Debugger
 			ss << std::endl;
 		}
 
-		this->_memory.setString(ss.str());
+		this->_memory.setString(ss.str().c_str());
 		_debugWindow.draw(this->_memory);
 	}
 
@@ -882,7 +895,7 @@ namespace GBEmulator::Debugger
 		ss << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
 		ss << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
 		ss << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_Y_COORD)) << std::endl;
-		ss << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(INTERRUPT_ENABLE_ADDRESS)) << "     ";
+		ss << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_ENABLED)) << "     ";
 		ss << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_REQUESTS)) << "     ";
 		ss << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._rom.getRomBank()) << std::endl << std::endl;
 
@@ -893,7 +906,7 @@ namespace GBEmulator::Debugger
 		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
 		ss << "Maximum CPU speed: " << this->_rate * 100 << "%";
 
-		this->_registers.setString(ss.str());
+		this->_registers.setString(ss.str().c_str());
 		_debugWindow.draw(this->_registers);
 	}
 

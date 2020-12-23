@@ -2,8 +2,23 @@ cmake_minimum_required(VERSION 3.10)
 project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/pkgs)
+find_package(SFML REQUIRED)
+find_package(TGUI)
 
-add_compile_options(-W -Wall -Wextra -Wshadow -o3)
+include_directories(
+	${SFML_INCLUDE_DIRS}
+)
+
+if (NOT MSVC)
+	if (CONFIG STREQUAL Debug)
+		add_compile_options(-W -Wall -Wextra -Wshadow -O0)
+	else ()
+		add_compile_options(-O3)
+		add_link_options(-mwindows)
+	endif()
+endif()
+
 add_executable(
         GBEmulator
         src/debugger/debugger.cpp
@@ -59,29 +74,21 @@ add_executable(
 	src/debugger/CompiledCondition.hpp
 )
 
-if (WIN32)
-        target_link_libraries(
-                GBEmulator
-                ws2_32
-                sfml-graphics
-                sfml-window
-                sfml-system
-                sfml-audio
-                sfml-network
-                pthread
-        )
-else (WIN32)
-        target_link_libraries(
-                GBEmulator
-                sfml-graphics
-                sfml-window
-                sfml-system
-                sfml-audio
-                sfml-network
-                pthread
-                X11
-        )
-endif (WIN32)
+if (NOT WIN32)
+	set(OS_SPEC_LIBS X11 pthread)
+elseif (NOT MSVC)
+	set(OS_SPEC_LIBS pthread)
+endif (NOT WIN32)
+
+target_link_libraries(
+	GBEmulator
+	${SFML_GRAPHICS_LIBRARY}
+	${SFML_SYSTEM_LIBRARY}
+	${SFML_WINDOW_LIBRARY}
+	${SFML_NETWORK_LIBRARY}
+	${SFML_AUDIO_LIBRARY}
+	${OS_SPEC_LIBS}
+)
 
 add_executable(
         tests

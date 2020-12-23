@@ -35,6 +35,7 @@
 //! The address of the first interrupt
 #define INTERRUPT_CODE_OFFSET 0x40
 
+#ifdef __GNUG__
 //! The startup code
 #define STARTUP_CODE_RANGE 0x0000 ... 0x00FF
 
@@ -43,7 +44,6 @@
 
 //! The switchable ROM bank (ROM1)
 #define ROM1_RANGE 0x4000 ... 0x7FFF
-#define ROM1_STARTING_ADDRESS 0x4000
 
 //! Video RAM
 #define VRAM_RANGE 0x8000 ... 0x9FFF
@@ -53,26 +53,21 @@
 
 //! Working RAM
 #define WRAM_RANGE 0xC000 ... 0xCFFF
-#define WRAM_STARTING_ADDRESS 0xC000
 
 //! Working RAM
 #define WRAMBX_RANGE 0xD000 ... 0xDFFF
-#define WRAMBX_STARTING_ADDRESS 0xD000
 
 //! Echo RAM (Echoing the WRAM)
 #define ECHO_RAM_RANGE 0xE000 ... 0xFDFF
-#define ECHO_RAM_STARTING_ADDRESS 0xE000
 
 //! Object attributes matrix
 #define OAM_RANGE 0xFE00 ... 0xFE9F
 
 //! The first range of I/O ports
 #define IO_PORT1_RANGE 0xFF00 ... 0xFF0F
-#define IO_PORTS_STARTING_ADDRESS 0xFF00
 
 //! The APU
 #define APU_RANGE 0xFF10 ... 0xFF2F
-#define APU_STARTING_ADDRESS 0xFF10
 
 //! The wave pattern RAM
 #define WPRAM_RANGE 0xFF30 ... 0xFF3F
@@ -82,10 +77,63 @@
 
 //! High RAM
 #define HRAM_RANGE 0xFF80 ... 0xFFFE
-#define HRAM_STARTING_ADDRESS 0xFF80
 
 //! Interrupt enable
 #define INTERRUPT_ENABLE_ADDRESS 0xFFFF
+#else
+//! The startup code
+#define STARTUP_CODE_RANGE(a) (a >= 0x0000 && a <= 0x00FF)
+
+//! The first bank of the ROM (ROM0)
+#define ROM0_RANGE(a) (a >= 0x0100 && a <= 0x3FFF)
+
+//! The switchable ROM bank (ROM1)
+#define ROM1_RANGE(a) (a >= 0x4000 && a <= 0x7FFF)
+
+//! Video RAM
+#define VRAM_RANGE(a) (a >= 0x8000 && a <= 0x9FFF)
+
+//! Cartridge RAM
+#define SRAM_RANGE(a) (a >= 0xA000 && a <= 0xBFFF)
+
+//! Working RAM
+#define WRAM_RANGE(a) (a >= 0xC000 && a <= 0xCFFF)
+
+//! Working RAM
+#define WRAMBX_RANGE(a) (a >= 0xD000 && a <= 0xDFFF)
+
+//! Echo RAM (Echoing the WRAM)
+#define ECHO_RAM_RANGE(a) (a >= 0xE000 && a <= 0xFDFF)
+
+//! Object attributes matrix
+#define OAM_RANGE(a) (a >= 0xFE00 && a <= 0xFE9F)
+
+//! The first range of I/O ports
+#define IO_PORT1_RANGE(a) (a >= 0xFF00 && a <= 0xFF0F)
+
+//! The APU
+#define APU_RANGE(a) (a >= 0xFF10 && a <= 0xFF2F)
+
+//! The wave pattern RAM
+#define WPRAM_RANGE(a) (a >= 0xFF30 && a <= 0xFF3F)
+
+//! The second range of I/O ports
+#define IO_PORT2_RANGE(a) (a >= 0xFF40 && a <= 0xFF7F)
+
+//! High RAM
+#define HRAM_RANGE(a) (a >= 0xFF80 && a <= 0xFFFE)
+
+//! Interrupt enable
+#define INTERRUPT_ENABLE_ADDRESS(a) (a == 0xFFFF)
+#endif
+
+#define ROM1_STARTING_ADDRESS 0x4000
+#define WRAM_STARTING_ADDRESS 0xC000
+#define WRAMBX_STARTING_ADDRESS 0xD000
+#define ECHO_RAM_STARTING_ADDRESS 0xE000
+#define IO_PORTS_STARTING_ADDRESS 0xFF00
+#define APU_STARTING_ADDRESS 0xFF10
+#define HRAM_STARTING_ADDRESS 0xFF80
 
 namespace GBEmulator
 {
@@ -140,6 +188,7 @@ namespace GBEmulator
 			OBPI                    = 0x6A,
 			OBPD                    = 0x6B,
 			SVBK                    = 0x70,
+			INTERRUPT_ENABLED       = 0xFF,
 		};
 
 

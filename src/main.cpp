@@ -50,6 +50,7 @@ std::string getLastExceptionName()
 Args parseArguments(int argc, char **argv)
 {
 	Args args;
+#ifdef __GNUG__
 	struct option long_options[] = {
 		{"debug",   no_argument,       nullptr, 'd'},
 		{"listen",  required_argument, nullptr, 'l'},
@@ -84,6 +85,12 @@ Args parseArguments(int argc, char **argv)
 	if (optind != argc - 1)
 		throw std::invalid_argument("Too many or no ROM given");
 	args.fileName = argv[optind];
+#else
+	//TODO: Redo a proper getopt implem for MSVC
+	if (argc != 2)
+		throw std::invalid_argument("Too many or no ROM given");
+	args.fileName = argv[1];
+#endif
 	return args;
 }
 
