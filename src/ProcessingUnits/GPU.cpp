@@ -192,8 +192,9 @@ namespace GBEmulator
 		unsigned char color = 0;
 		unsigned char paletteIndex = 0;
 		bool bgZero = false;
+		bool bgPriority = false;
 
-		if (this->_control.bgDisplayEnabled) {
+		if (this->_control.bgDisplayEnabled || !this->_gbMode) {
 			int id = static_cast<int>((x + this->_scrollX) / 8 % 32) + 32 * static_cast<int>((y + this->_scrollY) / 8 % 32);
 			auto bgData = reinterpret_cast<BGData*>(&this->_getTileMap(1, this->_control.bgTileMapSelect)[id]);
 			unsigned char val = this->_getPixelAt(
@@ -206,6 +207,7 @@ namespace GBEmulator
 				bgData->tile_bank && !this->_gbMode
 			);
 
+			bgPriority = bgData->priority && !this->_gbMode;
 			if (this->_gbMode)
 				color = (this->_bgPaletteValue >> DUCT_TAPE(val) * 2) & 0b11U;
 			else {
@@ -242,7 +244,7 @@ namespace GBEmulator
 		}
 
 		if (!(this->_spritesMap[x + y * 256] & 0x80))
-			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0) || bgZero) {
+			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0 && (this->_control.bgDisplayEnabled || this->_gbMode) && !bgPriority) || bgZero) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
 				if (!this->_gbMode)
 					paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
