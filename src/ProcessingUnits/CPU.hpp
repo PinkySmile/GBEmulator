@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2022
+** EPITECH PROJECT, 2019
 ** GBEmulator
 ** File description:
 ** Created by agrellier,
@@ -77,63 +77,39 @@
 
 //! High RAM
 #define HRAM_RANGE 0xFF80 ... 0xFFFE
+#else
+#ifdef DIRTY_MSVC_SWITCH
+#include "MSVCRanges.hpp"
+#endif
+#endif
 
 //! Interrupt enable
 #define INTERRUPT_ENABLE_ADDRESS 0xFFFF
-#else
-//! The startup code
-#define STARTUP_CODE_RANGE(a) (a >= 0x0000 && a <= 0x00FF)
 
-//! The first bank of the ROM (ROM0)
-#define ROM0_RANGE(a) (a >= 0x0100 && a <= 0x3FFF)
-
-//! The switchable ROM bank (ROM1)
-#define ROM1_RANGE(a) (a >= 0x4000 && a <= 0x7FFF)
-
-//! Video RAM
-#define VRAM_RANGE(a) (a >= 0x8000 && a <= 0x9FFF)
-
-//! Cartridge RAM
-#define SRAM_RANGE(a) (a >= 0xA000 && a <= 0xBFFF)
-
-//! Working RAM
-#define WRAM_RANGE(a) (a >= 0xC000 && a <= 0xCFFF)
-
-//! Working RAM
-#define WRAMBX_RANGE(a) (a >= 0xD000 && a <= 0xDFFF)
-
-//! Echo RAM (Echoing the WRAM)
-#define ECHO_RAM_RANGE(a) (a >= 0xE000 && a <= 0xFDFF)
-
-//! Object attributes matrix
-#define OAM_RANGE(a) (a >= 0xFE00 && a <= 0xFE9F)
-
-//! The first range of I/O ports
-#define IO_PORT1_RANGE(a) (a >= 0xFF00 && a <= 0xFF0F)
-
-//! The APU
-#define APU_RANGE(a) (a >= 0xFF10 && a <= 0xFF2F)
-
-//! The wave pattern RAM
-#define WPRAM_RANGE(a) (a >= 0xFF30 && a <= 0xFF3F)
-
-//! The second range of I/O ports
-#define IO_PORT2_RANGE(a) (a >= 0xFF40 && a <= 0xFF7F)
-
-//! High RAM
-#define HRAM_RANGE(a) (a >= 0xFF80 && a <= 0xFFFE)
-
-//! Interrupt enable
-#define INTERRUPT_ENABLE_ADDRESS(a) (a == 0xFFFF)
-#endif
-
+#define STARTUP_CODE_ENDING_ADDRESS 0x100
+#define ROM0_ENDING_ADDRESS ROM1_STARTING_ADDRESS
 #define ROM1_STARTING_ADDRESS 0x4000
+#define ROM1_ENDING_ADDRESS VRAM_STARTING_ADDRESS
+#define VRAM_STARTING_ADDRESS 0x8000
+#define VRAM_ENDING_ADDRESS SRAM_STARTING_ADDRESS
+#define SRAM_STARTING_ADDRESS 0xA000
+#define SRAM_ENDING_ADDRESS WRAM_STARTING_ADDRESS
 #define WRAM_STARTING_ADDRESS 0xC000
+#define WRAM_ENDING_ADDRESS WRAMBX_STARTING_ADDRESS
 #define WRAMBX_STARTING_ADDRESS 0xD000
+#define WRAMBX_ENDING_ADDRESS ECHO_RAM_STARTING_ADDRESS
 #define ECHO_RAM_STARTING_ADDRESS 0xE000
+#define ECHO_RAM_ENDING_ADDRESS OAM_STARTING_ADDRESS
+#define OAM_STARTING_ADDRESS 0xFE00
+#define OAM_ENDING_ADDRESS IO_PORTS_STARTING_ADDRESS
 #define IO_PORTS_STARTING_ADDRESS 0xFF00
+#define IO_PORTS_ENDING_ADDRESS APU_STARTING_ADDRESS
 #define APU_STARTING_ADDRESS 0xFF10
+#define APU_ENDING_ADDRESS WPRAM_STARTING_ADDRESS
+#define WPRAM_STARTING_ADDRESS 0xFF30
+#define WPRAM_ENDING_ADDRESS 0xFF3F
 #define HRAM_STARTING_ADDRESS 0xFF80
+#define HRAM_ENDING_ADDRESS INTERRUPT_ENABLE_ADDRESS
 
 namespace GBEmulator
 {

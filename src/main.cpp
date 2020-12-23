@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <cstring>
+#include <windows.h>
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
@@ -180,8 +181,12 @@ int main(int argc, char **argv)
 			end = window.isClosed();
 		}
 	} catch (std::exception &e) {
+#ifdef _WIN32
+		MessageBox(nullptr, e.what(), getLastExceptionName().c_str(), MB_ICONERROR);
+#else
 		cpu.dump();
 		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
+#endif
 	}
 
 	thread.join();

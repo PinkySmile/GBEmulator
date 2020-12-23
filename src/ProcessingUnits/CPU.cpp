@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2022
+** EPITECH PROJECT, 2019
 ** GBEmulator
 ** File description:
 ** Created by agrellier,
@@ -73,19 +73,20 @@ namespace GBEmulator
 
 	unsigned char CPU::read(unsigned short address) const
 	{
-#ifdef __GNUG__
+#if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 			if (this->_internalRomEnabled)
 				return CPU::_startupCode[address];
+#ifdef __GNUG__
 			__attribute__((fallthrough));
-
+#endif
 		case ROM0_RANGE:
 		case ROM1_RANGE:
 			return this->_rom.read(address);
 
 		case VRAM_RANGE:
-			return this->_gpu.readVRAM(address - 0x8000);
+			return this->_gpu.readVRAM(address - VRAM_STARTING_ADDRESS);
 
 		case SRAM_RANGE:
 			return this->_rom.read(address);
@@ -100,7 +101,7 @@ namespace GBEmulator
 			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
 
 		case OAM_RANGE:
-			return this->_gpu.readOAM(address - 0xFE00);
+			return this->_gpu.readOAM(address - OAM_STARTING_ADDRESS);
 
 		case IO_PORT1_RANGE:
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
@@ -124,50 +125,50 @@ namespace GBEmulator
 			return 0x00;
 		}
 #else
-		if STARTUP_CODE_RANGE(address)
+		if (address < STARTUP_CODE_ENDING_ADDRESS)
 			if (this->_internalRomEnabled)
 				return CPU::_startupCode[address];
 
-		if ROM0_RANGE(address)
+		if (address < ROM0_ENDING_ADDRESS)
 			return this->_rom.read(address);
 
-		if ROM1_RANGE(address)
+		if (address < ROM1_ENDING_ADDRESS)
 			return this->_rom.read(address);
 
-		if VRAM_RANGE(address)
-			return this->_gpu.readVRAM(address - 0x8000);
+		if (address < VRAM_ENDING_ADDRESS)
+			return this->_gpu.readVRAM(address - VRAM_STARTING_ADDRESS);
 
-		if SRAM_RANGE(address)
+		if (address < SRAM_ENDING_ADDRESS)
 			return this->_rom.read(address);
 
-		if WRAM_RANGE(address)
+		if (address < WRAM_ENDING_ADDRESS)
 			return this->_ram.rawRead(address - WRAM_STARTING_ADDRESS);
 
-		if WRAMBX_RANGE(address)
+		if (address < WRAMBX_ENDING_ADDRESS)
 			return this->_ram.read(address - WRAMBX_STARTING_ADDRESS);
 
-		if ECHO_RAM_RANGE(address)
+		if (address < ECHO_RAM_ENDING_ADDRESS)
 			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
 
-		if OAM_RANGE(address)
-			return this->_gpu.readOAM(address - 0xFE00);
+		if (address < OAM_ENDING_ADDRESS)
+			return this->_gpu.readOAM(address - OAM_STARTING_ADDRESS);
 
-		if IO_PORT1_RANGE(address)
+		if (address >= IO_PORTS_STARTING_ADDRESS && address < IO_PORTS_ENDING_ADDRESS)
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
-		if APU_RANGE(address)
+		if (address < APU_ENDING_ADDRESS)
 			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
-		if WPRAM_RANGE(address)
+		if (address < WPRAM_ENDING_ADDRESS)
 			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
-		if IO_PORT2_RANGE(address)
+		if (address < HRAM_STARTING_ADDRESS)
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
-		if HRAM_RANGE(address)
+		if (address < HRAM_ENDING_ADDRESS)
 			return this->_hram.read(address - HRAM_STARTING_ADDRESS);
 
-		if INTERRUPT_ENABLE_ADDRESS(address)
+		if (address == INTERRUPT_ENABLE_ADDRESS)
 			return this->_interruptEnabled;
 
 		return 0x00;
@@ -209,7 +210,7 @@ namespace GBEmulator
 
 	void CPU::write(unsigned short address, unsigned char value)
 	{
-#ifdef __GNUG__
+#if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
 		case ROM0_RANGE:
@@ -256,46 +257,40 @@ namespace GBEmulator
 			break;
 		}
 #else
-		if STARTUP_CODE_RANGE(address)
-			return this->_rom.write(address, value);
-		if ROM0_RANGE(address)
-			return this->_rom.write(address, value);
-		if ROM1_RANGE(address)
+		if (address < ROM1_ENDING_ADDRESS)
 			return this->_rom.write(address, value);
 
-		if VRAM_RANGE(address)
+		if (address < VRAM_ENDING_ADDRESS)
 			return this->_gpu.writeVRAM(address - 0x8000, value);
 
-		if SRAM_RANGE(address)
+		if (address < SRAM_ENDING_ADDRESS)
 			return this->_rom.write(address, value);
 
-		if WRAM_RANGE(address)
+		if (address < WRAM_ENDING_ADDRESS)
 			return this->_ram.rawWrite(address - WRAM_STARTING_ADDRESS, value);
 
-		if WRAMBX_RANGE(address)
+		if (address < WRAMBX_ENDING_ADDRESS)
 			return this->_ram.write(address - WRAMBX_STARTING_ADDRESS, value);
 
-		if ECHO_RAM_RANGE(address)
+		if (address < ECHO_RAM_ENDING_ADDRESS)
 			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
 
-		if IO_PORT1_RANGE(address)
-			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
-
-		if APU_RANGE(address)
-			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
-		if WPRAM_RANGE(address)
-			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
-
-		if IO_PORT2_RANGE(address)
-			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
-
-		if OAM_RANGE(address)
+		if (address < OAM_ENDING_ADDRESS)
 			return this->_gpu.writeOAM(address - 0xFE00, value);
 
-		if HRAM_RANGE(address)
+		if (address >= IO_PORTS_STARTING_ADDRESS && address < IO_PORTS_ENDING_ADDRESS)
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		if (address < WPRAM_ENDING_ADDRESS)
+			return this->_apu.write(address - APU_STARTING_ADDRESS, value);
+
+		if (address < HRAM_STARTING_ADDRESS)
+			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
+
+		if (address < HRAM_ENDING_ADDRESS)
 			return this->_hram.write(address - HRAM_STARTING_ADDRESS, value);
 
-		if INTERRUPT_ENABLE_ADDRESS(address)
+		if (address == INTERRUPT_ENABLE_ADDRESS)
 			this->_interruptEnabled = value;
 #endif
 	}
