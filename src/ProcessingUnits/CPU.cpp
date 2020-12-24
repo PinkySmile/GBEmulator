@@ -326,26 +326,32 @@ namespace GBEmulator
 
 	int CPU::update()
 	{
+		int total = 0;
+
 		if (this->_joypad.isButtonPressed(Input::RESET)) {
 			this->init();
 			return 0;
 		}
-		this->_newTime = this->_clock.getElapsedTime().asSeconds();
-		if (this->_newTime < this->_oldTime)
-			return -1;
+		while (true) {
+			this->_newTime = this->_clock.getElapsedTime().asSeconds();
+			if (this->_newTime < this->_oldTime)
+				break;
 
-		if ( this->_newTime > 20) {
-			this->_clock.restart();
-			this->_newTime = 0;
+			if (this->_newTime > 20) {
+				this->_clock.restart();
+				this->_newTime -= 20;
+				this->_oldTime -= 20;
+			}
+
+			int cycles = this->_executeNextAction();
+
+			total += cycles;
+			if (cycles) {
+				this->_divRegister += cycles;
+				this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
+			}
 		}
-
-		int cycles = this->_executeNextAction();
-
-		if (cycles) {
-			this->_divRegister += cycles;
-			this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
-		}
-		return cycles;
+		return total;
 	}
 
 	void CPU::setSpeed(float speed)
@@ -357,7 +363,7 @@ namespace GBEmulator
 	{
 		unsigned gpuInts = this->_gpu.update(*this, cycles);
 
-		this->_oldTime = this->_newTime + cycles * 1. / GB_CPU_FREQUENCY / this->_speed;
+		this->_oldTime += cycles * 1. / GB_CPU_FREQUENCY / this->_speed;
 		this->_hardwareInterruptRequests = 0;
 		this->_hardwareInterruptRequests |= gpuInts;
 
