@@ -451,6 +451,8 @@ namespace GBEmulator::Instructions
 
 	extern const std::function<std::string (const CPU &, unsigned short address)> _instructionsString[256];
 	extern const std::function<std::string (const CPU &, unsigned short address)> _bitLevelInstructionsString[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _instructionsString2[256];
+	extern const std::function<std::string (const CPU &, unsigned short address)> _bitLevelInstructionsString2[256];
 }
 
 

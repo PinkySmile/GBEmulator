@@ -25,6 +25,7 @@ struct Args
 	std::string connectIp;
 	bool debug = false;
 	bool error = true;
+	bool profiler = false;
 };
 
 std::string getLastExceptionName()
@@ -53,15 +54,16 @@ Args parseArguments(int argc, char **argv)
 	Args args;
 #ifdef __GNUG__
 	struct option long_options[] = {
-		{"debug",   no_argument,       nullptr, 'd'},
-		{"listen",  required_argument, nullptr, 'l'},
-		{"connect", required_argument, nullptr, 'c'},
-		{"no-error",no_argument,       nullptr, 'n'},
-		{nullptr,   no_argument,       nullptr, 0}
+		{"debug",    no_argument,       nullptr, 'd'},
+		{"listen",   required_argument, nullptr, 'l'},
+		{"connect",  required_argument, nullptr, 'c'},
+		{"no-error", no_argument,       nullptr, 'n'},
+		{"profiling",no_argument,       nullptr, 'p'},
+		{nullptr,    no_argument,       nullptr, 0}
 	};
 
 	while (true) {
-		int c = getopt_long(argc, argv, "l:c:dn", long_options, nullptr);
+		int c = getopt_long(argc, argv, "l:c:dnp", long_options, nullptr);
 
 		if (c == -1)
 			break;
@@ -78,6 +80,9 @@ Args parseArguments(int argc, char **argv)
 			break;
 		case 'n':
 			args.error = false;
+			break;
+		case 'p':
+			args.profiler = true;
 			break;
 		default:
 			throw std::invalid_argument("Invalid argument");
@@ -144,8 +149,6 @@ int main(int argc, char **argv)
 	window.setFramerateLimit(60);
 	window.setView(view);
 
-//	channel3.setDisabled(true);
-
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
 		cpu.init();
@@ -166,6 +169,8 @@ int main(int argc, char **argv)
 
 	if (args.debug)
 		return debugger.startDebugSession();
+
+	cpu.setProfiling(args.profiler);
 
 	bool end = false;
 	std::thread thread{
@@ -191,6 +196,8 @@ int main(int argc, char **argv)
 
 	thread.join();
 	cpu.getCartridgeEmulator().saveRAM();
+	if (args.profiler)
+		cpu.dumpProfiler();
 
 	return EXIT_SUCCESS;
 }

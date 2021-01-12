@@ -524,67 +524,67 @@ namespace GBEmulator::Instructions {
 		case 0x7F:
 			return LD8(reg.a, reg.a);
 
-		//! 80; ADD a,b: Adds b to a.
+		//! 80; ADD b: Adds b to a.
 		case 0x80:
 			return ADD8(reg, reg.a, reg.b, false);
 
-		//! 81; ADD a,c: Adds c to a.
+		//! 81; ADD c: Adds c to a.
 		case 0x81:
 			return ADD8(reg, reg.a, reg.c, false);
 
-		//! 82; ADD a,d: Adds d to a.
+		//! 82; ADD d: Adds d to a.
 		case 0x82:
 			return ADD8(reg, reg.a, reg.d, false);
 
-		//! 83; ADD a,e: Adds e to a.
+		//! 83; ADD e: Adds e to a.
 		case 0x83:
 			return ADD8(reg, reg.a, reg.e, false);
 
-		//! 84; ADD a,h: Adds h to a.
+		//! 84; ADD h: Adds h to a.
 		case 0x84:
 			return ADD8(reg, reg.a, reg.h, false);
 
-		//! 85; ADD a,l: Adds l to a.
+		//! 85; ADD l: Adds l to a.
 		case 0x85:
 			return ADD8(reg, reg.a, reg.l, false);
 
-		//! 86; ADD a,(hl): Adds (hl) to a.
+		//! 86; ADD (hl): Adds (hl) to a.
 		case 0x86:
 			return ADD8(reg, reg.a, cpu.read(reg.hl), false) + INDIRECTION_CYCLE_DURATION;
 
-		//! 87; ADD a,a: Adds a to a.
+		//! 87; ADD a: Adds a to a.
 		case 0x87:
 			return ADD8(reg, reg.a, reg.a, false);
 
-		//! 88; ADC a,b: Adds b and the carry flag to a.
+		//! 88; ADC b: Adds b and the carry flag to a.
 		case 0x88:
 			return ADD8(reg, reg.a, reg.b, reg.fc);
 
-		//! 89; ADC a,c: Adds c and the carry flag to a.
+		//! 89; ADC c: Adds c and the carry flag to a.
 		case 0x89:
 			return ADD8(reg, reg.a, reg.c, reg.fc);
 
-		//! 8A; ADC a,d: Adds d and the carry flag to a.
+		//! 8A; ADC d: Adds d and the carry flag to a.
 		case 0x8A:
 			return ADD8(reg, reg.a, reg.d, reg.fc);
 
-		//! 8B; ADC a,e: Adds e and the carry flag to a.
+		//! 8B; ADC e: Adds e and the carry flag to a.
 		case 0x8B:
 			return ADD8(reg, reg.a, reg.e, reg.fc);
 
-		//! 8C; ADC a,h: Adds h and the carry flag to a.
+		//! 8C; ADC h: Adds h and the carry flag to a.
 		case 0x8C:
 			return ADD8(reg, reg.a, reg.h, reg.fc);
 
-		//! 8D; ADC a,l: Adds l and the carry flag to a.
+		//! 8D; ADC l: Adds l and the carry flag to a.
 		case 0x8D:
 			return ADD8(reg, reg.a, reg.l, reg.fc);
 
-		//! 8E; ADC a,(hl): Adds (hl) and the carry flag to a.
+		//! 8E; ADC (hl): Adds (hl) and the carry flag to a.
 		case 0x8E:
 			return ADD8(reg, reg.a, cpu.read(reg.hl), reg.fc) + INDIRECTION_CYCLE_DURATION;
 
-		//! 8F; ADC a,a: Adds a and the carry flag to a.
+		//! 8F; ADC a: Adds a and the carry flag to a.
 		case 0x8F:
 			return ADD8(reg, reg.a, reg.a, reg.fc);
 
@@ -620,35 +620,35 @@ namespace GBEmulator::Instructions {
 		case 0x97:
 			return SUB8(reg, reg.a, reg.a, false);
 
-		//! 98; SBC a,b: Subtracts b and the carry flag from a.
+		//! 98; SBC b: Subtracts b and the carry flag from a.
 		case 0x98:
 			return SUB8(reg, reg.a, reg.b, reg.fc);
 
-		//! 99; SBC a,c: Subtracts c and the carry flag from a.
+		//! 99; SBC c: Subtracts c and the carry flag from a.
 		case 0x99:
 			return SUB8(reg, reg.a, reg.c, reg.fc);
 
-		//! 9A; SBC a,d: Subtracts d and the carry flag from a.
+		//! 9A; SBC d: Subtracts d and the carry flag from a.
 		case 0x9A:
 			return SUB8(reg, reg.a, reg.d, reg.fc);
 
-		//! 9B; SBC a,e: Subtracts e and the carry flag from a.
+		//! 9B; SBC e: Subtracts e and the carry flag from a.
 		case 0x9B:
 			return SUB8(reg, reg.a, reg.e, reg.fc);
 
-		//! 9C; SBC a,h: Subtracts h and the carry flag from a.
+		//! 9C; SBC h: Subtracts h and the carry flag from a.
 		case 0x9C:
 			return SUB8(reg, reg.a, reg.h, reg.fc);
 
-		//! 9D; SBC a,l: Subtracts l and the carry flag from a.
+		//! 9D; SBC l: Subtracts l and the carry flag from a.
 		case 0x9D:
 			return SUB8(reg, reg.a, reg.l, reg.fc);
 
-		//! 9E; SBC a,(hl): Subtracts (hl) and the carry flag from a.
+		//! 9E; SBC (hl): Subtracts (hl) and the carry flag from a.
 		case 0x9E:
 			return SUB8(reg, reg.a, cpu.read(reg.hl), reg.fc) + INDIRECTION_CYCLE_DURATION;
 
-		//! 9F; SBC a,a: Subtracts a and the carry flag from a.
+		//! 9F; SBC a: Subtracts a and the carry flag from a.
 		case 0x9F:
 			return SUB8(reg, reg.a, reg.a, reg.fc);
 
@@ -804,7 +804,7 @@ namespace GBEmulator::Instructions {
 		case 0xC5:
 			return PUSH(cpu, reg, reg.bc);
 
-		//! C6; ADD a,*: Adds * to a.
+		//! C6; ADD *: Adds * to a.
 		case 0xC6:
 			return ADD8(reg, reg.a, cpu.fetchArgument(), false) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
@@ -836,7 +836,7 @@ namespace GBEmulator::Instructions {
 		case 0xCD:
 			return CALL(cpu, reg, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION;
 
-		//! CE; ADC a,*: Adds * and the carry flag to a.
+		//! CE; ADC *: Adds * and the carry flag to a.
 		case 0xCE:
 			return ADD8(reg, reg.a, cpu.fetchArgument(), reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
@@ -888,7 +888,7 @@ namespace GBEmulator::Instructions {
 		case 0xDC:
 			return CALLC(cpu, reg, reg.fc, cpu.fetchArgument16()) + FETCH_ARGUMENT16_CYLCE_DURATION;
 
-		//! DE; SBC a,*: Subtracts * and the carry flag from a.
+		//! DE; SBC *: Subtracts * and the carry flag from a.
 		case 0xDE:
 			return SUB8(reg, reg.a, cpu.fetchArgument(), reg.fc) + FETCH_ARGUMENT8_CYLCE_DURATION;
 
@@ -999,297 +999,561 @@ namespace GBEmulator::Instructions {
 	}
 
 	const std::function<std::string(const CPU &, unsigned short)> _instructionsString[256] = {
-			[](const CPU &, unsigned short) { return "NOP"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD bc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "LD (bc), a"; },
-			[](const CPU &, unsigned short) { return "INC bc"; },
-			[](const CPU &, unsigned short) { return "INC b"; },
-			[](const CPU &, unsigned short) { return "DEC b"; },
-			[](const CPU &cpu, unsigned short address) { return "LD b," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RLCA"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "), SP";
-			},
-			[](const CPU &, unsigned short) { return "ADD hl,bc"; },
-			[](const CPU &, unsigned short) { return "LD a,(bc)"; },
-			[](const CPU &, unsigned short) { return "DEC bc"; },
-			[](const CPU &, unsigned short) { return "INC c"; },
-			[](const CPU &, unsigned short) { return "DEC c"; },
-			[](const CPU &cpu, unsigned short address) { return "LD c," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RRCA"; },
-			[](const CPU &, unsigned short) { return "STOP"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD de," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "LD (de),a"; },
-			[](const CPU &, unsigned short) { return "INC de"; },
-			[](const CPU &, unsigned short) { return "INC d"; },
-			[](const CPU &, unsigned short) { return "DEC d"; },
-			[](const CPU &cpu, unsigned short address) { return "LD d," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RLA"; },
-			[](const CPU &cpu, unsigned short address) { return "JR " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "ADD hl,de"; },
-			[](const CPU &, unsigned short) { return "LD a,(de)"; },
-			[](const CPU &, unsigned short) { return "DEC de"; },
-			[](const CPU &, unsigned short) { return "INC e"; },
-			[](const CPU &, unsigned short) { return "DEC e"; },
-			[](const CPU &cpu, unsigned short address) { return "LD e," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RRA"; },
-			[](const CPU &cpu, unsigned short address) { return "JR nz," + intToHex(cpu.read(address)); },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD hl, " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "LDI (hl),a"; },
-			[](const CPU &, unsigned short) { return "INC hl"; },
-			[](const CPU &, unsigned short) { return "INC h"; },
-			[](const CPU &, unsigned short) { return "DEC h"; },
-			[](const CPU &cpu, unsigned short address) { return "LD h," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "DAA"; },
-			[](const CPU &cpu, unsigned short address) { return "JR z," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "ADD hl,hl"; },
-			[](const CPU &, unsigned short) { return "LDI a,(hl)"; },
-			[](const CPU &, unsigned short) { return "DEC hl"; },
-			[](const CPU &, unsigned short) { return "INC l"; },
-			[](const CPU &, unsigned short) { return "DEC l"; },
-			[](const CPU &cpu, unsigned short address) { return "LD l," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "CPL"; },
-			[](const CPU &cpu, unsigned short address) { return "JR nc," + intToHex(cpu.read(address)); },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD sp, " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "LD (hl-), a"; },
-			[](const CPU &, unsigned short) { return "INC sp"; },
-			[](const CPU &, unsigned short) { return "INC (hl)"; },
-			[](const CPU &, unsigned short) { return "DEC (hl)"; },
-			[](const CPU &cpu, unsigned short address) { return "LD (hl)," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "SCF"; },
-			[](const CPU &cpu, unsigned short address) { return "JR c," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "ADD hl,sp"; },
-			[](const CPU &, unsigned short) { return "LDD a,(hl)"; },
-			[](const CPU &, unsigned short) { return "DEC sp"; },
-			[](const CPU &, unsigned short) { return "INC a"; },
-			[](const CPU &, unsigned short) { return "DEC a"; },
-			[](const CPU &cpu, unsigned short address) { return "LD a," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "CCF"; },
-			[](const CPU &, unsigned short) { return "LD b,b"; },
-			[](const CPU &, unsigned short) { return "LD b,c"; },
-			[](const CPU &, unsigned short) { return "LD b,d"; },
-			[](const CPU &, unsigned short) { return "LD b,e"; },
-			[](const CPU &, unsigned short) { return "LD b,h"; },
-			[](const CPU &, unsigned short) { return "LD b,l"; },
-			[](const CPU &, unsigned short) { return "LD b,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD b,a"; },
-			[](const CPU &, unsigned short) { return "LD c,b"; },
-			[](const CPU &, unsigned short) { return "LD c,c"; },
-			[](const CPU &, unsigned short) { return "LD c,d"; },
-			[](const CPU &, unsigned short) { return "LD c,e"; },
-			[](const CPU &, unsigned short) { return "LD c,h"; },
-			[](const CPU &, unsigned short) { return "LD c,l"; },
-			[](const CPU &, unsigned short) { return "LD c,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD c,a"; },
-			[](const CPU &, unsigned short) { return "LD d,b"; },
-			[](const CPU &, unsigned short) { return "LD d,c"; },
-			[](const CPU &, unsigned short) { return "LD d,d"; },
-			[](const CPU &, unsigned short) { return "LD d,e"; },
-			[](const CPU &, unsigned short) { return "LD d,h"; },
-			[](const CPU &, unsigned short) { return "LD d,l"; },
-			[](const CPU &, unsigned short) { return "LD d,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD d,a"; },
-			[](const CPU &, unsigned short) { return "LD e,b"; },
-			[](const CPU &, unsigned short) { return "LD e,c"; },
-			[](const CPU &, unsigned short) { return "LD e,d"; },
-			[](const CPU &, unsigned short) { return "LD e,e"; },
-			[](const CPU &, unsigned short) { return "LD e,h"; },
-			[](const CPU &, unsigned short) { return "LD e,l"; },
-			[](const CPU &, unsigned short) { return "LD e,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD e,a"; },
-			[](const CPU &, unsigned short) { return "LD h,b"; },
-			[](const CPU &, unsigned short) { return "LD h,c"; },
-			[](const CPU &, unsigned short) { return "LD h,d"; },
-			[](const CPU &, unsigned short) { return "LD h,e"; },
-			[](const CPU &, unsigned short) { return "LD h,h"; },
-			[](const CPU &, unsigned short) { return "LD h,l"; },
-			[](const CPU &, unsigned short) { return "LD h,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD h,a"; },
-			[](const CPU &, unsigned short) { return "LD l,b"; },
-			[](const CPU &, unsigned short) { return "LD l,c"; },
-			[](const CPU &, unsigned short) { return "LD l,d"; },
-			[](const CPU &, unsigned short) { return "LD l,e"; },
-			[](const CPU &, unsigned short) { return "LD l,h"; },
-			[](const CPU &, unsigned short) { return "LD l,l"; },
-			[](const CPU &, unsigned short) { return "LD l,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD l,a"; },
-			[](const CPU &, unsigned short) { return "LD (hl),b"; },
-			[](const CPU &, unsigned short) { return "LD (hl),c"; },
-			[](const CPU &, unsigned short) { return "LD (hl),d"; },
-			[](const CPU &, unsigned short) { return "LD (hl),e"; },
-			[](const CPU &, unsigned short) { return "LD (hl),h"; },
-			[](const CPU &, unsigned short) { return "LD (hl),l"; },
-			[](const CPU &, unsigned short) { return "HALT"; },
-			[](const CPU &, unsigned short) { return "LD (hl),a"; },
-			[](const CPU &, unsigned short) { return "LD a,b"; },
-			[](const CPU &, unsigned short) { return "LD a,c"; },
-			[](const CPU &, unsigned short) { return "LD a,d"; },
-			[](const CPU &, unsigned short) { return "LD a,e"; },
-			[](const CPU &, unsigned short) { return "LD a,h"; },
-			[](const CPU &, unsigned short) { return "LD a,l"; },
-			[](const CPU &, unsigned short) { return "LD a,(hl)"; },
-			[](const CPU &, unsigned short) { return "LD a,a"; },
-			[](const CPU &, unsigned short) { return "ADD a,b"; },
-			[](const CPU &, unsigned short) { return "ADD a,c"; },
-			[](const CPU &, unsigned short) { return "ADD a,d"; },
-			[](const CPU &, unsigned short) { return "ADD a,e"; },
-			[](const CPU &, unsigned short) { return "ADD a,h"; },
-			[](const CPU &, unsigned short) { return "ADD a,l"; },
-			[](const CPU &, unsigned short) { return "ADD a,(hl)"; },
-			[](const CPU &, unsigned short) { return "ADD a,a"; },
-			[](const CPU &, unsigned short) { return "ADC a,b"; },
-			[](const CPU &, unsigned short) { return "ADC a,c"; },
-			[](const CPU &, unsigned short) { return "ADC a,d"; },
-			[](const CPU &, unsigned short) { return "ADC a,e"; },
-			[](const CPU &, unsigned short) { return "ADC a,h"; },
-			[](const CPU &, unsigned short) { return "ADC a,l"; },
-			[](const CPU &, unsigned short) { return "ADC a,(hl)"; },
-			[](const CPU &, unsigned short) { return "ADC a,a"; },
-			[](const CPU &, unsigned short) { return "SUB b"; },
-			[](const CPU &, unsigned short) { return "SUB c"; },
-			[](const CPU &, unsigned short) { return "SUB d"; },
-			[](const CPU &, unsigned short) { return "SUB e"; },
-			[](const CPU &, unsigned short) { return "SUB h"; },
-			[](const CPU &, unsigned short) { return "SUB l"; },
-			[](const CPU &, unsigned short) { return "SUB (hl)"; },
-			[](const CPU &, unsigned short) { return "SUB a"; },
-			[](const CPU &, unsigned short) { return "SBC a,b"; },
-			[](const CPU &, unsigned short) { return "SBC a,c"; },
-			[](const CPU &, unsigned short) { return "SBC a,d"; },
-			[](const CPU &, unsigned short) { return "SBC a,e"; },
-			[](const CPU &, unsigned short) { return "SBC a,h"; },
-			[](const CPU &, unsigned short) { return "SBC a,l"; },
-			[](const CPU &, unsigned short) { return "SBC a,(hl)"; },
-			[](const CPU &, unsigned short) { return "SBC a,a"; },
-			[](const CPU &, unsigned short) { return "AND b"; },
-			[](const CPU &, unsigned short) { return "AND c"; },
-			[](const CPU &, unsigned short) { return "AND d"; },
-			[](const CPU &, unsigned short) { return "AND e"; },
-			[](const CPU &, unsigned short) { return "AND h"; },
-			[](const CPU &, unsigned short) { return "AND l"; },
-			[](const CPU &, unsigned short) { return "AND (hl)"; },
-			[](const CPU &, unsigned short) { return "AND a"; },
-			[](const CPU &, unsigned short) { return "XOR b"; },
-			[](const CPU &, unsigned short) { return "XOR c"; },
-			[](const CPU &, unsigned short) { return "XOR d"; },
-			[](const CPU &, unsigned short) { return "XOR e"; },
-			[](const CPU &, unsigned short) { return "XOR h"; },
-			[](const CPU &, unsigned short) { return "XOR l"; },
-			[](const CPU &, unsigned short) { return "XOR (hl)"; },
-			[](const CPU &, unsigned short) { return "XOR a"; },
-			[](const CPU &, unsigned short) { return "OR b"; },
-			[](const CPU &, unsigned short) { return "OR c"; },
-			[](const CPU &, unsigned short) { return "OR d"; },
-			[](const CPU &, unsigned short) { return "OR e"; },
-			[](const CPU &, unsigned short) { return "OR h"; },
-			[](const CPU &, unsigned short) { return "OR l"; },
-			[](const CPU &, unsigned short) { return "OR (hl)"; },
-			[](const CPU &, unsigned short) { return "OR a"; },
-			[](const CPU &, unsigned short) { return "CP b"; },
-			[](const CPU &, unsigned short) { return "CP c"; },
-			[](const CPU &, unsigned short) { return "CP d"; },
-			[](const CPU &, unsigned short) { return "CP e"; },
-			[](const CPU &, unsigned short) { return "CP h"; },
-			[](const CPU &, unsigned short) { return "CP l"; },
-			[](const CPU &, unsigned short) { return "CP (hl)"; },
-			[](const CPU &, unsigned short) { return "CP a"; },
-			[](const CPU &, unsigned short) { return "RET nz"; },
-			[](const CPU &, unsigned short) { return "POP bc"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "JP nz," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &cpu, unsigned short address) {
-				return "JP " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &cpu, unsigned short address) {
-				return "CALL nz," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "PUSH bc"; },
-			[](const CPU &cpu, unsigned short address) { return "ADD a," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 00h"; },
-			[](const CPU &, unsigned short) { return "RET z"; },
-			[](const CPU &, unsigned short) { return "RET"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "JP z," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &cpu, unsigned short address) {
-				return _bitLevelInstructionsString[cpu.read(address)](cpu, address + 1);
-			},
-			[](const CPU &cpu, unsigned short address) {
-				return "CALL z," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &cpu, unsigned short address) {
-				return "CALL " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &cpu, unsigned short address) { return "ADC a," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 08h"; },
-			[](const CPU &, unsigned short) { return "RET nc"; },
-			[](const CPU &, unsigned short) { return "POP de"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "JP nc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "CALL nc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "PUSH de"; },
-			[](const CPU &cpu, unsigned short address) { return "SUB " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 10h"; },
-			[](const CPU &, unsigned short) { return "RET c"; },
-			[](const CPU &, unsigned short) { return "RETI"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "JP c," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "CALL c," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
-			},
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &cpu, unsigned short address) { return "SBC a," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 18h"; },
-			[](const CPU &cpu, unsigned short address) { return "LD (FF00+" + intToHex(cpu.read(address)) + "),a"; },
-			[](const CPU &, unsigned short) { return "POP hl"; },
-			[](const CPU &, unsigned short) { return "LD (FF00+c),a"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "PUSH hl"; },
-			[](const CPU &cpu, unsigned short address) { return "AND " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 20h"; },
-			[](const CPU &cpu, unsigned short address) { return "ADD sp," + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "JP (hl)"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "),a";
-			},
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &cpu, unsigned short address) { return "XOR " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 28h"; },
-			[](const CPU &cpu, unsigned short address) { return "LD a,(FF00+" + intToHex(cpu.read(address)) + ")"; },
-			[](const CPU &, unsigned short) { return "POP af"; },
-			[](const CPU &, unsigned short) { return "LD a,(FF00+c)"; },
-			[](const CPU &, unsigned short) { return "DI"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "PUSH af"; },
-			[](const CPU &cpu, unsigned short address) { return "OR " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 30h"; },
-			[](const CPU &cpu, unsigned short address) { return "LD hl,sp+" + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "LD sp,hl"; },
-			[](const CPU &cpu, unsigned short address) {
-				return "LD a,(" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + ")";
-			},
-			[](const CPU &, unsigned short) { return "EI"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &, unsigned short) { return "Invalid Opcode"; },
-			[](const CPU &cpu, unsigned short address) { return "CP " + intToHex(cpu.read(address)); },
-			[](const CPU &, unsigned short) { return "RST 38h"; },
+		[](const CPU &, unsigned short) { return "NOP"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD bc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "LD (bc), a"; },
+		[](const CPU &, unsigned short) { return "INC bc"; },
+		[](const CPU &, unsigned short) { return "INC b"; },
+		[](const CPU &, unsigned short) { return "DEC b"; },
+		[](const CPU &cpu, unsigned short address) { return "LD b," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RLCA"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "), SP";
+		},
+		[](const CPU &, unsigned short) { return "ADD hl,bc"; },
+		[](const CPU &, unsigned short) { return "LD a,(bc)"; },
+		[](const CPU &, unsigned short) { return "DEC bc"; },
+		[](const CPU &, unsigned short) { return "INC c"; },
+		[](const CPU &, unsigned short) { return "DEC c"; },
+		[](const CPU &cpu, unsigned short address) { return "LD c," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RRCA"; },
+		[](const CPU &, unsigned short) { return "STOP"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD de," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "LD (de),a"; },
+		[](const CPU &, unsigned short) { return "INC de"; },
+		[](const CPU &, unsigned short) { return "INC d"; },
+		[](const CPU &, unsigned short) { return "DEC d"; },
+		[](const CPU &cpu, unsigned short address) { return "LD d," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RLA"; },
+		[](const CPU &cpu, unsigned short address) { return "JR " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "ADD hl,de"; },
+		[](const CPU &, unsigned short) { return "LD a,(de)"; },
+		[](const CPU &, unsigned short) { return "DEC de"; },
+		[](const CPU &, unsigned short) { return "INC e"; },
+		[](const CPU &, unsigned short) { return "DEC e"; },
+		[](const CPU &cpu, unsigned short address) { return "LD e," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RRA"; },
+		[](const CPU &cpu, unsigned short address) { return "JR nz," + intToHex(cpu.read(address)); },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD hl, " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "LDI (hl),a"; },
+		[](const CPU &, unsigned short) { return "INC hl"; },
+		[](const CPU &, unsigned short) { return "INC h"; },
+		[](const CPU &, unsigned short) { return "DEC h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD h," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "DAA"; },
+		[](const CPU &cpu, unsigned short address) { return "JR z," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "ADD hl,hl"; },
+		[](const CPU &, unsigned short) { return "LDI a,(hl)"; },
+		[](const CPU &, unsigned short) { return "DEC hl"; },
+		[](const CPU &, unsigned short) { return "INC l"; },
+		[](const CPU &, unsigned short) { return "DEC l"; },
+		[](const CPU &cpu, unsigned short address) { return "LD l," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "CPL"; },
+		[](const CPU &cpu, unsigned short address) { return "JR nc," + intToHex(cpu.read(address)); },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD sp, " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "LD (hl-), a"; },
+		[](const CPU &, unsigned short) { return "INC sp"; },
+		[](const CPU &, unsigned short) { return "INC (hl)"; },
+		[](const CPU &, unsigned short) { return "DEC (hl)"; },
+		[](const CPU &cpu, unsigned short address) { return "LD (hl)," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "SCF"; },
+		[](const CPU &cpu, unsigned short address) { return "JR c," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "ADD hl,sp"; },
+		[](const CPU &, unsigned short) { return "LDD a,(hl)"; },
+		[](const CPU &, unsigned short) { return "DEC sp"; },
+		[](const CPU &, unsigned short) { return "INC a"; },
+		[](const CPU &, unsigned short) { return "DEC a"; },
+		[](const CPU &cpu, unsigned short address) { return "LD a," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "CCF"; },
+		[](const CPU &, unsigned short) { return "LD b,b"; },
+		[](const CPU &, unsigned short) { return "LD b,c"; },
+		[](const CPU &, unsigned short) { return "LD b,d"; },
+		[](const CPU &, unsigned short) { return "LD b,e"; },
+		[](const CPU &, unsigned short) { return "LD b,h"; },
+		[](const CPU &, unsigned short) { return "LD b,l"; },
+		[](const CPU &, unsigned short) { return "LD b,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD b,a"; },
+		[](const CPU &, unsigned short) { return "LD c,b"; },
+		[](const CPU &, unsigned short) { return "LD c,c"; },
+		[](const CPU &, unsigned short) { return "LD c,d"; },
+		[](const CPU &, unsigned short) { return "LD c,e"; },
+		[](const CPU &, unsigned short) { return "LD c,h"; },
+		[](const CPU &, unsigned short) { return "LD c,l"; },
+		[](const CPU &, unsigned short) { return "LD c,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD c,a"; },
+		[](const CPU &, unsigned short) { return "LD d,b"; },
+		[](const CPU &, unsigned short) { return "LD d,c"; },
+		[](const CPU &, unsigned short) { return "LD d,d"; },
+		[](const CPU &, unsigned short) { return "LD d,e"; },
+		[](const CPU &, unsigned short) { return "LD d,h"; },
+		[](const CPU &, unsigned short) { return "LD d,l"; },
+		[](const CPU &, unsigned short) { return "LD d,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD d,a"; },
+		[](const CPU &, unsigned short) { return "LD e,b"; },
+		[](const CPU &, unsigned short) { return "LD e,c"; },
+		[](const CPU &, unsigned short) { return "LD e,d"; },
+		[](const CPU &, unsigned short) { return "LD e,e"; },
+		[](const CPU &, unsigned short) { return "LD e,h"; },
+		[](const CPU &, unsigned short) { return "LD e,l"; },
+		[](const CPU &, unsigned short) { return "LD e,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD e,a"; },
+		[](const CPU &, unsigned short) { return "LD h,b"; },
+		[](const CPU &, unsigned short) { return "LD h,c"; },
+		[](const CPU &, unsigned short) { return "LD h,d"; },
+		[](const CPU &, unsigned short) { return "LD h,e"; },
+		[](const CPU &, unsigned short) { return "LD h,h"; },
+		[](const CPU &, unsigned short) { return "LD h,l"; },
+		[](const CPU &, unsigned short) { return "LD h,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD h,a"; },
+		[](const CPU &, unsigned short) { return "LD l,b"; },
+		[](const CPU &, unsigned short) { return "LD l,c"; },
+		[](const CPU &, unsigned short) { return "LD l,d"; },
+		[](const CPU &, unsigned short) { return "LD l,e"; },
+		[](const CPU &, unsigned short) { return "LD l,h"; },
+		[](const CPU &, unsigned short) { return "LD l,l"; },
+		[](const CPU &, unsigned short) { return "LD l,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD l,a"; },
+		[](const CPU &, unsigned short) { return "LD (hl),b"; },
+		[](const CPU &, unsigned short) { return "LD (hl),c"; },
+		[](const CPU &, unsigned short) { return "LD (hl),d"; },
+		[](const CPU &, unsigned short) { return "LD (hl),e"; },
+		[](const CPU &, unsigned short) { return "LD (hl),h"; },
+		[](const CPU &, unsigned short) { return "LD (hl),l"; },
+		[](const CPU &, unsigned short) { return "HALT"; },
+		[](const CPU &, unsigned short) { return "LD (hl),a"; },
+		[](const CPU &, unsigned short) { return "LD a,b"; },
+		[](const CPU &, unsigned short) { return "LD a,c"; },
+		[](const CPU &, unsigned short) { return "LD a,d"; },
+		[](const CPU &, unsigned short) { return "LD a,e"; },
+		[](const CPU &, unsigned short) { return "LD a,h"; },
+		[](const CPU &, unsigned short) { return "LD a,l"; },
+		[](const CPU &, unsigned short) { return "LD a,(hl)"; },
+		[](const CPU &, unsigned short) { return "LD a,a"; },
+		[](const CPU &, unsigned short) { return "ADD b"; },
+		[](const CPU &, unsigned short) { return "ADD c"; },
+		[](const CPU &, unsigned short) { return "ADD d"; },
+		[](const CPU &, unsigned short) { return "ADD e"; },
+		[](const CPU &, unsigned short) { return "ADD h"; },
+		[](const CPU &, unsigned short) { return "ADD l"; },
+		[](const CPU &, unsigned short) { return "ADD (hl)"; },
+		[](const CPU &, unsigned short) { return "ADD a"; },
+		[](const CPU &, unsigned short) { return "ADC b"; },
+		[](const CPU &, unsigned short) { return "ADC c"; },
+		[](const CPU &, unsigned short) { return "ADC d"; },
+		[](const CPU &, unsigned short) { return "ADC e"; },
+		[](const CPU &, unsigned short) { return "ADC h"; },
+		[](const CPU &, unsigned short) { return "ADC l"; },
+		[](const CPU &, unsigned short) { return "ADC (hl)"; },
+		[](const CPU &, unsigned short) { return "ADC a"; },
+		[](const CPU &, unsigned short) { return "SUB b"; },
+		[](const CPU &, unsigned short) { return "SUB c"; },
+		[](const CPU &, unsigned short) { return "SUB d"; },
+		[](const CPU &, unsigned short) { return "SUB e"; },
+		[](const CPU &, unsigned short) { return "SUB h"; },
+		[](const CPU &, unsigned short) { return "SUB l"; },
+		[](const CPU &, unsigned short) { return "SUB (hl)"; },
+		[](const CPU &, unsigned short) { return "SUB a"; },
+		[](const CPU &, unsigned short) { return "SBC b"; },
+		[](const CPU &, unsigned short) { return "SBC c"; },
+		[](const CPU &, unsigned short) { return "SBC d"; },
+		[](const CPU &, unsigned short) { return "SBC e"; },
+		[](const CPU &, unsigned short) { return "SBC h"; },
+		[](const CPU &, unsigned short) { return "SBC l"; },
+		[](const CPU &, unsigned short) { return "SBC (hl)"; },
+		[](const CPU &, unsigned short) { return "SBC a"; },
+		[](const CPU &, unsigned short) { return "AND b"; },
+		[](const CPU &, unsigned short) { return "AND c"; },
+		[](const CPU &, unsigned short) { return "AND d"; },
+		[](const CPU &, unsigned short) { return "AND e"; },
+		[](const CPU &, unsigned short) { return "AND h"; },
+		[](const CPU &, unsigned short) { return "AND l"; },
+		[](const CPU &, unsigned short) { return "AND (hl)"; },
+		[](const CPU &, unsigned short) { return "AND a"; },
+		[](const CPU &, unsigned short) { return "XOR b"; },
+		[](const CPU &, unsigned short) { return "XOR c"; },
+		[](const CPU &, unsigned short) { return "XOR d"; },
+		[](const CPU &, unsigned short) { return "XOR e"; },
+		[](const CPU &, unsigned short) { return "XOR h"; },
+		[](const CPU &, unsigned short) { return "XOR l"; },
+		[](const CPU &, unsigned short) { return "XOR (hl)"; },
+		[](const CPU &, unsigned short) { return "XOR a"; },
+		[](const CPU &, unsigned short) { return "OR b"; },
+		[](const CPU &, unsigned short) { return "OR c"; },
+		[](const CPU &, unsigned short) { return "OR d"; },
+		[](const CPU &, unsigned short) { return "OR e"; },
+		[](const CPU &, unsigned short) { return "OR h"; },
+		[](const CPU &, unsigned short) { return "OR l"; },
+		[](const CPU &, unsigned short) { return "OR (hl)"; },
+		[](const CPU &, unsigned short) { return "OR a"; },
+		[](const CPU &, unsigned short) { return "CP b"; },
+		[](const CPU &, unsigned short) { return "CP c"; },
+		[](const CPU &, unsigned short) { return "CP d"; },
+		[](const CPU &, unsigned short) { return "CP e"; },
+		[](const CPU &, unsigned short) { return "CP h"; },
+		[](const CPU &, unsigned short) { return "CP l"; },
+		[](const CPU &, unsigned short) { return "CP (hl)"; },
+		[](const CPU &, unsigned short) { return "CP a"; },
+		[](const CPU &, unsigned short) { return "RET nz"; },
+		[](const CPU &, unsigned short) { return "POP bc"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "JP nz," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &cpu, unsigned short address) {
+			return "JP " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &cpu, unsigned short address) {
+			return "CALL nz," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "PUSH bc"; },
+		[](const CPU &cpu, unsigned short address) { return "ADD " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 00h"; },
+		[](const CPU &, unsigned short) { return "RET z"; },
+		[](const CPU &, unsigned short) { return "RET"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "JP z," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &cpu, unsigned short address) {
+			return _bitLevelInstructionsString[cpu.read(address)](cpu, address + 1);
+		},
+		[](const CPU &cpu, unsigned short address) {
+			return "CALL z," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &cpu, unsigned short address) {
+			return "CALL " + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &cpu, unsigned short address) { return "ADC " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 08h"; },
+		[](const CPU &, unsigned short) { return "RET nc"; },
+		[](const CPU &, unsigned short) { return "POP de"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "JP nc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "CALL nc," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "PUSH de"; },
+		[](const CPU &cpu, unsigned short address) { return "SUB " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 10h"; },
+		[](const CPU &, unsigned short) { return "RET c"; },
+		[](const CPU &, unsigned short) { return "RETI"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "JP c," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "CALL c," + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address));
+		},
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) { return "SBC " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 18h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD (FF00+" + intToHex(cpu.read(address)) + "),a"; },
+		[](const CPU &, unsigned short) { return "POP hl"; },
+		[](const CPU &, unsigned short) { return "LD (FF00+c),a"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "PUSH hl"; },
+		[](const CPU &cpu, unsigned short address) { return "AND " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 20h"; },
+		[](const CPU &cpu, unsigned short address) { return "ADD sp," + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "JP (hl)"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "),a";
+		},
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) { return "XOR " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 28h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD a,(FF00+" + intToHex(cpu.read(address)) + ")"; },
+		[](const CPU &, unsigned short) { return "POP af"; },
+		[](const CPU &, unsigned short) { return "LD a,(FF00+c)"; },
+		[](const CPU &, unsigned short) { return "DI"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "PUSH af"; },
+		[](const CPU &cpu, unsigned short address) { return "OR " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 30h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD hl,sp+" + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "LD sp,hl"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD a,(" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + ")";
+		},
+		[](const CPU &, unsigned short) { return "EI"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) { return "CP " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 38h"; },
+	};
+
+
+	const std::function<std::string(const CPU &, unsigned short)> _instructionsString2[256] = {
+		[](const CPU &, unsigned short) { return "NOP"; },
+		[](const CPU &, unsigned short) { return "LD bc,**";},
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().bc, 4) + "), a"; },
+		[](const CPU &, unsigned short) { return "INC bc"; },
+		[](const CPU &, unsigned short) { return "INC b"; },
+		[](const CPU &, unsigned short) { return "DEC b"; },
+		[](const CPU &, unsigned short) { return "LD b,*"; },
+		[](const CPU &, unsigned short) { return "RLCA"; },
+		[](const CPU &cpu, unsigned short address) {
+			return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "), SP";
+		},
+		[](const CPU &, unsigned short) { return "ADD hl,bc"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(" + intToHex(cpu.getRegisters().bc, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "DEC bc"; },
+		[](const CPU &, unsigned short) { return "INC c"; },
+		[](const CPU &, unsigned short) { return "DEC c"; },
+		[](const CPU &, unsigned short) { return "LD c,*"; },
+		[](const CPU &, unsigned short) { return "RRCA"; },
+		[](const CPU &, unsigned short) { return "STOP"; },
+		[](const CPU &, unsigned short) {return "LD de,**"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().de, 4) + "),a"; },
+		[](const CPU &, unsigned short) { return "INC de"; },
+		[](const CPU &, unsigned short) { return "INC d"; },
+		[](const CPU &, unsigned short) { return "DEC d"; },
+		[](const CPU &, unsigned short) { return "LD d,*"; },
+		[](const CPU &, unsigned short) { return "RLA"; },
+		[](const CPU &, unsigned short) { return "JR *"; },
+		[](const CPU &, unsigned short) { return "ADD hl,de"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(" + intToHex(cpu.getRegisters().de, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "DEC de"; },
+		[](const CPU &, unsigned short) { return "INC e"; },
+		[](const CPU &, unsigned short) { return "DEC e"; },
+		[](const CPU &, unsigned short) { return "LD e,*"; },
+		[](const CPU &, unsigned short) { return "RRA"; },
+		[](const CPU &, unsigned short) { return "JR nz,*"; },
+		[](const CPU &, unsigned short) { return "LD hl,**"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),a"; },
+		[](const CPU &, unsigned short) { return "INC hl"; },
+		[](const CPU &, unsigned short) { return "INC h"; },
+		[](const CPU &, unsigned short) { return "DEC h"; },
+		[](const CPU &, unsigned short) { return "LD h,*"; },
+		[](const CPU &, unsigned short) { return "DAA"; },
+		[](const CPU &, unsigned short) { return "JR z,*"; },
+		[](const CPU &, unsigned short) { return "ADD hl,hl"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "DEC hl"; },
+		[](const CPU &, unsigned short) { return "INC l"; },
+		[](const CPU &, unsigned short) { return "DEC l"; },
+		[](const CPU &, unsigned short) { return "LD l,*"; },
+		[](const CPU &, unsigned short) { return "CPL"; },
+		[](const CPU &, unsigned short) { return "JR nc,*"; },
+		[](const CPU &, unsigned short) { return "LD sp,**"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "), a"; },
+		[](const CPU &, unsigned short) { return "INC sp"; },
+		[](const CPU &cpu, unsigned short) { return "INC (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &cpu, unsigned short) { return "DEC (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),*"; },
+		[](const CPU &, unsigned short) { return "SCF"; },
+		[](const CPU &, unsigned short) { return "JR c,*"; },
+		[](const CPU &, unsigned short) { return "ADD hl,sp"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "DEC sp"; },
+		[](const CPU &, unsigned short) { return "INC a"; },
+		[](const CPU &, unsigned short) { return "DEC a"; },
+		[](const CPU &, unsigned short) { return "LD a,*"; },
+		[](const CPU &, unsigned short) { return "CCF"; },
+		[](const CPU &, unsigned short) { return "LD b,b"; },
+		[](const CPU &, unsigned short) { return "LD b,c"; },
+		[](const CPU &, unsigned short) { return "LD b,d"; },
+		[](const CPU &, unsigned short) { return "LD b,e"; },
+		[](const CPU &, unsigned short) { return "LD b,h"; },
+		[](const CPU &, unsigned short) { return "LD b,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD b,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD b,a"; },
+		[](const CPU &, unsigned short) { return "LD c,b"; },
+		[](const CPU &, unsigned short) { return "LD c,c"; },
+		[](const CPU &, unsigned short) { return "LD c,d"; },
+		[](const CPU &, unsigned short) { return "LD c,e"; },
+		[](const CPU &, unsigned short) { return "LD c,h"; },
+		[](const CPU &, unsigned short) { return "LD c,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD c,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD c,a"; },
+		[](const CPU &, unsigned short) { return "LD d,b"; },
+		[](const CPU &, unsigned short) { return "LD d,c"; },
+		[](const CPU &, unsigned short) { return "LD d,d"; },
+		[](const CPU &, unsigned short) { return "LD d,e"; },
+		[](const CPU &, unsigned short) { return "LD d,h"; },
+		[](const CPU &, unsigned short) { return "LD d,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD d,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD d,a"; },
+		[](const CPU &, unsigned short) { return "LD e,b"; },
+		[](const CPU &, unsigned short) { return "LD e,c"; },
+		[](const CPU &, unsigned short) { return "LD e,d"; },
+		[](const CPU &, unsigned short) { return "LD e,e"; },
+		[](const CPU &, unsigned short) { return "LD e,h"; },
+		[](const CPU &, unsigned short) { return "LD e,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD e,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD e,a"; },
+		[](const CPU &, unsigned short) { return "LD h,b"; },
+		[](const CPU &, unsigned short) { return "LD h,c"; },
+		[](const CPU &, unsigned short) { return "LD h,d"; },
+		[](const CPU &, unsigned short) { return "LD h,e"; },
+		[](const CPU &, unsigned short) { return "LD h,h"; },
+		[](const CPU &, unsigned short) { return "LD h,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD h,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD h,a"; },
+		[](const CPU &, unsigned short) { return "LD l,b"; },
+		[](const CPU &, unsigned short) { return "LD l,c"; },
+		[](const CPU &, unsigned short) { return "LD l,d"; },
+		[](const CPU &, unsigned short) { return "LD l,e"; },
+		[](const CPU &, unsigned short) { return "LD l,h"; },
+		[](const CPU &, unsigned short) { return "LD l,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD l,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD l,a"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),b"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),c"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),d"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),e"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),h"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),l"; },
+		[](const CPU &, unsigned short) { return "HALT"; },
+		[](const CPU &cpu, unsigned short) { return "LD (" + intToHex(cpu.getRegisters().hl, 4) + "),a"; },
+		[](const CPU &, unsigned short) { return "LD a,b"; },
+		[](const CPU &, unsigned short) { return "LD a,c"; },
+		[](const CPU &, unsigned short) { return "LD a,d"; },
+		[](const CPU &, unsigned short) { return "LD a,e"; },
+		[](const CPU &, unsigned short) { return "LD a,h"; },
+		[](const CPU &, unsigned short) { return "LD a,l"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "LD a,a"; },
+		[](const CPU &, unsigned short) { return "ADD b"; },
+		[](const CPU &, unsigned short) { return "ADD c"; },
+		[](const CPU &, unsigned short) { return "ADD d"; },
+		[](const CPU &, unsigned short) { return "ADD e"; },
+		[](const CPU &, unsigned short) { return "ADD h"; },
+		[](const CPU &, unsigned short) { return "ADD l"; },
+		[](const CPU &cpu, unsigned short) { return "ADD (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "ADD a"; },
+		[](const CPU &, unsigned short) { return "ADC b"; },
+		[](const CPU &, unsigned short) { return "ADC c"; },
+		[](const CPU &, unsigned short) { return "ADC d"; },
+		[](const CPU &, unsigned short) { return "ADC e"; },
+		[](const CPU &, unsigned short) { return "ADC h"; },
+		[](const CPU &, unsigned short) { return "ADC l"; },
+		[](const CPU &cpu, unsigned short) { return "ADC (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "ADC a"; },
+		[](const CPU &, unsigned short) { return "SUB b"; },
+		[](const CPU &, unsigned short) { return "SUB c"; },
+		[](const CPU &, unsigned short) { return "SUB d"; },
+		[](const CPU &, unsigned short) { return "SUB e"; },
+		[](const CPU &, unsigned short) { return "SUB h"; },
+		[](const CPU &, unsigned short) { return "SUB l"; },
+		[](const CPU &cpu, unsigned short) { return "SUB (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "SUB a"; },
+		[](const CPU &, unsigned short) { return "SBC b"; },
+		[](const CPU &, unsigned short) { return "SBC c"; },
+		[](const CPU &, unsigned short) { return "SBC d"; },
+		[](const CPU &, unsigned short) { return "SBC e"; },
+		[](const CPU &, unsigned short) { return "SBC h"; },
+		[](const CPU &, unsigned short) { return "SBC l"; },
+		[](const CPU &cpu, unsigned short) { return "SBC (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "SBC a"; },
+		[](const CPU &, unsigned short) { return "AND b"; },
+		[](const CPU &, unsigned short) { return "AND c"; },
+		[](const CPU &, unsigned short) { return "AND d"; },
+		[](const CPU &, unsigned short) { return "AND e"; },
+		[](const CPU &, unsigned short) { return "AND h"; },
+		[](const CPU &, unsigned short) { return "AND l"; },
+		[](const CPU &cpu, unsigned short) { return "AND (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "AND a"; },
+		[](const CPU &, unsigned short) { return "XOR b"; },
+		[](const CPU &, unsigned short) { return "XOR c"; },
+		[](const CPU &, unsigned short) { return "XOR d"; },
+		[](const CPU &, unsigned short) { return "XOR e"; },
+		[](const CPU &, unsigned short) { return "XOR h"; },
+		[](const CPU &, unsigned short) { return "XOR l"; },
+		[](const CPU &cpu, unsigned short) { return "XOR (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "XOR a"; },
+		[](const CPU &, unsigned short) { return "OR b"; },
+		[](const CPU &, unsigned short) { return "OR c"; },
+		[](const CPU &, unsigned short) { return "OR d"; },
+		[](const CPU &, unsigned short) { return "OR e"; },
+		[](const CPU &, unsigned short) { return "OR h"; },
+		[](const CPU &, unsigned short) { return "OR l"; },
+		[](const CPU &cpu, unsigned short) { return "OR (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "OR a"; },
+		[](const CPU &, unsigned short) { return "CP b"; },
+		[](const CPU &, unsigned short) { return "CP c"; },
+		[](const CPU &, unsigned short) { return "CP d"; },
+		[](const CPU &, unsigned short) { return "CP e"; },
+		[](const CPU &, unsigned short) { return "CP h"; },
+		[](const CPU &, unsigned short) { return "CP l"; },
+		[](const CPU &cpu, unsigned short) { return "CP (" + intToHex(cpu.getRegisters().hl, 4) + ")"; },
+		[](const CPU &, unsigned short) { return "CP a"; },
+		[](const CPU &, unsigned short) { return "RET nz"; },
+		[](const CPU &, unsigned short) { return "POP bc"; },
+		[](const CPU &, unsigned short) { return "JP nz,**"; },
+		[](const CPU &, unsigned short) { return "JP **"; },
+		[](const CPU &, unsigned short) { return "CALL nz,**"; },
+		[](const CPU &, unsigned short) { return "PUSH bc"; },
+		[](const CPU &, unsigned short) { return "ADD *"; },
+		[](const CPU &, unsigned short) { return "RST 00h"; },
+		[](const CPU &, unsigned short) { return "RET z"; },
+		[](const CPU &, unsigned short) { return "RET"; },
+		[](const CPU &, unsigned short) { return "JP z,*";},
+		[](const CPU &cpu, unsigned short address) {
+			return _bitLevelInstructionsString2[cpu.read(address)](cpu, address + 1);
+		},
+		[](const CPU &, unsigned short) { return "CALL z,**"; },
+		[](const CPU &, unsigned short) { return "CALL **"; },
+		[](const CPU &, unsigned short) { return "ADC *"; },
+		[](const CPU &, unsigned short) { return "RST 08h"; },
+		[](const CPU &, unsigned short) { return "RET nc"; },
+		[](const CPU &, unsigned short) { return "POP de"; },
+		[](const CPU &, unsigned short) { return "JP nc,**"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "CALL nc,**"; },
+		[](const CPU &, unsigned short) { return "PUSH de"; },
+		[](const CPU &, unsigned short) { return "SUB *"; },
+		[](const CPU &, unsigned short) { return "RST 10h"; },
+		[](const CPU &, unsigned short) { return "RET c"; },
+		[](const CPU &, unsigned short) { return "RETI"; },
+		[](const CPU &, unsigned short) { return "JP c,*"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "CALL c,**"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "SBC *"; },
+		[](const CPU &, unsigned short) { return "RST 18h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD (FF00+" + intToHex(cpu.read(address)) + "),a"; },
+		[](const CPU &, unsigned short) { return "POP hl"; },
+		[](const CPU &cpu, unsigned short) { return "LD (FF00+" + intToHex(cpu.getRegisters().c) + "),a"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "PUSH hl"; },
+		[](const CPU &, unsigned short) { return "AND *"; },
+		[](const CPU &, unsigned short) { return "RST 20h"; },
+		[](const CPU &, unsigned short) { return "ADD sp,*"; },
+		[](const CPU &, unsigned short) { return "JP (hl)"; },
+		[](const CPU &cpu, unsigned short address) { return "LD (" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + "),a"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "XOR *"; },
+		[](const CPU &, unsigned short) { return "RST 28h"; },
+		[](const CPU &cpu, unsigned short address) { return "LD a,(FF00+" + intToHex(cpu.read(address)) + ")"; },
+		[](const CPU &, unsigned short) { return "POP af"; },
+		[](const CPU &cpu, unsigned short) { return "LD a,(FF00+" + intToHex(cpu.getRegisters().c) + ")"; },
+		[](const CPU &, unsigned short) { return "DI"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "PUSH af"; },
+		[](const CPU &, unsigned short) { return "OR *"; },
+		[](const CPU &, unsigned short) { return "RST 30h"; },
+		[](const CPU &, unsigned short) { return "LD hl,sp+*"; },
+		[](const CPU &, unsigned short) { return "LD sp,hl"; },
+		[](const CPU &cpu, unsigned short address) { return "LD a,(" + intToHex(cpu.read(address + 1)) + intToHex(cpu.read(address)) + ")"; },
+		[](const CPU &, unsigned short) { return "EI"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &, unsigned short) { return "Invalid Opcode"; },
+		[](const CPU &cpu, unsigned short address) { return "CP " + intToHex(cpu.read(address)); },
+		[](const CPU &, unsigned short) { return "RST 38h"; },
 	};
 }

@@ -327,6 +327,7 @@ namespace GBEmulator
 	int CPU::update()
 	{
 		int total = 0;
+		unsigned number = 500;
 
 		if (this->_joypad.isButtonPressed(Input::RESET)) {
 			this->init();
@@ -335,6 +336,9 @@ namespace GBEmulator
 		while (true) {
 			this->_newTime = this->_clock.getElapsedTime().asSeconds();
 			if (this->_newTime < this->_oldTime)
+				break;
+
+			if (!--number)
 				break;
 
 			if (this->_newTime > 20) {
@@ -678,8 +682,22 @@ namespace GBEmulator
 	int CPU::_executeNextInstruction()
 	{
 		unsigned char opcode = this->read(this->_registers.pc++);
+		unsigned cycles;
 
-		unsigned cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
+		if (!this->_profiling)
+			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
+		else {
+			unsigned old = this->_registers.pc;
+			sf::Clock clock;
+
+			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
+
+			auto time = clock.getElapsedTime().asSeconds();
+			auto &elem = this->_profiler[Instructions::_instructionsString2[opcode](*this, old)];
+
+			elem.first += time;
+			elem.second++;
+		}
 
 		this->_registers._ = 0;
 		return cycles;
@@ -800,5 +818,25 @@ namespace GBEmulator
 			}
 		} else
 			this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
+	}
+
+	void CPU::dumpProfiler()
+	{
+		std::vector<std::pair<std::string, std::pair<float, unsigned>>> v{
+			this->_profiler.begin(),
+			this->_profiler.end()
+		};
+
+		std::sort(v.begin(), v.end(), [](std::pair<std::string, std::pair<float, unsigned>> g1, std::pair<std::string, std::pair<float, unsigned>> g2){
+			return g1.second.first / g1.second.second < g2.second.first / g2.second.second;
+		});
+		std::cout << "Mnemonic;Sample size;Total time;Average time" << std::endl;
+		for (auto &g : v)
+			std::cout << g.first << ";" << g.second.second << ";" << g.second.first << ";" << g.second.first / g.second.second << std::endl;
+	}
+
+	void CPU::setProfiling(bool profiling)
+	{
+		this->_profiling = profiling;
 	}
 }

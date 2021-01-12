@@ -12,7 +12,7 @@ include_directories(
 
 if (NOT MSVC)
 	if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-		add_compile_options(-W -Wall -Wextra -Wshadow -O0)
+		add_compile_options(-W -Wall -Wextra -Wshadow -g -O0)
 	else ()
 		add_compile_options(-O3)
 		add_link_options(-mwindows)

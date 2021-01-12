@@ -294,6 +294,9 @@ namespace GBEmulator
 
 		void init();
 
+		void setProfiling(bool profiling);
+		void dumpProfiler();
+
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
@@ -311,6 +314,8 @@ namespace GBEmulator
 		bool _halted;
 		double _oldTime;
 		double _newTime;
+		bool _profiling = false;
+		std::map<std::string, std::pair<float, unsigned>> _profiler;
 		sf::Clock _clock;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
