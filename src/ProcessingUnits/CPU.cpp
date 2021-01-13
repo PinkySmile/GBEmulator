@@ -73,6 +73,11 @@ namespace GBEmulator
 
 	unsigned char CPU::read(unsigned short address) const
 	{
+		auto it = this->_frozenAddresses.find(address);
+
+		if (it != this->_frozenAddresses.end())
+			return it->second;
+
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
@@ -210,6 +215,11 @@ namespace GBEmulator
 
 	void CPU::write(unsigned short address, unsigned char value)
 	{
+		auto it = this->_frozenAddresses.find(address);
+
+		if (it != this->_frozenAddresses.end())
+			return;
+
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
@@ -838,5 +848,14 @@ namespace GBEmulator
 	void CPU::setProfiling(bool profiling)
 	{
 		this->_profiling = profiling;
+	}
+
+	bool CPU::freezeAddress(unsigned short address, unsigned char value)
+	{
+		auto it = this->_frozenAddresses.find(address);
+
+		if (it != this->_frozenAddresses.end())
+			return this->_frozenAddresses.erase(it), false;
+		return this->_frozenAddresses[address] = value, true;
 	}
 }

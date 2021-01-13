@@ -167,8 +167,12 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	if (args.debug)
-		return debugger.startDebugSession();
+	if (args.debug) {
+		int result = debugger.startDebugSession();
+
+		cpu.getCartridgeEmulator().saveRAM();
+		return result;
+	}
 
 	cpu.setProfiling(args.profiler);
 

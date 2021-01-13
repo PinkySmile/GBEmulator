@@ -296,6 +296,7 @@ namespace GBEmulator
 
 		void setProfiling(bool profiling);
 		void dumpProfiler();
+		bool freezeAddress(unsigned short address, unsigned char value);
 
 	private:
 		friend Debugger::Debugger;
@@ -314,6 +315,7 @@ namespace GBEmulator
 		bool _halted;
 		double _oldTime;
 		double _newTime;
+		std::map<unsigned short, unsigned char> _frozenAddresses;
 		bool _profiling = false;
 		std::map<std::string, std::pair<float, unsigned>> _profiler;
 		sf::Clock _clock;

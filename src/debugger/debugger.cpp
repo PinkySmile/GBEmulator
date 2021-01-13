@@ -408,7 +408,16 @@ namespace GBEmulator::Debugger
 			return true;
 		} else if (args[0] == "where")
 			this->_displayCurrentLine();
-		else
+		else if (args[0] == "freeze") {
+			unsigned addr = std::stoul(args.at(1), nullptr, 16);
+			unsigned val = args.size() >= 3 ? std::stoul(args.at(2), nullptr, 16) : this->_cpu.read(addr);
+
+			std::cout << "Address " << std::hex << addr << " is ";
+			if (this->_cpu.freezeAddress(addr, val))
+				std::cout << "now frozen to value" << std::hex << val << std::endl;
+			else
+				std::cout << "no longer frozen" << val << std::endl;
+		} else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
 		return false;
 	}
