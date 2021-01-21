@@ -340,10 +340,9 @@ namespace GBEmulator
 			return 16;
 	}
 
-	int CPU::update()
+	int CPU::update(unsigned number)
 	{
 		int total = 0;
-		unsigned number = 500;
 
 		if (this->_joypad.isButtonPressed(Input::RESET)) {
 			this->init();
@@ -354,8 +353,10 @@ namespace GBEmulator
 			if (this->_newTime < this->_oldTime)
 				break;
 
-			if (!--number)
+			if (!number)
 				break;
+
+			number--;
 
 			if (this->_newTime > 20) {
 				this->_clock.restart();
@@ -369,6 +370,11 @@ namespace GBEmulator
 			if (cycles) {
 				this->_divRegister += cycles;
 				this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
+			}
+
+			if (this->_newTime - this->_oldTime > 0.1) {
+				this->_oldTime = this->_newTime;
+				break;
 			}
 		}
 		return total;

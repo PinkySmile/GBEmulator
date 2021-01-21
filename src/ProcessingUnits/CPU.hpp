@@ -287,7 +287,7 @@ namespace GBEmulator
 		//! @return La cartouche du CPU.
 		const Memory::Cartridge &getCartridgeEmulator() const;
 		//! Éxécute un cycle Fetch+Execute
-		int update();
+		int update(unsigned maxIter = 500);
 
 		//! @brief Décremente pc et retourne sa valeur.
 		//! @return pc - 1

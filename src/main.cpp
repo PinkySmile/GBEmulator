@@ -180,23 +180,31 @@ int main(int argc, char **argv)
 	bool end = false;
 	std::thread thread{
 		[&cpu, &end]{
-			while (!end)
-				cpu.update();
+			bool crashed = false;
+
+			while (!end) {
+				if (!crashed)
+					try {
+						cpu.update();
+					} catch (std::exception &e) {
+						crashed = true;
+#ifdef _WIN32
+						MessageBox(nullptr, e.what(), getLastExceptionName().c_str(), MB_ICONERROR);
+#else
+						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
+#endif
+					}
+				else {
+					cpu.update(0);
+					crashed = cpu.getRegisters().pc != 0x0000;
+				}
+			}
 		}
 	};
 
-	try {
-		while (!end) {
-			window.render();
-			end = window.isClosed();
-		}
-	} catch (std::exception &e) {
-#ifdef _WIN32
-		MessageBox(nullptr, e.what(), getLastExceptionName().c_str(), MB_ICONERROR);
-#else
-		cpu.dump();
-		std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
-#endif
+	while (!end) {
+		window.render();
+		end = window.isClosed();
 	}
 
 	thread.join();

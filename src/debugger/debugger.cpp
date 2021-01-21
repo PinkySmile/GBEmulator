@@ -1128,6 +1128,6 @@ namespace GBEmulator::Debugger
 			this->_oldpcs.push_back(this->_cpu._registers.pc);
 		}
 
-		this->_cpu.update();
+		this->_cpu.update(1);
 	}
 }
