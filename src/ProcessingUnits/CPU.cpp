@@ -609,7 +609,7 @@ namespace GBEmulator
 			this->_obpi += this->_autoIncrementObpi;
 			return;
 
-		//TODO: Add inaccessibility of everything but HRAM during DMA and copy only when OAM is accessible
+		//TODO: Add inaccessibility of everything but HRAM during DMA
 		case OAM_DMA:
 			if (value <= 0xF1) {
 				for (int i = 0; i < 40; i++) {
