@@ -7,7 +7,6 @@
 
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
-#include "SquareWaveChannel.hpp"
 
 namespace GBEmulator::SoundChannel
 {
@@ -25,8 +24,8 @@ namespace GBEmulator::SoundChannel
 		for (int i = 0; i < 4096 / 2; i += 1) {
 			unsigned char wpRam = this->_wpRAM.read(i % 16);
 
-			raw[i * 2] = (wpRam >> 4U)  << 4U | 0xFU;
-			raw[i * 2] = (wpRam & 0xFU) << 4U | 0xFU;
+			raw[i * 2]     = (wpRam >> 4U)  << 4U | 0xFU;
+			raw[i * 2 + 1] = (wpRam & 0xFU) << 4U | 0xFU;
 		}
 		return (raw);
 	}

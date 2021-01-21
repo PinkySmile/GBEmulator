@@ -60,7 +60,7 @@ namespace GBEmulator::SoundChannel
 		do {
 			bit = ((LFSR) ^ (LFSR >> 1)) & 0b1;
 			LFSR = (LFSR >> 1) | (bit << (stepNumber - 1));
-			lfsrBit[st++] = (bit ? 127 : -127);
+			lfsrBit[st++] = (bit ? 255 : 0);
 		} while (LFSR != start_state);
 		/*if (_counter == stepNumber) {
 			unsigned short xorResult = ((((_lfsr & 0b10) >> 1) ^ (_lfsr & 0b1)) << 15) | 0b0111111111111111;

@@ -47,8 +47,10 @@ namespace GBEmulator
 	{
 		auto buff = new sf::Int16[wave.size()];
 
-		for (size_t i = 0; i < wave.size(); i++)
-			buff[i] = static_cast<char>(wave[i]) * 256;
+		for (size_t i = 0; i < wave.size(); i++) {
+			buff[i] = static_cast<char>(wave[i]) << 8U | (wave[i] != 0 ? 0xFF : 0);
+			buff[i] ^= 0x8000U;
+		}
 		if (!this->_soundBuffer.loadFromSamples(buff, wave.size(), 1, sampleRate))
 			throw std::invalid_argument("Cannot load sound buffer");
 		delete[] buff;

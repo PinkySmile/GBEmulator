@@ -81,8 +81,16 @@ namespace GBEmulator
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
-			if (this->_internalRomEnabled)
+			if (this->_internalRomEnabled && this->_rom.isGameBoyOnly())
 				return CPU::_startupCode[address];
+#ifdef __GNUG__
+			__attribute__((fallthrough));
+#endif
+		case GBC_STARTUP_CODE_RANGE:
+			if (address > 0x101 && address < 0x200)
+				return this->_rom.read(address);
+			if (this->_internalRomEnabled && !this->_rom.isGameBoyOnly())
+				return CPU::_gbcStartupCode[address];
 #ifdef __GNUG__
 			__attribute__((fallthrough));
 #endif
@@ -112,8 +120,6 @@ namespace GBEmulator
 			return this->_readIOPort(address - IO_PORTS_STARTING_ADDRESS);
 
 		case APU_RANGE:
-			return this->_apu.read(address - APU_STARTING_ADDRESS);
-
 		case WPRAM_RANGE:
 			return this->_apu.read(address - APU_STARTING_ADDRESS);
 
@@ -561,12 +567,11 @@ namespace GBEmulator
 			break;
 
 		case INTERNAL_ROM_ENABLE:
-			if (value != 1 && this->_errorReport) {
+			if (!(value & 1) && this->_errorReport) {
 				this->_halted = true;
 				this->_interruptEnabled = 0;
 			} else
 				this->_internalRomEnabled = false;
-			this->_registers.a = 0x11;
 			break;
 
 		case TIMER_CONTROL:

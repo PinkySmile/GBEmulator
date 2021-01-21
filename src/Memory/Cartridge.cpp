@@ -86,11 +86,7 @@ namespace GBEmulator::Memory
 			this->_rom.setBank(1);
 			this->_rom.setBankSize(ROM_BANK_SIZE);
 			this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
-			try {
-				this->_checkROM();
-			} catch (std::exception &) {
-				throw;
-			}
+			//this->_checkROM();
 
 			size = (this->_rom.rawRead(0x149) != 0) * 2 * std::pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
 			mem = new unsigned char[size];

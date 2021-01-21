@@ -2,7 +2,6 @@
 #include <chrono>
 #include <thread>
 #include <cstring>
-#include <windows.h>
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
@@ -16,6 +15,8 @@
 
 #ifndef _WIN32
 #include <X11/Xlib.h>
+#else
+#include <windows.h>
 #endif
 
 struct Args

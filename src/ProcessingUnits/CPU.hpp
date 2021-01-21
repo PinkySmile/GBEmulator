@@ -39,8 +39,11 @@
 //! The startup code
 #define STARTUP_CODE_RANGE 0x0000 ... 0x00FF
 
+//! The startup code
+#define GBC_STARTUP_CODE_RANGE 0x00100 ... 0x08FF
+
 //! The first bank of the ROM (ROM0)
-#define ROM0_RANGE 0x0100 ... 0x3FFF
+#define ROM0_RANGE 0x0900 ... 0x3FFF
 
 //! The switchable ROM bank (ROM1)
 #define ROM1_RANGE 0x4000 ... 0x7FFF
@@ -302,6 +305,7 @@ namespace GBEmulator
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
 		static const std::vector<unsigned char> _startupCode;
+		static const std::vector<unsigned char> _gbcStartupCode;
 
 		//! APU de la Gameboy.
 		APU _apu;
