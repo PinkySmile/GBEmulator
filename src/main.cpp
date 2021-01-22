@@ -33,6 +33,76 @@ struct Args
 	bool profiler = false;
 };
 
+struct Components {
+	std::unique_ptr<GBEmulator::Network::CableInterface> network;
+	std::unique_ptr<GBEmulator::ISound> channel1;
+	std::unique_ptr<GBEmulator::ISound> channel2;
+	std::unique_ptr<GBEmulator::ISound> channel3;
+	std::unique_ptr<GBEmulator::ISound> channel4;
+	std::unique_ptr<GBEmulator::Graphics::ILCD> window;
+	std::unique_ptr<GBEmulator::Input::JoypadEmulator> joypad;
+};
+
+class DummyLCD : public GBEmulator::Graphics::ILCD {
+private:
+	bool _closed = false;
+
+public:
+	void setMaxSize(unsigned int, unsigned int) override
+	{}
+
+	void setPixel(unsigned int, unsigned int, const GBEmulator::Graphics::RGBColor &) override
+	{}
+
+	void display() override
+	{}
+
+	void clear() override
+	{}
+
+	bool isClosed() const override
+	{
+		return this->_closed;
+	}
+
+	void close() override
+	{
+		this->_closed = false;
+	}
+
+	void render() override
+	{}
+};
+
+class DummyJoypadInput : public GBEmulator::Input::JoypadEmulator {
+public:
+	bool isButtonPressed(GBEmulator::Input::Keys) const noexcept override
+	{
+		return false;
+	}
+};
+
+class DummySoundPlayer : public GBEmulator::ISound {
+public:
+	void setDisabled(bool) override
+	{}
+
+	void setPitch(float) override
+	{}
+
+	void setWave(std::vector<unsigned char>, unsigned int) override
+	{}
+
+	void setVolume(float) override
+	{}
+
+	void setSO1Volume(float) override
+	{}
+
+	void setSO2Volume(float) override
+	{}
+};
+
 std::string getLastExceptionName()
 {
 #ifdef __GNUG__
@@ -121,12 +191,67 @@ Args parseArguments(int argc, char **argv)
 	return args;
 }
 
+Components prepareComponents(const Args &args)
+{
+	Components components;
+	auto network = new GBEmulator::Network::BGBProtocolCableInterface();
+
+	components.network.reset(network);
+	if (!args.connectIp.empty() && !args.listenPort.empty())
+		throw std::invalid_argument("Cannot connect and listen at the same time");
+	else if (!args.connectIp.empty())
+		network->connect(
+			args.connectIp.substr(0, args.connectIp.find(':')),
+			std::stoi(args.connectIp.substr(args.connectIp.find(':') + 1))
+		);
+	else if (!args.listenPort.empty())
+		network->host(std::stoi(args.listenPort));
+
+	if (args.noDisplay) {
+		components.window = std::make_unique<DummyLCD>();
+		components.joypad = std::make_unique<DummyJoypadInput>();
+	} else {
+		auto window = new GBEmulator::Graphics::LCDSFML{sf::VideoMode{640, 576}, "GBEmulator"};
+
+		components.window.reset(window);
+		components.joypad = std::make_unique<GBEmulator::Input::SFMLKeyboardJoypadEmulator>(
+			*window,
+			std::map<GBEmulator::Input::Keys, sf::Keyboard::Key>{
+				{GBEmulator::Input::RESET, sf::Keyboard::R},
+				{GBEmulator::Input::JOYPAD_A, sf::Keyboard::X},
+				{GBEmulator::Input::JOYPAD_B, sf::Keyboard::C},
+				{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
+				{GBEmulator::Input::JOYPAD_DOWN, sf::Keyboard::Down},
+				{GBEmulator::Input::JOYPAD_LEFT, sf::Keyboard::Left},
+				{GBEmulator::Input::JOYPAD_RIGHT, sf::Keyboard::Right},
+				{GBEmulator::Input::JOYPAD_START, sf::Keyboard::Return},
+				{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
+				{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
+			}
+		);
+		window->setFramerateLimit(60);
+	}
+
+	if (args.noAudio) {
+		components.channel1 = std::make_unique<DummySoundPlayer>();
+		components.channel2 = std::make_unique<DummySoundPlayer>();
+		components.channel3 = std::make_unique<DummySoundPlayer>();
+		components.channel4 = std::make_unique<DummySoundPlayer>();
+	} else {
+		components.channel1 = std::make_unique<GBEmulator::SoundPlayer>();
+		components.channel2 = std::make_unique<GBEmulator::SoundPlayer>();
+		components.channel3 = std::make_unique<GBEmulator::SoundPlayer>();
+		components.channel4 = std::make_unique<GBEmulator::SoundPlayer>();
+	}
+	return components;
+}
+
 int main(int argc, char **argv)
 {
 	Args args;
 
 	if (argc == 1) {
-		std::cout << "Usage: " << argv[0] << " rom.gb [-dn] [-l <port>] [-c <ip:port>]" << std::endl;
+		std::cout << "Usage: " << argv[0] << " rom.gb [-dnrmba] [-l <port>] [-c <ip:port>]" << std::endl;
 		return EXIT_SUCCESS;
 	}
 
@@ -134,7 +259,7 @@ int main(int argc, char **argv)
 		args = parseArguments(argc, argv);
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		std::cerr << "Usage: " << argv[0] << " rom.gb [-dn] [-l <port>] [-c <ip:port>]" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " rom.gb [-dnrmba] [-l <port>] [-c <ip:port>]" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -144,52 +269,21 @@ int main(int argc, char **argv)
 	XInitThreads();
 #endif
 
-	GBEmulator::Network::BGBProtocolCableInterface network;
-	GBEmulator::SoundPlayer channel1;
-	GBEmulator::SoundPlayer channel2;
-	GBEmulator::SoundPlayer channel3;
-	GBEmulator::SoundPlayer channel4;
-	GBEmulator::Graphics::LCDSFML window{sf::VideoMode{640, 576}, "GBEmulator"};
-	GBEmulator::Input::SFMLKeyboardJoypadEmulator joypad(window, {
-		{GBEmulator::Input::RESET, sf::Keyboard::R},
-		{GBEmulator::Input::JOYPAD_A, sf::Keyboard::X},
-		{GBEmulator::Input::JOYPAD_B, sf::Keyboard::C},
-		{GBEmulator::Input::JOYPAD_UP, sf::Keyboard::Up},
-		{GBEmulator::Input::JOYPAD_DOWN, sf::Keyboard::Down},
-		{GBEmulator::Input::JOYPAD_LEFT, sf::Keyboard::Left},
-		{GBEmulator::Input::JOYPAD_RIGHT, sf::Keyboard::Right},
-		{GBEmulator::Input::JOYPAD_START, sf::Keyboard::Return},
-		{GBEmulator::Input::JOYPAD_SELECT, sf::Keyboard::BackSpace},
-		{GBEmulator::Input::ENABLE_DEBUGGING, sf::Keyboard::V}
-	});
 	std::string path = argv[0];
 #ifdef _WIN32
 	size_t occurence = path.find_last_of('\\');
 #else
 	size_t occurence = path.find_last_of('/');
 #endif
-	GBEmulator::CPU cpu(channel1, channel2, channel3, channel4, window, joypad, network, args.error);
-	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, window, joypad};
-	sf::View view{sf::FloatRect{0, 0, 160, 144}};
-
-	window.setFramerateLimit(60);
-	window.setView(view);
+	Components components = prepareComponents(args);
+	GBEmulator::CPU cpu(*components.channel1, *components.channel2, *components.channel3, *components.channel4, *components.window, *components.joypad, *components.network, args.error);
+	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, *components.window, *components.joypad};
 
 	cpu.ignoreBootRom(args.noBootRom);
 	cpu.goMaxSpeed(args.maxSpeed);
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
 		cpu.init();
-
-		if (!args.connectIp.empty() && !args.listenPort.empty())
-			throw std::invalid_argument("Cannot connect and listen at the same time");
-		else if (!args.connectIp.empty())
-			network.connect(
-				args.connectIp.substr(0, args.connectIp.find(':')),
-				std::stoi(args.connectIp.substr(args.connectIp.find(':') + 1))
-			);
-		else if (!args.listenPort.empty())
-			network.host(std::stoi(args.listenPort));
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
@@ -230,8 +324,8 @@ int main(int argc, char **argv)
 	};
 
 	while (!end) {
-		window.render();
-		end = window.isClosed();
+		components.window->render();
+		end = components.window->isClosed();
 	}
 
 	thread.join();

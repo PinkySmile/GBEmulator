@@ -84,12 +84,8 @@ void GBEmulator::Graphics::LCDSFML::close()
 void GBEmulator::Graphics::LCDSFML::setMaxSize(unsigned int x, unsigned y)
 {
 	this->_size = {x, y};
-	this->_view.setViewport({
-		x / 2.f,
-		y / 2.f,
-		static_cast<float>(x),
-		static_cast<float>(y)
-	});
+	this->_view.setCenter(x / 2, y / 2);
+	this->_view.setSize(x, y);
 	this->setView(this->_view);
 	this->_texture.create(x, y);
 	delete[] this->_screen;

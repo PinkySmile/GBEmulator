@@ -3,14 +3,15 @@ import sys
 import socket
 import subprocess
 import select
-import asyncio
+import threading
+import time
 
 base_port = 10800
 S_IFMT = 0o170000
 S_IFDIR = 0o40000
 
 results = {}
-tasks = []
+threads = []
 
 def getEmuTestResult(sock):
 	buffer = []
@@ -35,18 +36,28 @@ def getEmuTestResult(sock):
 			sock.send(bytes([105, 0, 0x80, 0, 0, 0, 0, 0]))
 
 
-async def executeTest(romPath, port):
+def executeTest(romPath, port):
+	times = 0
 	sock = socket.socket()
-	sock.bind(("0.0.0.0", port))
-	sock.listen()
-	process = subprocess.Popen([emuPath, "-n", "-c", "localhost:" + str(port), romPath], 0, emuPath, subprocess.DEVNULL, subprocess.DEVNULL, subprocess.DEVNULL)
-	newSock = sock.accept()[0]
-	newSock.send(bytes([1, 1, 4, 0, 0, 0, 0, 0]))
+	args = [emuPath, "--no-error", "--no-bootrom", "--no-audio", "--no-display", "--max-speed", "--listen", str(port), romPath]
+	#args = [emuPath, "-nrabml", str(port), romPath]
+	process = subprocess.Popen(args, 0, emuPath, subprocess.DEVNULL, subprocess.DEVNULL)
+	while True:
+		times += 1
+		try:
+			sock.connect(("localhost", port))
+			break
+		except ConnectionRefusedError:
+			time.sleep(0.1)
+		if times >= 30:
+			results[romPath.replace("/", "_").replace(" ", "_")] = "Cannot connect to emulator"
+			print("Cannot connect to emulator......")
+			return
+	sock.send(bytes([1, 1, 4, 0, 0, 0, 0, 0]))
 	try:
-		buffer = getEmuTestResult(newSock)
+		buffer = getEmuTestResult(sock)
 	except BrokenPipeError:
 		buffer = "BrokenPipeError"
-	newSock.close()
 	sock.close()
 	process.terminate()
 	old = buffer
@@ -60,21 +71,32 @@ async def executeTest(romPath, port):
 		else:
 			buffer.append(old[count])
 		count += 1
-	print(buffer)
 	results[romPath.replace("/", "_").replace(" ", "_")] = "".join(buffer)
+
+
+class TestThread(threading.Thread):
+	def __init__(self, path, port):
+		super().__init__(None, None)
+		self.path = path
+		self.port = port
+
+	def run(self):
+		executeTest(self.path, self.port)
 
 
 def executeTestSuite(directory):
 	global base_port
-	for rom in os.listdir(directory):
+	for rom in sorted(os.listdir(directory)):
 		if rom[-3:].lower() == ".gb" or rom[-4:].lower() == ".gbc":
-			task = loop.create_task(executeTest(directory + "/" + rom, base_port))
-			tasks.append(task)
+			port = base_port
+			thread = TestThread(directory + "/" + rom, port)
+			thread.start()
+			threads.append(thread)
 			base_port += 1
 
 
 def testEmulator(path):
-	expected = "Usage: " + path + " rom.gb [-dn] [-l <port>] [-c <ip:port>]"
+	expected = "Usage: " + path + " rom.gb [-dnrmba] [-l <port>] [-c <ip:port>]"
 	f = os.popen(path, "r")
 	if f.read(len(expected)) != expected:
 		print(path + ": GBEmulator didn't return the proper help message")
@@ -90,16 +112,16 @@ if len(sys.argv) != 2:
 
 emuPath = sys.argv[1]
 testEmulator(emuPath)
-loop = asyncio.new_event_loop()
-for elem in os.listdir():
+for elem in sorted(os.listdir()):
 	if (os.stat(elem).st_mode & S_IFMT) == S_IFDIR:
 		executeTestSuite(elem)
 
+for thread in threads:
+	thread.join()
 
-loop.run_forever()
 passed = 0
 failed = 0
-for name, result in results.items():
+for name, result in sorted(results.items(), key=lambda a: a[0]):
 	if "Passed" in result:
 		passed += 1
 		print(name + ": \033[32mPassed\033[0m")
