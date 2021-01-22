@@ -12,6 +12,9 @@ S_IFDIR = 0o40000
 
 results = {}
 threads = []
+total = 0
+longest = 0
+p = False
 
 def getEmuTestResult(sock):
 	buffer = []
@@ -50,14 +53,14 @@ def executeTest(romPath, port):
 		except ConnectionRefusedError:
 			time.sleep(0.1)
 		if times >= 30:
-			results[romPath.replace("/", "_").replace(" ", "_")] = "Cannot connect to emulator"
+			results[romPath.replace("/", "_").replace(" ", "_")] = "Cannot connect to emulator\n"
 			print("Cannot connect to emulator......")
 			return
 	sock.send(bytes([1, 1, 4, 0, 0, 0, 0, 0]))
 	try:
 		buffer = getEmuTestResult(sock)
 	except BrokenPipeError:
-		buffer = "BrokenPipeError"
+		buffer = "BrokenPipeError\n"
 	sock.close()
 	process.terminate()
 	old = buffer
@@ -72,6 +75,14 @@ def executeTest(romPath, port):
 			buffer.append(old[count])
 		count += 1
 	results[romPath.replace("/", "_").replace(" ", "_")] = "".join(buffer)
+	global p
+	while p:
+		pass
+	p = True
+	global total
+	total += 1
+	print("\033[A" + str(total) + "/" + str(len(threads)))
+	p = False
 
 
 class TestThread(threading.Thread):
@@ -89,9 +100,11 @@ def executeTestSuite(directory):
 	for rom in sorted(os.listdir(directory)):
 		if rom[-3:].lower() == ".gb" or rom[-4:].lower() == ".gbc":
 			port = base_port
-			thread = TestThread(directory + "/" + rom, port)
-			thread.start()
-			threads.append(thread)
+			global longest
+			longest = max(longest, len(directory + "/" + rom))
+			thr = TestThread(directory + "/" + rom, port)
+			thr.start()
+			threads.append(thr)
 			base_port += 1
 
 
@@ -116,6 +129,9 @@ for elem in sorted(os.listdir()):
 	if (os.stat(elem).st_mode & S_IFMT) == S_IFDIR:
 		executeTestSuite(elem)
 
+p = True
+print("0/" + str(len(threads)))
+p = False
 for thread in threads:
 	thread.join()
 
@@ -124,10 +140,10 @@ failed = 0
 for name, result in sorted(results.items(), key=lambda a: a[0]):
 	if "Passed" in result:
 		passed += 1
-		print(name + ": \033[32mPassed\033[0m")
+		print(("{:<" + str(longest) + "}: \033[32mPassed\033[0m").format(name))
 	else:
 		failed += 1
-		print(name + ": \033[31mFailed\033[0m. Rom output:")
+		print(("{:<" + str(longest) + "}: \033[31mFailed\033[0m. Rom output:").format(name))
 		print(result)
 
 print("Total:", passed, "\033[32mPassed\033[0m,", failed, "\033[31mFailed\033[0m")
