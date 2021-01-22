@@ -223,13 +223,13 @@ namespace GBEmulator::Debugger
 		else if (name == "l")
 			return std::make_shared<ValueRegister<unsigned char>>(regs.l, name);
 		else if (name == "zf")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.fz, name);
+			return std::make_shared<ValueRegister<bool>>(regs.fz, name);
 		else if (name == "cf")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.fc, name);
+			return std::make_shared<ValueRegister<bool>>(regs.fc, name);
 		else if (name == "nf")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.fn, name);
+			return std::make_shared<ValueRegister<bool>>(regs.fn, name);
 		else if (name == "hcf")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.fh, name);
+			return std::make_shared<ValueRegister<bool>>(regs.fh, name);
 		else if (name == "f")
 			return std::make_shared<ValueRegister<unsigned char>>(regs.f, name);
 		else if (name == "af")
