@@ -389,8 +389,10 @@ namespace GBEmulator::Debugger
 			this->_displayCurrentLine();
 		} else if (args[0] == "next") {
 			unsigned short address = this->_cpu._registers.pc;
+			auto bIt = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
+			auto cbNb = this->checkConditionalBreakPoints();
 
-			while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && !this->checkBreakPoints() && !this->checkConditionalBreakPoints()) {
+			do {
 				this->_executeNextInstruction();
 				if (this->_timer++ == 30)
 					this->_timer = 0;
@@ -398,7 +400,11 @@ namespace GBEmulator::Debugger
 					this->_displayCurrentLine();
 					break;
 				}
-			}
+			} while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && bIt == this->_breakPoints.end() && cbNb == -1);
+			if (cbNb != -1)
+				std::cout << "Hit conditional breakpoint #" << cbNb << ": " << this->_condBreakPoints[cbNb]->tostring() << std::endl;
+			else if (bIt != this->_breakPoints.end())
+				std::cout << "Hit breakpoint #" << bIt - this->_breakPoints.begin() << ": $" << std::setw(4) << std::setfill('0') << std::hex << *bIt << std::endl;
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
 			this->_executeNextInstruction();
