@@ -91,11 +91,6 @@ namespace GBEmulator::SoundChannel
 		this->_dividingRatio = value & 0b00000111U;
 	}
 
-	unsigned char NoiseChannel::getSoundLength() const
-	{
-		return (0b11000000U | this->_soundLength);
-	}
-
 	unsigned char NoiseChannel::getPolynomialCounters() const
 	{
 		return (this->_shiftClockFrequency << 4U) | (this->_polynomialCounterStep << 3U) | this->_dividingRatio;

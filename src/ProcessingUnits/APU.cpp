@@ -35,19 +35,24 @@ namespace GBEmulator
 #ifdef __GNUG__
 		switch (address) {
 		case FF10 ... FF14 :
-			channelOneWriting(address, value);
+			if (this->_allSoundsOn)
+				channelOneWriting(address, value);
 			break;
 		case FF16 ... FF19 :
-			channelTwoWriting(address - FF16, value);
+			if (this->_allSoundsOn)
+				channelTwoWriting(address - FF16, value);
 			break;
 		case FF1A ... FF1E :
-			channelWaveWriting(address - FF1A, value);
+			if (this->_allSoundsOn)
+				channelWaveWriting(address - FF1A, value);
 			break;
 		case FF20 ... FF23 :
-			channelNoiseWriting(address - FF20, value);
+			if (this->_allSoundsOn)
+				channelNoiseWriting(address - FF20, value);
 			break;
 		case FF24 ... FF26 :
-			controllerWriting(address - FF24, value);
+			if (this->_allSoundsOn || address == FF26)
+				controllerWriting(address - FF24, value);
 			break;
 		case WPRAM_START ... WPRAM_END :
 			this->_managerChannelWave.write(address - WPRAM_START, value);
@@ -86,7 +91,7 @@ namespace GBEmulator
 		case FF24 ... FF26 :
 			return controllerReading(address - FF24);
 		case WPRAM_START ... WPRAM_END :
-			return this->_managerChannelWave.read(address);
+			return this->_managerChannelWave.read(address - WPRAM_START);
 		default :
 			return 0xFF;
 		}
@@ -192,8 +197,6 @@ namespace GBEmulator
 		switch (address) {
 			case 0x0 :
 				return this->_managerChannelWave.getSoundOnOff();
-			case 0x1 :
-				return this->_managerChannelWave.getSoundLength();
 			case 0x2 :
 				return this->_managerChannelWave.getOutputLevel();
 			case 0x3 :
@@ -236,8 +239,6 @@ namespace GBEmulator
 	unsigned char APU::channelNoiseReading(unsigned short address) const
 	{
 		switch (address) {
-			case 0x0 :
-				return this->_managerChannelNoise.getSoundLength();
 			case 0x1 :
 				return this->_managerChannelNoise.getVolume();
 			case 0x2 :
@@ -344,20 +345,24 @@ namespace GBEmulator
 
 	void APU::setSoundOnOff(unsigned char value)
 	{
-		this->_allSoundsOn = value >> 7U;
 		this->_managerChannel1.disable(!this->_allSoundsOn);
 		this->_managerChannel2.disable(!this->_allSoundsOn);
 		this->_managerChannelWave.disable(!this->_allSoundsOn);
 		this->_managerChannelNoise.disable(!this->_allSoundsOn);
+		if (!(value >> 7U)) {
+			for (int i = 0; i < FF26; i++)
+				this->write(i, 0);
+		}
+		this->_allSoundsOn = value >> 7U;
 	}
 
 	unsigned char APU::getSoundOnOff() const
 	{
-		unsigned char value = this->_allSoundsOn;
+		if (!this->_allSoundsOn)
+			return 0x70;
 
-		value <<= 3U;
-		value |= 0b00000111U;
-		value <<= 1U;
+		unsigned char value = 0b00011110U;
+
 		value |= this->_soundOnOffSound;
 		value <<= 1U;
 		value |= this->_soundOnOffWave;

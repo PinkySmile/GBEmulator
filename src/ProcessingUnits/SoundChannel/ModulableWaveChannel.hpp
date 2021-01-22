@@ -46,11 +46,6 @@ namespace GBEmulator::SoundChannel
 		 */
 		unsigned char getSoundOnOff() const;
 		/*!
-		 * @brief Permet de récupérer la longueur du son joué.
-		 * @return Longueur du son joué (8 bits)
-		 */
-		unsigned char getSoundLength() const;
-		/*!
 		 * @brief Permet de récupérer le niveau du volume de la wave (sur 2 bits).
 		 * @return Le niveau du volume de la wave.
 		 */

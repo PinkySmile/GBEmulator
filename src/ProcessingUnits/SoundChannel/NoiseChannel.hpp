@@ -78,11 +78,6 @@ namespace GBEmulator::SoundChannel
 		 */
 		void setPolynomialCounters(unsigned char value);
 		/*!
-		 * @brief Permet de récupérer la longueur du son du channel noise.
-		 * @return Longueur du son (6 bits)
-		 */
-		unsigned char getSoundLength() const;
-		/*!
 		 * @brief Permet de récupérer le byte contenant les attributs de modificaitons de fréquence du son joué.
 		 * @return Le byte contenant les attributs
 		 */

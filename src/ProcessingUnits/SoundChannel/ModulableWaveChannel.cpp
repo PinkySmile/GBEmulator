@@ -55,11 +55,6 @@ namespace GBEmulator::SoundChannel
 		return (this->_soundOn << 7U) | 0b01111111U;
 	}
 
-	unsigned char ModulableWaveChannel::getSoundLength() const
-	{
-		return this->_soundLength;
-	}
-
 	unsigned char ModulableWaveChannel::getOutputLevel() const
 	{
 		return 0b10011111U | (this->_waveOutputLevel << 5U);
