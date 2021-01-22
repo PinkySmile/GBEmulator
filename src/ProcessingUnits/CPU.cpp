@@ -140,6 +140,13 @@ namespace GBEmulator
 			if (this->_internalRomEnabled)
 				return CPU::_startupCode[address];
 
+		if (address < GBC_STARTUP_CODE_ENDING_ADDRESS) {
+			if (address > 0x101 && address < 0x200)
+				return this->_rom.read(address);
+			if (this->_internalRomEnabled && !this->_rom.isGameBoyOnly())
+				return CPU::_gbcStartupCode[address];
+		}
+
 		if (address < ROM0_ENDING_ADDRESS)
 			return this->_rom.read(address);
 
@@ -229,6 +236,7 @@ namespace GBEmulator
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
+		case GBC_STARTUP_CODE_RANGE:
 		case ROM0_RANGE:
 		case ROM1_RANGE:
 			return this->_rom.write(address, value);
