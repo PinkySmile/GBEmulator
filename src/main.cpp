@@ -25,6 +25,10 @@ struct Args
 	std::string listenPort;
 	std::string connectIp;
 	bool debug = false;
+	bool noDisplay = false;
+	bool maxSpeed = false;
+	bool noAudio = false;
+	bool noBootRom = false;
 	bool error = true;
 	bool profiler = false;
 };
@@ -55,16 +59,20 @@ Args parseArguments(int argc, char **argv)
 	Args args;
 #ifdef __GNUG__
 	struct option long_options[] = {
-		{"debug",    no_argument,       nullptr, 'd'},
-		{"listen",   required_argument, nullptr, 'l'},
-		{"connect",  required_argument, nullptr, 'c'},
-		{"no-error", no_argument,       nullptr, 'n'},
-		{"profiling",no_argument,       nullptr, 'p'},
-		{nullptr,    no_argument,       nullptr, 0}
+		{"debug",     no_argument,       nullptr, 'd'},
+		{"listen",    required_argument, nullptr, 'l'},
+		{"connect",   required_argument, nullptr, 'c'},
+		{"no-error",  no_argument,       nullptr, 'n'},
+		{"profiling", no_argument,       nullptr, 'p'},
+		{"max-speed", no_argument,       nullptr, 'm'},
+		{"no-display",no_argument,       nullptr, 'b'},
+		{"no-audio",  no_argument,       nullptr, 'a'},
+		{"no-bootrom",no_argument,       nullptr, 'r'},
+		{nullptr,     no_argument,       nullptr, 0}
 	};
 
 	while (true) {
-		int c = getopt_long(argc, argv, "l:c:dnp", long_options, nullptr);
+		int c = getopt_long(argc, argv, "l:c:dnpmbar", long_options, nullptr);
 
 		if (c == -1)
 			break;
@@ -85,6 +93,18 @@ Args parseArguments(int argc, char **argv)
 		case 'p':
 			args.profiler = true;
 			break;
+		case 'b':
+			args.noDisplay = true;
+			break;
+		case 'r':
+			args.noBootRom = true;
+			break;
+		case 'a':
+			args.noAudio = true;
+			break;
+		case 'm':
+			args.maxSpeed = true;
+			break;
 		default:
 			throw std::invalid_argument("Invalid argument");
 		}
@@ -104,6 +124,11 @@ Args parseArguments(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	Args args;
+
+	if (argc == 1) {
+		std::cout << "Usage: " << argv[0] << " rom.gb [-dn] [-l <port>] [-c <ip:port>]" << std::endl;
+		return EXIT_SUCCESS;
+	}
 
 	try {
 		args = parseArguments(argc, argv);
@@ -150,6 +175,8 @@ int main(int argc, char **argv)
 	window.setFramerateLimit(60);
 	window.setView(view);
 
+	cpu.ignoreBootRom(args.noBootRom);
+	cpu.goMaxSpeed(args.maxSpeed);
 	try {
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
 		cpu.init();

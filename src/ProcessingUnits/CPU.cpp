@@ -358,7 +358,7 @@ namespace GBEmulator
 
 			number--;
 
-			if (this->_newTime > 20) {
+			while (this->_newTime > 20) {
 				this->_clock.restart();
 				this->_newTime -= 20;
 				this->_oldTime -= 20;
@@ -795,7 +795,6 @@ namespace GBEmulator
 
 	void CPU::init()
 	{
-		this->_gpu.setControlByte(0);
 		this->_interruptRequest = 0;
 		this->_hardwareInterruptRequests = 0;
 		this->_bgpi = 0;
@@ -813,8 +812,15 @@ namespace GBEmulator
 		this->_directionEnabled = false;
 		this->_halted = false;
 		this->_stopped = false;
-		this->_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		this->_internalRomEnabled = true;
+		if (this->_noBootRom)
+			this->_initState();
+		else {
+			this->_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			this->_internalRomEnabled = true;
+			this->_gpu.setControlByte(0);
+			this->_gpu.setXScroll(0);
+			this->_gpu.setYScroll(0);
+		}
 		this->_divRegister = 0;
 		this->_interruptEnabled = 0x00;
 		this->_interruptRequest = 0x00;
@@ -868,5 +874,85 @@ namespace GBEmulator
 		if (it != this->_frozenAddresses.end())
 			return this->_frozenAddresses.erase(it), false;
 		return this->_frozenAddresses[address] = value, true;
+	}
+
+	void CPU::ignoreBootRom(bool ignored)
+	{
+		this->_noBootRom = ignored;
+	}
+
+	void CPU::goMaxSpeed(bool speed)
+	{
+		this->_maxSpeed = speed;
+	}
+
+	void CPU::_initState()
+	{
+		unsigned char pattern[] = {
+			0x00, 0x00, 0x00, 0x00, 0xF0, 0xFC, 0xFC, 0xF3,
+			0x3C, 0x3C, 0x3C, 0x3C, 0xF0, 0xF0, 0x00, 0xF3,
+			0x00, 0x00, 0x00, 0xCF, 0x00, 0x0F, 0x3F, 0x0F,
+			0x00, 0x00, 0xC0, 0x0F, 0x00, 0x00, 0x00, 0xF0,
+			0x00, 0x00, 0x00, 0xF3, 0x00, 0x00, 0x00, 0xC0,
+			0x03, 0x03, 0x03, 0xFF, 0xC0, 0xC0, 0xC0, 0xC3,
+			0x00, 0x00, 0x00, 0xFC, 0xF3, 0xF0, 0xF0, 0xF0,
+			0x3C, 0xFC, 0xFC, 0x3C, 0xF3, 0xF3, 0xF3, 0xF3,
+			0xF3, 0xC3, 0xC3, 0xC3, 0xCF, 0xCF, 0xCF, 0xCF,
+			0x3C, 0x3F, 0x3C, 0x0F, 0x3C, 0xFC, 0x00, 0xFC,
+			0xFC, 0xF0, 0xF0, 0xF0, 0xF3, 0xF3, 0xF3, 0xF0,
+			0xC3, 0xC3, 0xC3, 0xFF, 0xCF, 0xCF, 0xCF, 0xC3,
+			0x0F, 0x0F, 0x0F, 0xFC
+		};
+		unsigned char pattern2[] = {
+			0x3C, 0x42, 0xB9, 0xA5, 0xB9, 0xA5, 0x42, 0x3C
+		};
+		unsigned short addr = 0;
+
+		this->_internalRomEnabled = false;
+		if (this->_rom.isGameBoyOnly()) {
+			this->_registers = {
+				.af = 0x01B0,
+				.bc = 0x0013,
+				.de = 0x00D8,
+				.hl = 0x014D,
+				.pc = 0x0100,
+				.sp = 0xFFFE
+			};
+			for (int i = 0; i < 0x2000; i++)
+				this->_gpu.writeVRAM(i, 0);
+			for (int i = 1; i <= 0xC; i++)
+				this->_gpu.writeVRAM(0x1903 + i, i);
+			for (int i = 0xD; i <= 0x18; i++)
+				this->_gpu.writeVRAM(0x1924 - 0xD + i, i);
+			this->_gpu.writeVRAM(0x1910, 0x19);
+		} else {
+			this->_registers = {
+				.af = 0x1180,
+				.bc = 0x0000,
+				.de = 0xFF56,
+				.hl = 0x000D,
+				.pc = 0x0100,
+				.sp = 0xFFFE
+			};
+			this->_gpu.setVBK(false);
+			for (int i = 0; i < 0x2000; i++)
+				this->_gpu.writeVRAM(i, 0);
+		}
+
+		this->_gpu.setBGPalette(0xFC);
+		this->_gpu.setControlByte(0x91);
+		this->_gpu.setXScroll(0);
+		this->_gpu.setYScroll(0);
+		for (auto c : pattern) {
+			this->_gpu.writeVRAM(addr, c);
+			this->_gpu.writeVRAM(addr + 2, c);
+			addr += 4;
+		}
+		for (auto c : pattern2) {
+			this->_gpu.writeVRAM(addr, c);
+			addr += 2;
+		}
+		if (!this->_rom.isGameBoyOnly())
+			this->_gpu.update(*this, GPU_FULL_CYCLE_DURATION * 0x90/ 153);
 	}
 }

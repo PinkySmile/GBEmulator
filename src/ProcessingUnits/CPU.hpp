@@ -301,6 +301,8 @@ namespace GBEmulator
 		void dumpProfiler();
 		bool freezeAddress(unsigned short address, unsigned char value);
 
+		void ignoreBootRom(bool ignored = true);
+		void goMaxSpeed(bool speed = true);
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
@@ -317,6 +319,8 @@ namespace GBEmulator
 		bool _directionEnabled;
 		//! Est-ce que le CPU est en mode 'halted'
 		bool _halted;
+		bool _maxSpeed = false;
+		bool _noBootRom = false;
 		double _oldTime;
 		double _newTime;
 		std::map<unsigned short, unsigned char> _frozenAddresses;
@@ -379,6 +383,7 @@ namespace GBEmulator
 		unsigned char _HDMAStart = 0;
 		unsigned _joypadCache = 0xFF;
 
+		void _initState();
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.
 		void _updateComponents(unsigned int cycles);
