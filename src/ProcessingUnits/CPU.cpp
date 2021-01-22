@@ -349,16 +349,18 @@ namespace GBEmulator
 			return 0;
 		}
 		while (true) {
-			this->_newTime = this->_clock.getElapsedTime().asSeconds();
-			if (this->_newTime < this->_oldTime)
-				break;
+			if (!this->_maxSpeed) {
+				this->_newTime = this->_clock.getElapsedTime().asSeconds();
+				if (this->_newTime < this->_oldTime)
+					break;
+			}
 
 			if (!number)
 				break;
 
 			number--;
 
-			while (this->_newTime > 20) {
+			while (!this->_maxSpeed && this->_newTime > 20) {
 				this->_clock.restart();
 				this->_newTime -= 20;
 				this->_oldTime -= 20;
@@ -372,7 +374,7 @@ namespace GBEmulator
 				this->_updateComponents(cycles / (this->_isDoubleSpeed + 1));
 			}
 
-			if (this->_newTime - this->_oldTime > 0.1) {
+			if (!this->_maxSpeed && this->_newTime - this->_oldTime > 0.1) {
 				this->_oldTime = this->_newTime;
 				break;
 			}
