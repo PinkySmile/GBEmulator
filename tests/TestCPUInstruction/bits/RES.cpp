@@ -8,16 +8,14 @@
 #include <criterion/criterion.h>
 #include "../../communism.hpp"
 #include "../../TestComponents.hpp"
-#include "../../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_bitLevelInstructions
+#include "../../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 Test(RES_0_b, random_value_set_0) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xBB;
-	unsigned char time = instructions[0x80](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x80, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xBA;
@@ -30,7 +28,7 @@ Test(RES_0_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x9F;
-	unsigned char time = instructions[0x80](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x80, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x9E;
@@ -43,7 +41,7 @@ Test(RES_0_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xD0;
-	unsigned char time = instructions[0x80](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x80, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xD0;
@@ -56,7 +54,7 @@ Test(RES_0_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xB0;
-	unsigned char time = instructions[0x80](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x80, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xB0;
@@ -69,7 +67,7 @@ Test(RES_0_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x99;
-	unsigned char time = instructions[0x81](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x81, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x98;
@@ -82,7 +80,7 @@ Test(RES_0_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x3B;
-	unsigned char time = instructions[0x81](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x81, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x3A;
@@ -95,7 +93,7 @@ Test(RES_0_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x8;
-	unsigned char time = instructions[0x81](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x81, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x8;
@@ -108,7 +106,7 @@ Test(RES_0_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x34;
-	unsigned char time = instructions[0x81](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x81, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x34;
@@ -121,7 +119,7 @@ Test(RES_0_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x25;
-	unsigned char time = instructions[0x82](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x82, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x24;
@@ -134,7 +132,7 @@ Test(RES_0_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x4F;
-	unsigned char time = instructions[0x82](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x82, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x4E;
@@ -147,7 +145,7 @@ Test(RES_0_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xE0;
-	unsigned char time = instructions[0x82](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x82, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xE0;
@@ -160,7 +158,7 @@ Test(RES_0_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x9C;
-	unsigned char time = instructions[0x82](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x82, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x9C;
@@ -173,7 +171,7 @@ Test(RES_0_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x31;
-	unsigned char time = instructions[0x83](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x83, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x30;
@@ -186,7 +184,7 @@ Test(RES_0_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x53;
-	unsigned char time = instructions[0x83](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x83, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x52;
@@ -199,7 +197,7 @@ Test(RES_0_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x4E;
-	unsigned char time = instructions[0x83](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x83, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x4E;
@@ -212,7 +210,7 @@ Test(RES_0_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x4;
-	unsigned char time = instructions[0x83](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x83, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x4;
@@ -225,7 +223,7 @@ Test(RES_0_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x73;
-	unsigned char time = instructions[0x84](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x84, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x72;
@@ -238,7 +236,7 @@ Test(RES_0_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x2D;
-	unsigned char time = instructions[0x84](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x84, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x2C;
@@ -251,7 +249,7 @@ Test(RES_0_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x8C;
-	unsigned char time = instructions[0x84](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x84, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x8C;
@@ -264,7 +262,7 @@ Test(RES_0_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x6;
-	unsigned char time = instructions[0x84](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x84, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x6;
@@ -277,7 +275,7 @@ Test(RES_0_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x2F;
-	unsigned char time = instructions[0x85](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x85, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x2E;
@@ -290,7 +288,7 @@ Test(RES_0_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x73;
-	unsigned char time = instructions[0x85](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x85, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x72;
@@ -303,7 +301,7 @@ Test(RES_0_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xB8;
-	unsigned char time = instructions[0x85](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x85, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xB8;
@@ -316,7 +314,7 @@ Test(RES_0_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x8A;
-	unsigned char time = instructions[0x85](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x85, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x8A;
@@ -329,7 +327,7 @@ Test(RES_0_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x99;
-	unsigned char time = instructions[0x87](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x87, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x98;
@@ -342,7 +340,7 @@ Test(RES_0_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xA3;
-	unsigned char time = instructions[0x87](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x87, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xA2;
@@ -355,7 +353,7 @@ Test(RES_0_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xE8;
-	unsigned char time = instructions[0x87](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x87, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xE8;
@@ -368,7 +366,7 @@ Test(RES_0_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xD8;
-	unsigned char time = instructions[0x87](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x87, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xD8;
@@ -381,7 +379,7 @@ Test(RES_1_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x3A;
-	unsigned char time = instructions[0x88](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x88, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x38;
@@ -394,7 +392,7 @@ Test(RES_1_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xAF;
-	unsigned char time = instructions[0x88](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x88, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xAD;
@@ -407,7 +405,7 @@ Test(RES_1_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x6C;
-	unsigned char time = instructions[0x88](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x88, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x6C;
@@ -420,7 +418,7 @@ Test(RES_1_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x6D;
-	unsigned char time = instructions[0x88](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x88, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x6D;
@@ -433,7 +431,7 @@ Test(RES_1_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x96;
-	unsigned char time = instructions[0x89](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x89, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x94;
@@ -446,7 +444,7 @@ Test(RES_1_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x6A;
-	unsigned char time = instructions[0x89](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x89, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x68;
@@ -459,7 +457,7 @@ Test(RES_1_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x61;
-	unsigned char time = instructions[0x89](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x89, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x61;
@@ -472,7 +470,7 @@ Test(RES_1_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x15;
-	unsigned char time = instructions[0x89](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x89, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x15;
@@ -485,7 +483,7 @@ Test(RES_1_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x27;
-	unsigned char time = instructions[0x8A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x25;
@@ -498,7 +496,7 @@ Test(RES_1_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x1B;
-	unsigned char time = instructions[0x8A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x19;
@@ -511,7 +509,7 @@ Test(RES_1_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x2C;
-	unsigned char time = instructions[0x8A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x2C;
@@ -524,7 +522,7 @@ Test(RES_1_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x99;
-	unsigned char time = instructions[0x8A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x99;
@@ -537,7 +535,7 @@ Test(RES_1_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x8B;
-	unsigned char time = instructions[0x8B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x89;
@@ -550,7 +548,7 @@ Test(RES_1_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x7;
-	unsigned char time = instructions[0x8B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x5;
@@ -563,7 +561,7 @@ Test(RES_1_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x79;
-	unsigned char time = instructions[0x8B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x79;
@@ -576,7 +574,7 @@ Test(RES_1_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x1;
-	unsigned char time = instructions[0x8B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x1;
@@ -589,7 +587,7 @@ Test(RES_1_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x1E;
-	unsigned char time = instructions[0x8C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x1C;
@@ -602,7 +600,7 @@ Test(RES_1_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xEE;
-	unsigned char time = instructions[0x8C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xEC;
@@ -615,7 +613,7 @@ Test(RES_1_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xF5;
-	unsigned char time = instructions[0x8C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xF5;
@@ -628,7 +626,7 @@ Test(RES_1_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x45;
-	unsigned char time = instructions[0x8C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x45;
@@ -641,7 +639,7 @@ Test(RES_1_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xA6;
-	unsigned char time = instructions[0x8D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xA4;
@@ -654,7 +652,7 @@ Test(RES_1_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xCF;
-	unsigned char time = instructions[0x8D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xCD;
@@ -667,7 +665,7 @@ Test(RES_1_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x54;
-	unsigned char time = instructions[0x8D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x54;
@@ -680,7 +678,7 @@ Test(RES_1_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xE5;
-	unsigned char time = instructions[0x8D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xE5;
@@ -693,7 +691,7 @@ Test(RES_1_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x7E;
-	unsigned char time = instructions[0x8F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x7C;
@@ -706,7 +704,7 @@ Test(RES_1_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x52;
-	unsigned char time = instructions[0x8F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x50;
@@ -719,7 +717,7 @@ Test(RES_1_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x74;
-	unsigned char time = instructions[0x8F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x74;
@@ -732,7 +730,7 @@ Test(RES_1_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xE0;
-	unsigned char time = instructions[0x8F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x8F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xE0;
@@ -745,7 +743,7 @@ Test(RES_2_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x4E;
-	unsigned char time = instructions[0x90](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x90, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x4A;
@@ -758,7 +756,7 @@ Test(RES_2_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x96;
-	unsigned char time = instructions[0x90](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x90, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x92;
@@ -771,7 +769,7 @@ Test(RES_2_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x51;
-	unsigned char time = instructions[0x90](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x90, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x51;
@@ -784,7 +782,7 @@ Test(RES_2_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x29;
-	unsigned char time = instructions[0x90](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x90, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x29;
@@ -797,7 +795,7 @@ Test(RES_2_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x3E;
-	unsigned char time = instructions[0x91](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x91, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x3A;
@@ -810,7 +808,7 @@ Test(RES_2_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x96;
-	unsigned char time = instructions[0x91](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x91, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x92;
@@ -823,7 +821,7 @@ Test(RES_2_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x69;
-	unsigned char time = instructions[0x91](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x91, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x69;
@@ -836,7 +834,7 @@ Test(RES_2_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x12;
-	unsigned char time = instructions[0x91](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x91, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x12;
@@ -849,7 +847,7 @@ Test(RES_2_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xC4;
-	unsigned char time = instructions[0x92](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x92, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xC0;
@@ -862,7 +860,7 @@ Test(RES_2_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x2D;
-	unsigned char time = instructions[0x92](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x92, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x29;
@@ -875,7 +873,7 @@ Test(RES_2_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x33;
-	unsigned char time = instructions[0x92](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x92, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x33;
@@ -888,7 +886,7 @@ Test(RES_2_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xF8;
-	unsigned char time = instructions[0x92](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x92, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xF8;
@@ -901,7 +899,7 @@ Test(RES_2_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x5C;
-	unsigned char time = instructions[0x93](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x93, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x58;
@@ -914,7 +912,7 @@ Test(RES_2_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xB6;
-	unsigned char time = instructions[0x93](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x93, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xB2;
@@ -927,7 +925,7 @@ Test(RES_2_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xCA;
-	unsigned char time = instructions[0x93](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x93, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xCA;
@@ -940,7 +938,7 @@ Test(RES_2_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x71;
-	unsigned char time = instructions[0x93](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x93, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x71;
@@ -953,7 +951,7 @@ Test(RES_2_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xE4;
-	unsigned char time = instructions[0x94](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x94, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xE0;
@@ -966,7 +964,7 @@ Test(RES_2_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xD4;
-	unsigned char time = instructions[0x94](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x94, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xD0;
@@ -979,7 +977,7 @@ Test(RES_2_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xDB;
-	unsigned char time = instructions[0x94](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x94, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xDB;
@@ -992,7 +990,7 @@ Test(RES_2_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xA;
-	unsigned char time = instructions[0x94](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x94, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xA;
@@ -1005,7 +1003,7 @@ Test(RES_2_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x94;
-	unsigned char time = instructions[0x95](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x95, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x90;
@@ -1018,7 +1016,7 @@ Test(RES_2_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xC6;
-	unsigned char time = instructions[0x95](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x95, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xC2;
@@ -1031,7 +1029,7 @@ Test(RES_2_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xAB;
-	unsigned char time = instructions[0x95](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x95, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xAB;
@@ -1044,7 +1042,7 @@ Test(RES_2_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x5B;
-	unsigned char time = instructions[0x95](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x95, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x5B;
@@ -1057,7 +1055,7 @@ Test(RES_2_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x86;
-	unsigned char time = instructions[0x97](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x97, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x82;
@@ -1070,7 +1068,7 @@ Test(RES_2_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x3F;
-	unsigned char time = instructions[0x97](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x97, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x3B;
@@ -1083,7 +1081,7 @@ Test(RES_2_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xB3;
-	unsigned char time = instructions[0x97](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x97, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xB3;
@@ -1096,7 +1094,7 @@ Test(RES_2_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x50;
-	unsigned char time = instructions[0x97](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x97, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x50;
@@ -1109,7 +1107,7 @@ Test(RES_3_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x88;
-	unsigned char time = instructions[0x98](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x98, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x80;
@@ -1122,7 +1120,7 @@ Test(RES_3_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xB8;
-	unsigned char time = instructions[0x98](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x98, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xB0;
@@ -1135,7 +1133,7 @@ Test(RES_3_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xD5;
-	unsigned char time = instructions[0x98](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x98, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xD5;
@@ -1148,7 +1146,7 @@ Test(RES_3_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x13;
-	unsigned char time = instructions[0x98](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x98, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x13;
@@ -1161,7 +1159,7 @@ Test(RES_3_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x8E;
-	unsigned char time = instructions[0x99](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x99, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x86;
@@ -1174,7 +1172,7 @@ Test(RES_3_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x3D;
-	unsigned char time = instructions[0x99](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x99, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x35;
@@ -1187,7 +1185,7 @@ Test(RES_3_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xD2;
-	unsigned char time = instructions[0x99](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x99, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xD2;
@@ -1200,7 +1198,7 @@ Test(RES_3_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x93;
-	unsigned char time = instructions[0x99](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x99, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x93;
@@ -1213,7 +1211,7 @@ Test(RES_3_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x59;
-	unsigned char time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x51;
@@ -1226,7 +1224,7 @@ Test(RES_3_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x6A;
-	unsigned char time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x62;
@@ -1239,7 +1237,7 @@ Test(RES_3_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x81;
-	unsigned char time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x81;
@@ -1252,7 +1250,7 @@ Test(RES_3_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xD0;
-	unsigned char time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9A, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xD0;
@@ -1265,7 +1263,7 @@ Test(RES_3_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x7D;
-	unsigned char time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x75;
@@ -1278,7 +1276,7 @@ Test(RES_3_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xD8;
-	unsigned char time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xD0;
@@ -1291,7 +1289,7 @@ Test(RES_3_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x41;
-	unsigned char time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x41;
@@ -1304,7 +1302,7 @@ Test(RES_3_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x24;
-	unsigned char time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9B, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x24;
@@ -1317,7 +1315,7 @@ Test(RES_3_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x2B;
-	unsigned char time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x23;
@@ -1330,7 +1328,7 @@ Test(RES_3_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x99;
-	unsigned char time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x91;
@@ -1343,7 +1341,7 @@ Test(RES_3_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x80;
-	unsigned char time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x80;
@@ -1356,7 +1354,7 @@ Test(RES_3_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xB4;
-	unsigned char time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9C, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xB4;
@@ -1369,7 +1367,7 @@ Test(RES_3_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x4B;
-	unsigned char time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x43;
@@ -1382,7 +1380,7 @@ Test(RES_3_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x1E;
-	unsigned char time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x16;
@@ -1395,7 +1393,7 @@ Test(RES_3_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x26;
-	unsigned char time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x26;
@@ -1408,7 +1406,7 @@ Test(RES_3_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x82;
-	unsigned char time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9D, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x82;
@@ -1421,7 +1419,7 @@ Test(RES_3_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xFC;
-	unsigned char time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xF4;
@@ -1434,7 +1432,7 @@ Test(RES_3_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x2C;
-	unsigned char time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x24;
@@ -1447,7 +1445,7 @@ Test(RES_3_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xD1;
-	unsigned char time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xD1;
@@ -1460,7 +1458,7 @@ Test(RES_3_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x13;
-	unsigned char time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0x9F, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x13;
@@ -1473,7 +1471,7 @@ Test(RES_4_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xDB;
-	unsigned char time = instructions[0xA0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xCB;
@@ -1486,7 +1484,7 @@ Test(RES_4_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xFD;
-	unsigned char time = instructions[0xA0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xED;
@@ -1499,7 +1497,7 @@ Test(RES_4_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xE9;
-	unsigned char time = instructions[0xA0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xE9;
@@ -1512,7 +1510,7 @@ Test(RES_4_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xE6;
-	unsigned char time = instructions[0xA0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xE6;
@@ -1525,7 +1523,7 @@ Test(RES_4_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xF1;
-	unsigned char time = instructions[0xA1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xE1;
@@ -1538,7 +1536,7 @@ Test(RES_4_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x71;
-	unsigned char time = instructions[0xA1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x61;
@@ -1551,7 +1549,7 @@ Test(RES_4_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xA2;
-	unsigned char time = instructions[0xA1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xA2;
@@ -1564,7 +1562,7 @@ Test(RES_4_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x83;
-	unsigned char time = instructions[0xA1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x83;
@@ -1577,7 +1575,7 @@ Test(RES_4_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x1A;
-	unsigned char time = instructions[0xA2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xA;
@@ -1590,7 +1588,7 @@ Test(RES_4_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x9B;
-	unsigned char time = instructions[0xA2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x8B;
@@ -1603,7 +1601,7 @@ Test(RES_4_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x23;
-	unsigned char time = instructions[0xA2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x23;
@@ -1616,7 +1614,7 @@ Test(RES_4_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xA3;
-	unsigned char time = instructions[0xA2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xA3;
@@ -1629,7 +1627,7 @@ Test(RES_4_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xB1;
-	unsigned char time = instructions[0xA3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xA1;
@@ -1642,7 +1640,7 @@ Test(RES_4_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xD9;
-	unsigned char time = instructions[0xA3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xC9;
@@ -1655,7 +1653,7 @@ Test(RES_4_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xCC;
-	unsigned char time = instructions[0xA3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xCC;
@@ -1668,7 +1666,7 @@ Test(RES_4_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x6A;
-	unsigned char time = instructions[0xA3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x6A;
@@ -1681,7 +1679,7 @@ Test(RES_4_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x31;
-	unsigned char time = instructions[0xA4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x21;
@@ -1694,7 +1692,7 @@ Test(RES_4_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xB2;
-	unsigned char time = instructions[0xA4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xA2;
@@ -1707,7 +1705,7 @@ Test(RES_4_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xAD;
-	unsigned char time = instructions[0xA4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xAD;
@@ -1720,7 +1718,7 @@ Test(RES_4_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xEF;
-	unsigned char time = instructions[0xA4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xEF;
@@ -1733,7 +1731,7 @@ Test(RES_4_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x59;
-	unsigned char time = instructions[0xA5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x49;
@@ -1746,7 +1744,7 @@ Test(RES_4_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x56;
-	unsigned char time = instructions[0xA5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x46;
@@ -1759,7 +1757,7 @@ Test(RES_4_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xAC;
-	unsigned char time = instructions[0xA5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xAC;
@@ -1772,7 +1770,7 @@ Test(RES_4_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x6C;
-	unsigned char time = instructions[0xA5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x6C;
@@ -1785,7 +1783,7 @@ Test(RES_4_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x7D;
-	unsigned char time = instructions[0xA7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x6D;
@@ -1798,7 +1796,7 @@ Test(RES_4_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x5D;
-	unsigned char time = instructions[0xA7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x4D;
@@ -1811,7 +1809,7 @@ Test(RES_4_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x24;
-	unsigned char time = instructions[0xA7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x24;
@@ -1824,7 +1822,7 @@ Test(RES_4_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x4A;
-	unsigned char time = instructions[0xA7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x4A;
@@ -1837,7 +1835,7 @@ Test(RES_5_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xA0;
-	unsigned char time = instructions[0xA8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x80;
@@ -1850,7 +1848,7 @@ Test(RES_5_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x34;
-	unsigned char time = instructions[0xA8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x14;
@@ -1863,7 +1861,7 @@ Test(RES_5_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xDE;
-	unsigned char time = instructions[0xA8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xDE;
@@ -1876,7 +1874,7 @@ Test(RES_5_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xD8;
-	unsigned char time = instructions[0xA8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0xD8;
@@ -1889,7 +1887,7 @@ Test(RES_5_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xA8;
-	unsigned char time = instructions[0xA9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x88;
@@ -1902,7 +1900,7 @@ Test(RES_5_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xE7;
-	unsigned char time = instructions[0xA9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xC7;
@@ -1915,7 +1913,7 @@ Test(RES_5_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x9B;
-	unsigned char time = instructions[0xA9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x9B;
@@ -1928,7 +1926,7 @@ Test(RES_5_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x98;
-	unsigned char time = instructions[0xA9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xA9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x98;
@@ -1941,7 +1939,7 @@ Test(RES_5_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x23;
-	unsigned char time = instructions[0xAA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x3;
@@ -1954,7 +1952,7 @@ Test(RES_5_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xB4;
-	unsigned char time = instructions[0xAA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x94;
@@ -1967,7 +1965,7 @@ Test(RES_5_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xC0;
-	unsigned char time = instructions[0xAA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0xC0;
@@ -1980,7 +1978,7 @@ Test(RES_5_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x56;
-	unsigned char time = instructions[0xAA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x56;
@@ -1993,7 +1991,7 @@ Test(RES_5_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x79;
-	unsigned char time = instructions[0xAB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x59;
@@ -2006,7 +2004,7 @@ Test(RES_5_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xFF;
-	unsigned char time = instructions[0xAB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0xDF;
@@ -2019,7 +2017,7 @@ Test(RES_5_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x42;
-	unsigned char time = instructions[0xAB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x42;
@@ -2032,7 +2030,7 @@ Test(RES_5_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x8;
-	unsigned char time = instructions[0xAB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x8;
@@ -2045,7 +2043,7 @@ Test(RES_5_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xB4;
-	unsigned char time = instructions[0xAC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x94;
@@ -2058,7 +2056,7 @@ Test(RES_5_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x20;
-	unsigned char time = instructions[0xAC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x0;
@@ -2071,7 +2069,7 @@ Test(RES_5_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x50;
-	unsigned char time = instructions[0xAC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x50;
@@ -2084,7 +2082,7 @@ Test(RES_5_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x97;
-	unsigned char time = instructions[0xAC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x97;
@@ -2097,7 +2095,7 @@ Test(RES_5_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xE9;
-	unsigned char time = instructions[0xAD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xC9;
@@ -2110,7 +2108,7 @@ Test(RES_5_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x31;
-	unsigned char time = instructions[0xAD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x11;
@@ -2123,7 +2121,7 @@ Test(RES_5_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xD1;
-	unsigned char time = instructions[0xAD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xD1;
@@ -2136,7 +2134,7 @@ Test(RES_5_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x1D;
-	unsigned char time = instructions[0xAD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x1D;
@@ -2149,7 +2147,7 @@ Test(RES_5_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x36;
-	unsigned char time = instructions[0xAF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x16;
@@ -2162,7 +2160,7 @@ Test(RES_5_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xA9;
-	unsigned char time = instructions[0xAF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x89;
@@ -2175,7 +2173,7 @@ Test(RES_5_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xD2;
-	unsigned char time = instructions[0xAF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xD2;
@@ -2188,7 +2186,7 @@ Test(RES_5_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xE;
-	unsigned char time = instructions[0xAF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xAF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xE;
@@ -2201,7 +2199,7 @@ Test(RES_6_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xC8;
-	unsigned char time = instructions[0xB0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x88;
@@ -2214,7 +2212,7 @@ Test(RES_6_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xD0;
-	unsigned char time = instructions[0xB0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x90;
@@ -2227,7 +2225,7 @@ Test(RES_6_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x9A;
-	unsigned char time = instructions[0xB0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x9A;
@@ -2240,7 +2238,7 @@ Test(RES_6_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x3A;
-	unsigned char time = instructions[0xB0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x3A;
@@ -2253,7 +2251,7 @@ Test(RES_6_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xE2;
-	unsigned char time = instructions[0xB1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xA2;
@@ -2266,7 +2264,7 @@ Test(RES_6_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xE4;
-	unsigned char time = instructions[0xB1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xA4;
@@ -2279,7 +2277,7 @@ Test(RES_6_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x82;
-	unsigned char time = instructions[0xB1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x82;
@@ -2292,7 +2290,7 @@ Test(RES_6_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xF;
-	unsigned char time = instructions[0xB1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xF;
@@ -2305,7 +2303,7 @@ Test(RES_6_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xC1;
-	unsigned char time = instructions[0xB2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x81;
@@ -2318,7 +2316,7 @@ Test(RES_6_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x48;
-	unsigned char time = instructions[0xB2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x8;
@@ -2331,7 +2329,7 @@ Test(RES_6_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x84;
-	unsigned char time = instructions[0xB2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x84;
@@ -2344,7 +2342,7 @@ Test(RES_6_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x2E;
-	unsigned char time = instructions[0xB2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x2E;
@@ -2357,7 +2355,7 @@ Test(RES_6_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x58;
-	unsigned char time = instructions[0xB3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x18;
@@ -2370,7 +2368,7 @@ Test(RES_6_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x7E;
-	unsigned char time = instructions[0xB3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x3E;
@@ -2383,7 +2381,7 @@ Test(RES_6_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x1D;
-	unsigned char time = instructions[0xB3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x1D;
@@ -2396,7 +2394,7 @@ Test(RES_6_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x7;
-	unsigned char time = instructions[0xB3](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB3, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x7;
@@ -2409,7 +2407,7 @@ Test(RES_6_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x6C;
-	unsigned char time = instructions[0xB4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x2C;
@@ -2422,7 +2420,7 @@ Test(RES_6_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x54;
-	unsigned char time = instructions[0xB4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x14;
@@ -2435,7 +2433,7 @@ Test(RES_6_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x91;
-	unsigned char time = instructions[0xB4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x91;
@@ -2448,7 +2446,7 @@ Test(RES_6_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xBC;
-	unsigned char time = instructions[0xB4](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB4, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0xBC;
@@ -2461,7 +2459,7 @@ Test(RES_6_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xC7;
-	unsigned char time = instructions[0xB5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x87;
@@ -2474,7 +2472,7 @@ Test(RES_6_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xFC;
-	unsigned char time = instructions[0xB5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0xBC;
@@ -2487,7 +2485,7 @@ Test(RES_6_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x3B;
-	unsigned char time = instructions[0xB5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x3B;
@@ -2500,7 +2498,7 @@ Test(RES_6_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x27;
-	unsigned char time = instructions[0xB5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB5, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x27;
@@ -2513,7 +2511,7 @@ Test(RES_6_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xE3;
-	unsigned char time = instructions[0xB7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xA3;
@@ -2526,7 +2524,7 @@ Test(RES_6_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x4C;
-	unsigned char time = instructions[0xB7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xC;
@@ -2539,7 +2537,7 @@ Test(RES_6_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x2B;
-	unsigned char time = instructions[0xB7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x2B;
@@ -2552,7 +2550,7 @@ Test(RES_6_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x9C;
-	unsigned char time = instructions[0xB7](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB7, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x9C;
@@ -2565,7 +2563,7 @@ Test(RES_7_b, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x9E;
-	unsigned char time = instructions[0xB8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x1E;
@@ -2578,7 +2576,7 @@ Test(RES_7_b, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0xA3;
-	unsigned char time = instructions[0xB8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x23;
@@ -2591,7 +2589,7 @@ Test(RES_7_b, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x5C;
-	unsigned char time = instructions[0xB8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x5C;
@@ -2604,7 +2602,7 @@ Test(RES_7_b, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.b = 0x1D;
-	unsigned char time = instructions[0xB8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x1D;
@@ -2617,7 +2615,7 @@ Test(RES_7_c, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x83;
-	unsigned char time = instructions[0xB9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x3;
@@ -2630,7 +2628,7 @@ Test(RES_7_c, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xD4;
-	unsigned char time = instructions[0xB9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x54;
@@ -2643,7 +2641,7 @@ Test(RES_7_c, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0xF;
-	unsigned char time = instructions[0xB9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0xF;
@@ -2656,7 +2654,7 @@ Test(RES_7_c, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.c = 0x23;
-	unsigned char time = instructions[0xB9](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xB9, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.c;
 	unsigned char ex_result = 0x23;
@@ -2669,7 +2667,7 @@ Test(RES_7_d, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x9F;
-	unsigned char time = instructions[0xBA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x1F;
@@ -2682,7 +2680,7 @@ Test(RES_7_d, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0xC9;
-	unsigned char time = instructions[0xBA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x49;
@@ -2695,7 +2693,7 @@ Test(RES_7_d, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x71;
-	unsigned char time = instructions[0xBA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x71;
@@ -2708,7 +2706,7 @@ Test(RES_7_d, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.d = 0x3B;
-	unsigned char time = instructions[0xBA](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBA, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.d;
 	unsigned char ex_result = 0x3B;
@@ -2721,7 +2719,7 @@ Test(RES_7_e, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x82;
-	unsigned char time = instructions[0xBB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x2;
@@ -2734,7 +2732,7 @@ Test(RES_7_e, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0xB9;
-	unsigned char time = instructions[0xBB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x39;
@@ -2747,7 +2745,7 @@ Test(RES_7_e, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x11;
-	unsigned char time = instructions[0xBB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x11;
@@ -2760,7 +2758,7 @@ Test(RES_7_e, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.e = 0x40;
-	unsigned char time = instructions[0xBB](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBB, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.e;
 	unsigned char ex_result = 0x40;
@@ -2773,7 +2771,7 @@ Test(RES_7_h, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xA4;
-	unsigned char time = instructions[0xBC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x24;
@@ -2786,7 +2784,7 @@ Test(RES_7_h, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0xBB;
-	unsigned char time = instructions[0xBC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x3B;
@@ -2799,7 +2797,7 @@ Test(RES_7_h, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x3E;
-	unsigned char time = instructions[0xBC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x3E;
@@ -2812,7 +2810,7 @@ Test(RES_7_h, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.h = 0x2C;
-	unsigned char time = instructions[0xBC](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBC, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.h;
 	unsigned char ex_result = 0x2C;
@@ -2825,7 +2823,7 @@ Test(RES_7_l, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0xB2;
-	unsigned char time = instructions[0xBD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x32;
@@ -2838,7 +2836,7 @@ Test(RES_7_l, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x9A;
-	unsigned char time = instructions[0xBD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x1A;
@@ -2851,7 +2849,7 @@ Test(RES_7_l, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x70;
-	unsigned char time = instructions[0xBD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x70;
@@ -2864,7 +2862,7 @@ Test(RES_7_l, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.l = 0x79;
-	unsigned char time = instructions[0xBD](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBD, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.l;
 	unsigned char ex_result = 0x79;
@@ -2877,7 +2875,7 @@ Test(RES_7_a, random_value_set_0) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0xB8;
-	unsigned char time = instructions[0xBF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x38;
@@ -2890,7 +2888,7 @@ Test(RES_7_a, random_value_set_1) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x8B;
-	unsigned char time = instructions[0xBF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0xB;
@@ -2903,7 +2901,7 @@ Test(RES_7_a, random_value_unset_2) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x40;
-	unsigned char time = instructions[0xBF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x40;
@@ -2916,7 +2914,7 @@ Test(RES_7_a, random_value_unset_3) {
 	unsigned char excepted_time = 8 - 4;
 
 	gb.cpu._registers.a = 0x7B;
-	unsigned char time = instructions[0xBF](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeBitInstruction(0xBF, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.a;
 	unsigned char ex_result = 0x7B;

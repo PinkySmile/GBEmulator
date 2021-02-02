@@ -14,7 +14,7 @@ Test(isVBlankInterrupt, no_interrupt)
 {
 	Tests::GBTest gb;
 
-	gb.cpu._gpu._control = 0x80;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._cycles = 0;
 
 	cr_assert(!gb.cpu._gpu._isVBlankInterrupt());
@@ -24,7 +24,7 @@ Test(isVBlankInterrupt, one_interrupt)
 {
 	Tests::GBTest gb;
 
-	gb.cpu._gpu._control = 0x80;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._cycles = 69000;
 
 	cr_assert(gb.cpu._gpu._isVBlankInterrupt());
@@ -34,7 +34,7 @@ Test(isVBlankIntrrupt, multiple_calls)
 {
 	Tests::GBTest gb;
 
-	gb.cpu._gpu._control = 0x80;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._cycles = 69000;
 
 	cr_assert(gb.cpu._gpu._isVBlankInterrupt());

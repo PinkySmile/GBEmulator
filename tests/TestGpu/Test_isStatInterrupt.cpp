@@ -24,7 +24,7 @@ Test(isStatInterrupt, lyc_interrupt)
 
 	gb.cpu._gpu._lyc = 4;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
@@ -35,7 +35,7 @@ Test(isStatInterrupt, oam_interrupt)
 	Tests::GBTest gb;
 
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b00100000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
@@ -46,7 +46,7 @@ Test(isStatInterrupt, vblank_interrupt)
 	Tests::GBTest gb;
 
 	gb.cpu._gpu._cycles = 69000; // Current line > 144
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b00010000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
@@ -57,7 +57,7 @@ Test(isStatInterrupt, hblank_interrupt)
 	Tests::GBTest gb;
 
 	gb.cpu._gpu._cycles = 60000;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b00001000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
@@ -69,14 +69,14 @@ Test(isStatInterrupt, interrupt_x2)
 
 	gb.cpu._gpu._lyc = 4;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
 
 	gb.cpu._gpu._lyc = 4;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(!gb.cpu._gpu._isStatInterrupt());
@@ -88,27 +88,27 @@ Test(isStatInterrupt, multiple_call)
 
 	gb.cpu._gpu._lyc = 4;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());
 
 	gb.cpu._gpu._lyc = 4;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(!gb.cpu._gpu._isStatInterrupt());
 
 	gb.cpu._gpu._lyc = 0;
 	gb.cpu._gpu._cycles = 1850;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b01000000U);
 
 	cr_assert(!gb.cpu._gpu._isStatInterrupt());
 
 	gb.cpu._gpu._cycles = 60000;
-	gb.cpu._gpu._control = 0b10000000U;
+	gb.cpu._gpu._control.enabled = true;
 	gb.cpu._gpu._stat = static_cast<unsigned char>(0b00001000U);
 
 	cr_assert(gb.cpu._gpu._isStatInterrupt());

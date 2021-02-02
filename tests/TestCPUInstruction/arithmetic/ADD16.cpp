@@ -8,9 +8,7 @@
 #include <criterion/criterion.h>
 #include "../../communism.hpp"
 #include "../../TestComponents.hpp"
-#include "../../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 
 //! INSTRUCTION 09: ADD hl,bc
@@ -23,7 +21,7 @@ Test(ADD_HL_BC, all_values) {
 			gb.cpu._registers.hl = i;
 			gb.cpu._registers.bc = j;
 
-			unsigned time = instructions[0x09](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x09, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);
@@ -45,7 +43,7 @@ Test(ADD_HL_DE, all_values) {
 			gb.cpu._registers.hl = i;
 			gb.cpu._registers.de = j;
 
-			unsigned time = instructions[0x19](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x19, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);
@@ -65,7 +63,7 @@ Test(ADD_HL_HL, all_values) {
 	for (unsigned i = 0; i <= 0xFFFF; i++) {
 		gb.cpu._registers.hl = i;
 
-		unsigned time = instructions[0x29](gb.cpu, gb.cpu._registers);
+		unsigned time = GBEmulator::Instructions::executeInstruction(0x29, gb.cpu, gb.cpu._registers);
 
 		cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 		cr_assert_eq(gb.cpu._registers.hl, (i + i) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + i) % 0x10000, gb.cpu._registers.hl);
@@ -86,7 +84,7 @@ Test(ADD_HL_SP, all_values) {
 			gb.cpu._registers.hl = i;
 			gb.cpu._registers.sp = j;
 
-			unsigned time = instructions[0x39](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x39, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.hl, (i + j) % 0x10000, "Result must be 0x%X but it was 0x%X", (i + j) % 0x10000, gb.cpu._registers.hl);

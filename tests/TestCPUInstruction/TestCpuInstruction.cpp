@@ -8,9 +8,7 @@
 #include <criterion/criterion.h>
 #include "../communism.hpp"
 #include "../TestComponents.hpp"
-#include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 //! INSTRUCTIONS
 
@@ -25,7 +23,7 @@ Test(NOP, return_value) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 4;
 
-	unsigned char time = instructions[0x0](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x0, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 }
 

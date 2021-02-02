@@ -8,9 +8,7 @@
 #include <criterion/criterion.h>
 #include "../communism.hpp"
 #include "../TestComponents.hpp"
-#include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 //! INSTRUCTION 01
 
@@ -22,7 +20,7 @@ Test(LD_BC_d16, rom_500_0)
 	gb.cpu.write(0x500, 0);
 	gb.cpu.write(0x501, 0);
 	gb.cpu._registers.pc = 0x500;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0;
@@ -37,7 +35,7 @@ Test(LD_BC_d16, rom_500_65535)
 	gb.cpu.write(0x500, 0xFF);
 	gb.cpu.write(0x501, 0xFF);
 	gb.cpu._registers.pc = 0x500;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0;
@@ -52,7 +50,7 @@ Test(LD_BC_d16, rom_4242_2142)
 	gb.cpu.write(0x4242, 21);
 	gb.cpu.write(0x4243, 42);
 	gb.cpu._registers.pc = 0x4242;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0;
@@ -67,7 +65,7 @@ Test(LD_BC_d16, rom_1234_256)
 	gb.cpu.write(0x1234, 0);
 	gb.cpu.write(0x1235, 1);
 	gb.cpu._registers.pc = 0x1234;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0x0;
@@ -82,7 +80,7 @@ Test(LD_BC_d16, vram_8000_256)
 	gb.cpu.write(0x8000, 0);
 	gb.cpu.write(0x8001, 1);
 	gb.cpu._registers.pc = 0x8000;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0x100;
@@ -97,7 +95,7 @@ Test(LD_BC_d16, wram_C000_256)
 	gb.cpu.write(0xC000, 0x42);
 	gb.cpu.write(0xC001, 0xC9);
 	gb.cpu._registers.pc = 0xC000;
-	unsigned char time = instructions[0x1](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x1, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu._registers.bc;
 	unsigned short ex_result = 0xC942;
@@ -112,7 +110,7 @@ Test(LD_unrefBC_A, value_1) {
 
 	gb.cpu._registers.a = 0xD8;
 	gb.cpu._registers.bc = 0xC000;
-	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu.read(0xC000);
 	unsigned char ex_result = 0xD8;
@@ -125,7 +123,7 @@ Test(LD_unrefBC_A, value_2) {
 
 	gb.cpu._registers.a = 0xFD;
 	gb.cpu._registers.bc = 0xD83E;
-	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu.read(0xD83E);
 	unsigned char ex_result = 0xFD;
@@ -138,7 +136,7 @@ Test(LD_unrefBC_A, value_3) {
 
 	gb.cpu._registers.a = 0x01;
 	gb.cpu._registers.bc = 0xF0D0;
-	unsigned char time = instructions[0x2](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu.read(0xF0D0);
 	unsigned char ex_result = 0x01;
@@ -153,7 +151,7 @@ Test(LD_B_d8, wram_C159_256) {
 
 	gb.cpu.write(0xC159, 0x2E);
 	gb.cpu._registers.pc = 0xC159;
-	unsigned char time = instructions[0x6](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x6, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu._registers.b;
 	unsigned char ex_result = 0x2E;
@@ -170,7 +168,7 @@ Test(LD_a16_SP, vram_8000_256) {
 	gb.cpu.write(0x8001, 0x81);
 	gb.cpu._registers.pc = 0x8000;
 	gb.cpu._registers.sp = 0x0100;
-	unsigned char time = instructions[0x8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu.read(0x8100) | (gb.cpu.read(0x8101) << 8U);
 	unsigned short ex_result = 0x100;
@@ -185,7 +183,7 @@ Test(LD_a16_SP, wram_C159) {
 	gb.cpu.write(0xC15A, 0xEA);
 	gb.cpu._registers.pc = 0xC159;
 	gb.cpu._registers.sp = 0xA7F4;
-	unsigned char time = instructions[0x8](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x8, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned short result = gb.cpu.read(0xEA43) + (gb.cpu.read(0xEA44) << 8U);
 	unsigned short ex_result = 0xA7F4;

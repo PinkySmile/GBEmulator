@@ -8,10 +8,9 @@
 #define GBEMULATOR_TESTCOMPONENTS_HPP
 
 #include <ostream>
-#include "communism.hpp"
 #include "../src/Joypad/JoypadEmulator.hpp"
 #include "../src/ProcessingUnits/CPU.hpp"
-#include "../src/Network/BgbProtocolNetworkInterface.hpp"
+#include "../src/CableLink/CableInterface.hpp"
 
 
 namespace Tests {
@@ -24,23 +23,33 @@ namespace Tests {
 	};
 
 	class Screen : public GBEmulator::Graphics::ILCD {
+	private:
+		bool _closed = false;
+
 	public:
-		void updateTexture(unsigned char *tile, size_t id) override;
-		void drawSprite(GBEmulator::Graphics::Sprite sprite, bool signedMode, bool doubleSize) override;
-		void drawBackground(const unsigned char *tiles, float x, float y, bool signedMode) override;
-		void drawWindow(const unsigned char *tiles, float x, float y, bool signedMode) override;
+		void setMaxSize(unsigned int, unsigned int) override;
+		void setPixel(unsigned int, unsigned int, const GBEmulator::Graphics::RGBColor &) override;
 		void display() override;
 		void clear() override;
 		bool isClosed() const override;
 		void close() override;
+		void render() override;
 	};
 
 	class Sound : public GBEmulator::ISound {
 	public:
-		void setPitch(float frequency) override;
-		void setWave(std::vector<unsigned char> samples, unsigned int sampleRate) override;
-		void setVolume(float volume) override;
-		void setDisabled(bool disabled) override;
+		void setDisabled(bool) override;
+		void setPitch(float) override;
+		void setWave(std::vector<unsigned char>, unsigned int) override;
+		void setVolume(float) override;
+		void setSO1Volume(float) override;
+		void setSO2Volume(float) override;
+	};
+
+	class CableInterface : public GBEmulator::Network::CableInterface {
+	private:
+		void _sync(unsigned int cycles) override;
+		void _sendByte(unsigned char byte) override;
 	};
 
 	class GBTest {
@@ -51,7 +60,7 @@ namespace Tests {
 		Sound sound2;
 		Sound sound3;
 		Sound sound4;
-		GBEmulator::Network::BGBProtocolCableInterface cableInterface;
+		CableInterface cableInterface;
 		GBEmulator::CPU cpu;
 
 		GBTest();

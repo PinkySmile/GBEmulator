@@ -6,10 +6,9 @@
 */
 
 #include <criterion/criterion.h>
+#include "../communism.hpp"
 #include "../TestComponents.hpp"
-#include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 //! INSTRUCTION 18
 
@@ -20,7 +19,7 @@ Test(JR_r8, forward_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x18](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x18, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8041;
 
@@ -35,7 +34,7 @@ Test(JR_r8, backward_jump) {
 	gb.cpu.write(0x8000, 0xFE);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x18](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x18, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x7FFF;
 
@@ -53,7 +52,7 @@ Test(JR_nz_r8, no_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 8;
-	unsigned char time = instructions[0x20](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x20, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8001;
 
@@ -69,7 +68,7 @@ Test(JR_nz_r8, forward_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x20](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x20, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8041;
 
@@ -85,7 +84,7 @@ Test(JR_nz_r8, backward_jump) {
 	gb.cpu.write(0x8000, 0xFE);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x20](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x20, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x7FFF;
 
@@ -103,7 +102,7 @@ Test(JR_z_r8, no_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 8;
-	unsigned char time = instructions[0x28](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x28, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8001;
 
@@ -119,7 +118,7 @@ Test(JR_z_r8, forward_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x28](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x28, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8041;
 
@@ -135,7 +134,7 @@ Test(JR_z_r8, backward_jump) {
 	gb.cpu.write(0x8000, 0xFE);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x28](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x28, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x7FFF;
 
@@ -153,7 +152,7 @@ Test(JR_nc_r8, no_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 8;
-	unsigned char time = instructions[0x30](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x30, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8001;
 
@@ -169,7 +168,7 @@ Test(JR_nc_r8, forward_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x30](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x30, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8041;
 
@@ -185,7 +184,7 @@ Test(JR_nc_r8, backward_jump) {
 	gb.cpu.write(0x8000, 0xFE);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x30](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x30, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x7FFF;
 
@@ -203,7 +202,7 @@ Test(JR_c_r8, no_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 8;
-	unsigned char time = instructions[0x38](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x38, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8001;
 
@@ -219,7 +218,7 @@ Test(JR_c_r8, forward_jump) {
 	gb.cpu.write(0x8000, 0x40);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x38](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x38, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x8041;
 
@@ -235,7 +234,7 @@ Test(JR_c_r8, backward_jump) {
 	gb.cpu.write(0x8000, 0xFE);
 
 	unsigned char excepted_time = 12;
-	unsigned char time = instructions[0x38](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0x38, gb.cpu, gb.cpu._registers);
 	unsigned short result = gb.cpu._registers.pc;
 	unsigned short ex_result = 0x7FFF;
 

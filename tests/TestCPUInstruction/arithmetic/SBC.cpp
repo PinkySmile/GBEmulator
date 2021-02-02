@@ -8,9 +8,7 @@
 #include <criterion/criterion.h>
 #include "../../communism.hpp"
 #include "../../TestComponents.hpp"
-#include "../../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 
 //! INSTRUCTION 98: SBC a,b
@@ -24,7 +22,7 @@ Test(SBC_A_B, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.b = j;
 
-			unsigned time = instructions[0x98](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x98, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -41,7 +39,7 @@ Test(SBC_A_B, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.b = j;
 
-			unsigned time = instructions[0x98](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x98, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -65,7 +63,7 @@ Test(SBC_A_C, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.c = j;
 
-			unsigned time = instructions[0x99](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x99, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -82,7 +80,7 @@ Test(SBC_A_C, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.c = j;
 
-			unsigned time = instructions[0x99](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x99, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -106,7 +104,7 @@ Test(SBC_A_D, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.d = j;
 
-			unsigned time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9A, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -123,7 +121,7 @@ Test(SBC_A_D, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.d = j;
 
-			unsigned time = instructions[0x9A](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9A, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -147,7 +145,7 @@ Test(SBC_A_E, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.e = j;
 
-			unsigned time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9B, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -164,7 +162,7 @@ Test(SBC_A_E, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.e = j;
 
-			unsigned time = instructions[0x9B](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9B, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -188,7 +186,7 @@ Test(SBC_A_H, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.h = j;
 
-			unsigned time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9C, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -205,7 +203,7 @@ Test(SBC_A_H, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.h = j;
 
-			unsigned time = instructions[0x9C](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9C, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -229,7 +227,7 @@ Test(SBC_A_L, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.l = j;
 
-			unsigned time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9D, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -246,7 +244,7 @@ Test(SBC_A_L, all_values) {
 			gb.cpu._registers.a = i;
 			gb.cpu._registers.l = j;
 
-			unsigned time = instructions[0x9D](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9D, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -271,7 +269,7 @@ Test(SBC_A_HL_UNREF, all_values) {
 			gb.cpu._registers.hl = 0xC000;
 			gb.cpu.write(0xC000, j);
 
-			unsigned time = instructions[0x9E](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9E, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -289,7 +287,7 @@ Test(SBC_A_HL_UNREF, all_values) {
 			gb.cpu._registers.hl = 0xC000;
 			gb.cpu.write(0xC000, j);
 
-			unsigned time = instructions[0x9E](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0x9E, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -314,7 +312,7 @@ Test(SBC_A_val, all_values) {
 			gb.cpu._registers.pc = 0xC000;
 			gb.cpu.write(0xC000, j);
 
-			unsigned time = instructions[0xDE](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0xDE, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j - 1 + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -332,7 +330,7 @@ Test(SBC_A_val, all_values) {
 			gb.cpu._registers.pc = 0xC000;
 			gb.cpu.write(0xC000, j);
 
-			unsigned time = instructions[0xDE](gb.cpu, gb.cpu._registers);
+			unsigned time = GBEmulator::Instructions::executeInstruction(0xDE, gb.cpu, gb.cpu._registers);
 
 			cr_assert_eq(time, 8, "Execution time must be 8 but it was %d", time);
 			cr_assert_eq(gb.cpu._registers.a, (i - j + 0x100) % 0x100, "Result must be 0x%X when doing %i - %i but it was 0x%X", (i - j + 0x100) % 0x100, i, j, gb.cpu._registers.a);
@@ -354,7 +352,7 @@ Test(SBC_A_A, all_values) {
 		gb.cpu._registers.fc = true;
 		gb.cpu._registers.a = i;
 
-		unsigned time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+		unsigned time = GBEmulator::Instructions::executeInstruction(0x9F, gb.cpu, gb.cpu._registers);
 
 		cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 		cr_assert_eq(gb.cpu._registers.a, 0xFF, "Result must be 0x%X when doing %i - %i - 1 but it was 0x%X", 0xFF, i, i, gb.cpu._registers.a);
@@ -368,7 +366,7 @@ Test(SBC_A_A, all_values) {
 		gb.cpu._registers.fc = false;
 		gb.cpu._registers.a = i;
 
-		unsigned time = instructions[0x9F](gb.cpu, gb.cpu._registers);
+		unsigned time = GBEmulator::Instructions::executeInstruction(0x9F, gb.cpu, gb.cpu._registers);
 
 		cr_assert_eq(time, 4, "Execution time must be 4 but it was %d", time);
 		cr_assert_eq(gb.cpu._registers.a, 0, "Result must be 0x%X when doing %i - %i but it was 0x%X", 0, i, i, gb.cpu._registers.a);

@@ -6,10 +6,9 @@
 */
 
 #include <criterion/criterion.h>
+#include "../communism.hpp"
 #include "../TestComponents.hpp"
-#include "../../src/ProcessingUnits/Instructions/CPUInstructions.hpp"
-
-#define instructions GBEmulator::Instructions::_instructions
+#include "../../src/ProcessingUnits/Instructions/Instructions.hpp"
 
 //! INSTRUCTION C5
 
@@ -22,7 +21,7 @@ Test(PUSH_bc, basic_push) {
 	gb.cpu.write(0x8FFE, 0x00);
 
 	unsigned char excepted_time = 16;
-	unsigned char time = instructions[0xC5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0xC5, gb.cpu, gb.cpu._registers);
 
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	cr_assert_eq(gb.cpu.read(0x8FFF), gb.cpu._registers.b, "Value at address 0x8FFF must be 0x%X but was 0x%X", gb.cpu._registers.b, gb.cpu.read(0x8FFF));
@@ -41,7 +40,7 @@ Test(PUSH_de, basic_push) {
 	gb.cpu.write(0x8FFE, 0x00);
 
 	unsigned char excepted_time = 16;
-	unsigned char time = instructions[0xD5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0xD5, gb.cpu, gb.cpu._registers);
 
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	cr_assert_eq(gb.cpu.read(0x8FFF), gb.cpu._registers.d, "Value at address 0x8FFF must be 0x%X but was 0x%X", gb.cpu._registers.d, gb.cpu.read(0x8FFF));
@@ -60,7 +59,7 @@ Test(PUSH_hl, basic_push) {
 	gb.cpu.write(0x8FFE, 0x00);
 
 	unsigned char excepted_time = 16;
-	unsigned char time = instructions[0xE5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0xE5, gb.cpu, gb.cpu._registers);
 
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	cr_assert_eq(gb.cpu.read(0x8FFF), gb.cpu._registers.h, "Value at address 0x8FFF must be 0x%X but was 0x%X", gb.cpu._registers.h, gb.cpu.read(0x8FFF));
@@ -79,7 +78,7 @@ Test(PUSH_af, basic_push) {
 	gb.cpu.write(0x8FFE, 0x00);
 
 	unsigned char excepted_time = 16;
-	unsigned char time = instructions[0xF5](gb.cpu, gb.cpu._registers);
+	unsigned char time = GBEmulator::Instructions::executeInstruction(0xF5, gb.cpu, gb.cpu._registers);
 
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	cr_assert_eq(gb.cpu.read(0x8FFF), gb.cpu._registers.a, "Value at address 0x8FFF must be 0x%X but was 0x%X", gb.cpu._registers.a, gb.cpu.read(0x8FFF));

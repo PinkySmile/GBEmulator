@@ -16,13 +16,10 @@ bool Tests::Joypad::isButtonPressed(GBEmulator::Input::Keys) const noexcept
 }
 
 Tests::GBTest::GBTest() :
-	cpu{this->sound1, this->sound2, this->sound3, this->sound4, this->screen, this->joypad, this->cableInterface}
+	cpu{this->sound1, this->sound2, this->sound3, this->sound4, this->screen, this->joypad, this->cableInterface, false}
 {
 }
 
-
-void Tests::Screen::updateTexture(unsigned char *, size_t)
-{}
 
 bool Tests::Screen::isClosed() const
 {
@@ -38,14 +35,22 @@ void Tests::Screen::close()
 void Tests::Screen::display()
 {}
 
-void Tests::Screen::drawBackground(const unsigned char *, float, float, bool)
-{}
+void Tests::Screen::setMaxSize(unsigned int, unsigned int)
+{
 
-void Tests::Screen::drawSprite(GBEmulator::Graphics::Sprite, bool, bool)
-{}
+}
 
-void Tests::Screen::drawWindow(const unsigned char *, float, float, bool)
-{}
+void Tests::Screen::setPixel(unsigned int, unsigned int,
+			     const GBEmulator::Graphics::RGBColor &)
+{
+
+}
+
+void Tests::Screen::render()
+{
+
+}
+
 
 void Tests::Sound::setPitch(float)
 {
@@ -61,3 +66,23 @@ void Tests::Sound::setVolume(float)
 
 void Tests::Sound::setDisabled(bool)
 {}
+
+void Tests::Sound::setSO1Volume(float)
+{
+
+}
+
+void Tests::Sound::setSO2Volume(float)
+{
+
+}
+
+void Tests::CableInterface::_sync(unsigned int)
+{
+
+}
+
+void Tests::CableInterface::_sendByte(unsigned char)
+{
+
+}
