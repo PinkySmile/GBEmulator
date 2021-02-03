@@ -111,7 +111,7 @@ namespace GBEmulator
 			return this->_ram.read(address - WRAMBX_STARTING_ADDRESS);
 
 		case ECHO_RAM_RANGE:
-			return this->_ram.read(address - ECHO_RAM_STARTING_ADDRESS);
+			return this->read(address - ECHO_RAM_STARTING_ADDRESS + WRAM_STARTING_ADDRESS);
 
 		case OAM_RANGE:
 			return this->_gpu.readOAM(address - OAM_STARTING_ADDRESS);
@@ -254,7 +254,7 @@ namespace GBEmulator
 			return this->_ram.write(address - WRAMBX_STARTING_ADDRESS, value);
 
 		case ECHO_RAM_RANGE:
-			return this->_ram.write(address - ECHO_RAM_STARTING_ADDRESS, value);
+			return this->write(address - ECHO_RAM_STARTING_ADDRESS + WRAM_STARTING_ADDRESS, value);
 
 		case IO_PORT1_RANGE:
 			return this->_writeIOPort(address - IO_PORTS_STARTING_ADDRESS, value);
@@ -944,6 +944,9 @@ namespace GBEmulator
 				.pc = 0x0100,
 				.sp = 0xFFFE
 			};
+			this->_gpu.setVBK(true);
+			for (int i = 0; i < 0x2000; i++)
+				this->_gpu.writeVRAM(i, 0);
 			this->_gpu.setVBK(false);
 			for (int i = 0; i < 0x2000; i++)
 				this->_gpu.writeVRAM(i, 0);
