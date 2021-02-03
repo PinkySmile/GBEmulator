@@ -10,6 +10,7 @@ base_port = 10800
 S_IFMT = 0o170000
 S_IFDIR = 0o40000
 
+flags = ["--no-error", "--no-bootrom", "--no-display", "--no-audio", "--max-speed", "--listen"]
 results = {}
 threads = []
 total = 0
@@ -42,7 +43,7 @@ def getEmuTestResult(sock):
 def executeTest(romPath, port):
 	times = 0
 	sock = socket.socket()
-	args = [emuPath, "--no-error", "--no-bootrom", "--no-audio", "--no-display", "--max-speed", "--listen", str(port), romPath]
+	args = [emuPath, *flags, str(port), romPath]
 	#args = [emuPath, "-nrabml", str(port), romPath]
 	process = subprocess.Popen(args, 0, emuPath, subprocess.DEVNULL, subprocess.DEVNULL)
 	while True:
