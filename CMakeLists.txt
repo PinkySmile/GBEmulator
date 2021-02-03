@@ -89,9 +89,8 @@ target_link_libraries(
 	${OS_SPEC_LIBS}
 )
 
-add_executable(
-        tests
-
+set(
+	BASE_GBEMULATOR_SOURCES
 	src/Joypad/JoypadEmulator.hpp
 	src/LCD/ILCD.cpp
 	src/LCD/ILCD.hpp
@@ -128,40 +127,113 @@ add_executable(
 	src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
 	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
 	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
+)
 
-        tests/TestComponents.cpp
-        tests/TestComponents.hpp
-        tests/TestCPUInstruction/TestCpuInstruction.cpp
-        tests/TestCPUInstruction/DEC.cpp
-        tests/communism.hpp
-        tests/TestCPUInstruction/LD.cpp
-        tests/TestCPUInstruction/INC.cpp
-        tests/TestGpu/Test_readVRAM.cpp
-        tests/TestGpu/Test_writeVRAM.cpp
-        tests/TestGpu/Test_isStatInterrupt.cpp
-        tests/TestGpu/Test_isVBlankInterrupt.cpp
-        tests/TestCpu/Test_write.cpp
-        tests/TestCPUInstruction/arithmetic/ADD16.cpp
-        tests/TestCPUInstruction/JP.cpp
-        tests/TestCPUInstruction/JR.cpp
-        tests/TestCPUInstruction/LD/LD8.cpp
-        tests/TestCPUInstruction/PUSH.cpp
-        tests/TestCPUInstruction/POP.cpp
-        tests/TestCPUInstruction/RET.cpp
-        tests/TestCPUInstruction/CALL.cpp
-        tests/TestCartridge/TestMBC1.cpp
-        tests/TestCPUInstruction/bits/RES.cpp
-        tests/TestCPUInstruction/bits/SET.cpp
-        tests/TestCPUInstruction/CALL.cpp
-        tests/TestCPUInstruction/bits/RESunrefHL.cpp
-        tests/TestCPUInstruction/bits/SETunrefHL.cpp
-        tests/TestCPUInstruction/arithmetic/ADD.cpp
-        tests/TestCPUInstruction/arithmetic/ADC.cpp
-        tests/TestCPUInstruction/arithmetic/SBC.cpp
+set(
+	TESTS_BASE_SOURCES
+	tests/communism.hpp
+	tests/TestComponents.cpp
+	tests/TestComponents.hpp
+)
+
+add_library(
+	test_base
+	${BASE_GBEMULATOR_SOURCES}
+	${TESTS_BASE_SOURCES}
+)
+
+add_executable(
+	tests_cpuinstr
+	tests/TestCPUInstruction/arithmetic/ADC.cpp
+	tests/TestCPUInstruction/arithmetic/ADD16.cpp
+	tests/TestCPUInstruction/arithmetic/ADD.cpp
+	tests/TestCPUInstruction/arithmetic/SBC.cpp
+	tests/TestCPUInstruction/bits/RES.cpp
+	tests/TestCPUInstruction/bits/RESunrefHL.cpp
+	tests/TestCPUInstruction/bits/SET.cpp
+	tests/TestCPUInstruction/bits/SETunrefHL.cpp
+	tests/TestCPUInstruction/CALL.cpp
+	tests/TestCPUInstruction/CALL.cpp
+	tests/TestCPUInstruction/DEC.cpp
+	tests/TestCPUInstruction/INC.cpp
+	tests/TestCPUInstruction/JP.cpp
+	tests/TestCPUInstruction/JR.cpp
+	tests/TestCPUInstruction/LD.cpp
+	tests/TestCPUInstruction/LD/LD8.cpp
+	tests/TestCPUInstruction/POP.cpp
+	tests/TestCPUInstruction/PUSH.cpp
+	tests/TestCPUInstruction/RET.cpp
+	tests/TestCPUInstruction/TestCpuInstruction.cpp
 )
 
 target_link_libraries(
-        tests
+	tests_cpuinstr
+	criterion
+	sfml-system
+	test_base
+)
+
+add_executable(
+        tests_gpu
+	tests/TestGpu/Test_isStatInterrupt.cpp
+	tests/TestGpu/Test_isVBlankInterrupt.cpp
+	tests/TestGpu/Test_readVRAM.cpp
+	tests/TestGpu/Test_writeVRAM.cpp
+)
+
+target_link_libraries(
+        tests_gpu
         criterion
 	sfml-system
+	test_base
+)
+
+add_executable(
+	tests_misc
+	tests/TestCartridge/TestMBC1.cpp
+	tests/TestCpu/Test_write.cpp
+)
+
+target_link_libraries(
+	tests_misc
+	criterion
+	sfml-system
+	test_base
+)
+
+add_executable(
+	all_tests
+	tests/TestCartridge/TestMBC1.cpp
+	tests/TestCpu/Test_write.cpp
+	tests/TestGpu/Test_isStatInterrupt.cpp
+	tests/TestGpu/Test_isVBlankInterrupt.cpp
+	tests/TestGpu/Test_readVRAM.cpp
+	tests/TestGpu/Test_writeVRAM.cpp
+	tests/TestCPUInstruction/arithmetic/ADC.cpp
+	tests/TestCPUInstruction/arithmetic/ADD16.cpp
+	tests/TestCPUInstruction/arithmetic/ADD.cpp
+	tests/TestCPUInstruction/arithmetic/SBC.cpp
+	tests/TestCPUInstruction/bits/RES.cpp
+	tests/TestCPUInstruction/bits/RESunrefHL.cpp
+	tests/TestCPUInstruction/bits/SET.cpp
+	tests/TestCPUInstruction/bits/SETunrefHL.cpp
+	tests/TestCPUInstruction/CALL.cpp
+	tests/TestCPUInstruction/CALL.cpp
+	tests/TestCPUInstruction/DEC.cpp
+	tests/TestCPUInstruction/INC.cpp
+	tests/TestCPUInstruction/JP.cpp
+	tests/TestCPUInstruction/JR.cpp
+	tests/TestCPUInstruction/LD.cpp
+	tests/TestCPUInstruction/LD/LD8.cpp
+	tests/TestCPUInstruction/POP.cpp
+	tests/TestCPUInstruction/PUSH.cpp
+	tests/TestCPUInstruction/RET.cpp
+	tests/TestCPUInstruction/TestCpuInstruction.cpp
+)
+
+target_link_libraries(
+	all_tests
+	criterion
+	sfml-system
+	test_base
 )

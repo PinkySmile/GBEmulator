@@ -104,20 +104,20 @@ Test(LD_BC_d16, wram_C000_256)
 
 //! INSTRUCTION 02
 
-Test(LD_unrefBC_A, value_1) {
+Test(LD_unrefBC_A, value_VRAM) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 8;
 
 	gb.cpu._registers.a = 0xD8;
-	gb.cpu._registers.bc = 0xC000;
+	gb.cpu._registers.bc = 0x8000;
 	unsigned char time = GBEmulator::Instructions::executeInstruction(0x2, gb.cpu, gb.cpu._registers);
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
-	unsigned char result = gb.cpu.read(0xC000);
+	unsigned char result = gb.cpu.read(0x8000);
 	unsigned char ex_result = 0xD8;
-	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
+	cr_assert_eq(result, ex_result, "Address $8000 must be 0x%X but it was 0x%X", ex_result, result);
 }
 
-Test(LD_unrefBC_A, value_2) {
+Test(LD_unrefBC_A, value_RAM) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 8;
 
@@ -127,10 +127,10 @@ Test(LD_unrefBC_A, value_2) {
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu.read(0xD83E);
 	unsigned char ex_result = 0xFD;
-	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
+	cr_assert_eq(result, ex_result, "Address $D83E must be 0x%X but it was 0x%X", ex_result, result);
 }
 
-Test(LD_unrefBC_A, value_3) {
+Test(LD_unrefBC_A, value_echoRAM) {
 	Tests::GBTest gb;
 	unsigned char excepted_time = 8;
 
@@ -140,7 +140,7 @@ Test(LD_unrefBC_A, value_3) {
 	cr_assert_eq(time, excepted_time, "Execution time must be %d but it was %d", excepted_time, time);
 	unsigned char result = gb.cpu.read(0xF0D0);
 	unsigned char ex_result = 0x01;
-	cr_assert_eq(result, ex_result, "Register bc must be 0x%X but it was 0x%X", ex_result, result);
+	cr_assert_eq(result, ex_result, "Address $F0D0 must be 0x%X but it was 0x%X", ex_result, result);
 }
 
 //! INSTRUCTION 06
