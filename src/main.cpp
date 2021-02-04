@@ -315,10 +315,8 @@ int main(int argc, char **argv)
 						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
 #endif
 					}
-				else {
-					cpu.update(0);
-					crashed = cpu.getRegisters().pc != 0x0000;
-				}
+				else
+					crashed = cpu.update(0) >= 0;
 			}
 		}
 	};

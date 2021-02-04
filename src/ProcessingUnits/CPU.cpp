@@ -357,7 +357,7 @@ namespace GBEmulator
 
 		if (this->_joypad.isButtonPressed(Input::RESET)) {
 			this->init();
-			return 0;
+			return -1;
 		}
 		while (true) {
 			if (!this->_maxSpeed) {
