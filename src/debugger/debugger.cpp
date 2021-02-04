@@ -356,7 +356,7 @@ namespace GBEmulator::Debugger
 			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
-			this->_executeNextInstruction();
+			this->_executeNextInstruction(true);
 			this->_rate = 0.001;
 			return true;
 		} else if (args[0] == "ram") {
@@ -392,8 +392,9 @@ namespace GBEmulator::Debugger
 			auto bIt = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 			auto cbNb = this->checkConditionalBreakPoints();
 
+			this->_executeNextInstruction(true);
 			do {
-				this->_executeNextInstruction();
+				this->_executeNextInstruction(false);
 				if (this->_timer++ == 30)
 					this->_timer = 0;
 				if (this->_timer == 0 && this->_input.isButtonPressed(Input::ENABLE_DEBUGGING)) {
@@ -407,10 +408,10 @@ namespace GBEmulator::Debugger
 				std::cout << "Hit breakpoint #" << bIt - this->_breakPoints.begin() << ": $" << std::setw(4) << std::setfill('0') << std::hex << *bIt << std::endl;
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
-			this->_executeNextInstruction();
+			this->_executeNextInstruction(true);
 			this->_displayCurrentLine();
 		} else if (args[0] == "continue") {
-			this->_executeNextInstruction();
+			this->_executeNextInstruction(true);
 			return true;
 		} else if (args[0] == "where")
 			this->_displayCurrentLine();
@@ -491,7 +492,7 @@ namespace GBEmulator::Debugger
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 				try {
-					this->_executeNextInstruction();
+					this->_executeNextInstruction(false);
 				} catch (CPU::InvalidOpcodeException &e) {
 					dbg = true;
 					std::cout << e.what() << std::endl;
@@ -1127,11 +1128,15 @@ namespace GBEmulator::Debugger
 		return -1;
 	}
 
-	void Debugger::_executeNextInstruction()
+	void Debugger::_executeNextInstruction(bool resetClock)
 	{
 		if (this->_oldpcs.back() != this->_cpu._registers.pc) {
 			this->_oldpcs.erase(this->_oldpcs.begin());
 			this->_oldpcs.push_back(this->_cpu._registers.pc);
+		}
+		if (resetClock) {
+			this->_cpu._clock.restart();
+			this->_cpu._oldTime = -1;
 		}
 
 		this->_cpu.update(1);

@@ -140,7 +140,7 @@ namespace GBEmulator::Debugger
 		//! @param posy Position de la boîte en ordonnées
 		void _displayBackground(sf::RenderWindow &_debugWindow, float posx, float posy);
 
-		void _executeNextInstruction();
+		void _executeNextInstruction(bool resetClock);
 
 	public:
 		//! Constructeur du debugger
