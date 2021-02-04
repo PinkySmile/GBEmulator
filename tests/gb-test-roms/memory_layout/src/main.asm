@@ -124,7 +124,7 @@ oamRamTest2::
 	ld b, h
 	ld c, l
 	ld hl, displayECHORamMsg2
-	ld a, 1
+	ld a, 2
 	jp failedTest
 
 OAMfailed::
