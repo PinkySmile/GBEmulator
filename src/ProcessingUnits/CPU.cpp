@@ -339,13 +339,16 @@ namespace GBEmulator
 			return 0;
 		}
 
-		if (this->_checkInterrupts())
-			return 12;
+
+		int cycles = 0;
 
 		if (!this->_halted)
-			return this->_executeNextInstruction();
+			cycles = this->_executeNextInstruction();
 		else
-			return 16;
+			cycles = 16;
+
+		this->_checkInterrupts();
+		return cycles;
 	}
 
 	int CPU::update(unsigned number)
