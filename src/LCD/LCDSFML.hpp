@@ -8,6 +8,7 @@
 #ifndef GBEMULATOR_LCDSFML_HPP
 #define GBEMULATOR_LCDSFML_HPP
 
+#include <SFML/Graphics.hpp>
 #include "ILCD.hpp"
 
 namespace GBEmulator

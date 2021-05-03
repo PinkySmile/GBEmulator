@@ -8,7 +8,6 @@
 #ifndef GBEMULATOR_ILCD_HPP
 #define GBEMULATOR_ILCD_HPP
 
-#include <SFML/Graphics.hpp>
 #include <vector>
 
 namespace GBEmulator::Debugger {

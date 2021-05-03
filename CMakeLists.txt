@@ -3,12 +3,6 @@ project(GBEmulator)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/pkgs)
-find_package(SFML REQUIRED)
-find_package(TGUI)
-
-include_directories(
-	${SFML_INCLUDE_DIRS}
-)
 
 if (NOT MSVC)
 	if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
@@ -18,79 +12,15 @@ if (NOT MSVC)
 	endif()
 endif()
 
-add_executable(
-        GBEmulator
-        src/debugger/debugger.cpp
-        src/debugger/debugger.hpp
-        src/Joypad/JoypadEmulator.hpp
-        src/Joypad/SfmlKeyboardJoypadEmulator.cpp
-        src/Joypad/SfmlKeyboardJoypadEmulator.hpp
-        src/LCD/ILCD.cpp
-        src/LCD/ILCD.hpp
-        src/LCD/LCDSFML.cpp
-        src/LCD/LCDSFML.hpp
-        src/main.cpp
-        src/Memory/Cartridge.cpp
-        src/Memory/Cartridge.hpp
-        src/Memory/Memory.cpp
-        src/Memory/Memory.hpp
-        src/Memory/ROM.cpp
-        src/Memory/ROM.hpp
-        src/CableLink/BgbProtocolNetworkInterface.cpp
-        src/CableLink/BgbProtocolNetworkInterface.hpp
-        src/CableLink/CableInterface.cpp
-        src/CableLink/CableInterface.hpp
-        src/ProcessingUnits/APU.cpp
-        src/ProcessingUnits/APU.hpp
-        src/ProcessingUnits/CPU.cpp
-        src/ProcessingUnits/CPU.hpp
-        src/ProcessingUnits/Instructions/Instructions.hpp
-        src/ProcessingUnits/Instructions/CPUInstructions.cpp
-        src/ProcessingUnits/Instructions/CPUInstructions.hpp
-        src/ProcessingUnits/Instructions/BasicInstructions.cpp
-        src/ProcessingUnits/Instructions/BitInstructions.cpp
-        src/ProcessingUnits/GPU.cpp
-        src/ProcessingUnits/GPU.hpp
-        src/ProcessingUnits/StartupCode.cpp
-        src/Sound/ISound.hpp
-        src/Sound/SoundPlayer.cpp
-        src/Sound/SoundPlayer.hpp
-        src/Timing/Timer.cpp
-        src/Timing/Timer.hpp
-        src/Network/BgbHandler.cpp
-        src/Network/BgbHandler.hpp
-        src/Network/Exception.hpp
-        src/Network/ProtocolHandle.hpp
-        src/ProcessingUnits/SoundChannel/SoundChannel.hpp
-        src/ProcessingUnits/SoundChannel/SoundChannel.cpp
-        src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
-        src/ProcessingUnits/SoundChannel/NoiseChannel.hpp
-        src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
-        src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
-        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
-        src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
-	src/debugger/CompiledCondition.cpp
-	src/debugger/CompiledCondition.hpp
+find_package(SFML REQUIRED)
+find_package(TGUI)
+
+include_directories(
+	${SFML_INCLUDE_DIRS}
 )
 
-if (NOT WIN32)
-	set(OS_SPEC_LIBS X11 pthread)
-elseif (NOT MSVC)
-	set(OS_SPEC_LIBS pthread)
-endif (NOT WIN32)
-
-target_link_libraries(
-	GBEmulator
-	${SFML_GRAPHICS_LIBRARY}
-	${SFML_SYSTEM_LIBRARY}
-	${SFML_WINDOW_LIBRARY}
-	${SFML_NETWORK_LIBRARY}
-	${SFML_AUDIO_LIBRARY}
-	${OS_SPEC_LIBS}
-)
-
-set(
-	BASE_GBEMULATOR_SOURCES
+add_library(
+	GBEmulator_Core STATIC
 	src/Joypad/JoypadEmulator.hpp
 	src/LCD/ILCD.cpp
 	src/LCD/ILCD.hpp
@@ -127,6 +57,44 @@ set(
 	src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
 	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
 	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
+	src/Timing/Clock.cpp
+	src/Timing/Clock.hpp
+)
+
+add_executable(
+        GBEmulator
+	src/main.cpp
+        src/debugger/debugger.cpp
+        src/debugger/debugger.hpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.cpp
+        src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+        src/LCD/LCDSFML.cpp
+        src/LCD/LCDSFML.hpp
+        src/CableLink/BgbProtocolNetworkInterface.cpp
+        src/CableLink/BgbProtocolNetworkInterface.hpp
+        src/Sound/SoundPlayer.cpp
+        src/Sound/SoundPlayer.hpp
+        src/Network/BgbHandler.cpp
+        src/Network/BgbHandler.hpp
+	src/debugger/CompiledCondition.cpp
+	src/debugger/CompiledCondition.hpp
+)
+
+if (NOT WIN32)
+	set(OS_SPEC_LIBS X11 pthread)
+elseif (NOT MSVC)
+	set(OS_SPEC_LIBS pthread)
+endif (NOT WIN32)
+
+target_link_libraries(
+	GBEmulator
+	${SFML_GRAPHICS_LIBRARY}
+	${SFML_SYSTEM_LIBRARY}
+	${SFML_WINDOW_LIBRARY}
+	${SFML_NETWORK_LIBRARY}
+	${SFML_AUDIO_LIBRARY}
+	${OS_SPEC_LIBS}
+	GBEmulator_Core
 )
 
 set(
@@ -138,9 +106,10 @@ set(
 
 add_library(
 	test_base
-	${BASE_GBEMULATOR_SOURCES}
 	${TESTS_BASE_SOURCES}
 )
+
+target_link_libraries(test_base GBEmulator_Core)
 
 add_executable(
 	tests_cpuinstr

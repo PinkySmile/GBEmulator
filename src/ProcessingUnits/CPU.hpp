@@ -12,8 +12,9 @@
 #include <string>
 #include <functional>
 #include "APU.hpp"
-#include "../Sound/SoundPlayer.hpp"
 #include "GPU.hpp"
+#include <SFML/System.hpp>
+#include "../Sound/ISound.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../CableLink/CableInterface.hpp"

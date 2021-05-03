@@ -10,6 +10,7 @@
 
 #include <stack>
 #include <thread>
+#include <SFML/Graphics.hpp>
 #include "../ProcessingUnits/CPU.hpp"
 #include "CompiledCondition.hpp"
 

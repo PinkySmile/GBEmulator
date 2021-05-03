@@ -9,7 +9,6 @@
 #define GBEMULATOR_GPU_HPP
 
 #include <memory>
-#include <SFML/Graphics/Texture.hpp>
 #include "../Memory/Memory.hpp"
 #include "../LCD/ILCD.hpp"
 

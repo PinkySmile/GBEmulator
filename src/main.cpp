@@ -4,6 +4,7 @@
 #include <cstring>
 #include "ProcessingUnits/CPU.hpp"
 #include "LCD/LCDSFML.hpp"
+#include "Sound/SoundPlayer.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "debugger/debugger.hpp"
 #include "CableLink/BgbProtocolNetworkInterface.hpp"
