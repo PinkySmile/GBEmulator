@@ -10,6 +10,7 @@
 
 
 #include <vector>
+#include <cstddef>
 
 namespace GBEmulator::Memory
 {

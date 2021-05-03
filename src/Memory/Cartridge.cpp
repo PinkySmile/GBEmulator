@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <cstring>
 #include <cmath>
+#include <stdexcept>
 #include "Cartridge.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
@@ -51,8 +52,18 @@ namespace GBEmulator::Memory
 		if (stat(path.c_str(), &stats) == -1)
 			throw InvalidRomException("Cannot stat file " + path + ": " + strerror(errno));
 
-		if (stats.st_size > 0x400000)
-			throw InvalidRomSizeException("The ROM is too large (Max 4MB but rom size is " + std::to_string(stats.st_size / 1048576.) + "MB)");
+		if (stats.st_size > 0x400000) {
+			std::string sizeRepresentation;
+#ifdef __serenity__
+			char buffer[64];
+
+			sprintf(buffer, "%f\n", stats.st_size / 1048576.);
+			sizeRepresentation = buffer;
+#else
+			sizeRepresentation = std::to_string(stats.st_size / 1048576.);
+#endif
+			throw InvalidRomSizeException("The ROM is too large (Max 4MB but rom size is " + sizeRepresentation + "MB)");
+		}
 
 		for (auto &size : Cartridge::_sizeBytes) {
 			if (size.first >= static_cast<size_t>(stats.st_size) && size.first < best)

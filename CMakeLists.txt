@@ -12,12 +12,54 @@ if (NOT MSVC)
 	endif()
 endif()
 
-find_package(SFML REQUIRED)
-find_package(TGUI)
+if (NOT NODEBUGGER OR NOT SERENITYOS)
+	find_package(SFML REQUIRED)
+	find_package(TGUI)
+else ()
+	find_package(SFML)
+endif()
 
-include_directories(
-	${SFML_INCLUDE_DIRS}
-)
+set(SFML_IMPL 0)
+set(SERENITY_IMPL 0)
+if (SFML_FOUND)
+	include_directories(
+		${SFML_INCLUDE_DIRS}
+	)
+	set(
+		JOYPAD_IMPL
+		src/Joypad/SfmlKeyboardJoypadEmulator.cpp
+		src/Joypad/SfmlKeyboardJoypadEmulator.hpp
+	)
+	set(
+		SOUND_IMPL
+		src/Sound/SoundPlayer.cpp
+		src/Sound/SoundPlayer.hpp
+	)
+	set(
+		LCD_IMPL
+		src/LCD/LCDSFML.cpp
+		src/LCD/LCDSFML.hpp
+	)
+	set(
+		NETWORK_IMPL
+		src/CableLink/BgbProtocolNetworkInterface.cpp
+		src/CableLink/BgbProtocolNetworkInterface.hpp
+		src/Network/BgbHandler.cpp
+	)
+	set(SFML_IMPL 1)
+	set(
+		OTHER_LIBRARIES
+		${SFML_GRAPHICS_LIBRARY}
+		${SFML_SYSTEM_LIBRARY}
+		${SFML_WINDOW_LIBRARY}
+		${SFML_NETWORK_LIBRARY}
+		${SFML_AUDIO_LIBRARY}
+	)
+	message("Sfml was found")
+elseif (SERENITYOS)
+	message("Running on SerenityOS")
+	set(SERENITY_IMPL 1)
+endif ()
 
 add_library(
 	GBEmulator_Core STATIC
@@ -61,38 +103,50 @@ add_library(
 	src/Timing/Clock.hpp
 )
 
+if (NODEBUGGER)
+	set(DEBUGGER_SRC)
+else ()
+	set(NODEBUGGER 0)
+	set(
+		DEBUGGER_SRC
+		src/debugger/debugger.cpp
+		src/debugger/debugger.hpp
+		src/Network/BgbHandler.hpp
+		src/debugger/CompiledCondition.cpp
+		src/debugger/CompiledCondition.hpp
+	)
+endif()
+
 add_executable(
         GBEmulator
 	src/main.cpp
-        src/debugger/debugger.cpp
-        src/debugger/debugger.hpp
-        src/Joypad/SfmlKeyboardJoypadEmulator.cpp
-        src/Joypad/SfmlKeyboardJoypadEmulator.hpp
-        src/LCD/LCDSFML.cpp
-        src/LCD/LCDSFML.hpp
-        src/CableLink/BgbProtocolNetworkInterface.cpp
-        src/CableLink/BgbProtocolNetworkInterface.hpp
-        src/Sound/SoundPlayer.cpp
-        src/Sound/SoundPlayer.hpp
-        src/Network/BgbHandler.cpp
-        src/Network/BgbHandler.hpp
-	src/debugger/CompiledCondition.cpp
-	src/debugger/CompiledCondition.hpp
+	${JOYPAD_IMPL}
+	${SOUND_IMPL}
+	${LCD_IMPL}
+	${NETWORK_IMPL}
+	${DEBUGGER_SRC}
+	src/CreateInferfaceImpl.cpp
+	src/CreateInferfaceImpl.hpp
+	src/DummyDevices.hpp
+)
+target_compile_definitions(
+	GBEmulator PRIVATE
+	NODEBUGGER=${NODEBUGGER}
+	SFML_IMPL=${SFML_IMPL}
+	SERENITY_IMPL=${SERENITY_IMPL}
 )
 
-if (NOT WIN32)
+if (SERENITYOS)
+	set(OS_SPEC_LIBS pthread)
+elseif (NOT WIN32)
 	set(OS_SPEC_LIBS X11 pthread)
 elseif (NOT MSVC)
 	set(OS_SPEC_LIBS pthread)
-endif (NOT WIN32)
+endif ()
 
 target_link_libraries(
 	GBEmulator
-	${SFML_GRAPHICS_LIBRARY}
-	${SFML_SYSTEM_LIBRARY}
-	${SFML_WINDOW_LIBRARY}
-	${SFML_NETWORK_LIBRARY}
-	${SFML_AUDIO_LIBRARY}
+	${OTHER_LIBRARIES}
 	${OS_SPEC_LIBS}
 	GBEmulator_Core
 )

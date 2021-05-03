@@ -722,7 +722,7 @@ namespace GBEmulator
 			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 		else {
 			unsigned old = this->_registers.pc;
-			sf::Clock clock;
+			Timing::Clock clock;
 
 			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 

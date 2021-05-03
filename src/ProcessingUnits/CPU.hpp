@@ -13,11 +13,11 @@
 #include <functional>
 #include "APU.hpp"
 #include "GPU.hpp"
-#include <SFML/System.hpp>
 #include "../Sound/ISound.hpp"
 #include "../Memory/Cartridge.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
 #include "../CableLink/CableInterface.hpp"
+#include "../Timing/Clock.hpp"
 #include "../Timing/Timer.hpp"
 
 //! The total size of the working RAM
@@ -328,7 +328,7 @@ namespace GBEmulator
 		std::map<unsigned short, unsigned char> _frozenAddresses;
 		bool _profiling = false;
 		std::map<std::string, std::pair<float, unsigned>> _profiler;
-		sf::Clock _clock;
+		Timing::Clock _clock;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
 		float _speed = 1;
