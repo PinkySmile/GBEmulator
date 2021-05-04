@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 	size_t occurence = path.find_last_of('/');
 #endif
 	Components components = buildComponents(args);
-	GBEmulator::CPU cpu(*components.channel1, *components.channel2, *components.channel3, *components.channel4, *components.window, *components.joypad, *components.network, args.error);
+	GBEmulator::CPU cpu(*components.sound, *components.window, *components.joypad, *components.network, args.error);
 #if !NODEBUGGER
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, *components.window, *components.joypad};
 #endif

@@ -33,12 +33,8 @@ namespace GBEmulator
 
 	class DummySoundPlayer : public GBEmulator::ISound {
 	public:
-		void setDisabled(bool) override{}
-		void setPitch(float) override{}
-		void setWave(std::vector<unsigned char>, unsigned int) override{}
+		void pushSamples(short *samples, size_t sampleCount) override{}
 		void setVolume(float) override{}
-		void setSO1Volume(float) override{}
-		void setSO2Volume(float) override{}
 	};
 
 	class DummyCable : public Network::CableInterface {

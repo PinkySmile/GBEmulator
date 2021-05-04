@@ -30,16 +30,13 @@ namespace GBEmulator
 	}
 
 	CPU::CPU(
-		ISound &channelOne,
-		ISound &channelTwo,
-		ISound &channelThree,
-		ISound &channelFour,
+		ISound &soundPlayer,
 		Graphics::ILCD &window,
 		Input::JoypadEmulator &joypad,
 		Network::CableInterface &cable,
 		bool errorReport
 	) :
-		_apu(channelOne, channelTwo, channelThree, channelFour),
+		_apu(soundPlayer),
 		_gpu(window),
 		_buttonEnabled(false),
 		_directionEnabled(false),

@@ -228,19 +228,13 @@ namespace GBEmulator
 
 		/*!
 		 * Constructeur
-		 * @param channelOne Interface de son pour le canal 1
-		 * @param channelTwo Interface de son pour le canal 2
-		 * @param channelThree Interface de son pour le canal 3
-		 * @param channelFour Interface de son pour le canal 4
+		 * @param soundPlayer Interface de son
 		 * @param window Emulateur d'écran LCD du GPU
 		 * @param joypad Emulateur de Joypad
 		 * @param cable Emulateur de CableLink
 		 */
 		CPU(
-			ISound &channelOne,
-			ISound &channelTwo,
-			ISound &channelThree,
-			ISound &channelFour,
+			ISound &soundPlayer,
 			Graphics::ILCD &window,
 			Input::JoypadEmulator &joypad,
 			Network::CableInterface &cable,

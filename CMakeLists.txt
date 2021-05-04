@@ -34,8 +34,8 @@ if (SFML_FOUND)
 	)
 	set(
 		SOUND_IMPL
-		src/Sound/SoundPlayer.cpp
-		src/Sound/SoundPlayer.hpp
+		src/Sound/SFMLSoundPlayer.cpp
+		src/Sound/SFMLSoundPlayer.hpp
 	)
 	set(
 		LCD_IMPL
@@ -124,16 +124,9 @@ add_library(
 	src/Timing/Timer.hpp
 	src/Network/Exception.hpp
 	src/Network/ProtocolHandle.hpp
-	src/ProcessingUnits/SoundChannel/SoundChannel.hpp
-	src/ProcessingUnits/SoundChannel/SoundChannel.cpp
-	src/ProcessingUnits/SoundChannel/NoiseChannel.cpp
-	src/ProcessingUnits/SoundChannel/NoiseChannel.hpp
-	src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
-	src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
-	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
-	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
 	src/Timing/Clock.cpp
 	src/Timing/Clock.hpp
+	src/ProcessingUnits/SoundChannel/IGBSoundChannel.hpp
 )
 
 if (NODEBUGGER)
@@ -147,7 +140,7 @@ else ()
 		src/Network/BgbHandler.hpp
 		src/debugger/CompiledCondition.cpp
 		src/debugger/CompiledCondition.hpp
-	)
+		src/ProcessingUnits/SoundChannel/BasicSoundChannel.cpp src/ProcessingUnits/SoundChannel/BasicSoundChannel.hpp)
 endif()
 
 add_executable(

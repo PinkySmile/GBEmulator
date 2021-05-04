@@ -38,12 +38,9 @@ namespace Tests {
 
 	class Sound : public GBEmulator::ISound {
 	public:
-		void setDisabled(bool) override;
-		void setPitch(float) override;
-		void setWave(std::vector<unsigned char>, unsigned int) override;
+		void pushSamples(short *samples, size_t sampleCount) override;
+
 		void setVolume(float) override;
-		void setSO1Volume(float) override;
-		void setSO2Volume(float) override;
 	};
 
 	class CableInterface : public GBEmulator::Network::CableInterface {
@@ -56,10 +53,7 @@ namespace Tests {
 	public:
 		Joypad joypad;
 		Screen screen;
-		Sound sound1;
-		Sound sound2;
-		Sound sound3;
-		Sound sound4;
+		Sound sound;
 		CableInterface cableInterface;
 		GBEmulator::CPU cpu;
 

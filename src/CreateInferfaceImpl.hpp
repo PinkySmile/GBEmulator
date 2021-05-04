@@ -30,10 +30,7 @@ namespace GBEmulator
 
 	struct Components {
 		std::unique_ptr<GBEmulator::Network::CableInterface> network;
-		std::unique_ptr<GBEmulator::ISound> channel1;
-		std::unique_ptr<GBEmulator::ISound> channel2;
-		std::unique_ptr<GBEmulator::ISound> channel3;
-		std::unique_ptr<GBEmulator::ISound> channel4;
+		std::unique_ptr<GBEmulator::ISound> sound;
 		std::unique_ptr<GBEmulator::Graphics::ILCD> window;
 		std::unique_ptr<GBEmulator::Input::JoypadEmulator> joypad;
 	};

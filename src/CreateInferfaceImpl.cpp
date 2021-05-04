@@ -10,7 +10,8 @@
 #include "CableLink/BgbProtocolNetworkInterface.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
-#include "Sound/SoundPlayer.hpp"
+#include "Sound/SFMLSoundPlayer.hpp"
+
 #elif SERENITY_IMPL
 #include "LCD/LCDSerenityLibGui.hpp"
 #elif SDL_IMPL
@@ -65,7 +66,7 @@ namespace GBEmulator
 		if (args.noAudio)
 			return new DummySoundPlayer();
 #if SFML_IMPL
-		return new SoundPlayer();
+		return new SFMLSoundPlayer();
 #else
 		return new DummySoundPlayer();
 #endif
@@ -117,10 +118,7 @@ namespace GBEmulator
 		components.network.reset(createCableInterfaceImpl(components, args));
 		components.window.reset(createILCDImpl(components, args));
 		components.joypad.reset(createJoypadEmulatorImpl(components, args));
-		components.channel1.reset(createISoundImpl(components, args));
-		components.channel2.reset(createISoundImpl(components, args));
-		components.channel3.reset(createISoundImpl(components, args));
-		components.channel4.reset(createISoundImpl(components, args));
+		components.sound.reset(createISoundImpl(components, args));
 		return components;
 	}
 }
