@@ -2,6 +2,7 @@
 // Created by andgel on 03/05/2021
 //
 
+#include <cstdio>
 #include "Clock.hpp"
 
 namespace GBEmulator::Timing
@@ -31,7 +32,7 @@ namespace GBEmulator::Timing
 		timespec time;
 
 		clock_gettime(CLOCK_MONOTONIC, &time);
-		return Time{static_cast<uint64_t>(time.tv_sec) * 1000000 + time.tv_nsec / 1000} - this->_start;
+		return Time{static_cast<uint64_t>(time.tv_sec) * 1000000 + time.tv_nsec / 1000};
 	}
 
 	Time::Time(uint64_t time) :

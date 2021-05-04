@@ -11,15 +11,17 @@
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "Sound/SoundPlayer.hpp"
+#elif SERENITY_IMPL
+#include "LCD/LCDSerenityLibGui.hpp"
 #endif
 
 namespace GBEmulator
 {
 	Input::JoypadEmulator *createJoypadEmulatorImpl(Components &otherComponents, const Args &args)
 	{
-#if SFML_IMPL
 		if (args.noDisplay)
 			return new DummyJoypadInput();
+#if SFML_IMPL
 		return new Input::SFMLKeyboardJoypadEmulator{
 			reinterpret_cast<Graphics::LCDSFML &>(*otherComponents.window),
 			std::map<Input::Keys, sf::Keyboard::Key>{
@@ -42,9 +44,9 @@ namespace GBEmulator
 
 	ISound *createISoundImpl(Components &otherComponents, const Args &args)
 	{
-#if SFML_IMPL
 		if (args.noAudio)
 			return new DummySoundPlayer();
+#if SFML_IMPL
 		return new SoundPlayer();
 #else
 		return new DummySoundPlayer();
@@ -53,14 +55,16 @@ namespace GBEmulator
 
 	Graphics::ILCD *createILCDImpl(Components &otherComponents, const Args &args)
 	{
-#if SFML_IMPL
 		if (args.noDisplay)
 			return new DummyLCD();
-
+#if SFML_IMPL
 		auto win = new Graphics::LCDSFML{sf::VideoMode{640, 576}, "GBEmulator"};
 
 		win->setFramerateLimit(60);
 		return win;
+#elif SERENITY_IMPL
+		Serenity::initSerenityApp();
+		return new Graphics::LCDSerenityLibGui{{640, 576}, "GBEmulator"};
 #else
 		return new DummyLCD();
 #endif

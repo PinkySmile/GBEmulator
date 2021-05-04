@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(GBEmulator)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/pkgs)
 
 if (NOT MSVC)
@@ -58,6 +58,11 @@ if (SFML_FOUND)
 	message("Sfml was found")
 elseif (SERENITYOS)
 	message("Running on SerenityOS")
+	set(
+		LCD_IMPL
+		src/LCD/LCDSerenityLibGui.cpp
+		src/LCD/LCDSerenityLibGui.hpp
+		src/LCD/SerenityPlatformWindow.cpp src/LCD/SerenityPlatformWindow.hpp)
 	set(SERENITY_IMPL 1)
 endif ()
 
@@ -129,15 +134,26 @@ add_executable(
 	src/CreateInferfaceImpl.hpp
 	src/DummyDevices.hpp
 )
-target_compile_definitions(
-	GBEmulator PRIVATE
-	NODEBUGGER=${NODEBUGGER}
-	SFML_IMPL=${SFML_IMPL}
-	SERENITY_IMPL=${SERENITY_IMPL}
-)
+if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+	target_compile_definitions(
+		GBEmulator PRIVATE
+		NODEBUGGER=${NODEBUGGER}
+		SFML_IMPL=${SFML_IMPL}
+		SERENITY_IMPL=${SERENITY_IMPL}
+		DEBUG=1
+	)
+else()
+	target_compile_definitions(
+		GBEmulator PRIVATE
+		NODEBUGGER=${NODEBUGGER}
+		SFML_IMPL=${SFML_IMPL}
+		SERENITY_IMPL=${SERENITY_IMPL}
+		NDEBUG=1
+	)
+endif()
 
 if (SERENITYOS)
-	set(OS_SPEC_LIBS pthread)
+	set(OS_SPEC_LIBS pthread gui gfx core)
 elseif (NOT WIN32)
 	set(OS_SPEC_LIBS X11 pthread)
 elseif (NOT MSVC)
