@@ -12,13 +12,15 @@ if (NOT MSVC)
 	endif()
 endif()
 
-if (NOT NODEBUGGER OR NOT SERENITYOS)
+if (NOT NODEBUGGER)
 	find_package(SFML REQUIRED)
 	find_package(TGUI)
 else ()
 	find_package(SFML)
+	find_package(SDL2)
 endif()
 
+set(SDL_IMPL 0)
 set(SFML_IMPL 0)
 set(SERENITY_IMPL 0)
 if (SFML_FOUND)
@@ -55,15 +57,41 @@ if (SFML_FOUND)
 		${SFML_NETWORK_LIBRARY}
 		${SFML_AUDIO_LIBRARY}
 	)
-	message("Sfml was found")
+	message("Sfml was found (${SFML_INCLUDE_DIRS} ${SFML_GRAPHICS_LIBRARY} ${SFML_SYSTEM_LIBRARY} ${SFML_WINDOW_LIBRARY} ${SFML_NETWORK_LIBRARY} ${SFML_AUDIO_LIBRARY})")
+elseif (SDL2_FOUND)
+	include_directories(
+		${SDL2_INCLUDE_DIRS}
+	)
+	set(
+		JOYPAD_IMPL
+		src/Joypad/SDLKeyboardJoypadEmulator.cpp
+		src/Joypad/SDLKeyboardJoypadEmulator.hpp
+	)
+	set(
+		LCD_IMPL
+		src/LCD/LCDSDL.cpp
+		src/LCD/LCDSDL.hpp
+		src/LCD/util/TimerSDL.cpp
+		src/LCD/util/TimerSDL.hpp
+	)
+	set(
+		OTHER_LIBRARIES
+		${SDL2_LIBRARY}
+	)
+	set(SDL_IMPL 1)
+	message("SDL was found ${SDL2_INCLUDE_DIRS} ${SDL2_LIBRARY}")
 elseif (SERENITYOS)
-	message("Running on SerenityOS")
 	set(
 		LCD_IMPL
 		src/LCD/LCDSerenityLibGui.cpp
 		src/LCD/LCDSerenityLibGui.hpp
-		src/LCD/SerenityPlatformWindow.cpp src/LCD/SerenityPlatformWindow.hpp)
+		src/LCD/SerenityPlatformWindow.cpp
+		src/LCD/SerenityPlatformWindow.hpp
+	)
 	set(SERENITY_IMPL 1)
+	message("Using SerenityOS native libraries")
+else ()
+	message(FATAL_ERROR "Cannot find either SDL2 or SFML. Please either set SFML_DIR or SDL2_DIR.")
 endif ()
 
 add_library(
@@ -135,22 +163,19 @@ add_executable(
 	src/DummyDevices.hpp
 )
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-	target_compile_definitions(
-		GBEmulator PRIVATE
-		NODEBUGGER=${NODEBUGGER}
-		SFML_IMPL=${SFML_IMPL}
-		SERENITY_IMPL=${SERENITY_IMPL}
-		DEBUG=1
-	)
+	set(DEBUG_FLAG DEBUG)
 else()
-	target_compile_definitions(
-		GBEmulator PRIVATE
-		NODEBUGGER=${NODEBUGGER}
-		SFML_IMPL=${SFML_IMPL}
-		SERENITY_IMPL=${SERENITY_IMPL}
-		NDEBUG=1
-	)
+	set(DEBUG_FLAG NDEBUG)
 endif()
+
+target_compile_definitions(
+	GBEmulator PRIVATE
+	NODEBUGGER=${NODEBUGGER}
+	SDL_IMPL=${SDL_IMPL}
+	SFML_IMPL=${SFML_IMPL}
+	SERENITY_IMPL=${SERENITY_IMPL}
+	${DEBUG_FLAG}=1
+)
 
 if (SERENITYOS)
 	set(OS_SPEC_LIBS pthread gui gfx core)

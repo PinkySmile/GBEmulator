@@ -13,6 +13,9 @@
 #include "Sound/SoundPlayer.hpp"
 #elif SERENITY_IMPL
 #include "LCD/LCDSerenityLibGui.hpp"
+#elif SDL_IMPL
+#include "LCD/LCDSDL.hpp"
+#include "Joypad/SDLKeyboardJoypadEmulator.hpp"
 #endif
 
 namespace GBEmulator
@@ -37,6 +40,21 @@ namespace GBEmulator
 				{Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 			}
 		};
+#elif SDL_IMPL
+		return new Input::SDLKeyboardJoypadEmulator(
+			reinterpret_cast<Graphics::LCDSDL &>(*otherComponents.window), {
+				{Input::RESET,            SDLK_r},
+				{Input::JOYPAD_A,         SDLK_x},
+				{Input::JOYPAD_B,         SDLK_c},
+				{Input::JOYPAD_UP,        SDLK_UP},
+				{Input::JOYPAD_DOWN,      SDLK_DOWN},
+				{Input::JOYPAD_LEFT,      SDLK_LEFT},
+				{Input::JOYPAD_RIGHT,     SDLK_RIGHT},
+				{Input::JOYPAD_START,     SDLK_RETURN},
+				{Input::JOYPAD_SELECT,    SDLK_BACKSPACE},
+				{Input::ENABLE_DEBUGGING, SDLK_v}
+			}
+		);
 #else
 		return new DummyJoypadInput();
 #endif
@@ -65,6 +83,8 @@ namespace GBEmulator
 #elif SERENITY_IMPL
 		Serenity::initSerenityApp();
 		return new Graphics::LCDSerenityLibGui{{640, 576}, "GBEmulator"};
+#elif SDL_IMPL
+		return new Graphics::LCDSDL();
 #else
 		return new DummyLCD();
 #endif

@@ -2,12 +2,11 @@
 // Created by andgel on 03/05/2021
 //
 
-#include <cstdio>
 #include "Clock.hpp"
 
 namespace GBEmulator::Timing
 {
-#ifdef __serenity__
+#if !SFML_IMPL
 	Clock::Clock() :
 		_start(this->_getTime())
 	{

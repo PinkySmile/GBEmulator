@@ -6,15 +6,16 @@
 #define GBEMULATOR_CLOCK_HPP
 
 
-#ifdef __serenity__
-#include <ctime>
-#else
+#if SFML_IMPL
 #include <SFML/System.hpp>
+#else
+#include <ctime>
+#include <cstdint>
 #endif
 
 namespace GBEmulator::Timing
 {
-#ifdef __serenity__
+#if !SFML_IMPL
 	struct Time {
 	private:
 		uint64_t _micro;
