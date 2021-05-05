@@ -14,11 +14,6 @@ namespace GBEmulator::Timing
 		_expected(getCyclesPerSecondsFromFrequency(this->getFrequency()))
 	{}
 
-	double getCyclesPerSecondsFromFrequency(double frequency)
-	{
-		return GB_CPU_FREQUENCY / frequency;
-	}
-
 	unsigned char Timer::getControlByte() const
 	{
 		return this->_byte;

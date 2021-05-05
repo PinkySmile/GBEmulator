@@ -12,6 +12,8 @@
 #include <SFML/Audio.hpp>
 #include "ISound.hpp"
 
+#define NB_SAMPLE_BUFFER 4
+
 namespace GBEmulator {
 	/*!
 	 * @brief SFMLSoundPlayer implémente les fonctions de l'interface ISound avec la SFML audio.
@@ -25,7 +27,7 @@ namespace GBEmulator {
 		 * Lance la lecture d'un son sur deux sorties différentes (SO1 et SO2) en volume 0.
 		 */
 		SFMLSoundPlayer();
-		~SFMLSoundPlayer() override = default;
+		~SFMLSoundPlayer() override;
 
 		void setVolume(float volume) override;
 		void pushSamples(short *samples, size_t sampleCount) override;
@@ -38,7 +40,9 @@ namespace GBEmulator {
 		 */
 		float _masterVolume = 0;
 		bool mutex = false;
-		std::vector<short> _samples;
+		char readHead = 0;
+		char writeHead = 0;
+		std::vector<short> _samples[NB_SAMPLE_BUFFER];
 		std::vector<short> _buffer;
 	};
 }

@@ -19,13 +19,14 @@ namespace GBEmulator
 
 	std::vector<short> BasicSoundChannel::update(unsigned int cycles)
 	{
-		this->_update(cycles);
+		if (!this->hasExpired())
+			this->_update(cycles);
 		this->_cycles += cycles;
-		if (this->_cycles >= GB_CPU_FREQUENCY / 44100.) {
-			auto data = this->_getSoundData();
+		if (this->_cycles >= GB_CPU_FREQUENCY / SAMPLE_RATE) {
+			short data = this->hasExpired() ? 0 : this->_getSoundData();
 
-			this->_cycles -= GB_CPU_FREQUENCY / 44100.;
-			return {data.first, data.second};
+			this->_cycles -= GB_CPU_FREQUENCY / SAMPLE_RATE;
+			return {data, data};
 		}
 		return {};
 	}

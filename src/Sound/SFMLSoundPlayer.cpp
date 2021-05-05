@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <cassert>
+#include <cstring>
+#include <thread>
 #include "SFMLSoundPlayer.hpp"
 
 namespace GBEmulator
@@ -14,8 +16,16 @@ namespace GBEmulator
 	SFMLSoundPlayer::SFMLSoundPlayer()
 	{
 		this->initialize(2, 44100);
-		this->_samples.resize(100);
-		this->play();
+	}
+
+	SFMLSoundPlayer::~SFMLSoundPlayer()
+	{
+		while (this->mutex);
+		this->mutex = true;
+		for (auto &sample : this->_samples)
+			sample.resize(40000);
+		this->mutex = false;
+		this->stop();
 	}
 
 	void SFMLSoundPlayer::setVolume(float volume)
@@ -25,10 +35,13 @@ namespace GBEmulator
 
 	bool SFMLSoundPlayer::onGetData(sf::SoundStream::Chunk &data)
 	{
-		while (this->mutex);
+		while (this->mutex || this->_samples[this->readHead].empty())
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
 		this->mutex = true;
-		this->_buffer.swap(this->_samples);
+		this->_buffer = this->_samples[this->readHead];
+		this->_samples[this->readHead].clear();
 		this->mutex = false;
+		this->readHead = (this->readHead + 1) % NB_SAMPLE_BUFFER;
 		data.sampleCount = this->_buffer.size();
 		data.samples = this->_buffer.data();
 		return true;
@@ -43,7 +56,10 @@ namespace GBEmulator
 	{
 		while (this->mutex);
 		this->mutex = true;
-		this->_samples = {samples, samples + sampleCount};
+		this->_samples[this->writeHead] = {samples, samples + sampleCount};
 		this->mutex = false;
+		this->writeHead = (this->writeHead + 1) % NB_SAMPLE_BUFFER;
+		if (this->getStatus() != sf::Sound::Status::Playing)
+			this->play();
 	}
 }

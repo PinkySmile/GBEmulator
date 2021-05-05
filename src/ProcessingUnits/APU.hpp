@@ -21,7 +21,7 @@ namespace GBEmulator
 	 * @brief Liste des adresses que le CPU peut envoyer à l'APU.
 	 * Acutellement, n'utilise qu'une partie des adresses.
 	 */
-	enum regist {
+	enum APURegisters {
 		FF10 = 0x0,
 		FF11 = 0x1,
 		FF12 = 0x2,
@@ -44,37 +44,73 @@ namespace GBEmulator
 		FF25 = 0x15,
 		FF26 = 0x16,
 		NR10 = FF10,
-		NR11 = FF11,
-		NR12 = FF12,
-		NR13 = FF13,
-		NR14 = FF14,
-		NR21 = FF16,
-		NR22 = FF17,
-		NR23 = FF18,
-		NR24 = FF19,
-		NR30 = FF1A,
-		NR31 = FF1B,
-		NR32 = FF1C,
-		NR33 = FF1D,
-		NR34 = FF1E,
-		NR41 = FF20,
-		NR42 = FF21,
-		NR43 = FF22,
-		NR44 = FF23,
-		NR50 = FF24,
-		NR51 = FF25,
-		NR52 = FF26,
+		NR11,
+		NR12,
+		NR13,
+		NR14,
+		NR20,
+		NR21,
+		NR22,
+		NR23,
+		NR24,
+		NR30,
+		NR31,
+		NR32,
+		NR33,
+		NR34,
+		NR40,
+		NR41,
+		NR42,
+		NR43,
+		NR44,
+		NR50,
+		NR51,
+		NR52,
 		WPRAM_START = 0x20,
 		WPRAM_END = 0x2F
+	};
+
+	enum APUInternalRegisters {
+		APU_CHANNEL_CONTROL,
+		APU_SOT_SELECTION,
+		APU_SOUND_ON_OFF
 	};
 
 	class SampleBuffer {
 	public:
 		std::vector<short> _buffer;
+		float leftVolume = 1;
+		float rightVolume = 1;
 
 		SampleBuffer &operator=(const std::vector<short> &samples);
 		SampleBuffer &operator<<(const std::vector<short> &samples);
 		SampleBuffer &operator+=(const std::vector<short> &samples);
+	};
+
+	struct APUSoundOutputTerminalSelect {
+		bool outputSound1toSO1 : 1;
+		bool outputSound2toSO1 : 1;
+		bool outputSound3toSO1 : 1;
+		bool outputSound4toSO1 : 1;
+		bool outputSound1toSO2 : 1;
+		bool outputSound2toSO2 : 1;
+		bool outputSound3toSO2 : 1;
+		bool outputSound4toSO2 : 1;
+
+		APUSoundOutputTerminalSelect(unsigned char v) { *this = v; };
+		APUSoundOutputTerminalSelect &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
+		operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+	};
+
+	struct APUChannelControl {
+		unsigned char SO1volume : 3;
+		bool vinToSO1 : 1;
+		unsigned char SO2volume : 3;
+		bool vinToSO2 : 1;
+
+		APUChannelControl(unsigned char v) { *this = v; };
+		APUChannelControl &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
+		operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
 	};
 
 	/*!
@@ -112,13 +148,22 @@ namespace GBEmulator
 		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
 
 	private:
+		void _internalWrite(unsigned short relativeAddress, unsigned char value);
+		unsigned char _internalRead(unsigned short relativeAddress) const;
+		std::vector<short> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
+
 		//! @brief Lecteur de son
 		ISound &_soundPlayer;
 
+		//! @brief Sample buffer
 		SampleBuffer _samples;
 
 		//! @brief Tous les channels
 		std::unique_ptr<IGBSoundChannel> _channels[4];
+
+		bool _enabled = false;
+		APUSoundOutputTerminalSelect _terminalSelect = 0x00;
+		APUChannelControl _channelControl = 0x00;
 	};
 }
 

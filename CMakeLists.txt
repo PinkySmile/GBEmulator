@@ -127,6 +127,10 @@ add_library(
 	src/Timing/Clock.cpp
 	src/Timing/Clock.hpp
 	src/ProcessingUnits/SoundChannel/IGBSoundChannel.hpp
+	src/ProcessingUnits/SoundChannel/SquareWaveChannel.cpp
+	src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
+	src/ProcessingUnits/SoundChannel/BasicSoundChannel.cpp
+	src/ProcessingUnits/SoundChannel/BasicSoundChannel.hpp
 )
 
 if (NODEBUGGER)
@@ -140,7 +144,7 @@ else ()
 		src/Network/BgbHandler.hpp
 		src/debugger/CompiledCondition.cpp
 		src/debugger/CompiledCondition.hpp
-		src/ProcessingUnits/SoundChannel/BasicSoundChannel.cpp src/ProcessingUnits/SoundChannel/BasicSoundChannel.hpp)
+)
 endif()
 
 add_executable(

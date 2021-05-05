@@ -6,6 +6,7 @@
 #define GBEMULATOR_IGBSOUNDCHANNEL_HPP
 
 
+#define SAMPLE_RATE 44100
 #include <vector>
 
 namespace GBEmulator
@@ -15,6 +16,7 @@ namespace GBEmulator
 		virtual void write(unsigned int relativeAddress, unsigned char value) = 0;
 		virtual unsigned char read(unsigned int relativeAddress) = 0;
 		virtual std::vector<short> update(unsigned int cycles) = 0;
+		virtual bool hasExpired() const = 0;
 	};
 }
 

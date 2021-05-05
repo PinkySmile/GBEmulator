@@ -15,7 +15,10 @@ namespace GBEmulator::Timing
 {
 	//! @brief Transforme une fréquence en nombre de cycles CPU.
 	//! @param frequency Fréquence à transformer en cycles CPU
-	double getCyclesPerSecondsFromFrequency(double frequency);
+	inline double getCyclesPerSecondsFromFrequency(double frequency)
+	{
+		return GB_CPU_FREQUENCY / frequency;
+	}
 
 	//! @brief Classe implémentant le Timer de la GameBoy
 	//! Pour plus d'informations : http://problemkaputt.de/pandocs.htm#timeranddividerregisters

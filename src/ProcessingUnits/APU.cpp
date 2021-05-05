@@ -5,36 +5,44 @@
 ** Apu.cpp
 */
 
-#include <cmath>
-#include <cstdio>
-#include <iostream>
 #include <cassert>
 #include "APU.hpp"
 #include "SoundChannel/BasicSoundChannel.hpp"
-#include "../Timing/Timer.hpp"
+#include "SoundChannel/SquareWaveChannel.hpp"
+
+#define SAMPLE_BUFFER_SIZE 4000
 
 namespace GBEmulator
 {
 	APU::APU(ISound &soundPlayer) :
 		_soundPlayer(soundPlayer),
 		_channels{
-			std::make_unique<BasicSoundChannel>(),
-			std::make_unique<BasicSoundChannel>(),
+			std::make_unique<SquareWaveChannel>(),
+			std::make_unique<SquareWaveChannel>(),
 			std::make_unique<BasicSoundChannel>(),
 			std::make_unique<BasicSoundChannel>()
 		}
 	{
+		this->_samples._buffer.resize(SAMPLE_BUFFER_SIZE);
+		this->_soundPlayer.pushSamples(this->_samples._buffer.data(), this->_samples._buffer.size());
+		this->_samples._buffer.clear();
 	}
 
 	void APU::update(unsigned cycle)
 	{
-		this->_samples << this->_channels[0]->update(cycle);
-		this->_samples += this->_channels[1]->update(cycle);
-		this->_samples += this->_channels[2]->update(cycle);
-		this->_samples += this->_channels[3]->update(cycle);
-		if (this->_samples._buffer.size() >= 1000) {
-			this->_soundPlayer.pushSamples(this->_samples._buffer.data(), this->_samples._buffer.size());
+		if (!this->_enabled) {
 			this->_samples = std::vector<short>{};
+			return;
+		}
+		this->_samples.leftVolume = this->_channelControl.SO1volume / 7.f;
+		this->_samples.rightVolume = this->_channelControl.SO2volume / 7.f;
+		this->_samples << this->_updateAndProcessChannelSound(0, cycle);
+		this->_samples += this->_updateAndProcessChannelSound(1, cycle);
+		this->_samples += this->_updateAndProcessChannelSound(2, cycle);
+		this->_samples += this->_updateAndProcessChannelSound(3, cycle);
+		if (this->_samples._buffer.size() >= SAMPLE_BUFFER_SIZE) {
+			this->_soundPlayer.pushSamples(this->_samples._buffer.data(), this->_samples._buffer.size());
+			this->_samples._buffer.clear();
 		}
 	}
 
@@ -43,28 +51,88 @@ namespace GBEmulator
 		if (address >= NR10 && address <= NR14)
 			return this->_channels[0]->write(address - NR10, value);
 		if (address >= NR21 && address <= NR24)
-			return this->_channels[1]->write(address - NR21, value);
+			return this->_channels[1]->write(address - NR20, value);
 		if (address >= NR30 && address <= NR34)
 			return this->_channels[2]->write(address - NR30, value);
 		if (address >= NR41 && address <= NR44)
-			return this->_channels[3]->write(address - NR41, value);
+			return this->_channels[3]->write(address - NR40, value);
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->write(address - NR30, value);
+		if (address >= NR50 && address <= NR52)
+			return this->_internalWrite(address - NR50, value);
 	}
 
 	unsigned char APU::read(unsigned short address) const
 	{
+		if (!this->_enabled && address != NR52)
+			return 0xFF;
 		if (address >= NR10 && address <= NR14)
 			return this->_channels[0]->read(address - NR10);
+		//NR20 Doesn't actually exist
 		if (address >= NR21 && address <= NR24)
-			return this->_channels[1]->read(address - NR21);
+			return this->_channels[1]->read(address - NR20);
 		if (address >= NR30 && address <= NR34)
 			return this->_channels[2]->read(address - NR30);
+		//NR40 Doesn't actually exist
 		if (address >= NR41 && address <= NR44)
-			return this->_channels[3]->read(address - NR41);
+			return this->_channels[3]->read(address - NR40);
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->read(address - NR30);
+		if (address >= NR50 && address <= NR52)
+			return this->_internalRead(address - NR50);
 		return 0xFF;
+	}
+
+	void APU::_internalWrite(unsigned short relativeAddress, unsigned char value)
+	{
+		switch (relativeAddress) {
+		case APU_CHANNEL_CONTROL:
+			this->_channelControl = value;
+			break;
+		case APU_SOT_SELECTION:
+			this->_terminalSelect = value;
+			break;
+		case APU_SOUND_ON_OFF:
+			this->_enabled = (value & 0x80) != 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	unsigned char APU::_internalRead(unsigned short relativeAddress) const
+	{
+		switch (relativeAddress) {
+		case APU_CHANNEL_CONTROL:
+			return this->_channelControl;
+		case APU_SOT_SELECTION:
+			return this->_terminalSelect;
+		default:
+			return 0xFF;
+		case APU_SOUND_ON_OFF:
+			unsigned char v = 0;
+
+			for (int i = 4; i; i--) {
+				v <<= 1U;
+				v |= !this->_channels[i - 1]->hasExpired();
+			}
+			return (this->_enabled << 7U) | 0x70 | v;
+		}
+	}
+
+	std::vector<short> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
+	{
+		auto result = this->_channels[channelNb]->update(cycles);
+		APUSoundOutputTerminalSelect term = static_cast<unsigned char>(this->_terminalSelect) >> channelNb;
+
+		assert(result.size() % 2 == 0);
+		for (unsigned i = 0; i < result.size(); i += 2) {
+			if (!term.outputSound1toSO1)
+				result[i] = 0;
+			if (!term.outputSound1toSO2)
+				result[i + 1] = 0;
+		}
+		return result;
 	}
 
 	SampleBuffer &SampleBuffer::operator=(const std::vector<short> &samples)
@@ -78,16 +146,22 @@ namespace GBEmulator
 		unsigned offset = this->_buffer.size() - samples.size();
 
 		assert(this->_buffer.size() >= samples.size());
-		for (unsigned i = 0; i < samples.size(); i++)
-			this->_buffer[i + offset] += samples[i];
+		assert(samples.size() % 2 == 0);
+		for (unsigned i = 0; i < samples.size(); i += 2) {
+			this->_buffer[  i + offset  ] += samples[  i  ] * this->leftVolume;
+			this->_buffer[i + offset + 1] += samples[i + 1] * this->rightVolume;
+		}
 		return *this;
 	}
 
 	SampleBuffer &SampleBuffer::operator<<(const std::vector<short> &samples)
 	{
+		assert(samples.size() % 2 == 0);
 		this->_buffer.reserve(samples.size() + this->_buffer.size());
-		for (auto sample : samples)
-			this->_buffer.push_back(sample);
+		for (unsigned i = 0; i < samples.size(); i += 2) {
+			this->_buffer.push_back(samples[  i  ] * this->leftVolume);
+			this->_buffer.push_back(samples[i + 1] * this->rightVolume);
+		}
 		return *this;
 	}
 }
