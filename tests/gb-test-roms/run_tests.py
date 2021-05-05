@@ -20,18 +20,24 @@ p = False
 def getEmuTestResult(sock):
 	buffer = []
 	timeSpent = 0
+	timeSpent2 = 0
 	while True:
 		ready = select.select([sock.fileno()], [], [], 0.25)[0]
 		if not ready and ("Passed" in "".join(buffer) or "Failed" in "".join(buffer)):
 			return buffer
 		if not ready:
+			timeSpent2 += 0.25
 			if len([r for r in "".join(buffer).split('\n') if r]) > 1:
 				timeSpent += 0.25
 				if timeSpent > 10:
 					return buffer
+			if timeSpent2 >= 40:
+				buffer.append("\nTimed out after 10 seconds\n")
+				return buffer
 			continue
 		else:
 			timeSpent = 0
+			timeSpent2 = 0
 		d = sock.recv(8)
 		if not d:
 			return buffer
