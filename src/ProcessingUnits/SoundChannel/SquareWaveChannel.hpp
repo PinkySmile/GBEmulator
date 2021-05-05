@@ -100,6 +100,7 @@ namespace GBEmulator
 		double _frequencyCounter = 0;
 		double _volumeEnvelopeCounter = 0;
 		double _frequencySweepCounter = 0;
+		bool _first = true;
 
 	public:
 		bool hasExpired() const override;

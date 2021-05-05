@@ -1,0 +1,102 @@
+//
+// Created by andgel on 05/05/2021
+//
+
+#include <cstdio>
+#include "ModulableWaveChannel.hpp"
+#include "../../Timing/Timer.hpp"
+
+namespace GBEmulator
+{
+
+	void ModulableWaveChannel::_update(unsigned int cycles)
+	{
+		auto required = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency() * 0x10);
+
+		//printf("%f (%i -> %f)\n", required, this->_frequencyRegister.getFrequency(), this->_frequencyRegister.getActualFrequency());
+		this->_nextByteCounter += cycles;
+		while (this->_nextByteCounter >= required) {
+			this->_nextByteCounter -= required;
+			this->_current = (this->_current + 1) % 0x20;
+		}
+	}
+
+	short ModulableWaveChannel::_getSoundData() const
+	{
+		if (this->_volume == 0)
+			return -8 << 10;
+
+		short realVal = this->_wpram[this->_current];
+
+		realVal >>= (this->_volume - 1);
+		realVal -= 8;
+		realVal <<= 10;
+		return realVal;
+	}
+
+	bool ModulableWaveChannel::hasExpired() const
+	{
+		if (!this->_enabled)
+			return true;
+		return this->_frequencyRegister.useLength && this->_length == 0;
+	}
+
+	void ModulableWaveChannel::write(unsigned int relativeAddress, unsigned char value)
+	{
+		switch (relativeAddress) {
+		case MODULABLE_CHANNEL_ON_OFF:
+			this->_enabled = value & 0x80;
+			break;
+		case MODULABLE_CHANNEL_SOUND_LENGTH:
+			this->_length = value;
+			break;
+		case MODULABLE_CHANNEL_VOLUME:
+			this->_volume = static_cast<OutputLevel>(value >> 5 & 3);
+			break;
+		case MODULABLE_CHANNEL_FREQUENCY_LO:
+			this->_frequencyRegister.loFrequency = value;
+			break;
+		case MODULABLE_CHANNEL_FREQUENCY_HI:
+			this->_frequencyRegister.setHigh(value);
+			if (this->_frequencyRegister.initial)
+				this->_restart();
+			break;
+		default:
+			if (relativeAddress >= MODULABLE_CHANNEL_WPRAM_START && relativeAddress <= MODULABLE_CHANNEL_WPRAM_END) {
+				this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2] = value >> 4;
+				this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2 + 1] = value & 0xF;
+				break;
+			}
+			break;
+		}
+	}
+
+	unsigned char ModulableWaveChannel::read(unsigned int relativeAddress)
+	{
+		switch (relativeAddress) {
+		case MODULABLE_CHANNEL_ON_OFF:
+			return this->_enabled & 0x7F;
+		case MODULABLE_CHANNEL_SOUND_LENGTH:
+			return this->_length;
+		case MODULABLE_CHANNEL_VOLUME:
+			return this->_volume << 5 | 0x9F;
+		case MODULABLE_CHANNEL_FREQUENCY_LO:
+			return 0xFF;
+		case MODULABLE_CHANNEL_FREQUENCY_HI:
+			return this->_frequencyRegister.getHigh();
+		default:
+			if (relativeAddress >= MODULABLE_CHANNEL_WPRAM_START && relativeAddress <= MODULABLE_CHANNEL_WPRAM_END) {
+				if (!this->hasExpired())
+					return (this->_current << 3) | (this->_current >> 1);
+				return this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2] << 4 | this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2 + 1];
+			}
+			return 0xFF;
+		}
+	}
+
+	void ModulableWaveChannel::_restart()
+	{
+		this->_current = 0;
+		this->_nextByteCounter = 0;
+	}
+}

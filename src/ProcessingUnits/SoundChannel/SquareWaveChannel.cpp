@@ -2,12 +2,9 @@
 // Created by andgel on 05/05/2021
 //
 
-#include <cstdint>
-#include <cstdio>
 #include "SquareWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
-#include<cmath>
 namespace GBEmulator
 {
 	void SquareWaveChannel::_update(unsigned int cycles)
@@ -16,6 +13,7 @@ namespace GBEmulator
 		double frequencyCount = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
 		double volumeCount = this->_effectiveVolumeEnvelopeRegister.numberOfSweeps * Timing::getCyclesPerSecondsFromFrequency(64);
 
+		//TODO: Use length in NR11 / NR21
 		this->_frequencyCounter += cycles;
 		this->_volumeEnvelopeCounter += cycles;
 		this->_frequencySweepCounter += cycles;
@@ -60,7 +58,7 @@ namespace GBEmulator
 	short SquareWaveChannel::_getSoundData() const
 	{
 		auto v = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
-		short realValue = 5000 * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
+		short realValue = 8160 * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		switch (this->_soundLenPatternDutyRegister.patternDuty) {
 		case DUTY_12_5_PERCENT:
@@ -84,12 +82,13 @@ namespace GBEmulator
 
 	bool SquareWaveChannel::hasExpired() const
 	{
+		if (this->_first)
+			return true;
 		return this->_frequencyRegister.useLength && this->_soundLenPatternDutyRegister.length == 0;
 	}
 
 	void SquareWaveChannel::write(unsigned int relativeAddress, unsigned char value)
 	{
-		printf("{SQR}: Write $%02X to %X\n", value, relativeAddress);
 		switch (relativeAddress) {
 		case SQUARE_CHANNEL_SWEEP_REGISTER:
 			this->_sweepRegister = value;
@@ -107,6 +106,7 @@ namespace GBEmulator
 			this->_frequencyRegister.loFrequency = value;
 			break;
 		case SQUARE_CHANNEL_FREQUENCY_HI:
+			this->_first = false;
 			this->_frequencyRegister.setHigh(value);
 			if (this->_frequencyRegister.initial)
 				this->_restart();

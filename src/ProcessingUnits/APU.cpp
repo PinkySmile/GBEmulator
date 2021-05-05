@@ -9,6 +9,7 @@
 #include "APU.hpp"
 #include "SoundChannel/BasicSoundChannel.hpp"
 #include "SoundChannel/SquareWaveChannel.hpp"
+#include "SoundChannel/ModulableWaveChannel.hpp"
 
 #define SAMPLE_BUFFER_SIZE 4000
 
@@ -19,7 +20,7 @@ namespace GBEmulator
 		_channels{
 			std::make_unique<SquareWaveChannel>(),
 			std::make_unique<SquareWaveChannel>(),
-			std::make_unique<BasicSoundChannel>(),
+			std::make_unique<ModulableWaveChannel>(),
 			std::make_unique<BasicSoundChannel>()
 		}
 	{
@@ -48,6 +49,10 @@ namespace GBEmulator
 
 	void APU::write(unsigned short address, unsigned char value)
 	{
+		if (address >= WPRAM_START && address <= WPRAM_END)
+			return this->_channels[2]->write(address - NR30, value);
+		if (!this->_enabled && address != NR52)
+			return;
 		if (address >= NR10 && address <= NR14)
 			return this->_channels[0]->write(address - NR10, value);
 		if (address >= NR21 && address <= NR24)
@@ -56,14 +61,14 @@ namespace GBEmulator
 			return this->_channels[2]->write(address - NR30, value);
 		if (address >= NR41 && address <= NR44)
 			return this->_channels[3]->write(address - NR40, value);
-		if (address >= WPRAM_START && address <= WPRAM_END)
-			return this->_channels[2]->write(address - NR30, value);
 		if (address >= NR50 && address <= NR52)
 			return this->_internalWrite(address - NR50, value);
 	}
 
 	unsigned char APU::read(unsigned short address) const
 	{
+		if (address >= WPRAM_START && address <= WPRAM_END)
+			return this->_channels[2]->read(address - NR30);
 		if (!this->_enabled && address != NR52)
 			return 0xFF;
 		if (address >= NR10 && address <= NR14)
@@ -76,8 +81,6 @@ namespace GBEmulator
 		//NR40 Doesn't actually exist
 		if (address >= NR41 && address <= NR44)
 			return this->_channels[3]->read(address - NR40);
-		if (address >= WPRAM_START && address <= WPRAM_END)
-			return this->_channels[2]->read(address - NR30);
 		if (address >= NR50 && address <= NR52)
 			return this->_internalRead(address - NR50);
 		return 0xFF;
