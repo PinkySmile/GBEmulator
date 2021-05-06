@@ -7,16 +7,6 @@
 
 namespace GBEmulator
 {
-	void BasicSoundChannel::write(unsigned int relativeAddress, unsigned char value)
-	{
-
-	}
-
-	unsigned char BasicSoundChannel::read(unsigned int relativeAddress)
-	{
-		return 0xFF;
-	}
-
 	std::vector<short> BasicSoundChannel::update(unsigned int cycles)
 	{
 		if (!this->hasExpired())

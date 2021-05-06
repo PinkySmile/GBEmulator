@@ -10,6 +10,7 @@
 #include "SoundChannel/BasicSoundChannel.hpp"
 #include "SoundChannel/SquareWaveChannel.hpp"
 #include "SoundChannel/ModulableWaveChannel.hpp"
+#include "SoundChannel/NoiseWaveChannel.hpp"
 
 #define SAMPLE_BUFFER_SIZE 4000
 
@@ -21,7 +22,7 @@ namespace GBEmulator
 			std::make_unique<SquareWaveChannel>(),
 			std::make_unique<SquareWaveChannel>(),
 			std::make_unique<ModulableWaveChannel>(),
-			std::make_unique<BasicSoundChannel>()
+			std::make_unique<NoiseWaveChannel>()
 		}
 	{
 		this->_samples._buffer.resize(SAMPLE_BUFFER_SIZE);

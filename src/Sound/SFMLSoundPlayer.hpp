@@ -9,10 +9,11 @@
 #ifndef GBEMULATOR_SFMLSOUNDPLAYER_HPP
 #define GBEMULATOR_SFMLSOUNDPLAYER_HPP
 
+
 #include <SFML/Audio.hpp>
 #include "ISound.hpp"
 
-#define NB_SAMPLE_BUFFER 4
+#define NB_SAMPLE_BUFFER 1
 
 namespace GBEmulator {
 	/*!

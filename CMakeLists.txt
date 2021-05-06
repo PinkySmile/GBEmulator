@@ -131,7 +131,11 @@ add_library(
 	src/ProcessingUnits/SoundChannel/SquareWaveChannel.hpp
 	src/ProcessingUnits/SoundChannel/BasicSoundChannel.cpp
 	src/ProcessingUnits/SoundChannel/BasicSoundChannel.hpp
-	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp)
+	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.cpp
+	src/ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp
+	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.cpp
+	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.hpp
+)
 
 if (NODEBUGGER)
 	set(DEBUGGER_SRC)

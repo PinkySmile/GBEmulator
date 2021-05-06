@@ -57,7 +57,6 @@ namespace GBEmulator
 
 		bool _enabled = false;
 		unsigned char _length = 0;
-		unsigned _cycles = 0;
 		unsigned char _wpram[0x20];
 		OutputLevel _volume = OUTPUT_MUTED;
 		FrequencyRegister _frequencyRegister = 0;
