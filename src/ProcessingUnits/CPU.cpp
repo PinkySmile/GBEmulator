@@ -78,7 +78,7 @@ namespace GBEmulator
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
 		case STARTUP_CODE_RANGE:
-			if (this->_internalRomEnabled && this->_rom.isGameBoyOnly())
+			if (this->_internalRomEnabled && this->_isDMGMode())
 				return CPU::_startupCode[address];
 #ifdef __GNUG__
 			__attribute__((fallthrough));
@@ -86,7 +86,7 @@ namespace GBEmulator
 		case GBC_STARTUP_CODE_RANGE:
 			if (address > 0x101 && address < 0x200)
 				return this->_rom.read(address);
-			if (this->_internalRomEnabled && !this->_rom.isGameBoyOnly())
+			if (this->_internalRomEnabled && !this->_isDMGMode())
 				return CPU::_gbcStartupCode[address];
 #ifdef __GNUG__
 			__attribute__((fallthrough));
@@ -140,7 +140,7 @@ namespace GBEmulator
 		if (address < GBC_STARTUP_CODE_ENDING_ADDRESS) {
 			if (address > 0x101 && address < 0x200)
 				return this->_rom.read(address);
-			if (this->_internalRomEnabled && !this->_rom.isGameBoyOnly())
+			if (this->_internalRomEnabled && !this->_isDMGMode())
 				return CPU::_gbcStartupCode[address];
 		}
 
@@ -835,7 +835,7 @@ namespace GBEmulator
 		this->_interruptEnabled = 0x00;
 		this->_interruptRequest = 0x00;
 		this->_interruptMasterEnableFlag = false;
-		this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
+		this->_gpu.setToGBMode(this->_isDMGMode());
 		this->_oldTime = 0;
 		this->_newTime = 0;
 		this->_clock.restart();
@@ -919,7 +919,7 @@ namespace GBEmulator
 		unsigned short addr = 0;
 
 		this->_internalRomEnabled = false;
-		if (this->_rom.isGameBoyOnly()) {
+		if (this->_isDMGMode()) {
 			this->_registers = {
 				.af = 0x01B0,
 				.bc = 0x0013,
@@ -965,7 +965,22 @@ namespace GBEmulator
 			this->_gpu.writeVRAM(addr, c);
 			addr += 2;
 		}
-		if (!this->_rom.isGameBoyOnly())
+		if (!this->_isDMGMode())
 			this->_gpu.update(*this, GPU_FULL_CYCLE_DURATION * 0x90/ 153);
+	}
+
+	bool CPU::_isDMGMode() const
+	{
+		if (this->_gbmode == MODE_AUTO)
+			return this->_rom.isGameBoyOnly();
+		if (this->_gbmode == MODE_DMG)
+			return true;
+		return false;
+	}
+
+	void CPU::setGBMode(GBMode newMode)
+	{
+		this->_gbmode = newMode;
+		this->_gpu.setToGBMode(this->_isDMGMode());
 	}
 }

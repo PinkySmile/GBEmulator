@@ -11,6 +11,7 @@
 #include "Sound/ISound.hpp"
 #include "LCD/ILCD.hpp"
 #include "CableLink/CableInterface.hpp"
+#include "ProcessingUnits/CPU.hpp"
 
 namespace GBEmulator
 {
@@ -26,6 +27,7 @@ namespace GBEmulator
 		bool noBootRom = false;
 		bool error = true;
 		bool profiler = false;
+		GBMode mode = MODE_AUTO;
 	};
 
 	struct Components {

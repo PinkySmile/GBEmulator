@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['lcdsfml_965',['LCDSFML',['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#ac0f037c5159c14488e26becd0a964b5b',1,'GBEmulator::Graphics::LCDSFML::LCDSFML()=delete'],['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a68af7ef6cc6c4f1aac34f98b39964fcf',1,'GBEmulator::Graphics::LCDSFML::LCDSFML(const LCDSFML &amp;)=delete'],['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a20e3f34d44aaf49bdf34b5a5f939b4f7',1,'GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &amp;title)']]],
+  ['lcdsfml_965',['LCDSFML',['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#ac0f037c5159c14488e26becd0a964b5b',1,'GBEmulator::Graphics::LCDSFML::LCDSFML()=delete'],['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a68af7ef6cc6c4f1aac34f98b39964fcf',1,'GBEmulator::Graphics::LCDSFML::LCDSFML(const LCDSFML &amp;)=delete'],['../class_g_b_emulator_1_1_graphics_1_1_l_c_d_s_f_m_l.html#a20e3f34d44aaf49bdf34b5a5f939b4f7',1,'GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode _gbmode, const std::string &amp;title)']]],
   ['ld16_966',['LD16',['../namespace_g_b_emulator_1_1_instructions.html#a0a8ab3269a1bb48f0fc24f6246575d3a',1,'GBEmulator::Instructions']]],
   ['ld16fromptr_967',['LD16fromPTR',['../namespace_g_b_emulator_1_1_instructions.html#a3565073f77af472e7546c6f52ad0f412',1,'GBEmulator::Instructions']]],
   ['ld16toptr_968',['LD16toPTR',['../namespace_g_b_emulator_1_1_instructions.html#a8c177205893c908bd0e0b7cd2966b4f3',1,'GBEmulator::Instructions']]],

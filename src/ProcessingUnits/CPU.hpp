@@ -122,6 +122,12 @@ namespace GBEmulator
 		class Debugger;
 	}
 
+	enum GBMode {
+		MODE_AUTO,
+		MODE_DMG,
+		MODE_GBC
+	};
+
 	//! Central Process Unit de la Gameboy
 	class CPU {
 	public:
@@ -299,6 +305,7 @@ namespace GBEmulator
 
 		void ignoreBootRom(bool ignored = true);
 		void goMaxSpeed(bool speed = true);
+		void setGBMode(GBMode newMode);
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
@@ -378,7 +385,9 @@ namespace GBEmulator
 		//! HDMA transfert taille, mode, debut.
 		unsigned char _HDMAStart = 0;
 		unsigned _joypadCache = 0xFF;
+		GBMode _gbmode = MODE_AUTO;
 
+		bool _isDMGMode() const;
 		void _initState();
 		//! @brief Met à jour les composents liés au CPU.
 		//! @param cycles Nombre de cycles PCU écoulés.

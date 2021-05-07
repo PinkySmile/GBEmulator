@@ -23,7 +23,7 @@ for using the Gameboy™ Emulator, you must compile it from source
 #### -c \<ip:port\>
   Connect to \<ip:port\> for Gameboy™ link cable connection.
 
-## Debug mode
+## Debug _gbmode
 
 When the Gameboy™ Emulator is launched with a ``-d`` argument, a new window open with all the CPU's informations and a gdb-like prompt open in the terminal.
 You can enter some commands in this prompt:

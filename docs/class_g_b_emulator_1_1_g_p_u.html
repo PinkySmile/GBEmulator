@@ -113,7 +113,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaabc1c984f2001240f37cae34ff68e1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_g_b_emulator_1_1_g_p_u.html">GPU</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_g_p_u.html#aaabc1c984f2001240f37cae34ff68e1c">operator=</a> (const <a class="el" href="class_g_b_emulator_1_1_g_p_u.html">GPU</a> &amp;)=delete</td></tr>
 <tr class="separator:aaabc1c984f2001240f37cae34ff68e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cc3998036a716e263615cd0d2d82149"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149">getMode</a> () const</td></tr>
-<tr class="memdesc:a8cc3998036a716e263615cd0d2d82149"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtient le mode actuel le mode peut être H-Blank, V-Blank, Searching OAM-RAM ou Transfering Data to LCD Driver.  <a href="class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149">More...</a><br /></td></tr>
+<tr class="memdesc:a8cc3998036a716e263615cd0d2d82149"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtient le _gbmode actuel le _gbmode peut être H-Blank, V-Blank, Searching OAM-RAM ou Transfering Data to LCD Driver.  <a href="class_g_b_emulator_1_1_g_p_u.html#a8cc3998036a716e263615cd0d2d82149">More...</a><br /></td></tr>
 <tr class="separator:a8cc3998036a716e263615cd0d2d82149"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a105d08c4bd708d99bd1cfed7af70354a"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_b_emulator_1_1_g_p_u.html#a105d08c4bd708d99bd1cfed7af70354a">getCurrentLine</a> () const</td></tr>
 <tr class="memdesc:a105d08c4bd708d99bd1cfed7af70354a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtient la ligne à laquelle le <a class="el" href="class_g_b_emulator_1_1_g_p_u.html" title="Classe représentant le GPU. Cette classe gère l&#39;écriture/lecture de la VRAM et de l&#39;OAM....">GPU</a> écrit sur le LCD.  <a href="class_g_b_emulator_1_1_g_p_u.html#a105d08c4bd708d99bd1cfed7af70354a">More...</a><br /></td></tr>
@@ -540,7 +540,7 @@ Private Attributes</h2></td></tr>
     <tr><td class="paramname">tile</td><td>la tile map </td></tr>
     <tr><td class="paramname">x</td><td>position du pixel sur l'axe des abscisses. </td></tr>
     <tr><td class="paramname">y</td><td>position du pixel sur l'axe des ordonnées. </td></tr>
-    <tr><td class="paramname">signedMode</td><td>mode signé </td></tr>
+    <tr><td class="paramname">signedMode</td><td>_gbmode signé </td></tr>
   </table>
   </dd>
 </dl>
@@ -661,7 +661,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Obtient une tile map </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alt</td><td>mode signé </td></tr>
+    <tr><td class="paramname">alt</td><td>_gbmode signé </td></tr>
   </table>
   </dd>
 </dl>
@@ -820,7 +820,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Obtient le mode actuel le mode peut être H-Blank, V-Blank, Searching OAM-RAM ou Transfering Data to LCD Driver. </p>
+<p>Obtient le _gbmode actuel le _gbmode peut être H-Blank, V-Blank, Searching OAM-RAM ou Transfering Data to LCD Driver. </p>
 <dl class="section return"><dt>Returns</dt><dd>0 pendant H-Blank, 1 pendant V-Blank, 2 pendant Searching OAM-RAM ou 3 pendant Transfering Data to LCD Driver. </dd></dl>
 
 </div>

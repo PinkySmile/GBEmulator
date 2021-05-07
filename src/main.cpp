@@ -59,11 +59,12 @@ Args parseArguments(int argc, char **argv)
 		{"no-display",no_argument,       nullptr, 'b'},
 		{"no-audio",  no_argument,       nullptr, 'a'},
 		{"no-bootrom",no_argument,       nullptr, 'r'},
+		{"mode",      required_argument, nullptr, 'g'},
 		{nullptr,     no_argument,       nullptr, 0}
 	};
 
 	while (true) {
-		int c = getopt_long(argc, argv, "l:c:dnpmbar", long_options, nullptr);
+		int c = getopt_long(argc, argv, "l:c:dnpmbag:r", long_options, nullptr);
 
 		if (c == -1)
 			break;
@@ -71,6 +72,16 @@ Args parseArguments(int argc, char **argv)
 		switch (c) {
 		case 'd':
 			args.debug = true;
+			break;
+		case 'g':
+			if (strcmp(optarg, "auto") == 0)
+				args.mode = MODE_AUTO;
+			else if (strcmp(optarg, "dmg") == 0)
+				args.mode = MODE_DMG;
+			else if (strcmp(optarg, "gbc") == 0)
+				args.mode = MODE_GBC;
+			else
+				throw std::invalid_argument("Invalid mode: valid modes are 'dmg', 'gbc' or 'auto'");
 			break;
 		case 'c':
 			args.connectIp = optarg;
@@ -112,16 +123,21 @@ Args parseArguments(int argc, char **argv)
 	return args;
 }
 
+void printUsage(char *program)
+{
+	std::cout << "Usage: " << program << " rom.gb [-";
+#if !NODEBUGGER
+	std::cout << "d";
+#endif
+	std::cout << "nrmba] [-l <port>] [-c <ip:port>] [-g auto|dmg|gbc]" << std::endl;
+}
+
 int main(int argc, char **argv)
 {
 	Args args;
 
 	if (argc == 1) {
-		std::cout << "Usage: " << argv[0] << " rom.gb [-";
-#if !NODEBUGGER
-		std::cout << "d";
-#endif
-		std::cout << "nrmba] [-l <port>] [-c <ip:port>]" << std::endl;
+		printUsage(argv[0]);
 		return EXIT_SUCCESS;
 	}
 
@@ -129,11 +145,7 @@ int main(int argc, char **argv)
 		args = parseArguments(argc, argv);
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		std::cerr << "Usage: " << argv[0] << " rom.gb [-";
-#if !NODEBUGGER
-		std::cout << "d";
-#endif
-		std::cout << "nrmba] [-l <port>] [-c <ip:port>]" << std::endl;
+		printUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
 
@@ -155,6 +167,7 @@ int main(int argc, char **argv)
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, *components.window, *components.joypad};
 #endif
 
+	cpu.setGBMode(args.mode);
 	cpu.ignoreBootRom(args.noBootRom);
 	cpu.goMaxSpeed(args.maxSpeed);
 	try {
