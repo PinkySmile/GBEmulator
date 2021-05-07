@@ -61,14 +61,24 @@ namespace GBEmulator::Debugger
 	template<typename T>
 	class ValueRegister : public Operation {
 	private:
-		const T &_v;
+		const CPU::Registers *registers;
+		const T *_v;
 		std::string _name;
 
 	public:
-		ValueRegister(const T &reg, const std::string &name) : _v(reg), _name(name) {};
+		ValueRegister(const CPU::Registers &regs, const std::string &name) : registers(&regs), _v(nullptr), _name(name) {};
+		ValueRegister(const T &reg, const std::string &name) : registers(nullptr), _v(&reg), _name(name) {};
 		double getValue(const CPU &) const override
 		{
-			return this->_v;
+			if (this->_v)
+				return *this->_v;
+			if (this->_name == "zf")
+				return this->registers->fz;
+			if (this->_name == "cf")
+				return this->registers->fc;
+			if (this->_name == "nf")
+				return this->registers->fn;
+			return this->registers->fh;
 		}
 
 		std::string tostring() const override

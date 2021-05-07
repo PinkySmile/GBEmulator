@@ -5,6 +5,7 @@
 #include "SquareWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
+#include <cstdio>
 namespace GBEmulator
 {
 	void SquareWaveChannel::_update(unsigned int cycles)
@@ -59,11 +60,9 @@ namespace GBEmulator
 
 		while (this->_lengthCounter > lengthCount) {
 			this->_lengthCounter -= lengthCount;
-			if (this->hasExpired())
-				continue;
 			if (!this->_frequencyRegister.useLength)
 				continue;
-			this->_soundLenPatternDutyRegister.length--;
+			this->_soundLenPatternDutyRegister.length++;
 			this->_expired |= !this->_soundLenPatternDutyRegister.length;
 		}
 	}
@@ -102,7 +101,6 @@ namespace GBEmulator
 		case SQUARE_CHANNEL_SOUND_LENGTH_WAVE_PATTERN_DUTY:
 			this->_soundLenPatternDutyRegister = value;
 			this->_lengthCounter = 0;
-			this->_expired |= this->_soundLenPatternDutyRegister.length == 0 && this->_frequencyRegister.useLength;
 			break;
 		case SQUARE_CHANNEL_VOLUME_ENVELOPE:
 			this->_volumeEnvelopeRegister = value;
@@ -144,11 +142,17 @@ namespace GBEmulator
 	void SquareWaveChannel::_restart()
 	{
 		this->_expired = false;
-		this->_lengthCounter = 0;
 		this->_frequencyCounter = 0;
 		this->_volumeEnvelopeCounter = 0;
 		this->_frequencySweepCounter = 0;
 		this->_sweepFrequencyShadow = this->_frequencyRegister.getFrequency();
 		this->_effectiveVolumeEnvelopeRegister = this->_volumeEnvelopeRegister;
+	}
+
+	void SquareWaveChannel::onPowerOff()
+	{
+		this->_volumeEnvelopeRegister = 0;
+		this->_effectiveVolumeEnvelopeRegister = 0;
+		this->_expired = true;
 	}
 }

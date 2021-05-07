@@ -20,11 +20,9 @@ namespace GBEmulator
 
 		while (this->_lengthCounter >= lengthCount) {
 			this->_lengthCounter -= lengthCount;
-			if (this->hasExpired())
-				continue;
 			if (!this->_frequencyRegister.useLength)
 				continue;
-			this->_length--;
+			this->_length++;
 			this->_expired |= !this->_length;
 		}
 	}
@@ -48,8 +46,9 @@ namespace GBEmulator
 			this->_enabled = value & 0x80;
 			break;
 		case MODULABLE_CHANNEL_SOUND_LENGTH:
+			if (!value)
+				value = 0xFF;
 			this->_length = value;
-			this->_expired |= this->_length == 0 && this->_frequencyRegister.useLength;
 			break;
 		case MODULABLE_CHANNEL_VOLUME:
 			this->_volume = static_cast<OutputLevel>(value >> 5 & 3);
@@ -76,19 +75,18 @@ namespace GBEmulator
 	{
 		switch (relativeAddress) {
 		case MODULABLE_CHANNEL_ON_OFF:
-			return this->_enabled & 0x7F;
-		case MODULABLE_CHANNEL_SOUND_LENGTH:
-			return this->_length;
+			return (this->_enabled << 7) | 0x7F;
 		case MODULABLE_CHANNEL_VOLUME:
 			return this->_volume << 5 | 0x9F;
+		case MODULABLE_CHANNEL_SOUND_LENGTH:
 		case MODULABLE_CHANNEL_FREQUENCY_LO:
 			return 0xFF;
 		case MODULABLE_CHANNEL_FREQUENCY_HI:
 			return this->_frequencyRegister.getHigh();
 		default:
 			if (relativeAddress >= MODULABLE_CHANNEL_WPRAM_START && relativeAddress <= MODULABLE_CHANNEL_WPRAM_END) {
-				if (!this->hasExpired())
-					return (this->_wpram[(this->_current / 2) * 2] << 4 | this->_wpram[(this->_current / 2) * 2 + 1]);
+				//if (!this->hasExpired())
+				//	return (this->_wpram[(this->_current / 2) * 2] << 4 | this->_wpram[(this->_current / 2) * 2 + 1]);
 				return this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2] << 4 | this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2 + 1];
 			}
 			return 0xFF;
@@ -100,5 +98,10 @@ namespace GBEmulator
 		this->_expired = false;
 		this->_current = 0;
 		this->_nextByteCounter = 0;
+	}
+
+	void ModulableWaveChannel::onPowerOff()
+	{
+
 	}
 }

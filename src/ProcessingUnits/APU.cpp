@@ -97,6 +97,9 @@ namespace GBEmulator
 			this->_terminalSelect = value;
 			break;
 		case APU_SOUND_ON_OFF:
+			if (this->_enabled && (value & 0x80) == 0)
+				for (auto &channel : this->_channels)
+					channel->onPowerOff();
 			this->_enabled = (value & 0x80) != 0;
 			break;
 		default:

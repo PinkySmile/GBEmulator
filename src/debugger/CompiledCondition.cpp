@@ -19,7 +19,7 @@ namespace GBEmulator::Debugger
 			return cpu.read(a);
 		}},
 		{"!", [](const CPU &   , double a){
-			return !a;
+			return a == 0;
 		}},
 		{":", [](const CPU &   , double a){
 			return static_cast<unsigned>(a);
@@ -223,13 +223,13 @@ namespace GBEmulator::Debugger
 		else if (name == "l")
 			return std::make_shared<ValueRegister<unsigned char>>(regs.l, name);
 		else if (name == "zf")
-			return std::make_shared<ValueRegister<bool>>(regs.fz, name);
+			return std::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "cf")
-			return std::make_shared<ValueRegister<bool>>(regs.fc, name);
+			return std::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "nf")
-			return std::make_shared<ValueRegister<bool>>(regs.fn, name);
-		else if (name == "hcf")
-			return std::make_shared<ValueRegister<bool>>(regs.fh, name);
+			return std::make_shared<ValueRegister<bool>>(regs, name);
+		else if (name == "hcf" || name == "hf")
+			return std::make_shared<ValueRegister<bool>>(regs, "hf");
 		else if (name == "f")
 			return std::make_shared<ValueRegister<unsigned char>>(regs.f, name);
 		else if (name == "af")

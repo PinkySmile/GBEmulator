@@ -17,6 +17,7 @@ namespace GBEmulator
 		virtual unsigned char read(unsigned int relativeAddress) = 0;
 		virtual std::vector<short> update(unsigned int cycles) = 0;
 		virtual bool hasExpired() const = 0;
+		virtual void onPowerOff() = 0;
 	};
 }
 

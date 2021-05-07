@@ -48,11 +48,9 @@ namespace GBEmulator
 
 		while (this->_lengthCounter >= lengthCount) {
 			this->_lengthCounter -= lengthCount;
-			if (this->hasExpired())
-				continue;
 			if (!this->_useLength)
 				continue;
-			this->_length--;
+			this->_length++;
 			this->_expired |= !this->_length;
 		}
 	}
@@ -70,8 +68,9 @@ namespace GBEmulator
 	{
 		switch (relativeAddress) {
 		case NOISE_CHANNEL_SOUND_LENGTH:
+			if (!value)
+				value = 0xFF;
 			this->_length = value;
-			this->_expired |= this->_length == 0 && this->_useLength;
 			break;
 		case NOISE_CHANNEL_VOLUME:
 			this->_volumeEnvelopeRegister = value;
@@ -98,14 +97,13 @@ namespace GBEmulator
 	unsigned char NoiseWaveChannel::read(unsigned int relativeAddress)
 	{
 		switch (relativeAddress) {
-		case NOISE_CHANNEL_SOUND_LENGTH:
-			return this->_length | 0xC0;
 		case NOISE_CHANNEL_VOLUME:
 			return this->_volumeEnvelopeRegister;
 		case NOISE_CHANNEL_POLYNOMIAL_COUNTER:
 			return this->_polynomialCounter;
 		case NOISE_CHANNEL_COUNTER_CONSEC_INITIAL:
-			return this->_initial << 7 | this->_useLength << 6 | 0x3F;
+			return this->_useLength << 6 | 0xBF;
+		case NOISE_CHANNEL_SOUND_LENGTH:
 		default:
 			return 0xFF;
 		}
@@ -117,5 +115,10 @@ namespace GBEmulator
 		this->_expired = false;
 		this->_volumeEnvelopeCounter = 0;
 		this->_effectiveVolumeEnvelopeRegister = this->_volumeEnvelopeRegister;
+	}
+
+	void NoiseWaveChannel::onPowerOff()
+	{
+
 	}
 }
