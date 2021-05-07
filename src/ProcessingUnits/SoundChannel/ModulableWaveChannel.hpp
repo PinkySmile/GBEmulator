@@ -61,13 +61,13 @@ namespace GBEmulator
 		OutputLevel _volume = OUTPUT_MUTED;
 		FrequencyRegister _frequencyRegister = 0;
 		unsigned char _current = 0;
-		float _nextByteCounter = 0;
+		double _nextByteCounter = 0;
+		double _lengthCounter = 0;
 
 		void _update(unsigned cycles) override;
 		short _getSoundData() const override;
 		void _restart();
 	public:
-		bool hasExpired() const override;
 		void write(unsigned int relativeAddress, unsigned char value) override;
 		unsigned char read(unsigned int relativeAddress) override;
 	};

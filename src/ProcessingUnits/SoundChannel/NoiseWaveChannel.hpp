@@ -59,10 +59,10 @@ namespace GBEmulator
 		VolumeEnvelopeRegister _effectiveVolumeEnvelopeRegister = 0;
 		PolynomialCounterRegister _polynomialCounter = 0;
 		unsigned short _lfsr : 15 = 0x7FFF;
-		unsigned char _length : 6 = 0;
-		bool _initial = false;
-		bool _useLength = false;
-		bool _first = true;
+		unsigned char _length : 7 = 0;
+		bool _initial : 1 = false;
+		bool _useLength : 1 = false;
+		double _lengthCounter = 0;
 
 		double _lfsrCounter = 0;
 		double _volumeEnvelopeCounter = 0;
@@ -72,7 +72,6 @@ namespace GBEmulator
 		short _getSoundData() const override;
 
 	public:
-		bool hasExpired() const override;
 		void write(unsigned int relativeAddress, unsigned char value) override;
 		unsigned char read(unsigned int relativeAddress) override;
 	};

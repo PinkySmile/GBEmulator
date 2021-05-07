@@ -12,8 +12,9 @@ namespace GBEmulator
 		double frequencySweepCount = this->_sweepRegister.sweepTime == 0 ? 0 : Timing::getCyclesPerSecondsFromFrequency(128. / this->_sweepRegister.sweepTime);
 		double frequencyCount = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
 		double volumeCount = this->_effectiveVolumeEnvelopeRegister.numberOfSweeps * Timing::getCyclesPerSecondsFromFrequency(64);
+		double lengthCount = Timing::getCyclesPerSecondsFromFrequency(256);
 
-		//TODO: Use length in NR11 / NR21
+		this->_lengthCounter += cycles;
 		this->_frequencyCounter += cycles;
 		this->_volumeEnvelopeCounter += cycles;
 		this->_frequencySweepCounter += cycles;
@@ -21,11 +22,14 @@ namespace GBEmulator
 		while (this->_frequencyCounter >= frequencyCount)
 			this->_frequencyCounter -= frequencyCount;
 
-		while (
-			this->_effectiveVolumeEnvelopeRegister.numberOfSweeps &&
-			this->_volumeEnvelopeCounter >= volumeCount
-		) {
+		while (this->_volumeEnvelopeCounter >= volumeCount) {
 			this->_volumeEnvelopeCounter -= volumeCount;
+			if (volumeCount == 0) {
+				this->_volumeEnvelopeCounter = 0;
+				break;
+			}
+			if (!this->_effectiveVolumeEnvelopeRegister.numberOfSweeps)
+				continue;
 			if (this->_effectiveVolumeEnvelopeRegister.increases) {
 				if (this->_effectiveVolumeEnvelopeRegister.initialVolume != 15)
 					this->_effectiveVolumeEnvelopeRegister.initialVolume++;
@@ -35,30 +39,39 @@ namespace GBEmulator
 			}
 		}
 
-		while (
-			this->_sweepRegister.sweepTime &&
-			this->_frequencySweepCounter >= frequencySweepCount
-		) {
-			short old = this->_frequencyRegister.getFrequency();
-			auto change = old / (1 << this->_sweepRegister.sweepShifts);
-
+		while (this->_frequencySweepCounter >= frequencySweepCount) {
 			this->_frequencySweepCounter -= frequencySweepCount;
+			if (frequencySweepCount == 0) {
+				this->_frequencySweepCounter = 0;
+				break;
+			}
+			if (!this->_sweepRegister.sweepTime)
+				continue;
 			if (this->_sweepRegister.substract)
-				old -= change;
+				this->_sweepFrequencyShadow -= this->_sweepFrequencyShadow >> this->_sweepRegister.sweepShifts;
 			else
-				old += change;
-			if (old < 0)
-				old = 0;
-			if (old > 0x7FF)
-				old = 0x7FF;
-			this->_frequencyRegister.setFrequency(old);
+				this->_sweepFrequencyShadow += this->_sweepFrequencyShadow >> this->_sweepRegister.sweepShifts;
+			if (this->_sweepFrequencyShadow > 0x7FF)
+				this->_expired = true;
+			else
+				this->_frequencyRegister.setFrequency(this->_sweepFrequencyShadow);
+		}
+
+		while (this->_lengthCounter > lengthCount) {
+			this->_lengthCounter -= lengthCount;
+			if (this->hasExpired())
+				continue;
+			if (!this->_frequencyRegister.useLength)
+				continue;
+			this->_soundLenPatternDutyRegister.length--;
+			this->_expired |= !this->_soundLenPatternDutyRegister.length;
 		}
 	}
 
 	short SquareWaveChannel::_getSoundData() const
 	{
 		auto v = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
-		short realValue = 8160 * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
+		short realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		switch (this->_soundLenPatternDutyRegister.patternDuty) {
 		case DUTY_12_5_PERCENT:
@@ -76,15 +89,8 @@ namespace GBEmulator
 		}
 
 		if (this->_frequencyCounter > v)
-			return -realValue;
-		return realValue;
-	}
-
-	bool SquareWaveChannel::hasExpired() const
-	{
-		if (this->_first)
-			return true;
-		return this->_frequencyRegister.useLength && this->_soundLenPatternDutyRegister.length == 0;
+			return -SOUND_VALUE;
+		return realValue - SOUND_VALUE;
 	}
 
 	void SquareWaveChannel::write(unsigned int relativeAddress, unsigned char value)
@@ -92,21 +98,23 @@ namespace GBEmulator
 		switch (relativeAddress) {
 		case SQUARE_CHANNEL_SWEEP_REGISTER:
 			this->_sweepRegister = value;
-			this->_frequencySweepCounter = 0;
 			break;
 		case SQUARE_CHANNEL_SOUND_LENGTH_WAVE_PATTERN_DUTY:
 			this->_soundLenPatternDutyRegister = value;
+			this->_lengthCounter = 0;
+			this->_expired |= this->_soundLenPatternDutyRegister.length == 0 && this->_frequencyRegister.useLength;
 			break;
 		case SQUARE_CHANNEL_VOLUME_ENVELOPE:
 			this->_volumeEnvelopeRegister = value;
 			this->_effectiveVolumeEnvelopeRegister = value;
 			this->_volumeEnvelopeCounter = 0;
+			if (this->_volumeEnvelopeRegister.initialVolume == 0)
+				this->_expired = true;
 			break;
 		case SQUARE_CHANNEL_FREQUENCY_LO:
 			this->_frequencyRegister.loFrequency = value;
 			break;
 		case SQUARE_CHANNEL_FREQUENCY_HI:
-			this->_first = false;
 			this->_frequencyRegister.setHigh(value);
 			if (this->_frequencyRegister.initial)
 				this->_restart();
@@ -135,9 +143,12 @@ namespace GBEmulator
 
 	void SquareWaveChannel::_restart()
 	{
+		this->_expired = false;
+		this->_lengthCounter = 0;
 		this->_frequencyCounter = 0;
 		this->_volumeEnvelopeCounter = 0;
 		this->_frequencySweepCounter = 0;
+		this->_sweepFrequencyShadow = this->_frequencyRegister.getFrequency();
 		this->_effectiveVolumeEnvelopeRegister = this->_volumeEnvelopeRegister;
 	}
 }

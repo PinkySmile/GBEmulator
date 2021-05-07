@@ -97,13 +97,14 @@ namespace GBEmulator
 		VolumeEnvelopeRegister      _effectiveVolumeEnvelopeRegister = 0;
 		FrequencyRegister           _frequencyRegister = 0;
 
+		unsigned short _sweepFrequencyShadow = 0;
+
+		double _lengthCounter = 0;
 		double _frequencyCounter = 0;
 		double _volumeEnvelopeCounter = 0;
 		double _frequencySweepCounter = 0;
-		bool _first = true;
 
 	public:
-		bool hasExpired() const override;
 		void write(unsigned int relativeAddress, unsigned char value) override;
 		unsigned char read(unsigned int relativeAddress) override;
 	};

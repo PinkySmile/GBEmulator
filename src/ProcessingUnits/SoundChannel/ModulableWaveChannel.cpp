@@ -2,43 +2,43 @@
 // Created by andgel on 05/05/2021
 //
 
-#include <cstdio>
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
 namespace GBEmulator
 {
-
 	void ModulableWaveChannel::_update(unsigned int cycles)
 	{
 		auto required = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency() * 0x10);
+		double lengthCount = Timing::getCyclesPerSecondsFromFrequency(256);
 
-		//printf("%f (%i -> %f)\n", required, this->_frequencyRegister.getFrequency(), this->_frequencyRegister.getActualFrequency());
 		this->_nextByteCounter += cycles;
 		while (this->_nextByteCounter >= required) {
 			this->_nextByteCounter -= required;
 			this->_current = (this->_current + 1) % 0x20;
+		}
+
+		while (this->_lengthCounter >= lengthCount) {
+			this->_lengthCounter -= lengthCount;
+			if (this->hasExpired())
+				continue;
+			if (!this->_frequencyRegister.useLength)
+				continue;
+			this->_length--;
+			this->_expired |= !this->_length;
 		}
 	}
 
 	short ModulableWaveChannel::_getSoundData() const
 	{
 		if (this->_volume == 0)
-			return -8 << 10;
+			return -SOUND_VALUE;
 
 		short realVal = this->_wpram[this->_current];
 
 		realVal >>= (this->_volume - 1);
-		realVal -= 8;
 		realVal <<= 10;
-		return realVal;
-	}
-
-	bool ModulableWaveChannel::hasExpired() const
-	{
-		if (!this->_enabled)
-			return true;
-		return this->_frequencyRegister.useLength && this->_length == 0;
+		return realVal - SOUND_VALUE;
 	}
 
 	void ModulableWaveChannel::write(unsigned int relativeAddress, unsigned char value)
@@ -49,6 +49,7 @@ namespace GBEmulator
 			break;
 		case MODULABLE_CHANNEL_SOUND_LENGTH:
 			this->_length = value;
+			this->_expired |= this->_length == 0 && this->_frequencyRegister.useLength;
 			break;
 		case MODULABLE_CHANNEL_VOLUME:
 			this->_volume = static_cast<OutputLevel>(value >> 5 & 3);
@@ -87,7 +88,7 @@ namespace GBEmulator
 		default:
 			if (relativeAddress >= MODULABLE_CHANNEL_WPRAM_START && relativeAddress <= MODULABLE_CHANNEL_WPRAM_END) {
 				if (!this->hasExpired())
-					return (this->_current << 3) | (this->_current >> 1);
+					return (this->_wpram[(this->_current / 2) * 2] << 4 | this->_wpram[(this->_current / 2) * 2 + 1]);
 				return this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2] << 4 | this->_wpram[(relativeAddress - MODULABLE_CHANNEL_WPRAM_START) * 2 + 1];
 			}
 			return 0xFF;
@@ -96,6 +97,7 @@ namespace GBEmulator
 
 	void ModulableWaveChannel::_restart()
 	{
+		this->_expired = false;
 		this->_current = 0;
 		this->_nextByteCounter = 0;
 	}
