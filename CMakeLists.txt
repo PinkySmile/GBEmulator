@@ -10,6 +10,11 @@ if (NOT MSVC)
 	elseif (WIN32)
 		add_link_options(-mwindows)
 	endif()
+	if (NO_EXCEPTION)
+		message("Exceptions disabled")
+		set(NODEBUGGER 1)
+		add_compile_options(-fno-exceptions)
+	endif ()
 endif()
 
 if (NOT NODEBUGGER)
@@ -42,12 +47,14 @@ if (SFML_FOUND)
 		src/LCD/LCDSFML.cpp
 		src/LCD/LCDSFML.hpp
 	)
-	set(
-		NETWORK_IMPL
-		src/CableLink/BgbProtocolNetworkInterface.cpp
-		src/CableLink/BgbProtocolNetworkInterface.hpp
-		src/Network/BgbHandler.cpp
-	)
+	if (NOT NO_EXCEPTION)
+		set(
+			NETWORK_IMPL
+			src/CableLink/BgbProtocolNetworkInterface.cpp
+			src/CableLink/BgbProtocolNetworkInterface.hpp
+			src/Network/BgbHandler.cpp
+		)
+	endif ()
 	set(SFML_IMPL 1)
 	set(
 		OTHER_LIBRARIES

@@ -385,7 +385,11 @@ namespace GBEmulator::Instructions
 		unsigned char arg = cpu.read(cpu.getRegisters().pc);
 
 		if (arg)
+#ifdef __cpp_exceptions
 			throw InvalidSTOPException("Malformed STOP instruction", cpu.getRegisters().pc - 1, arg);
+#else
+			return ERRORED_DURATION;
+#endif
 		cpu.fetchArgument();
 		cpu.stop();
 		return NOP_CYCLE_DURATION;

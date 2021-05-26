@@ -30,6 +30,7 @@ namespace GBEmulator::Memory
 
 	void Cartridge::_checkROM()
 	{
+#ifdef __cpp_exceptions
 		try {
 			if (Cartridge::_sizeBytes.at(this->_rom.getSize()) != this->_rom.rawRead(0x148))
 				throw InvalidRomException(
@@ -42,10 +43,18 @@ namespace GBEmulator::Memory
 		} catch (std::out_of_range &) {
 			throw InvalidRomSizeException("The ROM size isn't valid");
 		}
+#endif
 	}
 
 	size_t Cartridge::_getBestSizeForFile(const std::string &path)
 	{
+#ifndef __cpp_exceptions
+		struct stat stats;
+
+		if (stat(path.c_str(), &stats) == -1)
+			return 0;
+		return stats.st_size;
+#else
 		size_t best = 0x400000;
 		struct stat stats;
 
@@ -70,6 +79,7 @@ namespace GBEmulator::Memory
 				best = size.first;
 		}
 		return best;
+#endif
 	}
 
 	void Cartridge::resetROM()
@@ -79,15 +89,25 @@ namespace GBEmulator::Memory
 		this->_rom.setBankSize(1);
 	}
 
-	void Cartridge::loadROM(const std::string &rom)
+	bool Cartridge::loadROM(const std::string &rom)
 	{
+#ifdef __cpp_exceptions
 		try {
+#endif
 			size_t size = this->_getBestSizeForFile(rom);
+
+			if (size == 0)
+				return false;
+
 			FILE *stream = fopen(rom.c_str(), "rb");
 			unsigned char *mem;
 
 			if (!stream)
+#ifdef __cpp_exceptions
 				throw InvalidRomException("Cannot open file " + rom + ": " + strerror(errno));
+#else
+				return false;
+#endif
 
 			mem = new unsigned char[size];
 			std::memset(mem, 0, size);
@@ -97,7 +117,7 @@ namespace GBEmulator::Memory
 			this->_rom.setBank(1);
 			this->_rom.setBankSize(ROM_BANK_SIZE);
 			this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
-			//this->_checkROM();
+			this->_checkROM();
 
 			size = (this->_rom.rawRead(0x149) != 0) * 2 * std::pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
 			mem = new unsigned char[size];
@@ -116,7 +136,8 @@ namespace GBEmulator::Memory
 				fread(mem, 1, size, stream);
 				fclose(stream);
 			}
-
+			return true;
+#ifdef __cpp_exceptions
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
 			throw;
@@ -124,17 +145,23 @@ namespace GBEmulator::Memory
 			this->resetROM();
 			throw;
 		}
+#endif
 	}
 
-	void Cartridge::saveRAM()
+	bool Cartridge::saveRAM()
 	{
 		FILE *stream = fopen(this->_savePath.c_str(), "wb");
 
 		if (!stream)
+#ifdef __cpp_exceptions
 			throw SavingFailedException("Cannot open " + this->_savePath + ": " + strerror(errno));
+#else
+			return false;
+#endif
 
 		fwrite(this->_ramMem, 1, this->_ram.getSize(), stream);
 		fclose(stream);
+		return true;
 	}
 
 	unsigned char Cartridge::read(unsigned short address) const
@@ -143,6 +170,10 @@ namespace GBEmulator::Memory
 			return this->_rom.rawRead(address);
 
 		switch (this->_type) {
+		default:
+#ifdef __cpp_exceptions
+			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
+#endif
 		case ROM_ONLY:
 		case ROM_RAM:
 		case ROM_RAM_BATTERY:
@@ -172,8 +203,6 @@ namespace GBEmulator::Memory
 			else if (address < 0x8000)
 				return this->_rom.read(address - 0x4000);
 			return 0xFF;
-		default:
-			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
 		}
 	}
 
@@ -202,6 +231,10 @@ namespace GBEmulator::Memory
 				return this->_ram.write(address - 0xA000, value);
 			break;
 
+		default:
+#ifdef __cpp_exceptions
+			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
+#endif
 		case MBC1:
 		case MBC1_RAM:
 		case MBC1_RAM_BATTERY:
@@ -231,9 +264,6 @@ namespace GBEmulator::Memory
 		case HuC1_RAM_BATTERY:
 		case HuC3:
 			return this->_handleHuCWrite(address, value);
-
-		default:
-			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
 		}
 	}
 

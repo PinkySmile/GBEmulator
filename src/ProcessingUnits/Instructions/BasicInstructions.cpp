@@ -994,7 +994,11 @@ namespace GBEmulator::Instructions {
 			return CALL(cpu, reg, 0x38);
 
 		default:
+#ifdef __cpp_exceptions
 			throw GBEmulator::CPU::InvalidOpcodeException(opcode, cpu.getDecPc());
+#else
+			return ERRORED_DURATION;
+#endif
 		}
 	}
 

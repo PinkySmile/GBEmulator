@@ -93,7 +93,7 @@ namespace GBEmulator
 
 	Network::CableInterface *createCableInterfaceImpl(Components &otherComponents, const Args &args)
 	{
-#if SFML_IMPL
+#if SFML_IMPL && defined(__cpp_exceptions)
 		auto network = new Network::BGBProtocolCableInterface();
 
 		if (!args.connectIp.empty() && !args.listenPort.empty())

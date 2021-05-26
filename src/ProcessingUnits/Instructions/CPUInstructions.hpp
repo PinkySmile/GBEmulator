@@ -13,6 +13,7 @@
 #include <functional>
 #include "../CPU.hpp"
 
+#define ERRORED_DURATION 255
 #define LD_CYCLE_DURATION 4
 #define NOP_CYCLE_DURATION 4
 #define JUMP_CYCLE_DURATION 4

@@ -344,6 +344,9 @@ namespace GBEmulator
 		else
 			cycles = 16;
 
+		if (cycles == -1)
+			return -1;
+
 		this->_checkInterrupts();
 		return cycles;
 	}
@@ -375,6 +378,9 @@ namespace GBEmulator
 			}
 
 			int cycles = this->_executeNextAction();
+
+			if (cycles == -1)
+				return -2;
 
 			total += cycles;
 			if (cycles) {
@@ -722,6 +728,9 @@ namespace GBEmulator
 			Timing::Clock clock;
 
 			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
+
+			if (cycles == ERRORED_DURATION)
+				return -1;
 
 			auto time = clock.getElapsedTime().asSeconds();
 			auto &elem = this->_profiler[Instructions::_instructionsString2[opcode](*this, old)];

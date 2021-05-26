@@ -43,9 +43,8 @@ std::string getLastExceptionName()
 #endif
 }
 
-Args parseArguments(int argc, char **argv)
+bool parseArguments(int argc, char **argv, Args &args)
 {
-	Args args;
 #ifdef __GNUG__
 	struct option long_options[] = {
 	#if !NODEBUGGER
@@ -81,7 +80,11 @@ Args parseArguments(int argc, char **argv)
 			else if (strcmp(optarg, "gbc") == 0)
 				args.mode = MODE_GBC;
 			else
+			#ifdef __cpp_exceptions
 				throw std::invalid_argument("Invalid mode: valid modes are 'dmg', 'gbc' or 'auto'");
+			#else
+				return false;
+			#endif
 			break;
 		case 'c':
 			args.connectIp = optarg;
@@ -108,11 +111,19 @@ Args parseArguments(int argc, char **argv)
 			args.maxSpeed = true;
 			break;
 		default:
+		#ifdef __cpp_exceptions
 			throw std::invalid_argument("Invalid argument");
+		#else
+			return false;
+		#endif
 		}
 	}
 	if (optind != argc - 1)
+	#ifdef __cpp_exceptions
 		throw std::invalid_argument("Too many or no ROM given");
+	#else
+		return false;
+	#endif
 	args.fileName = argv[optind];
 #else
 	//TODO: Redo a proper getopt implem for MSVC
@@ -120,7 +131,7 @@ Args parseArguments(int argc, char **argv)
 		throw std::invalid_argument("Too many or no ROM given");
 	args.fileName = argv[1];
 #endif
-	return args;
+	return true;
 }
 
 void printUsage(char *program)
@@ -141,13 +152,21 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
+#ifdef __cpp_exceptions
 	try {
-		args = parseArguments(argc, argv);
+		parseArguments(argc, argv, args);
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		printUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
+#else
+	if (!parseArguments(argc, argv, args)) {
+		std::cerr << "Argument parsing failed" << std::endl;
+		printUsage(argv[0]);
+		return EXIT_FAILURE;
+	}
+#endif
 
 	srand(time(nullptr));
 
@@ -170,14 +189,19 @@ int main(int argc, char **argv)
 	cpu.setGBMode(args.mode);
 	cpu.ignoreBootRom(args.noBootRom);
 	cpu.goMaxSpeed(args.maxSpeed);
+#ifdef __cpp_exceptions
 	try {
+#endif
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
-		cpu.init();
+
+#ifdef __cpp_exceptions
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
+#endif
 
+	cpu.init();
 #if !NODEBUGGER
 	if (args.debug) {
 		int result = debugger.startDebugSession();
@@ -195,19 +219,29 @@ int main(int argc, char **argv)
 			bool crashed = false;
 
 			while (!end) {
-				if (!crashed)
+				if (!crashed) {
+				#ifdef __cpp_exceptions
 					try {
 						cpu.update();
-					} catch (std::exception &e) {
+					} catch (std::exception &e)
+				#else
+					if (cpu.update() == -2)
+				#endif
+					{
 						crashed = true;
-#ifdef _WIN32
-						MessageBox(nullptr, e.what(), getLastExceptionName().c_str(), MB_ICONERROR);
-#else
-						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << e.what() << std::endl;
-#endif
+					#ifdef __cpp_exceptions
+						const char *errorStr = e.what();
+					#else
+						const char *errorStr = "Updating CPU failed";
+					#endif
+					#ifdef _WIN32
+						MessageBox(nullptr, errorStr, getLastExceptionName().c_str(), MB_ICONERROR);
+					#else
+						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << errorStr << std::endl;
+					#endif
 					}
-				else
-					crashed = cpu.update(0) >= 0;
+				} else
+					crashed = cpu.update(0) != -1;
 			}
 		}
 	};

@@ -157,9 +157,9 @@ namespace GBEmulator::Memory
 		void resetROM();
 		//! @brief Charge une ROM.
 		//! @param rom Chemin d'accès vers le fichier de ROM.
-		void loadROM(const std::string &rom);
+		bool loadROM(const std::string &rom);
 		//! @brief Sauvegarde la RAM dans un fichier.
-		void saveRAM();
+		bool saveRAM();
 		//! Écrit la valeur à l'adresse donnée dand la cartouche
 		//! @param address Adresse à laquelle écrire.
 		//! @param value La valeur à écrire.

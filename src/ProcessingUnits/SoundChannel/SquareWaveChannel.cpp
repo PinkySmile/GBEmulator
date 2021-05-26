@@ -74,16 +74,16 @@ namespace GBEmulator
 
 		switch (this->_soundLenPatternDutyRegister.patternDuty) {
 		case DUTY_12_5_PERCENT:
-			v /= 100 / 12.5;
+			v *= 12.5 / 100;
 			break;
 		case DUTY_25_PERCENT:
-			v /= 4;
+			v *= 25.0 / 100;
 			break;
 		case DUTY_50_PERCENT:
-			v /= 2;
+			v *= 50.0 / 100;
 			break;
 		case DUTY_75_PERCENT:
-			v /= 4 / 3.;
+			v *= 75.0 / 100;
 			break;
 		}
 
