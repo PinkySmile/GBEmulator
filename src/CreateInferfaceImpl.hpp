@@ -17,9 +17,9 @@ namespace GBEmulator
 {
 	struct Args
 	{
-		std::string fileName;
-		std::string listenPort;
-		std::string connectIp;
+		standard::string fileName;
+		standard::string listenPort;
+		standard::string connectIp;
 		bool debug = false;
 		bool noDisplay = false;
 		bool maxSpeed = false;
@@ -31,10 +31,10 @@ namespace GBEmulator
 	};
 
 	struct Components {
-		std::unique_ptr<GBEmulator::Network::CableInterface> network;
-		std::unique_ptr<GBEmulator::ISound> sound;
-		std::unique_ptr<GBEmulator::Graphics::ILCD> window;
-		std::unique_ptr<GBEmulator::Input::JoypadEmulator> joypad;
+		standard::unique_ptr<GBEmulator::Network::CableInterface> network;
+		standard::unique_ptr<GBEmulator::ISound> sound;
+		standard::unique_ptr<GBEmulator::Graphics::ILCD> window;
+		standard::unique_ptr<GBEmulator::Input::JoypadEmulator> joypad;
 	};
 
 	Components buildComponents(const Args &args);

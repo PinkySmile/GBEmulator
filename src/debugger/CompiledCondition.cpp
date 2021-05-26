@@ -8,7 +8,7 @@
 
 namespace GBEmulator::Debugger
 {
-	const std::map<std::string, std::function<double(const CPU &, double)>> _unFcts{
+	const standard::map<standard::string, standard::function<double(const CPU &, double)>> _unFcts{
 		{"~", [](const CPU &   , double a){
 			return ~static_cast<unsigned>(a);
 		}},
@@ -25,7 +25,7 @@ namespace GBEmulator::Debugger
 			return static_cast<unsigned>(a);
 		}}
 	};
-	const std::map<std::string, std::function<double(double, double)>> _binFcts{
+	const standard::map<standard::string, standard::function<double(double, double)>> _binFcts{
 		{"+", [](double a, double b){
 			return a + b;
 		}},
@@ -33,13 +33,13 @@ namespace GBEmulator::Debugger
 			return a - b;
 		}},
 		{"**", [](double a, double b){
-			return std::pow(a, b);
+			return standard::pow(a, b);
 		}},
 		{"/", [](double a, double b){
 			return a / b;
 		}},
 		{"%", [](double a, double b){
-			return std::fmod(a, b);
+			return standard::fmod(a, b);
 		}},
 		{"&&", [](double a, double b){
 			return static_cast<unsigned>(a) && static_cast<unsigned>(b);
@@ -81,7 +81,7 @@ namespace GBEmulator::Debugger
 			return a >= b;
 		}}
 	};
-	const std::vector<std::string> _binOps{
+	const standard::vector<standard::string> _binOps{
 		"&",
 		"|",
 		"&&",
@@ -102,9 +102,9 @@ namespace GBEmulator::Debugger
 	};
 
 	BinaryOperation::BinaryOperation(
-		const std::shared_ptr<Operation> &operand1,
-		const std::shared_ptr<Operation> &operand2,
-		const std::string &operato
+		const standard::shared_ptr<Operation> &operand1,
+		const standard::shared_ptr<Operation> &operand2,
+		const standard::string &operato
 	) :
 		_operand1(operand1),
 		_operand2(operand2),
@@ -117,14 +117,14 @@ namespace GBEmulator::Debugger
 		return _binFcts.at(this->_operator)(this->_operand1->getValue(cpu), this->_operand2->getValue(cpu));
 	}
 
-	std::string BinaryOperation::tostring() const
+	standard::string BinaryOperation::tostring() const
 	{
 		return "(" + this->_operand1->tostring() + ") " + this->_operator + " (" + this->_operand2->tostring() + ")";
 	}
 
 	UnaryOperation::UnaryOperation(
-		const std::shared_ptr<Operation> &operand,
-		const std::string &operato
+		const standard::shared_ptr<Operation> &operand,
+		const standard::string &operato
 	) :
 		_operand(operand),
 		_operator(operato)
@@ -136,7 +136,7 @@ namespace GBEmulator::Debugger
 		return _unFcts.at(this->_operator)(cpu, this->_operand->getValue(cpu));
 	}
 
-	std::string UnaryOperation::tostring() const
+	standard::string UnaryOperation::tostring() const
 	{
 		return this->_operator + "(" + this->_operand->tostring() + ")";
 	}
@@ -151,24 +151,24 @@ namespace GBEmulator::Debugger
 		return this->_v;
 	}
 
-	std::string Value::tostring() const
+	standard::string Value::tostring() const
 	{
-		std::stringstream s;
+		standard::stringstream s;
 
 		s << this->_v;
 		return s.str();
 	}
 
-	static void deleteSpaces(std::string &str)
+	static void deleteSpaces(standard::string &str)
 	{
 		size_t start = 0;
 
-		while (start < str.size() && std::isspace(str[start]))
+		while (start < str.size() && standard::isspace(str[start]))
 			start++;
 		str.erase(0, start);
 	}
 
-	static std::shared_ptr<Value> getNumber(std::string &str)
+	static standard::shared_ptr<Value> getNumber(standard::string &str)
 	{
 		int base = 10;
 		size_t index;
@@ -191,73 +191,73 @@ namespace GBEmulator::Debugger
 		}
 
 		try {
-			auto val = std::stol(str, &index, base);
+			auto val = standard::stol(str, &index, base);
 
 			str.erase(0, index);
-			return std::make_shared<Value>(val);
+			return standard::make_shared<Value>(val);
 		} catch (...) {
-			throw std::invalid_argument("Invalid number literal");
+			throw standard::invalid_argument("Invalid number literal");
 		}
 	}
 
-	static std::shared_ptr<Operation> getRegister(const CPU::Registers &regs, std::string &str)
+	static standard::shared_ptr<Operation> getRegister(const CPU::Registers &regs, standard::string &str)
 	{
-		std::string name;
+		standard::string name;
 
-		while (std::isalpha(str[0])) {
+		while (standard::isalpha(str[0])) {
 			name += str[0];
 			str.erase(0, 1);
 		}
 		if (name == "a")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.a, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.a, name);
 		else if (name == "b")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.b, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.b, name);
 		else if (name == "c")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.c, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.c, name);
 		else if (name == "d")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.d, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.d, name);
 		else if (name == "e")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.e, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.e, name);
 		else if (name == "h")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.h, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.h, name);
 		else if (name == "l")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.l, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.l, name);
 		else if (name == "zf")
-			return std::make_shared<ValueRegister<bool>>(regs, name);
+			return standard::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "cf")
-			return std::make_shared<ValueRegister<bool>>(regs, name);
+			return standard::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "nf")
-			return std::make_shared<ValueRegister<bool>>(regs, name);
+			return standard::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "hcf" || name == "hf")
-			return std::make_shared<ValueRegister<bool>>(regs, "hf");
+			return standard::make_shared<ValueRegister<bool>>(regs, "hf");
 		else if (name == "f")
-			return std::make_shared<ValueRegister<unsigned char>>(regs.f, name);
+			return standard::make_shared<ValueRegister<unsigned char>>(regs.f, name);
 		else if (name == "af")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.af, name);
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.af, name);
 		else if (name == "bc")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.bc, name);
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.bc, name);
 		else if (name == "de")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.de, name);
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.de, name);
 		else if (name == "hl")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.hl, name);
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.hl, name);
 		else if (name == "pc")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.pc, name);
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.pc, name);
 		else if (name == "sp")
-			return std::make_shared<ValueRegister<unsigned short>>(regs.sp, name);
-		throw std::invalid_argument(name + " is not a valid register name");
+			return standard::make_shared<ValueRegister<unsigned short>>(regs.sp, name);
+		throw standard::invalid_argument(name + " is not a valid register name");
 	}
 
-	static std::shared_ptr<Operation> getVal(const CPU::Registers &regs, std::string &str)
+	static standard::shared_ptr<Operation> getVal(const CPU::Registers &regs, standard::string &str)
 	{
 		deleteSpaces(str);
-		if (std::isalpha(str[0]))
+		if (standard::isalpha(str[0]))
 			return getRegister(regs, str);
 		return getNumber(str);
 	}
 
-	static std::string getOperator(std::string &str, unsigned operatorPriority)
+	static standard::string getOperator(standard::string &str, unsigned operatorPriority)
 	{
-		std::string check = _binOps[operatorPriority];
+		standard::string check = _binOps[operatorPriority];
 
 		if (str.substr(0, check.size()) == check) {
 			str.erase(0, check.size());
@@ -270,14 +270,14 @@ namespace GBEmulator::Debugger
 		return "";
 	}
 
-	static std::shared_ptr<Operation> getValue(const CPU::Registers &regs, const CPU &cpu, std::string &str);
-	static std::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, std::string &str, unsigned operatorPriority)
+	static standard::shared_ptr<Operation> getValue(const CPU::Registers &regs, const CPU &cpu, standard::string &str);
+	static standard::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, standard::string &str, unsigned operatorPriority)
 	{
 		deleteSpaces(str);
 		if (operatorPriority >= _binOps.size())
 			return getValue(regs, cpu, str);
 
-		std::shared_ptr<Operation> op1;
+		standard::shared_ptr<Operation> op1;
 
 		op1 = compileCondition(regs, cpu, str, operatorPriority + 1);
 		deleteSpaces(str);
@@ -286,29 +286,29 @@ namespace GBEmulator::Debugger
 			return op1;
 		}
 
-		std::string op = getOperator(str, operatorPriority);
+		standard::string op = getOperator(str, operatorPriority);
 
 		if (operatorPriority == 14) {
 
 			if (op.empty())
 				return op1;
-			return std::make_shared<BinaryOperation>(op1, compileCondition(regs, cpu, str, operatorPriority), op);
+			return standard::make_shared<BinaryOperation>(op1, compileCondition(regs, cpu, str, operatorPriority), op);
 		}
 
 		while (!op.empty()) {
-			std::shared_ptr<Operation> op2 = compileCondition(regs, cpu, str, operatorPriority + 1);
+			standard::shared_ptr<Operation> op2 = compileCondition(regs, cpu, str, operatorPriority + 1);
 
-			op1 = std::make_shared<BinaryOperation>(op1, op2, op);
+			op1 = standard::make_shared<BinaryOperation>(op1, op2, op);
 			op = getOperator(str, operatorPriority);
 		}
 		return op1;
 	}
 
-	static std::shared_ptr<Operation> getValue(const CPU::Registers &regs, const CPU &cpu, std::string &str)
+	static standard::shared_ptr<Operation> getValue(const CPU::Registers &regs, const CPU &cpu, standard::string &str)
 	{
 		try {
 			_unFcts.at(str.substr(0, 1));
-		} catch (std::out_of_range &) {
+		} catch (standard::out_of_range &) {
 			if (str[0] == '(') {
 				str.erase(0, 1);
 				return compileCondition(regs, cpu, str, 0);
@@ -320,20 +320,20 @@ namespace GBEmulator::Debugger
 
 		str.erase(0, 1);
 		deleteSpaces(str);
-		return std::make_shared<UnaryOperation>(getValue(regs, cpu, str), std::string(&op, &op + 1));
+		return standard::make_shared<UnaryOperation>(getValue(regs, cpu, str), standard::string(&op, &op + 1));
 	}
 
-	std::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, const std::string &line)
+	standard::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, const standard::string &line)
 	{
-		std::string str = line;
+		standard::string str = line;
 		try {
 			auto val = compileCondition(regs, cpu, str, 0);
 
 			if (!str.empty())
-				throw std::invalid_argument("Unexpected character found");
+				throw standard::invalid_argument("Unexpected character found");
 			return val;
-		} catch (std::exception &e) {
-			throw std::invalid_argument(e.what() + std::string(" near character ") + std::to_string(line.size() - str.size()) + " \"" + str + "\"");
+		} catch (standard::exception &e) {
+			throw standard::invalid_argument(e.what() + standard::string(" near character ") + standard::to_string(line.size() - str.size()) + " \"" + str + "\"");
 		}
 	}
 }

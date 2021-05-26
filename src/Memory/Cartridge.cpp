@@ -5,27 +5,34 @@
 ** Cartridge.cpp
 */
 
+#ifndef ARDUINO
 #include <sys/stat.h>
+#include <stdexcept>
 #include <cstring>
 #include <cmath>
-#include <stdexcept>
+#include "../ProcessingUnits/Instructions/Strings.hpp"
+#else
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
+#endif
 #include "Cartridge.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
 namespace GBEmulator::Memory
 {
-	const std::map<size_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
-		{0x008000, SIZE_32KByte },
-		{0x010000, SIZE_64KByte },
-		{0x020000, SIZE_128KByte},
-		{0x040000, SIZE_256KByte},
-		{0x080000, SIZE_512KByte},
-		{0x100000, SIZE_1MByte  },
-		{0x200000, SIZE_2MByte  },
-		{0x400000, SIZE_4MByte  },
-		{0x120000, SIZE_1_1MByte},
-		{0x140000, SIZE_1_2MByte},
-		{0x180000, SIZE_1_5MByte},
+	const standard::map<uint32_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x008000L, SIZE_32KByte },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x010000L, SIZE_64KByte },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x020000L, SIZE_128KByte},
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x040000L, SIZE_256KByte},
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x080000L, SIZE_512KByte},
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x100000L, SIZE_1MByte  },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x200000L, SIZE_2MByte  },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x400000L, SIZE_4MByte  },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x120000L, SIZE_1_1MByte},
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x140000L, SIZE_1_2MByte},
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x180000L, SIZE_1_5MByte},
 	};
 
 	void Cartridge::_checkROM()
@@ -35,25 +42,29 @@ namespace GBEmulator::Memory
 			if (Cartridge::_sizeBytes.at(this->_rom.getSize()) != this->_rom.rawRead(0x148))
 				throw InvalidRomException(
 					"The ROM size and size byte doesn't match (Expected byte " +
-					std::to_string(Cartridge::_sizeBytes.at(this->_rom.getSize())) +
-					" but found " + std::to_string(this->_rom.rawRead(0x148)) + ")"
+					standard::to_string(Cartridge::_sizeBytes.at(this->_rom.getSize())) +
+					" but found " + standard::to_string(this->_rom.rawRead(0x148)) + ")"
 				);
 			if (this->_rom.rawRead(0x149) > 0x04)
 				throw InvalidRomRamSizeException("The RAM size specified in the ROM file is not in range 0-3");
-		} catch (std::out_of_range &) {
+		} catch (standard::out_of_range &) {
 			throw InvalidRomSizeException("The ROM size isn't valid");
 		}
 #endif
 	}
 
-	size_t Cartridge::_getBestSizeForFile(const std::string &path)
+	size_t Cartridge::_getBestSizeForFile(const standard::string &path)
 	{
 #ifndef __cpp_exceptions
+#ifdef ARDUINO
+		return 0;
+#else
 		struct stat stats;
 
 		if (stat(path.c_str(), &stats) == -1)
 			return 0;
 		return stats.st_size;
+#endif
 #else
 		size_t best = 0x400000;
 		struct stat stats;
@@ -62,14 +73,14 @@ namespace GBEmulator::Memory
 			throw InvalidRomException("Cannot stat file " + path + ": " + strerror(errno));
 
 		if (stats.st_size > 0x400000) {
-			std::string sizeRepresentation;
+			standard::string sizeRepresentation;
 #ifdef __serenity__
 			char buffer[64];
 
 			sprintf(buffer, "%f\n", stats.st_size / 1048576.);
 			sizeRepresentation = buffer;
 #else
-			sizeRepresentation = std::to_string(stats.st_size / 1048576.);
+			sizeRepresentation = standard::to_string(stats.st_size / 1048576.);
 #endif
 			throw InvalidRomSizeException("The ROM is too large (Max 4MB but rom size is " + sizeRepresentation + "MB)");
 		}
@@ -89,7 +100,7 @@ namespace GBEmulator::Memory
 		this->_rom.setBankSize(1);
 	}
 
-	bool Cartridge::loadROM(const std::string &rom)
+	bool Cartridge::loadROM(const standard::string &rom)
 	{
 #ifdef __cpp_exceptions
 		try {
@@ -110,7 +121,7 @@ namespace GBEmulator::Memory
 #endif
 
 			mem = new unsigned char[size];
-			std::memset(mem, 0, size);
+			memset(mem, 0, size);
 			fread(mem, 1, size, stream);
 			fclose(stream);
 			this->_rom.setMemory(mem, size);
@@ -119,7 +130,7 @@ namespace GBEmulator::Memory
 			this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
 			this->_checkROM();
 
-			size = (this->_rom.rawRead(0x149) != 0) * 2 * std::pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
+			size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
 			mem = new unsigned char[size];
 			this->_ram.setMemory(mem, size);
 			if (size > RAM_BANKING_SIZE)
@@ -164,7 +175,7 @@ namespace GBEmulator::Memory
 		return true;
 	}
 
-	unsigned char Cartridge::read(unsigned short address) const
+	unsigned char Cartridge::read(uint16_t address) const
 	{
 		if (address < 0x4000)
 			return this->_rom.rawRead(address);
@@ -216,7 +227,7 @@ namespace GBEmulator::Memory
 		return this->_rom.getCurrentBank();
 	}
 
-	void Cartridge::write(unsigned short address, unsigned char value)
+	void Cartridge::write(uint16_t address, uint8_t value)
 	{
 		switch (this->_type) {
 		case ROM_ONLY:
@@ -267,12 +278,12 @@ namespace GBEmulator::Memory
 		}
 	}
 
-	void Cartridge::_handleHuCWrite(unsigned short address, unsigned char value)
+	void Cartridge::_handleHuCWrite(uint16_t address, uint8_t value)
 	{
 		return this->_handleMBC1Write(address, value);
 	}
 
-	void Cartridge::_handleMBC1Write(unsigned short address, unsigned char value)
+	void Cartridge::_handleMBC1Write(uint16_t address, uint8_t value)
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			return this->_ram.write(address - 0xA000, value);
@@ -305,7 +316,7 @@ namespace GBEmulator::Memory
 		}
 	}
 
-	void Cartridge::_handleMBC2Write(unsigned short address, unsigned char value)
+	void Cartridge::_handleMBC2Write(uint16_t address, uint8_t value)
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			return this->_ram.write(address - 0xA000, value);
@@ -317,7 +328,7 @@ namespace GBEmulator::Memory
 		}
 	}
 
-	void Cartridge::_handleMBC3Write(unsigned short address, unsigned char value)
+	void Cartridge::_handleMBC3Write(uint16_t address, uint8_t value)
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);
@@ -334,7 +345,7 @@ namespace GBEmulator::Memory
 			this->_ram.setBank(value & 0b11U);
 	}
 
-	void Cartridge::_handleMBC5Write(unsigned short address, unsigned char value)
+	void Cartridge::_handleMBC5Write(uint16_t address, uint8_t value)
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);
@@ -355,7 +366,7 @@ namespace GBEmulator::Memory
 			printf("RAM disabled\n");
 	}
 
-	void Cartridge::_handleRumbleWrite(unsigned short address, unsigned char value)
+	void Cartridge::_handleRumbleWrite(uint16_t address, uint8_t value)
 	{
 		if (address >= 0xA000 && this->_ramEnabled && this->_ram.getSize())
 			this->_ram.write(address - 0xA000, value);

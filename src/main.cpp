@@ -22,12 +22,12 @@
 
 using namespace GBEmulator;
 
-std::string getLastExceptionName()
+standard::string getLastExceptionName()
 {
 #ifdef __GNUG__
 	int status;
 	char *value;
-	std::string name;
+	standard::string name;
 
 	auto val = abi::__cxa_current_exception_type();
 
@@ -81,7 +81,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 				args.mode = MODE_GBC;
 			else
 			#ifdef __cpp_exceptions
-				throw std::invalid_argument("Invalid mode: valid modes are 'dmg', 'gbc' or 'auto'");
+				throw standard::invalid_argument("Invalid mode: valid modes are 'dmg', 'gbc' or 'auto'");
 			#else
 				return false;
 			#endif
@@ -112,7 +112,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 			break;
 		default:
 		#ifdef __cpp_exceptions
-			throw std::invalid_argument("Invalid argument");
+			throw standard::invalid_argument("Invalid argument");
 		#else
 			return false;
 		#endif
@@ -120,7 +120,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 	}
 	if (optind != argc - 1)
 	#ifdef __cpp_exceptions
-		throw std::invalid_argument("Too many or no ROM given");
+		throw standard::invalid_argument("Too many or no ROM given");
 	#else
 		return false;
 	#endif
@@ -128,7 +128,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 #else
 	//TODO: Redo a proper getopt implem for MSVC
 	if (argc != 2)
-		throw std::invalid_argument("Too many or no ROM given");
+		throw standard::invalid_argument("Too many or no ROM given");
 	args.fileName = argv[1];
 #endif
 	return true;
@@ -155,8 +155,8 @@ int main(int argc, char **argv)
 #ifdef __cpp_exceptions
 	try {
 		parseArguments(argc, argv, args);
-	} catch (std::exception &e) {
-		std::cerr << e.what() << std::endl;
+	} catch (standard::exception &e) {
+		std::cerr << e.what() << standard::endl;
 		printUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 	XInitThreads();
 #endif
 
-	std::string path = argv[0];
+	standard::string path = argv[0];
 #ifdef _WIN32
 	size_t occurence = path.find_last_of('\\');
 #else
@@ -195,8 +195,8 @@ int main(int argc, char **argv)
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
 
 #ifdef __cpp_exceptions
-	} catch (std::exception &e) {
-		std::cerr << e.what() << std::endl;
+	} catch (standard::exception &e) {
+		std::cerr << e.what() << standard::endl;
 		return EXIT_FAILURE;
 	}
 #endif
@@ -211,7 +211,9 @@ int main(int argc, char **argv)
 	}
 #endif
 
+#ifndef ARDUINO
 	cpu.setProfiling(args.profiler);
+#endif
 
 	bool end = false;
 	std::thread thread{
@@ -223,7 +225,7 @@ int main(int argc, char **argv)
 				#ifdef __cpp_exceptions
 					try {
 						cpu.update();
-					} catch (std::exception &e)
+					} catch (standard::exception &e)
 				#else
 					if (cpu.update() == -2)
 				#endif
@@ -237,7 +239,7 @@ int main(int argc, char **argv)
 					#ifdef _WIN32
 						MessageBox(nullptr, errorStr, getLastExceptionName().c_str(), MB_ICONERROR);
 					#else
-						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << errorStr << std::endl;
+						std::cerr << "Fatal error: " << getLastExceptionName() << ": " << errorStr << standard::endl;
 					#endif
 					}
 				} else
@@ -253,8 +255,10 @@ int main(int argc, char **argv)
 
 	thread.join();
 	cpu.getCartridgeEmulator().saveRAM();
+#ifndef ARDUINO
 	if (args.profiler)
 		cpu.dumpProfiler();
+#endif
 
 	return EXIT_SUCCESS;
 }

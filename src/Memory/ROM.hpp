@@ -9,8 +9,12 @@
 #define GBEMULATOR_ROM_HPP
 
 
+#ifndef ARDUINO
 #include <map>
 #include <string>
+#else
+#include "../ArduinoStuff/FakeSTL.hpp"
+#endif
 #include "Memory.hpp"
 
 namespace GBEmulator::Memory

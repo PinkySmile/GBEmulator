@@ -16,13 +16,15 @@ typedef fd_set FD_SET;
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <functional>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
+#include "../ProcessingUnits/Instructions/Strings.hpp"
 #include "../LCD/LCDSFML.hpp"
 
 namespace GBEmulator::Debugger
 {
-	const std::vector<unsigned char> Debugger::_instrSize = {
+	const standard::vector<unsigned char> Debugger::_instrSize = {
 		1, 3, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 1, 1, 2, 1,
 		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
 		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
@@ -41,7 +43,7 @@ namespace GBEmulator::Debugger
 		2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 1, 1, 2, 1
 	};
 
-	Debugger::Debugger(const std::string &programPath, GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
+	Debugger::Debugger(const standard::string &programPath, GBEmulator::CPU &cpu, GBEmulator::Graphics::ILCD &window, GBEmulator::Input::JoypadEmulator &input) :
 		_cpu(cpu),
 		_window(window),
 		_input(input)
@@ -64,10 +66,10 @@ namespace GBEmulator::Debugger
 	}
 
 
-	std::vector<std::string> Debugger::_splitCommand(const std::string &line)
+	standard::vector<standard::string> Debugger::_splitCommand(const standard::string &line)
 	{
-		std::vector<std::string> result;
-		std::stringstream stream;
+		standard::vector<standard::string> result;
+		standard::stringstream stream;
 		char quote = 0;
 
 		for (auto c : line) {
@@ -88,7 +90,7 @@ namespace GBEmulator::Debugger
 		return result;
 	}
 
-	void Debugger::_setVar(const std::string &name, unsigned short value)
+	void Debugger::_setVar(const standard::string &name, unsigned short value)
 	{
 		if (name == "a")
 			 this->_cpu._registers.a = value;
@@ -119,224 +121,221 @@ namespace GBEmulator::Debugger
 		else if (name == "sp")
 			 this->_cpu._registers.sp = value;
 		else {
-			size_t address = std::stoul(name, nullptr, 16);
+			size_t address = standard::stoul(name, nullptr, 16);
 
 			if (address > UINT16_MAX)
-				throw std::invalid_argument("stoul");
+				throw standard::invalid_argument("stoul");
 			this->_cpu.write(address, value);
 		}
 	}
 
-	void Debugger::_dispVar(const std::string &name)
+	void Debugger::_dispVar(const standard::string &name)
 	{
 		if (name == "a")
-			std::cout << "a: " << Instructions::intToHex(this->_cpu._registers.a) << std::endl;
+			std::cout << "a: " << Instructions::intToHex(this->_cpu._registers.a) << standard::endl;
 		else if (name == "b")
-			std::cout << "b: " << Instructions::intToHex(this->_cpu._registers.b) << std::endl;
+			std::cout << "b: " << Instructions::intToHex(this->_cpu._registers.b) << standard::endl;
 		else if (name == "c")
-			std::cout << "c: " << Instructions::intToHex(this->_cpu._registers.c) << std::endl;
+			std::cout << "c: " << Instructions::intToHex(this->_cpu._registers.c) << standard::endl;
 		else if (name == "d")
-			std::cout << "d: " << Instructions::intToHex(this->_cpu._registers.d) << std::endl;
+			std::cout << "d: " << Instructions::intToHex(this->_cpu._registers.d) << standard::endl;
 		else if (name == "e")
-			std::cout << "e: " << Instructions::intToHex(this->_cpu._registers.e) << std::endl;
+			std::cout << "e: " << Instructions::intToHex(this->_cpu._registers.e) << standard::endl;
 		else if (name == "h")
-			std::cout << "h: " << Instructions::intToHex(this->_cpu._registers.h) << std::endl;
+			std::cout << "h: " << Instructions::intToHex(this->_cpu._registers.h) << standard::endl;
 		else if (name == "l")
-			std::cout << "l: " << Instructions::intToHex(this->_cpu._registers.l) << std::endl;
+			std::cout << "l: " << Instructions::intToHex(this->_cpu._registers.l) << standard::endl;
 		else if (name == "f")
-			std::cout << "f: " << Instructions::intToHex(this->_cpu._registers.f) << std::endl;
+			std::cout << "f: " << Instructions::intToHex(this->_cpu._registers.f) << standard::endl;
 		else if (name == "af")
-			std::cout << "af: " << Instructions::intToHex(this->_cpu._registers.af, 4) << std::endl;
+			std::cout << "af: " << Instructions::intToHex(this->_cpu._registers.af, 4) << standard::endl;
 		else if (name == "bc")
-			std::cout << "bc: " << Instructions::intToHex(this->_cpu._registers.bc, 4) << std::endl;
+			std::cout << "bc: " << Instructions::intToHex(this->_cpu._registers.bc, 4) << standard::endl;
 		else if (name == "de")
-			std::cout << "de: " << Instructions::intToHex(this->_cpu._registers.de, 4) << std::endl;
+			std::cout << "de: " << Instructions::intToHex(this->_cpu._registers.de, 4) << standard::endl;
 		else if (name == "hl")
-			std::cout << "hl: " << Instructions::intToHex(this->_cpu._registers.hl, 4) << std::endl;
+			std::cout << "hl: " << Instructions::intToHex(this->_cpu._registers.hl, 4) << standard::endl;
 		else if (name == "pc")
 			this->_displayCurrentLine();
 		else if (name == "sp")
-			std::cout << "sp: " << Instructions::intToHex(this->_cpu._registers.sp, 4) << std::endl;
+			std::cout << "sp: " << Instructions::intToHex(this->_cpu._registers.sp, 4) << standard::endl;
 		else {
-			size_t address = std::stoul(name, nullptr, 16);
+			size_t address = standard::stoul(name, nullptr, 16);
 
 			if (address > UINT16_MAX)
-				throw std::invalid_argument("stoul");
-			std::cout << "$" << Instructions::intToHex(address, 4) << ": " << Instructions::intToHex(this->_cpu.read(address)) << std::endl;
+				throw standard::invalid_argument("stoul");
+			std::cout << "$" << Instructions::intToHex(address, 4) << ": " << Instructions::intToHex(this->_cpu.read(address)) << standard::endl;
 			this->_displayCurrentLine(address);
 		}
 	}
 
-	bool Debugger::processCommandLine(const std::string &line)
+	bool Debugger::processCommandLine(const standard::string &line)
 	{
-		std::vector<std::string> args = _splitCommand(line);
+		standard::vector<standard::string> args = _splitCommand(line);
 
 		if (line.empty())
 			args = {this->_lastCmd};
 		this->_lastCmd = args[0];
 		if (args[0] == "break") {
 			if (args.size() == 1) {
-				std::cout << "There are " << this->_breakPoints.size() << " breakpoint(s)" << std::endl;
+				std::cout << "There are " << this->_breakPoints.size() << " breakpoint(s)" << standard::endl;
 				for (unsigned i = 0; i < this->_breakPoints.size(); i++)
-					std::cout << "Breakpoint #" << i << " at $" << Instructions::intToHex(this->_breakPoints[i], 4) << std::endl;
+					std::cout << "Breakpoint #" << i << " at $" << Instructions::intToHex(this->_breakPoints[i], 4) << standard::endl;
 				return false;
 			}
-			auto add = std::stoul(args.at(1), nullptr, 16);
-			auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), add);
+			auto add = standard::stoul(args.at(1), nullptr, 16);
+			auto it = standard::find(this->_breakPoints.begin(), this->_breakPoints.end(), add);
 
 			if (it != this->_breakPoints.end()) {
-				std::cout << "Breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << " removed" << std::endl;
+				std::cout << "Breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << " removed" << standard::endl;
 				this->_breakPoints.erase(it);
 			} else {
-				std::cout << "Added breakpoint #" << this->_breakPoints.size() << " at $" << Instructions::intToHex(add, 4) << std::endl;
+				std::cout << "Added breakpoint #" << this->_breakPoints.size() << " at $" << Instructions::intToHex(add, 4) << standard::endl;
 				this->_breakPoints.push_back(add);
 			}
 		} else if (args[0] == "cbreak") {
 			if (args.size() == 1) {
-				std::cout << "There are " << this->_condBreakPoints.size() << " conditional breakpoint(s)" << std::endl;
+				std::cout << "There are " << this->_condBreakPoints.size() << " conditional breakpoint(s)" << standard::endl;
 				for (unsigned i = 0; i < this->_condBreakPoints.size(); i++)
-					std::cout << "Conditional breakpoint #" << i << " when (" << this->_condBreakPoints[i]->tostring() << ") != 0" << std::endl;
+					std::cout << "Conditional breakpoint #" << i << " when (" << this->_condBreakPoints[i]->tostring() << ") != 0" << standard::endl;
 				return false;
 			}
 
 			if (args[1] == "remove") {
 				if (args.size() != 3) {
-					std::cout << "Expected 2 arguments" << std::endl;
+					std::cout << "Expected 2 arguments" << standard::endl;
 					return false;
 				}
 
-				auto add = std::stoul(args.at(2), nullptr, 16);
+				auto add = standard::stoul(args.at(2), nullptr, 16);
 
 				if (add >= this->_condBreakPoints.size()) {
-					std::cout << "Invalid conditional breakpoints id." << std::endl;
-					std::cout << add << " is greater than the number of conditional breakpoints (" << add << " >= " << this->_condBreakPoints.size() << ")" << std::endl;
+					std::cout << "Invalid conditional breakpoints id." << standard::endl;
+					std::cout << add << " is greater than the number of conditional breakpoints (" << add << " >= " << this->_condBreakPoints.size() << ")" << standard::endl;
 					return false;
 				}
 
 				auto it = this->_condBreakPoints.begin() + add;
 
-				std::cout << "Removed conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << " when (" << (*it)->tostring() << ") != 0" << std::endl;
+				std::cout << "Removed conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << " when (" << (*it)->tostring() << ") != 0" << standard::endl;
 				this->_condBreakPoints.erase(it);
 				return false;
 			}
 
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
-				std::cout << "Added conditional breakpoint #" << this->_condBreakPoints.size() << " when (" << op->tostring() << ") != 0" << std::endl;
+				std::cout << "Added conditional breakpoint #" << this->_condBreakPoints.size() << " when (" << op->tostring() << ") != 0" << standard::endl;
 				this->_condBreakPoints.push_back(op);
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "help") {
-			std::cout << "help" << std::endl;
-			std::cout << "jump <addr>" << std::endl;
-			std::cout << "next" << std::endl;
-			std::cout << "step" << std::endl;
-			std::cout << "continue" << std::endl;
-			std::cout << "ram [<border1> <border2>]" << std::endl;
-			std::cout << "registers" << std::endl;
-			std::cout << "break <addr>" << std::endl;
-			std::cout << "cbreak <expression>" << std::endl;
-			std::cout << "print <expression>" << std::endl;
-			std::cout << "printi <expression>" << std::endl;
-			std::cout << "printx <expression>" << std::endl;
-			std::cout << "printo <expression>" << std::endl;
-			std::cout << "printb <expression>" << std::endl;
-			std::cout << "oldpcres <nb>" << std::endl;
-			std::cout << "oldpc" << std::endl;
-			std::cout << "jmplistres <nb>" << std::endl;
-			std::cout << "jmplist" << std::endl;
-		} else if (args[0] == "registers")
-			this->_cpu.dumpRegisters();
-		else if (args[0] == "oldpc") {
-			std::cout << "Showing the " << this->_oldpcs.size() << " latest pc values" << std::endl;
+			std::cout << "help" << standard::endl;
+			std::cout << "jump <addr>" << standard::endl;
+			std::cout << "next" << standard::endl;
+			std::cout << "step" << standard::endl;
+			std::cout << "continue" << standard::endl;
+			std::cout << "ram [<border1> <border2>]" << standard::endl;
+			std::cout << "break <addr>" << standard::endl;
+			std::cout << "cbreak <expression>" << standard::endl;
+			std::cout << "print <expression>" << standard::endl;
+			std::cout << "printi <expression>" << standard::endl;
+			std::cout << "printx <expression>" << standard::endl;
+			std::cout << "printo <expression>" << standard::endl;
+			std::cout << "printb <expression>" << standard::endl;
+			std::cout << "oldpcres <nb>" << standard::endl;
+			std::cout << "oldpc" << standard::endl;
+			std::cout << "jmplistres <nb>" << standard::endl;
+			std::cout << "jmplist" << standard::endl;
+		} else if (args[0] == "oldpc") {
+			std::cout << "Showing the " << this->_oldpcs.size() << " latest pc values" << standard::endl;
 			for (auto pc : this->_oldpcs)
 				this->_displayCurrentLine(pc);
 		} else if (args[0] == "oldpcres") {
-			auto newSize = std::stoul(args.at(1));
+			auto newSize = standard::stoul(args.at(1));
 
 			if (newSize < this->_oldpcs.size())
 				this->_oldpcs.erase(this->_oldpcs.begin(), this->_oldpcs.begin() + this->_oldpcs.size() - newSize);
 			this->_oldpcs.resize(newSize);
-			std::cout << "oldpc will now display " << this->_oldpcs.size() << " elements" << std::endl;
+			std::cout << "oldpc will now display " << this->_oldpcs.size() << " elements" << standard::endl;
 		} else if (args[0] == "jmplistres") {
-			auto newSize = std::stoul(args.at(1));
+			auto newSize = standard::stoul(args.at(1));
 
 			if (newSize < this->_jumpList.size())
 				this->_jumpList.erase(this->_jumpList.begin(), this->_jumpList.begin() + this->_jumpList.size() - newSize);
 			this->_jumpList.resize(newSize);
-			std::cout << "jmplist will now display " << this->_jumpList.size() << " elements" << std::endl;
+			std::cout << "jmplist will now display " << this->_jumpList.size() << " elements" << standard::endl;
 		} else if (args[0] == "jmplist") {
-			std::cout << "Showing the " << this->_jumpList.size() << " latest jumps" << std::endl;
+			std::cout << "Showing the " << this->_jumpList.size() << " latest jumps" << standard::endl;
 			for (auto pc : this->_jumpList)
 				this->_displayCurrentLine(pc);
 		} else if (args[0] == "print") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
-				std::cout << std::dec << op->getValue(this->_cpu) << std::endl;
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+				std::cout << standard::dec << op->getValue(this->_cpu) << standard::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "printx") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
-				std::cout << "$" << std::hex << static_cast<unsigned>(op->getValue(this->_cpu)) << std::endl;
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+				std::cout << "$" << standard::hex << static_cast<unsigned>(op->getValue(this->_cpu)) << standard::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "printi") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
 				this->_displayCurrentLine(static_cast<unsigned>(op->getValue(this->_cpu)));
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "printo") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
-				std::cout << "&" << std::oct << static_cast<unsigned>(op->getValue(this->_cpu)) << std::endl;
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+				std::cout << "&" << standard::oct << static_cast<unsigned>(op->getValue(this->_cpu)) << standard::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "ignore") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				unsigned op = compileCondition(this->_cpu._registers, this->_cpu, cmd)->getValue(this->_cpu);
-				auto it = std::find(this->_ignoredCorruptedStackAddress.begin(), this->_ignoredCorruptedStackAddress.end(), op);
+				auto it = standard::find(this->_ignoredCorruptedStackAddress.begin(), this->_ignoredCorruptedStackAddress.end(), op);
 
 				if (it == this->_ignoredCorruptedStackAddress.end()) {
 					this->_ignoredCorruptedStackAddress.push_back(op);
-					std::cout << "Ignored address $" << std::hex << op << " for stack corruption and source code break points" << std::endl;
+					std::cout << "Ignored address $" << standard::hex << op << " for stack corruption and source code break points" << standard::endl;
 				} else {
 					this->_ignoredCorruptedStackAddress.erase(it);
-					std::cout << "Address $" << std::hex << op << " is no longer ignored for stack corruption and source code break points" << std::endl;
+					std::cout << "Address $" << standard::hex << op << " is no longer ignored for stack corruption and source code break points" << standard::endl;
 				}
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "printb") {
-			std::string cmd = line.substr(args[0].size());
+			standard::string cmd = line.substr(args[0].size());
 
 			try {
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 				auto val = static_cast<unsigned>(op->getValue(this->_cpu));
-				std::stringstream s;
+				standard::stringstream s;
 
 				std::cout << "%";
 				do {
@@ -348,48 +347,45 @@ namespace GBEmulator::Debugger
 
 				for (int i = str.length()-1; i>=0; i--)
 					std::cout << str[i];
-				std::cout << std::endl;
-			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+				std::cout << standard::endl;
+			} catch (standard::exception &e) {
+				std::cout << e.what() << standard::endl;
 			}
 		} else if (args[0] == "set") {
-			this->_setVar(args.at(1), std::stoul(args.at(2), nullptr, 16));
+			this->_setVar(args.at(1), standard::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
 		} else if (args[0] == "slow") {
 			this->_executeNextInstruction(true);
 			this->_rate = 0.001;
 			return true;
 		} else if (args[0] == "ram") {
-			if (args.size() == 1)
-				return this->_cpu.dumpMemory(), false;
-
-			size_t i = std::stoul(args.at(1), nullptr, 16);
-			size_t end = std::stoul(args.at(2), nullptr, 16);
+			size_t i = standard::stoul(args.at(1), nullptr, 16);
+			size_t end = standard::stoul(args.at(2), nullptr, 16);
 
 			i -= i % 0x10;
 			end += 0x10 - end % 0x10;
 			for (; i < end; i += 0x10) {
-				std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << i << ":  ";
+				std::cout << standard::hex << standard::uppercase << standard::setw(4) << standard::setfill('0') << i << ":  ";
 				for (unsigned j = 0; j < 0x10 && j + i < end; j++)
-					std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + i)) << " ";
+					std::cout << standard::setw(2) << standard::setfill('0') << standard::hex << standard::uppercase << static_cast<int>(this->_cpu.read(j + i)) << " ";
 				for (int j = 0; j < static_cast<int>(i - end + 0x10); j++)
 					std::cout << "   ";
 				std::cout << " ";
 				for (unsigned j = 0; j < 0x10 && j + i < end; j++)
-					std::cout << static_cast<char>(std::isprint(this->_cpu.read(j + i)) ? this->_cpu.read(j + i) : '.');
+					std::cout << static_cast<char>(standard::isprint(this->_cpu.read(j + i)) ? this->_cpu.read(j + i) : '.');
 				for (int j = 0; j < static_cast<int>(i - end + 0x10); j++)
 					std::cout << " ";
-				std::cout << std::endl;
+				std::cout << standard::endl;
 			}
 		} else if (args[0] == "checkstack") {
 			this->_checkForStackCorruption = !this->_checkForStackCorruption;
-			std::cout << "Stack corruption check is " << (this->_checkForStackCorruption ? "en" : "dis") << "abled" << std::endl;
+			std::cout << "Stack corruption check is " << (this->_checkForStackCorruption ? "en" : "dis") << "abled" << standard::endl;
 		} else if (args[0] == "jump") {
-			this->_cpu._registers.pc = std::stoul(args.at(1), nullptr, 16);
+			this->_cpu._registers.pc = standard::stoul(args.at(1), nullptr, 16);
 			this->_displayCurrentLine();
 		} else if (args[0] == "next") {
-			unsigned short address = this->_cpu._registers.pc;
-			auto bIt = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
+			uint16_t address = this->_cpu._registers.pc;
+			auto bIt = standard::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 			auto cbNb = this->checkConditionalBreakPoints();
 
 			this->_executeNextInstruction(true);
@@ -403,9 +399,9 @@ namespace GBEmulator::Debugger
 				}
 			} while ((this->_cpu._registers.pc <= address || this->_cpu._registers.pc > address + 3) && bIt == this->_breakPoints.end() && cbNb == -1);
 			if (cbNb != -1)
-				std::cout << "Hit conditional breakpoint #" << cbNb << ": " << this->_condBreakPoints[cbNb]->tostring() << std::endl;
+				std::cout << "Hit conditional breakpoint #" << cbNb << ": " << this->_condBreakPoints[cbNb]->tostring() << standard::endl;
 			else if (bIt != this->_breakPoints.end())
-				std::cout << "Hit breakpoint #" << bIt - this->_breakPoints.begin() << ": $" << std::setw(4) << std::setfill('0') << std::hex << *bIt << std::endl;
+				std::cout << "Hit breakpoint #" << bIt - this->_breakPoints.begin() << ": $" << standard::setw(4) << standard::setfill('0') << standard::hex << *bIt << standard::endl;
 			this->_displayCurrentLine();
 		} else if (args[0] == "step") {
 			this->_executeNextInstruction(true);
@@ -416,14 +412,14 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "where")
 			this->_displayCurrentLine();
 		else if (args[0] == "freeze") {
-			unsigned addr = std::stoul(args.at(1), nullptr, 16);
-			unsigned val = args.size() >= 3 ? std::stoul(args.at(2), nullptr, 16) : this->_cpu.read(addr);
+			unsigned addr = standard::stoul(args.at(1), nullptr, 16);
+			unsigned val = args.size() >= 3 ? standard::stoul(args.at(2), nullptr, 16) : this->_cpu.read(addr);
 
-			std::cout << "Address " << std::hex << addr << " is ";
+			std::cout << "Address " << standard::hex << addr << " is ";
 			if (this->_cpu.freezeAddress(addr, val))
-				std::cout << "now frozen to value" << std::hex << val << std::endl;
+				std::cout << "now frozen to value" << standard::hex << val << standard::endl;
 			else
-				std::cout << "no longer frozen" << val << std::endl;
+				std::cout << "no longer frozen" << val << standard::endl;
 		} else
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
 		return false;
@@ -438,37 +434,37 @@ namespace GBEmulator::Debugger
 
 	bool Debugger::checkBreakPoints()
 	{
-		return std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc) != this->_breakPoints.end();
+		return standard::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc) != this->_breakPoints.end();
 	}
 
-	void Debugger::_displayCurrentLine(unsigned short address, std::ostream &stream)
+	void Debugger::_displayCurrentLine(uint16_t address, standard::ostream &stream)
 	{
 		stream << "$" << Instructions::intToHex(address, 4) << ": ";
-		stream << Instructions::_instructionsString[this->_cpu.read(address)](this->_cpu, address + 1) << std::endl;
+		stream << Instructions::_instructionsString[this->_cpu.read(address)](this->_cpu, address + 1) << standard::endl;
 	}
 
-	void Debugger::_displayCurrentLine(std::ostream &stream)
+	void Debugger::_displayCurrentLine(standard::ostream &stream)
 	{
 		this->_displayCurrentLine(this->_cpu._registers.pc, stream);
 	}
 
-	void Debugger::_checkCommands(bool &dbg, std::istream &inputStream)
+	void Debugger::_checkCommands(bool &dbg, standard::istream &inputStream)
 	{
-		std::string line;
+		standard::string line;
 
-		if (std::cin.eof())
+		if (standard::cin.eof())
 			return;
 
 		try {
-			std::getline(inputStream, line);
-			if ((std::cin.eof() && line.empty()) || this->processCommandLine(line))
+			standard::getline(inputStream, line);
+			if ((standard::cin.eof() && line.empty()) || this->processCommandLine(line))
 				dbg = false;
 		} catch (CommandNotFoundException &e) {
-			std::cout << e.what() << std::endl;
-		} catch (std::out_of_range &e) {
-			std::cout << "Not enough arguments" << std::endl;
-		} catch (std::exception &e) {
-			std::cout << "Error running command: " << e.what() << std::endl;
+			std::cout << e.what() << standard::endl;
+		} catch (standard::out_of_range &e) {
+			std::cout << "Not enough arguments" << standard::endl;
+		} catch (standard::exception &e) {
+			std::cout << "Error running command: " << e.what() << standard::endl;
 		}
 	}
 
@@ -486,16 +482,16 @@ namespace GBEmulator::Debugger
 			freopen_s(&_, "CONIN$", "r", stdin);
 		}
 #endif
-		this->_cpuThread = std::thread([&dbg, this]{
+		this->_cpuThread = standard::thread([&dbg, this]{
 			while (!this->_window.isClosed()) {
 				while (dbg)
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+					standard::this_thread::sleep_for(standard::chrono::milliseconds(1));
 
 				try {
 					this->_executeNextInstruction(false);
 				} catch (CPU::InvalidOpcodeException &e) {
 					dbg = true;
-					std::cout << e.what() << std::endl;
+					std::cout << e.what() << standard::endl;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -511,8 +507,8 @@ namespace GBEmulator::Debugger
 					)
 				) {
 					dbg = true;
-					std::cout << "Probably corrupted stack after function return." << std::endl;
-					std::cout << "Stack is at an invalid location $" << this->_cpu._registers.sp << std::endl;
+					std::cout << "Probably corrupted stack after function return." << standard::endl;
+					std::cout << "Stack is at an invalid location $" << this->_cpu._registers.sp << standard::endl;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -550,7 +546,7 @@ namespace GBEmulator::Debugger
 				}
 
 				if (
-					std::find(
+					standard::find(
 						this->_ignoredCorruptedStackAddress.begin(),
 						this->_ignoredCorruptedStackAddress.end(),
 						this->_cpu._registers.pc
@@ -558,7 +554,7 @@ namespace GBEmulator::Debugger
 					nextOpcode == 0x40
 				) {
 					dbg = true;
-					std::cout << "Hit source code breakpoint" << std::endl;
+					std::cout << "Hit source code breakpoint" << standard::endl;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -586,7 +582,7 @@ namespace GBEmulator::Debugger
 						if (this->_cpu._registers.sp == expected)
 							this->_expectedPcAtRet.pop();
 						else if (
-							std::find(
+							standard::find(
 								this->_ignoredCorruptedStackAddress.begin(),
 								this->_ignoredCorruptedStackAddress.end(),
 								this->_cpu._registers.pc
@@ -594,14 +590,14 @@ namespace GBEmulator::Debugger
 							this->_checkForStackCorruption
 						) {
 							dbg = true;
-							std::cout << "Probably corrupted stack after function return." << std::endl;
-							std::cout << "Stack is expected to be at $" << std::hex << expected << " but is at $" << this->_cpu._registers.sp << std::endl;
+							std::cout << "Probably corrupted stack after function return." << standard::endl;
+							std::cout << "Stack is expected to be at $" << standard::hex << expected << " but is at $" << this->_cpu._registers.sp << standard::endl;
 							this->_displayCurrentLine();
 							std::cout << "gbdb> ";
 							std::cout.flush();
 						}
 					} else if (
-						std::find(
+						standard::find(
 							this->_ignoredCorruptedStackAddress.begin(),
 							this->_ignoredCorruptedStackAddress.end(),
 							this->_cpu._registers.pc
@@ -609,8 +605,8 @@ namespace GBEmulator::Debugger
 						this->_checkForStackCorruption
 					){
 						dbg = true;
-						std::cout << "Probably corrupted stack after function return." << std::endl;
-						std::cout << "Stack is at $" << std::hex << this->_cpu._registers.sp << " but the call stack is empty." << std::endl;
+						std::cout << "Probably corrupted stack after function return." << standard::endl;
+						std::cout << "Stack is at $" << standard::hex << this->_cpu._registers.sp << " but the call stack is empty." << standard::endl;
 						this->_displayCurrentLine();
 						std::cout << "gbdb> ";
 						std::cout.flush();
@@ -627,9 +623,9 @@ namespace GBEmulator::Debugger
 					this->_expectedPcAtRet.push(this->_cpu._registers.sp - 2);
 
 				if (this->checkBreakPoints()) {
-					auto it = std::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
+					auto it = standard::find(this->_breakPoints.begin(), this->_breakPoints.end(), this->_cpu._registers.pc);
 
-					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << std::endl;
+					std::cout << "Hit breakpoint #" << (it - this->_breakPoints.begin()) << " at $" << Instructions::intToHex(*it, 4) << standard::endl;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -641,8 +637,8 @@ namespace GBEmulator::Debugger
 				if (cb >= 0) {
 					auto it = this->_condBreakPoints.begin() + cb;
 
-					std::cout << "Hit conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << std::endl;
-					std::cout << "Expression " << (*it)->tostring() << " resolved to " << (*it)->getValue(this->_cpu) << std::endl;
+					std::cout << "Hit conditional breakpoint #" << (it - this->_condBreakPoints.begin()) << standard::endl;
+					std::cout << "Expression " << (*it)->tostring() << " resolved to " << (*it)->getValue(this->_cpu) << standard::endl;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -651,20 +647,20 @@ namespace GBEmulator::Debugger
 			}
 		});
 
-		std::ifstream stream{".emudbgbrc"};
+		standard::ifstream stream{".emudbgbrc"};
 		int currentLine = 0;
 
 		if (!stream.fail()) {
-			std::string line;
+			standard::string line;
 
-			std::cout << "Executing commands in .emudbgbrc." << std::endl;
-			while (std::getline(stream, line)) {
+			std::cout << "Executing commands in .emudbgbrc." << standard::endl;
+			while (standard::getline(stream, line)) {
 				currentLine++;
 				try {
 					dbg &= !processCommandLine(line);
-				} catch (std::exception &e) {
-					std::cout << "Error line " << currentLine << ": " << line << std::endl;
-					std::cout << e.what() << std::endl;
+				} catch (standard::exception &e) {
+					std::cout << "Error line " << currentLine << ": " << line << standard::endl;
+					std::cout << e.what() << standard::endl;
 				}
 			}
 		}
@@ -678,7 +674,7 @@ namespace GBEmulator::Debugger
 #ifdef _WIN32
 				this->_checkCommands(dbg);
 
-				if (std::cin.eof())
+				if (standard::cin.eof())
 					return 0;
 
 				if (dbg) {
@@ -707,7 +703,7 @@ namespace GBEmulator::Debugger
 				} else {
 					this->_checkCommands(dbg);
 
-					if (std::cin.eof())
+					if (standard::cin.eof())
 						return 0;
 
 					if (dbg) {
@@ -753,7 +749,7 @@ namespace GBEmulator::Debugger
 		text.setPosition(10, 570);
 
 		for (int i = 0; i < 15; i++) {
-			std::stringstream ss;
+			standard::stringstream ss;
 			auto address = start + i + shift;
 			if (address < 0)
 				continue;
@@ -771,7 +767,7 @@ namespace GBEmulator::Debugger
 
 	void Debugger::_drawMemory(sf::RenderWindow &_debugWindow)
 	{
-		std::stringstream ss;
+		standard::stringstream ss;
 
 		size_t beg = this->_memBeg;
 		size_t end = this->_memBeg + 0x660;
@@ -779,17 +775,17 @@ namespace GBEmulator::Debugger
 		beg -= beg % 0x20;
 		end += 0x20 - end % 0x20;
 		for (; beg < end; beg += 0x20) {
-			ss << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << beg << ":  ";
+			ss << standard::hex << standard::uppercase << standard::setw(4) << standard::setfill('0') << beg << ":  ";
 			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
-				ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_cpu.read(j + beg)) << " ";
+				ss << standard::setw(2) << standard::setfill('0') << standard::hex << standard::uppercase << static_cast<int>(this->_cpu.read(j + beg)) << " ";
 			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
 				ss << "   ";
 			ss << " ";
 			for (unsigned j = 0; j < 0x20 && j + beg < end; j++)
-				ss << static_cast<char>(std::isprint(this->_cpu.read(j + beg)) ? this->_cpu.read(j + beg) : '.');
+				ss << static_cast<char>(standard::isprint(this->_cpu.read(j + beg)) ? this->_cpu.read(j + beg) : '.');
 			for (int j = 0; j < static_cast<int>(beg - end + 0x20); j++)
 				ss << " ";
-			ss << std::endl;
+			ss << standard::endl;
 		}
 
 		this->_memory.setString(ss.str().c_str());
@@ -902,40 +898,40 @@ namespace GBEmulator::Debugger
 
 	void Debugger::_drawRegisters(sf::RenderWindow &_debugWindow)
 	{
-		std::stringstream ss;
+		standard::stringstream ss;
 
-		ss << std::hex << std::uppercase;
-		ss << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af << "    ";
-		ss << "bc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.bc << "    ";
-		ss << "de: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.de << std::endl;
-		ss << "hl: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.hl << "    ";
-		ss << "sp: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.sp << "    ";
-		ss << "pc: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.pc << std::endl;
-		ss << "Flags:" << std::endl;
+		ss << standard::hex << standard::uppercase;
+		ss << "af: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.af << "    ";
+		ss << "bc: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.bc << "    ";
+		ss << "de: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.de << standard::endl;
+		ss << "hl: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.hl << "    ";
+		ss << "sp: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.sp << "    ";
+		ss << "pc: " << standard::setw(4) << standard::setfill('0') << this->_cpu._registers.pc << standard::endl;
+		ss << "Flags:" << standard::endl;
 		ss << "z: " << (this->_cpu._registers.fz ? "set" : "unset") << "    ";
 		ss << "c: " << (this->_cpu._registers.fc ? "set" : "unset") << "    ";
 		ss << "h: " << (this->_cpu._registers.fh ? "set" : "unset") << "    ";
-		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << std::endl;
+		ss << "n: " << (this->_cpu._registers.fn ? "set" : "unset") << standard::endl;
 
-		ss << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
-		ss << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
-		ss << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_Y_COORD)) << std::endl;
-		ss << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_ENABLED)) << "     ";
-		ss << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_REQUESTS)) << "     ";
-		ss << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._rom.getRomBank()) << std::endl << std::endl;
+		ss << "lcdc: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCD_CONTROL)) << "     ";
+		ss << "stat: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_STAT)) << "     ";
+		ss << "ly: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::LCDC_Y_COORD)) << standard::endl;
+		ss << "ie: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_ENABLED)) << "     ";
+		ss << "if: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu.read(0xFF00 + CPU::INTERRUPT_REQUESTS)) << "     ";
+		ss << "rom: " << standard::setw(2) << standard::setfill('0') << static_cast<int>(this->_cpu._rom.getRomBank()) << standard::endl << standard::endl;
 
 		if (this->_cpu._halted)
-			ss << "Waiting for interrupt..." << std::endl;
-		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
+			ss << "Waiting for interrupt..." << standard::endl;
+		ss << "Interrupts " << (this->_cpu._interruptMasterEnableFlag ? "enabled" : "disabled") << standard::endl;
 		ss << "Next instruction: " << Instructions::_instructionsString[this->_cpu.read(this->_cpu._registers.pc)](this->_cpu, this->_cpu._registers.pc + 1);
-		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << std::endl;
+		ss << " (" << static_cast<int>(this->_cpu.read(this->_cpu._registers.pc)) << ")" << standard::endl;
 		ss << "Maximum CPU speed: " << this->_rate * 100 << "%";
 
 		this->_registers.setString(ss.str().c_str());
 		_debugWindow.draw(this->_registers);
 	}
 
-	void Debugger::_displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
+	void Debugger::_displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent)
 	{
 		sf::RectangleShape square{sf::Vector2f{32, 16}};
 
@@ -951,7 +947,7 @@ namespace GBEmulator::Debugger
 		}
 	}
 
-	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent)
+	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent)
 	{
 		auto colors = new sf::Color[16 * 24 * 8 * 8];
 		sf::Sprite sprite;
@@ -1082,7 +1078,7 @@ namespace GBEmulator::Debugger
 
 	void Debugger::_drawVram(sf::RenderWindow &_debugWindow)
 	{
-		std::vector<Graphics::RGBColor> colors{
+		Graphics::RGBColor colors[4] = {
 			{0, 0, 0},
 			{0, 0, 255},
 			{0, 255, 0},
@@ -1112,10 +1108,10 @@ namespace GBEmulator::Debugger
 		this->_displayWindow(_debugWindow, 1500, 340);
 
 		for (int j = 0; j < 8; j++) {
-			std::vector<Graphics::RGBColor> colorBG;
-			for (int i = 0; i < 4; i++) {
-				colorBG.emplace_back(this->_cpu._gpu._bgpd[j * 4 + i]);
-			}
+			Graphics::RGBColor colorBG[4];
+
+			for (int i = 0; i < 4; i++)
+				colorBG[i] = this->_cpu._gpu._bgpd[j * 4 + i];
 			this->_displayPalette(_debugWindow, 1500, 600 + j * 20, colorBG, false);
 		}
 	}

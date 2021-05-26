@@ -8,7 +8,12 @@
 #ifndef GBEMULATOR_ILCD_HPP
 #define GBEMULATOR_ILCD_HPP
 
-#include <vector>
+
+#ifdef ARDUINO
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
 
 namespace GBEmulator::Debugger {
 	class Debugger;
@@ -26,13 +31,13 @@ namespace GBEmulator::Graphics
 		static const struct GBEmulator::Graphics::RGBColor DGray;
 		static const struct GBEmulator::Graphics::RGBColor Black;
 
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-		unsigned char a = 255;
-		RGBColor(unsigned char r, unsigned char g, unsigned char b) noexcept;
-		RGBColor(unsigned short gbc_color) noexcept;
-		RGBColor(unsigned rgba_color) noexcept;
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+		uint8_t a = 255;
+		RGBColor(uint8_t r, uint8_t g, uint8_t b) noexcept;
+		RGBColor(uint16_t gbc_color) noexcept;
+		RGBColor(uint32_t rgba_color) noexcept;
 		RGBColor() = default;
 	};
 
@@ -49,14 +54,14 @@ namespace GBEmulator::Graphics
 		 * @param x: largeur de l'écran.
 		 * @param y: hauteur de l'écran.
 		 */
-		virtual void setMaxSize(unsigned int x, unsigned y) = 0;
+		virtual void setMaxSize(unsigned x, unsigned y) = 0;
 		/*!
 		 * @brief Pose un pixel sur l'écran à la position x, y
 		 * @param x: position du pixel sur l'axe des abscisses.
 		 * @param y: position du pixel sur l'axe des ordonnées.
 		 * @param color: couleur du pixel (White, LGray, DGray, Black)
 		 */
-		virtual void setPixel(unsigned int x, unsigned y, const RGBColor &color) = 0;
+		virtual void setPixel(unsigned x, unsigned y, const RGBColor &color) = 0;
 		/*!
 		 * @brief Affiche l'écran mis àa jour
 		 */

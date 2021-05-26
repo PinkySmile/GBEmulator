@@ -28,7 +28,7 @@ namespace GBEmulator
 			Serenity::Vector2i               _winSize;
 			Gfx::Color                       *_screen;
 			Gfx::Color                       *_framebuffer;
-			std::string                      _title;
+			standard::string                      _title;
 			Timing::Clock                    _fpsClock;
 			Timing::Clock                    _clock;
 			Timing::Clock                    _emulatorSpeed;
@@ -49,7 +49,7 @@ namespace GBEmulator
 			 * @param size: Taille de la fenêtre.
 			 * @param title: Titre de la fenêtre.
 			 */
-			LCDSerenityLibGui(Serenity::Vector2i size, const std::string &title);
+			LCDSerenityLibGui(Serenity::Vector2i size, const standard::string &title);
 			//! Met à jour la fenetre du jeu
 			void display() override;
 			//! Nettoie la fenetre du jeu

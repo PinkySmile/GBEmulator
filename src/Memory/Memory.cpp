@@ -5,10 +5,13 @@
 ** Memory.cpp
 */
 
-#include <iostream>
-#include <iomanip>
+#ifndef ARDUINO
 #include <cstring>
 #include <cctype>
+#else
+#include <string.h>
+#include <ctype.h>
+#endif
 #include "Memory.hpp"
 
 namespace GBEmulator::Memory
@@ -30,12 +33,12 @@ namespace GBEmulator::Memory
 		delete[] this->_memory;
 	}
 
-	unsigned char Memory::rawRead(unsigned short address) const
+	unsigned char Memory::rawRead(uint16_t address) const
 	{
 		return this->_memory[address % this->_bankSize];
 	}
 
-	unsigned char Memory::read(unsigned short address) const
+	unsigned char Memory::read(uint16_t address) const
 	{
 		if (!this->_size)
 			return 0xFF;
@@ -73,28 +76,28 @@ namespace GBEmulator::Memory
 		for (size_t i = 0; i < size; i++)
 			tab[i] = rand() % 0x100;
 		if (size > this->_size)
-			std::memcpy(tab, this->_memory, this->_size);
+			memcpy(tab, this->_memory, this->_size);
 		else
-			std::memcpy(tab, this->_memory, size);
+			memcpy(tab, this->_memory, size);
 		delete[] this->_memory;
 		this->_memory = tab;
 		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 		this->_size = size;
 	}
 
-	void Memory::write(unsigned short address, unsigned char value)
+	void Memory::write(uint16_t address, uint8_t value)
 	{
 		if (this->_readOnly)
 			return;
 		this->forceWrite(address, value);
 	}
 
-	void Memory::rawWrite(unsigned short address,unsigned char value)
+	void Memory::rawWrite(uint16_t address,uint8_t value)
 	{
 		this->_memory[address] = value;
 	}
 
-	void Memory::forceWrite(unsigned short address,unsigned char value)
+	void Memory::forceWrite(uint16_t address,uint8_t value)
 	{
 		this->_bankPtr[address % this->_bankSize] = value;
 	}
@@ -106,23 +109,6 @@ namespace GBEmulator::Memory
 
 		this->_currentBank = bank % (this->_size / this->_bankSize);
 		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
-	}
-
-	void Memory::dump(unsigned short offset) const
-	{
-		for (unsigned int i = 0; i < this->_size; i += 0x10) {
-			std::cout << std::setw(4) << std::setfill('0') << (i + offset) << ":  ";
-			for (unsigned j = 0; j < 0x10 && j + i < this->_size; j++)
-				std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->_memory[j + i]) << " ";
-			for (int j = 0; j < static_cast<int>(i - this->_size + 0x10); j++)
-				std::cout << "   ";
-			std::cout << " ";
-			for (unsigned j = 0; j < 0x10 && j + i < this->_size; j++)
-				std::cout << (std::isprint(this->_memory[j + i]) ? this->_memory[j + i] : '.');
-			for (int j = 0; j < static_cast<int>(i - this->_size + 0x10); j++)
-				std::cout << " ";
-			std::cout << std::endl;
-		}
 	}
 
 	unsigned char *Memory::getBuffer()

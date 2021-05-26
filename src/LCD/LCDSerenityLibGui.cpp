@@ -11,7 +11,7 @@ static bool drawMutex = false;
 void lockMutex(bool &mutex) { while (mutex); mutex = true; }
 void unlockMutex(bool &mutex) { mutex = false; }
 
-GBEmulator::Graphics::LCDSerenityLibGui::LCDSerenityLibGui(Serenity::Vector2i size, const std::string &title) :
+GBEmulator::Graphics::LCDSerenityLibGui::LCDSerenityLibGui(Serenity::Vector2i size, const standard::string &title) :
 	_innerWindow(new Serenity::SerenityPlatformWindow(size)),
 	_size{160, 144},
 	_winSize(size),
@@ -119,7 +119,7 @@ void GBEmulator::Graphics::LCDSerenityLibGui::render()
 	loop.pump(Core::EventLoop::WaitMode::PollForEvents);
 
 	if (this->_clock.getElapsedTime().asMilliseconds() > 500) {
-		this->_innerWindow->window()->set_title((this->_title + " " + std::to_string(static_cast<int>(100 / this->_lastFrameTime / 60)) + "% (" + std::to_string(static_cast<int>(this->getFramerate())) + " FPS)").c_str());
+		this->_innerWindow->window()->set_title((this->_title + " " + standard::to_string(static_cast<int>(100 / this->_lastFrameTime / 60)) + "% (" + standard::to_string(static_cast<int>(this->getFramerate())) + " FPS)").c_str());
 		this->_clock.restart();
 	}
 	lockMutex(drawMutex);

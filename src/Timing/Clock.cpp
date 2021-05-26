@@ -28,10 +28,14 @@ namespace GBEmulator::Timing
 
 	Time Clock::_getTime() const
 	{
+#ifdef ARDUINO_CLOCK
+		return Time{micros()};
+#else
 		timespec time;
 
 		clock_gettime(CLOCK_MONOTONIC, &time);
 		return Time{static_cast<uint64_t>(time.tv_sec) * 1000000 + time.tv_nsec / 1000};
+#endif
 	}
 
 	Time::Time(uint64_t time) :

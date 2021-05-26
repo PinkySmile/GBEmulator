@@ -7,15 +7,21 @@
 
 
 #define SAMPLE_RATE 44100
+#ifndef ARDUINO
 #include <vector>
+#include <cstdint>
+#else
+#include "../../ArduinoStuff/FakeSTL.hpp"
+#include <stdint.h>
+#endif
 
 namespace GBEmulator
 {
 	class IGBSoundChannel {
 	public:
-		virtual void write(unsigned int relativeAddress, unsigned char value) = 0;
+		virtual void write(unsigned int relativeAddress, uint8_t value) = 0;
 		virtual unsigned char read(unsigned int relativeAddress) = 0;
-		virtual std::vector<short> update(unsigned int cycles) = 0;
+		virtual standard::vector<int16_t> update(unsigned int cycles) = 0;
 		virtual bool hasExpired() const = 0;
 		virtual void onPowerOff() = 0;
 	};

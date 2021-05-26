@@ -29,7 +29,7 @@ namespace GBEmulator::Network
 		//! @brief Connecte à un émulateur avec une ip ou un nom de domaine et son port.
 		//! @param host Nom de domaine ou ip du serveur.
 		//! @param port Port d'écoute du serveur.
-		void connect(const std::string &host, unsigned short port);
+		void connect(const standard::string &host, unsigned short port);
 		//! @brief Héberge un serveur sur un port.
 		//! @param port Port d'écoute.
 		void host(unsigned short port);

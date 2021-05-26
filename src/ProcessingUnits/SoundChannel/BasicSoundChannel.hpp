@@ -16,14 +16,14 @@ namespace GBEmulator
 		unsigned _cycles = 0;
 
 		virtual void _update(unsigned cycles) = 0;
-		virtual short _getSoundData() const = 0;
+		virtual int16_t _getSoundData() const = 0;
 
 	protected:
 		bool _expired = true;
 
 	public:
 		bool hasExpired() const override final { return this->_expired; };
-		std::vector<short> update(unsigned int cycles) override;
+		standard::vector<int16_t> update(unsigned int cycles) override;
 	};
 }
 

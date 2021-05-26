@@ -6,7 +6,13 @@
 #define GBEMULATOR_NOISEWAVECHANNEL_HPP
 
 
+#ifndef ARDUINO
 #include <cmath>
+#include <cstdint>
+#else
+#include <math.h>
+#include <stdint.h>
+#endif
 #include "BasicSoundChannel.hpp"
 
 namespace GBEmulator
@@ -58,10 +64,10 @@ namespace GBEmulator
 		VolumeEnvelopeRegister _volumeEnvelopeRegister = 0;
 		VolumeEnvelopeRegister _effectiveVolumeEnvelopeRegister = 0;
 		PolynomialCounterRegister _polynomialCounter = 0;
-		unsigned short _lfsr : 15 = 0x7FFF;
-		unsigned char _length : 7 = 0;
-		bool _initial : 1 = false;
-		bool _useLength : 1 = false;
+		unsigned short _lfsr : 15;
+		unsigned char _length : 7;
+		bool _initial : 1;
+		bool _useLength : 1;
 		double _lengthCounter = 0;
 
 		double _lfsrCounter = 0;
@@ -69,10 +75,11 @@ namespace GBEmulator
 
 		void _restart();
 		void _update(unsigned cycles) override;
-		short _getSoundData() const override;
+		int16_t _getSoundData() const override;
 
 	public:
-		void write(unsigned int relativeAddress, unsigned char value) override;
+		NoiseWaveChannel();
+		void write(unsigned int relativeAddress, uint8_t value) override;
 		unsigned char read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;

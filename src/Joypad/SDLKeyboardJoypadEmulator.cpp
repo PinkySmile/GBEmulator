@@ -9,7 +9,7 @@
 
 namespace GBEmulator::Input
 {
-	SDLKeyboardJoypadEmulator::SDLKeyboardJoypadEmulator(Graphics::LCDSDL &screen, const std::map<GBEmulator::Input::Keys, SDL_KeyCode> &&keys) :
+	SDLKeyboardJoypadEmulator::SDLKeyboardJoypadEmulator(Graphics::LCDSDL &screen, const standard::map<GBEmulator::Input::Keys, SDL_KeyCode> &&keys) :
 		_keys(keys),
 		_screen(screen),
 		_thread([this]{
@@ -17,7 +17,7 @@ namespace GBEmulator::Input
 				this->update();
 		})
 	{
-		for (std::pair<GBEmulator::Input::Keys, SDL_KeyCode> i : this->_keys)
+		for (standard::pair<GBEmulator::Input::Keys, SDL_KeyCode> i : this->_keys)
 			this->_rkeys[i.second] = i.first;
 	}
 
@@ -32,7 +32,7 @@ namespace GBEmulator::Input
 	{
 		this->_keys[button] = key;
 		this->_rkeys.clear();
-		for (std::pair<GBEmulator::Input::Keys, SDL_KeyCode> i : this->_keys)
+		for (standard::pair<GBEmulator::Input::Keys, SDL_KeyCode> i : this->_keys)
 			this->_rkeys[i.second] = i.first;
 	}
 
@@ -63,7 +63,7 @@ namespace GBEmulator::Input
 		try {
 			Keys button = this->_rkeys.at(keysym);
 			this->_keyPressed[button] = value;
-		} catch (std::exception &e) {}
+		} catch (standard::exception &e) {}
 	}
 
 	bool SDLKeyboardJoypadEmulator::isButtonPressed(GBEmulator::Input::Keys button) const noexcept

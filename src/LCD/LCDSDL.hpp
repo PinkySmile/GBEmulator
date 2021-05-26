@@ -13,12 +13,12 @@
 #include "util/TimerSDL.hpp"
 
 namespace GBEmulator::Graphics {
-	class Exception : public std::exception {
+	class Exception : public standard::exception {
 	private:
-		std::string _msg;
+		standard::string _msg;
 
 	public:
-		Exception(const std::string &msg) : _msg(msg) {};
+		Exception(const standard::string &msg) : _msg(msg) {};
 		const char *what() const noexcept override { return this->_msg.c_str(); };
 	};
 
@@ -45,7 +45,7 @@ namespace GBEmulator::Graphics {
 		LCDSDL(const LCDSDL &) = delete;
 		~LCDSDL();
 		LCDSDL &operator =(const LCDSDL &) = delete;
-		LCDSDL(SDLVideoMode mode, const std::string &title);
+		LCDSDL(SDLVideoMode mode, const standard::string &title);
 		void display() override;
 		void render() override;
 		void clear() override;

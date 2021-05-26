@@ -10,7 +10,7 @@ if (NOT MSVC)
 	elseif (WIN32)
 		add_link_options(-mwindows)
 	endif()
-	if (NO_EXCEPTION)
+	if (NO_EXCEPTION OR ARDUINO)
 		message("Exceptions disabled")
 		set(NODEBUGGER 1)
 		add_compile_options(-fno-exceptions)
@@ -28,7 +28,11 @@ endif()
 set(SDL_IMPL 0)
 set(SFML_IMPL 0)
 set(SERENITY_IMPL 0)
-if (SFML_FOUND)
+set(SPECIFIC_COMPILE_FLAGS standard=std)
+if (ARDUINO)
+	set(SPECIFIC_COMPILE_FLAGS ARDUINO=1)
+	set(ADDITIONAL_SOURCES src/ArduinoStuff/Impl.cpp)
+elseif (SFML_FOUND)
 	include_directories(
 		${SFML_INCLUDE_DIRS}
 	)
@@ -103,6 +107,7 @@ endif ()
 
 add_library(
 	GBEmulator_Core STATIC
+	${ADDITIONAL_SOURCES}
 	src/Joypad/JoypadEmulator.hpp
 	src/LCD/ILCD.cpp
 	src/LCD/ILCD.hpp
@@ -143,9 +148,10 @@ add_library(
 	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.cpp
 	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.hpp
 )
+target_compile_definitions(GBEmulator_Core PRIVATE ${SPECIFIC_COMPILE_FLAGS})
 
 if (NODEBUGGER)
-	set(DEBUGGER_SRC)
+	set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp)
 else ()
 	set(NODEBUGGER 0)
 	set(
@@ -155,7 +161,7 @@ else ()
 		src/Network/BgbHandler.hpp
 		src/debugger/CompiledCondition.cpp
 		src/debugger/CompiledCondition.hpp
-)
+	)
 endif()
 
 add_executable(
@@ -169,6 +175,8 @@ add_executable(
 	src/CreateInferfaceImpl.cpp
 	src/CreateInferfaceImpl.hpp
 	src/DummyDevices.hpp
+	src/ProcessingUnits/Instructions/Strings.cpp
+	src/ProcessingUnits/Instructions/Strings.hpp
 )
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
 	set(DEBUG_FLAG DEBUG)
@@ -183,6 +191,7 @@ target_compile_definitions(
 	SFML_IMPL=${SFML_IMPL}
 	SERENITY_IMPL=${SERENITY_IMPL}
 	${DEBUG_FLAG}=1
+	${SPECIFIC_COMPILE_FLAGS}
 )
 
 if (SERENITYOS)

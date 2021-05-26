@@ -9,8 +9,13 @@
 #if SFML_IMPL
 #include <SFML/System.hpp>
 #else
+#ifndef ARDUINO
 #include <ctime>
 #include <cstdint>
+#else
+#include <time.h>
+#include <stdint.h>
+#endif
 #endif
 
 namespace GBEmulator::Timing

@@ -14,37 +14,37 @@
 
 namespace GBEmulator::Debugger
 {
-	extern const std::map<std::string, std::function<double(const CPU &, double)>> _unFcts;
-	extern const std::map<std::string, std::function<double(double, double)>> _binFcts;
-	extern const std::vector<std::string> _binOps;
+	extern const standard::map<standard::string, standard::function<double(const CPU &, double)>> _unFcts;
+	extern const standard::map<standard::string, standard::function<double(double, double)>> _binFcts;
+	extern const standard::vector<standard::string> _binOps;
 
 	class Operation {
 	public:
 		virtual double getValue(const CPU &) const = 0;
-		virtual std::string tostring() const = 0;
+		virtual standard::string tostring() const = 0;
 	};
 
 	class UnaryOperation : public Operation {
 	private:
-		std::shared_ptr<Operation> _operand;
-		std::string _operator;
+		standard::shared_ptr<Operation> _operand;
+		standard::string _operator;
 
 	public:
-		UnaryOperation(const std::shared_ptr<Operation> &operand, const std::string &operato);
+		UnaryOperation(const standard::shared_ptr<Operation> &operand, const standard::string &operato);
 		double getValue(const CPU &) const override;
-		std::string tostring() const override;
+		standard::string tostring() const override;
 	};
 
 	class BinaryOperation : public Operation {
 	private:
-		std::shared_ptr<Operation> _operand1;
-		std::shared_ptr<Operation> _operand2;
-		std::string _operator;
+		standard::shared_ptr<Operation> _operand1;
+		standard::shared_ptr<Operation> _operand2;
+		standard::string _operator;
 
 	public:
-		BinaryOperation(const std::shared_ptr<Operation> &operand1, const std::shared_ptr<Operation> &operand2, const std::string &operato);
+		BinaryOperation(const standard::shared_ptr<Operation> &operand1, const standard::shared_ptr<Operation> &operand2, const standard::string &operato);
 		double getValue(const CPU &) const override;
-		std::string tostring() const override;
+		standard::string tostring() const override;
 	};
 
 	class Value : public Operation {
@@ -55,7 +55,7 @@ namespace GBEmulator::Debugger
 		Value(double v);
 		double getValue(const CPU &) const override;
 
-		std::string tostring() const override;
+		standard::string tostring() const override;
 	};
 
 	template<typename T>
@@ -63,11 +63,11 @@ namespace GBEmulator::Debugger
 	private:
 		const CPU::Registers *registers;
 		const T *_v;
-		std::string _name;
+		standard::string _name;
 
 	public:
-		ValueRegister(const CPU::Registers &regs, const std::string &name) : registers(&regs), _v(nullptr), _name(name) {};
-		ValueRegister(const T &reg, const std::string &name) : registers(nullptr), _v(&reg), _name(name) {};
+		ValueRegister(const CPU::Registers &regs, const standard::string &name) : registers(&regs), _v(nullptr), _name(name) {};
+		ValueRegister(const T &reg, const standard::string &name) : registers(nullptr), _v(&reg), _name(name) {};
 		double getValue(const CPU &) const override
 		{
 			if (this->_v)
@@ -81,13 +81,13 @@ namespace GBEmulator::Debugger
 			return this->registers->fh;
 		}
 
-		std::string tostring() const override
+		standard::string tostring() const override
 		{
 			return this->_name;
 		}
 	};
 
-	std::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, const std::string &line);
+	standard::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, const standard::string &line);
 }
 
 

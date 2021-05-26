@@ -10,7 +10,13 @@
 
 #define DIV_FREQUENCY 4194304
 
+#ifndef ARDUINO
 #include <memory>
+#include <cstdint>
+#else
+#include <stdint.h>
+#include "../ArduinoStuff/Memory.hpp"
+#endif
 #include "../Memory/Memory.hpp"
 #include "../Sound/ISound.hpp"
 #include "SoundChannel/IGBSoundChannel.hpp"
@@ -78,13 +84,13 @@ namespace GBEmulator
 
 	class SampleBuffer {
 	public:
-		std::vector<short> _buffer;
+		standard::vector<int16_t> _buffer;
 		float leftVolume = 1;
 		float rightVolume = 1;
 
-		SampleBuffer &operator=(const std::vector<short> &samples);
-		SampleBuffer &operator<<(const std::vector<short> &samples);
-		SampleBuffer &operator+=(const std::vector<short> &samples);
+		SampleBuffer &operator=(const standard::vector<int16_t> &samples);
+		SampleBuffer &operator<<(const standard::vector<int16_t> &samples);
+		SampleBuffer &operator+=(const standard::vector<int16_t> &samples);
 	};
 
 	struct APUSoundOutputTerminalSelect {
@@ -133,13 +139,13 @@ namespace GBEmulator
 		 * @param address Adresse d'écriture dans le channel. (Les valeurs sont légèrement modifiés de l'original, voir l'enumération regist pour plus d'informations)
 		 * @param value Valeur à écrire à l'adresse renseignée.
 		 */
-		void write(unsigned short address, unsigned char value);
+		void write(uint16_t address, uint8_t value);
 		/*!
 		 * @brief La fonction read permet de lire des données dans un des quatres channels de l'APU.
 		 * @param address Adresse où la fonction read lit. (Les valeurs sont légèrement modifiés de l'original, voir l'enumération regist pour plus d'informations)
 		 * @return La valeur écrite à l'adresse renseignée dans la fonction.
 		 */
-		unsigned char read(unsigned short address) const;
+		unsigned char read(uint16_t address) const;
 		/*!
 		 * @brief La fonction update permet d'effectuer des mises à jours des sons joués.
 		 * Il est souvent utilisé lorsqu'un son joué est soumis à un blayage/changement continu de volume ou de fréquence.
@@ -148,9 +154,9 @@ namespace GBEmulator
 		void update(unsigned cycleNB); // retourne le nombre de cycle écoulés depuis le début du CPU
 
 	private:
-		void _internalWrite(unsigned short relativeAddress, unsigned char value);
+		void _internalWrite(unsigned short relativeAddress, uint8_t value);
 		unsigned char _internalRead(unsigned short relativeAddress) const;
-		std::vector<short> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
+		standard::vector<int16_t> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
 
 		//! @brief Lecteur de son
 		ISound &_soundPlayer;
@@ -159,7 +165,7 @@ namespace GBEmulator
 		SampleBuffer _samples;
 
 		//! @brief Tous les channels
-		std::unique_ptr<IGBSoundChannel> _channels[4];
+		standard::unique_ptr<IGBSoundChannel> _channels[4];
 
 		bool _enabled = false;
 		APUSoundOutputTerminalSelect _terminalSelect = 0x00;

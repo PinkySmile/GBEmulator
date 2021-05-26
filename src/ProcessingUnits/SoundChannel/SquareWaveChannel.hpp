@@ -62,9 +62,9 @@ namespace GBEmulator
 		};
 
 		struct FrequencyRegister {
-			unsigned char loFrequency;
+			uint8_t loFrequency;
 			union {
-				unsigned char highByte;
+				uint8_t highByte;
 				struct {
 					unsigned char hiFrequency : 3;
 					unsigned char _ : 3;
@@ -89,7 +89,7 @@ namespace GBEmulator
 
 		void _restart();
 		void _update(unsigned cycles) override;
-		short _getSoundData() const override;
+		int16_t _getSoundData() const override;
 
 		SweepRegister               _sweepRegister = 0;
 		SoundLenPatternDutyRegister _soundLenPatternDutyRegister = 0;
@@ -97,7 +97,7 @@ namespace GBEmulator
 		VolumeEnvelopeRegister      _effectiveVolumeEnvelopeRegister = 0;
 		FrequencyRegister           _frequencyRegister = 0;
 
-		unsigned short _sweepFrequencyShadow = 0;
+		uint16_t _sweepFrequencyShadow = 0;
 
 		double _lengthCounter = 0;
 		double _frequencyCounter = 0;
@@ -105,7 +105,7 @@ namespace GBEmulator
 		double _frequencySweepCounter = 0;
 
 	public:
-		void write(unsigned int relativeAddress, unsigned char value) override;
+		void write(unsigned int relativeAddress, uint8_t value) override;
 		unsigned char read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;

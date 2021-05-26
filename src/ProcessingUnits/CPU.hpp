@@ -8,9 +8,13 @@
 #ifndef GBEMULATOR_CPU_HPP
 #define GBEMULATOR_CPU_HPP
 
-#include <thread>
+#ifndef ARDUINO
 #include <string>
-#include <functional>
+#include <cstdint>
+#else
+#include <stdint.h>
+#include "../ArduinoStuff/FakeSTL.hpp"
+#endif
 #include "APU.hpp"
 #include "GPU.hpp"
 #include "../Sound/ISound.hpp"
@@ -184,7 +188,7 @@ namespace GBEmulator
 			union {
 				struct {
 					union {
-						unsigned char f;
+						uint8_t f;
 						struct {
 							unsigned char _ : 4;
 							bool fc : 1;
@@ -193,44 +197,46 @@ namespace GBEmulator
 							bool fz : 1;
 						};
 					};
-					unsigned char a;
+					uint8_t a;
 				};
-				unsigned short af;
+				uint16_t af;
 			};
 			union {
 				struct {
-					unsigned char c;
-					unsigned char b;
+					uint8_t c;
+					uint8_t b;
 				};
-				unsigned short bc;
+				uint16_t bc;
 			};
 			union {
 				struct {
-					unsigned char e;
-					unsigned char d;
+					uint8_t e;
+					uint8_t d;
 				};
-				unsigned short de;
+				uint16_t de;
 			};
 			union {
 				struct {
-					unsigned char l;
-					unsigned char h;
+					uint8_t l;
+					uint8_t h;
 				};
-				unsigned short hl;
+				uint16_t hl;
 			};
-			unsigned short pc;
-			unsigned short sp;
+			uint16_t pc;
+			uint16_t sp;
 		};
 
+#ifdef __cpp_exceptions
 		//! @brief Un opcode est invalide.
-		class InvalidOpcodeException : public std::exception {
+		class InvalidOpcodeException : public standard::exception {
 		private:
 			char _buffer[40];
 
 		public:
-			InvalidOpcodeException(unsigned short op, unsigned short address);
+			InvalidOpcodeException(unsigned short op, uint16_t address);
 			const char *what() const noexcept override;
 		};
+#endif
 
 		/*!
 		 * Constructeur
@@ -254,7 +260,7 @@ namespace GBEmulator
 		//! Lis la valeur pointé par l'adresse passée
 		//! @param address Adresse à lire
 		//! @return Valeur pointé par adresse
-		unsigned char read(unsigned short address) const;
+		unsigned char read(uint16_t address) const;
 		//! Récupère l'adresse pointé par pc et incrémente pc
 		unsigned char fetchArgument();
 		//! Récupère l'adresse pointé par pc et pc+1 et incrémente pc de deux.
@@ -266,19 +272,13 @@ namespace GBEmulator
 		//! Écrit la valeur sur la zone pointé par l'adresse passée
 		//! @param address Adresse à écrire.
 		//! @param value Valeur à écrire.
-		void write(unsigned short address, unsigned char value);
-		//! Affiche sur la sortie standard un dump de la Mémoire et des registres
-		void dump() const;
+		void write(uint16_t address, uint8_t value);
 		//! renvoie True si le CPU a été halt
 		//! @return true sir le cpu est en mode 'halted'. Sinon, false.
 		bool isHalted() const;
 		//! renvoie True si le CPU a été stop
 		//! @return true sir le cpu est en mode 'stopped'. Sinon, false.
 		bool isStopped() const;
-		//! Affiche sur la sortie standard un debug de la mémoire
-		void dumpMemory() const;
-		//! Affiche sur la sortie standard un debug des registres
-		void dumpRegisters() const;
 		//! Récupère une copie des registres
 		//! @return Les registres du CPU.
 		Registers getRegisters() const;
@@ -299,9 +299,11 @@ namespace GBEmulator
 
 		void init();
 
+#ifndef ARDUINO
 		void setProfiling(bool profiling);
 		void dumpProfiler();
-		bool freezeAddress(unsigned short address, unsigned char value);
+		bool freezeAddress(uint16_t address, uint8_t value);
+#endif
 
 		void ignoreBootRom(bool ignored = true);
 		void goMaxSpeed(bool speed = true);
@@ -309,8 +311,8 @@ namespace GBEmulator
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
-		static const std::vector<unsigned char> _startupCode;
-		static const std::vector<unsigned char> _gbcStartupCode;
+		static const unsigned char _startupCode[256];
+		static const unsigned char _gbcStartupCode[2304];
 
 		//! APU de la Gameboy.
 		APU _apu;
@@ -326,9 +328,11 @@ namespace GBEmulator
 		bool _noBootRom = false;
 		double _oldTime;
 		double _newTime;
-		std::map<unsigned short, unsigned char> _frozenAddresses;
+#ifndef ARDUINO
+		standard::map<unsigned short, unsigned char> _frozenAddresses;
+#endif
 		bool _profiling = false;
-		std::map<std::string, std::pair<float, unsigned>> _profiler;
+		standard::map<standard::string, standard::pair<float, unsigned>> _profiler;
 		Timing::Clock _clock;
 		//! Est-ce que le CPU est en mode 'stopped'
 		bool _stopped;
@@ -351,40 +355,40 @@ namespace GBEmulator
 		//! renvoie True si le startupcode n'a pas fini d'être éxécuter.
 		bool _internalRomEnabled;
 		//! Devider Register
-		unsigned short _divRegister;
+		uint16_t _divRegister;
 		//! Entrée utilisateur
 		Input::JoypadEmulator &_joypad;
 		//! True si l'interrupt est activé
-		unsigned char _interruptEnabled;
+		uint8_t _interruptEnabled;
 		//! True si l'interrupt est demandé
-		unsigned char _interruptRequest = 0;
+		uint8_t _interruptRequest = 0;
 		//! True si l'interrupt est demandé
-		unsigned char _hardwareInterruptRequests = 0;
+		uint8_t _hardwareInterruptRequests = 0;
 		//! True si les interrupts sont activés
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link
 		Network::CableInterface &_cable;
 		//! L'index de la palette de couleur du fond (BGPI)
-		unsigned char _bgpi = 0;
+		uint8_t _bgpi = 0;
 		//! True si l'index de la palette de couleur du fond (BGPI) doit être incrémenté après chaque écriture
 		bool _autoIncrementBgpi = false;
 		//! L'index de la palette de couleur des sprites (OBPI)
-		unsigned char _obpi = 0;
+		uint8_t _obpi = 0;
 		//! True si l'index de la palette de couleur des sprites (OBPI) doit être incrémenté après chaque écriture
 		bool _autoIncrementObpi = false;
 		//! Bank utilisé dans la WRAM.
-		unsigned char _WRAMBank = 0;
+		uint8_t _WRAMBank = 0;
 		//! Byte que permet de préparer un SpeedSwitch.
 		bool _speedSwitch = false;
 		//! Permet de retenir la vitesse actuelle.
 		bool _isDoubleSpeed = false;
 		//! HDMA transfert destination.
-		unsigned short _HDMADest = 0x8000;
+		uint16_t _HDMADest = 0x8000;
 		//! HDMA transfert source.
-		unsigned short _HDMASrc = 0;
+		uint16_t _HDMASrc = 0;
 		//! HDMA transfert taille, mode, debut.
-		unsigned char _HDMAStart = 0;
-		unsigned _joypadCache = 0xFF;
+		uint8_t _HDMAStart = 0;
+		uint8_t _joypadCache = 0xFF;
 		GBMode _gbmode = MODE_AUTO;
 
 		bool _isDMGMode() const;
@@ -419,7 +423,7 @@ namespace GBEmulator
 		//! @brief Écrire une valeur d'un port d'I/O.
 		//! @param address Adresse d'écriture.
 		//! @param value Nouvelle valeur.
-		void _writeIOPort(unsigned char address, unsigned char value);
+		void _writeIOPort(unsigned char address, uint8_t value);
 	};
 }
 

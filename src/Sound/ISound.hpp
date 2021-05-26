@@ -9,7 +9,14 @@
 #ifndef GBEMULATOR_ISOUND_HPP
 #define GBEMULATOR_ISOUND_HPP
 
+
+#ifndef ARDUINO
 #include <vector>
+#include <cstdint>
+#else
+#include <stdint.h>
+#include "../ArduinoStuff/FakeSTL.hpp"
+#endif
 
 namespace GBEmulator {
     /*!
@@ -29,7 +36,7 @@ namespace GBEmulator {
 	* @param samples Tableau de samples.
 	* @param samplesCount Nombre de samples.
 	*/
-        virtual void pushSamples(short *samples, size_t sampleCount) = 0;
+        virtual void pushSamples(int16_t *samples, size_t sampleCount) = 0;
     };
 }
 

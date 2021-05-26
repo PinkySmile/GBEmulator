@@ -5,18 +5,25 @@
 ** Created by agrellier,
 */
 
+#ifndef ARDUINO
+#include <iostream>
 #include <vector>
 #include <cstring>
-#include <iostream>
-#include <iomanip>
 #include <cmath>
+#include "Instructions/Strings.hpp"
+#else
+#include "../ArduinoStuff/FakeSTL.hpp"
+#include <string.h>
+#include <math.h>
+#endif
 #include "CPU.hpp"
 #include "Instructions/CPUInstructions.hpp"
 #include "Instructions/Instructions.hpp"
 
 namespace GBEmulator
 {
-	CPU::InvalidOpcodeException::InvalidOpcodeException(unsigned short op, unsigned short address)
+#ifdef __cpp_exceptions
+	CPU::InvalidOpcodeException::InvalidOpcodeException(unsigned short op, uint16_t address)
 	{
 		if (op & 0xFF00U)
 			sprintf(this->_buffer, "Invalid opcode 0x%04X at address 0x%04X", op, address);
@@ -28,6 +35,7 @@ namespace GBEmulator
 	{
 		return this->_buffer;
 	}
+#endif
 
 	CPU::CPU(
 		ISound &soundPlayer,
@@ -68,12 +76,14 @@ namespace GBEmulator
 		return this->_rom;
 	}
 
-	unsigned char CPU::read(unsigned short address) const
+	unsigned char CPU::read(uint16_t address) const
 	{
+#ifndef ARDUINO
 		auto it = this->_frozenAddresses.find(address);
 
 		if (it != this->_frozenAddresses.end())
 			return it->second;
+#endif
 
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
@@ -223,12 +233,14 @@ namespace GBEmulator
 		return this->_stopped;
 	}
 
-	void CPU::write(unsigned short address, unsigned char value)
+	void CPU::write(uint16_t address, uint8_t value)
 	{
+#ifndef ARDUINO
 		auto it = this->_frozenAddresses.find(address);
 
 		if (it != this->_frozenAddresses.end())
 			return;
+#endif
 
 #if defined(__GNUG__) || defined(DIRTY_MSVC_SWITCH)
 		switch (address) {
@@ -571,7 +583,7 @@ namespace GBEmulator
 		}
 	}
 
-	void CPU::_writeIOPort(unsigned char address, unsigned char value)
+	void CPU::_writeIOPort(unsigned char address, uint8_t value)
 	{
 		switch (address) {
 		case SERIAL_DATA:
@@ -721,6 +733,7 @@ namespace GBEmulator
 		unsigned char opcode = this->read(this->_registers.pc++);
 		unsigned cycles;
 
+#ifndef ARDUINO
 		if (!this->_profiling)
 			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
 		else {
@@ -738,72 +751,12 @@ namespace GBEmulator
 			elem.first += time;
 			elem.second++;
 		}
+#else
+		cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
+#endif
 
 		this->_registers._ = 0;
 		return cycles;
-	}
-
-	void CPU::dumpRegisters() const
-	{
-		std::cout << std::hex << std::uppercase;
-		std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_registers.af;
-		std::cout << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.a);
-		std::cout << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.f) << ")" << std::endl;
-
-		std::cout << "bc: " << std::setw(4) << std::setfill('0') << this->_registers.bc;
-		std::cout << " (b: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.b);
-		std::cout << ", c: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.c) << ")" << std::endl;
-
-		std::cout << "de: " << std::setw(4) << std::setfill('0') << this->_registers.de;
-		std::cout << " (d: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.d);
-		std::cout << ", e: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.e) << ")" << std::endl;
-
-		std::cout << "hl: " << std::setw(4) << std::setfill('0') << this->_registers.hl;
-		std::cout << " (h: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.h);
-		std::cout << ", l: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_registers.l) << ")" << std::endl;
-
-		std::cout << "sp: " << std::setw(4) << std::setfill('0') << this->_registers.sp << std::endl;
-		std::cout << "pc: " << std::setw(4) << std::setfill('0') << this->_registers.pc << std::endl;
-		std::cout << "z: " << (this->_registers.fz ? "set" : "unset") << std::endl;
-		std::cout << "c: " << (this->_registers.fc ? "set" : "unset") << std::endl;
-		std::cout << "h: " << (this->_registers.fh ? "set" : "unset") << std::endl;
-		std::cout << "n: " << (this->_registers.fn ? "set" : "unset") << std::endl;
-
-		std::cout << "lcdc: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCD_CONTROL)) << std::endl;
-		std::cout << "stat: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_STAT)) << std::endl;
-		std::cout << "ly: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + LCDC_Y_COORD)) << std::endl;
-		std::cout << "ie: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_ENABLED)) << std::endl;
-		std::cout << "if: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->read(0xFF00 + INTERRUPT_REQUESTS)) << std::endl;
-		std::cout << "rom: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_rom.getRomBank()) << std::endl;
-
-		if (this->_halted)
-			std::cout << "Waiting for interrupt..." << std::endl;
-		std::cout << "Interrupts " << (this->_interruptMasterEnableFlag ? "enabled" : "disabled") << std::endl;
-		std::cout << "Next instruction: " << Instructions::_instructionsString[this->read(this->_registers.pc)](*this, this->_registers.pc + 1);
-		std::cout << " (" << static_cast<int>(this->read(this->_registers.pc)) << ")" << std::endl;
-	}
-
-	void CPU::dumpMemory() const
-	{
-		for (unsigned int i = 0; i < 0x10000; i += 0x10) {
-			std::cout << std::setw(4) << std::setfill('0') << i << ":  ";
-			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
-				std::cout << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << static_cast<int>(this->read(j + i)) << " ";
-			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
-				std::cout << "   ";
-			std::cout << " ";
-			for (unsigned j = 0; j < 0x10 && j + i < 0x10000; j++)
-				std::cout << static_cast<char>(std::isprint(this->read(j + i)) ? this->read(j + i) : '.');
-			for (int j = 0; j < static_cast<int>(i - 0x10000 + 0x10); j++)
-				std::cout << " ";
-			std::cout << std::endl;
-		}
-	}
-
-	void CPU::dump() const
-	{
-		this->dumpMemory();
-		this->dumpRegisters();
 	}
 
 	unsigned short CPU::getDecPc() noexcept
@@ -866,19 +819,20 @@ namespace GBEmulator
 			this->_gpu.startHDMA(len, this->_HDMASrc, this->_HDMADest);
 	}
 
+#ifndef ARDUINO
 	void CPU::dumpProfiler()
 	{
-		std::vector<std::pair<std::string, std::pair<float, unsigned>>> v{
+		standard::vector<standard::pair<standard::string, standard::pair<float, unsigned>>> v{
 			this->_profiler.begin(),
 			this->_profiler.end()
 		};
 
-		std::sort(v.begin(), v.end(), [](std::pair<std::string, std::pair<float, unsigned>> g1, std::pair<std::string, std::pair<float, unsigned>> g2){
+		standard::sort(v.begin(), v.end(), [](standard::pair<standard::string, standard::pair<float, unsigned>> g1, standard::pair<standard::string, standard::pair<float, unsigned>> g2){
 			return g1.second.first / g1.second.second < g2.second.first / g2.second.second;
 		});
-		std::cout << "Mnemonic;Sample size;Total time;Average time" << std::endl;
+		std::cout << "Mnemonic;Sample size;Total time;Average time" << standard::endl;
 		for (auto &g : v)
-			std::cout << g.first << ";" << g.second.second << ";" << g.second.first << ";" << g.second.first / g.second.second << std::endl;
+			std::cout << g.first << ";" << g.second.second << ";" << g.second.first << ";" << g.second.first / g.second.second << standard::endl;
 	}
 
 	void CPU::setProfiling(bool profiling)
@@ -886,7 +840,7 @@ namespace GBEmulator
 		this->_profiling = profiling;
 	}
 
-	bool CPU::freezeAddress(unsigned short address, unsigned char value)
+	bool CPU::freezeAddress(uint16_t address, uint8_t value)
 	{
 		auto it = this->_frozenAddresses.find(address);
 
@@ -894,6 +848,7 @@ namespace GBEmulator
 			return this->_frozenAddresses.erase(it), false;
 		return this->_frozenAddresses[address] = value, true;
 	}
+#endif
 
 	void CPU::ignoreBootRom(bool ignored)
 	{
@@ -928,15 +883,14 @@ namespace GBEmulator
 		unsigned short addr = 0;
 
 		this->_internalRomEnabled = false;
+		this->_registers.pc = 0x0100;
+		this->_registers.sp = 0xFFFE;
 		if (this->_isDMGMode()) {
-			this->_registers = {
-				.af = 0x01B0,
-				.bc = 0x0013,
-				.de = 0x00D8,
-				.hl = 0x014D,
-				.pc = 0x0100,
-				.sp = 0xFFFE
-			};
+			this->_registers.af = 0x01B0;
+			this->_registers.bc = 0x0013;
+			this->_registers.de = 0x00D8;
+			this->_registers.hl = 0x014D;
+
 			for (int i = 0; i < 0x2000; i++)
 				this->_gpu.writeVRAM(i, 0);
 			for (int i = 1; i <= 0xC; i++)
@@ -945,14 +899,11 @@ namespace GBEmulator
 				this->_gpu.writeVRAM(0x1924 - 0xD + i, i);
 			this->_gpu.writeVRAM(0x1910, 0x19);
 		} else {
-			this->_registers = {
-				.af = 0x1180,
-				.bc = 0x0000,
-				.de = 0xFF56,
-				.hl = 0x000D,
-				.pc = 0x0100,
-				.sp = 0xFFFE
-			};
+			this->_registers.af = 0x1180;
+			this->_registers.bc = 0x0000;
+			this->_registers.de = 0xFF56;
+			this->_registers.hl = 0x000D;
+
 			this->_gpu.setVBK(true);
 			for (int i = 0; i < 0x2000; i++)
 				this->_gpu.writeVRAM(i, 0);
@@ -975,7 +926,7 @@ namespace GBEmulator
 			addr += 2;
 		}
 		if (!this->_isDMGMode())
-			this->_gpu.update(*this, GPU_FULL_CYCLE_DURATION * 0x90/ 153);
+			this->_gpu.update(*this, GPU_FULL_CYCLE_DURATION * 0x90 / 153);
 	}
 
 	bool CPU::_isDMGMode() const

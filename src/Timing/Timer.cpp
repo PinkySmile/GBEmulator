@@ -5,7 +5,6 @@
 ** Timer.cpp
 */
 
-#include <iostream>
 #include "Timer.hpp"
 
 namespace GBEmulator::Timing
@@ -30,7 +29,7 @@ namespace GBEmulator::Timing
 		return this->_counter;
 	}
 
-	unsigned Timer::getFrequency() const
+	unsigned long Timer::getFrequency() const
 	{
 		switch (this->_byte & 0b11U) {
 		case 0b00:

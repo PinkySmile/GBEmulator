@@ -8,9 +8,15 @@
 #ifndef GBEMULATOR_MEMORY_HPP
 #define GBEMULATOR_MEMORY_HPP
 
-
+#ifndef ARDUINO
 #include <vector>
 #include <cstddef>
+#include <cstdint>
+#else
+#include <stddef.h>
+#include <stdint.h>
+#include "../ArduinoStuff/FakeSTL.hpp"
+#endif
 
 namespace GBEmulator::Memory
 {
@@ -22,7 +28,7 @@ namespace GBEmulator::Memory
 		//! @brief Bank actuelle.
 		unsigned char _currentBank;
 		//! @brief Taille d'une bank.
-		unsigned short _bankSize;
+		uint16_t _bankSize;
 		//! @brief Pointeur vers le début de la bank séléctionnée.
 		unsigned char *_bankPtr = nullptr;
 
@@ -63,11 +69,11 @@ namespace GBEmulator::Memory
 		//! Lis la valeur à l'adresse de la mémoire
 		//! @param address Adresse à lire.
 		//! @return La valeur à l'adresse.
-		unsigned char read(unsigned short address) const;
+		unsigned char read(uint16_t address) const;
 		//! Lis la valeur à l'adresse de la mémoire en ignorant les banks
 		//! @param address Adresse à lire.
 		//! @return La valeur à l'adresse.
-		unsigned char rawRead(unsigned short address) const;
+		unsigned char rawRead(uint16_t address) const;
 		//! Renvoie la taille de la mémoire
 		//! @return La taille totale de la mémoire.
 		size_t getSize() const;
@@ -78,18 +84,16 @@ namespace GBEmulator::Memory
 		//! Écrit la valeur à l'adresse de la mémoire
 		//! @param address Adresse à laquelle écrire.
 		//! @param value Valeur à écrire.
-		void write(unsigned short address,unsigned char value);
+		void write(uint16_t address,uint8_t value);
 		//! Écris la valeur à l'adresse de la mémoire en ignorant les banks et les permissions.
 		//! @param address Adresse à écrire.
 		//! @param value Valeur à écrire.
 		//! @return La valeur à l'adresse.
-		void rawWrite(unsigned short address,unsigned char value);
+		void rawWrite(uint16_t address,uint8_t value);
 		//! Écrit la valeur à l'adresse de la mémoire en ignorant les permissions
 		//! @param address Adresse à laquelle écrire.
 		//! @param value Valeur à écrire.
-		void forceWrite(unsigned short address, unsigned char value);
-		//! Écrit dans la sortie standard un debug de la mémoire
-		void dump(unsigned short offset = 0) const;
+		void forceWrite(uint16_t address, uint8_t value);
 		unsigned char *getBuffer();
 	};
 }

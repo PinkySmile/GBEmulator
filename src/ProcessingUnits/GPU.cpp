@@ -5,8 +5,12 @@
 ** Gpu.cpp
 */
 
-#include <iostream>
+#ifndef ARDUINO
 #include <cstring>
+#else
+#include <string.h>
+#include "../ArduinoStuff/Algorithm.h"
+#endif
 #undef _stat
 #include "GPU.hpp"
 #include "CPU.hpp"
@@ -15,7 +19,7 @@
 
 namespace GBEmulator
 {
-	std::vector<Graphics::RGBColor> GPU::defaultColors{
+	Graphics::RGBColor GPU::defaultColors[4] = {
 		{255, 255, 255},
 		{190, 190, 190},
 		{120, 120, 120},
@@ -24,12 +28,18 @@ namespace GBEmulator
 
 	GPU::GPU(Graphics::ILCD &screen) :
 		_oam(OAM_SIZE, OAM_SIZE),
-		_screen(screen),
-		_spritesMap(new unsigned char [256 * 256]),
-		_bgpd(0x40, 0x7FFF),
-		_obpd(0x40)
+		_screen(screen)
 	{
-		std::memset(this->_spritesMap, 0, 256 * 256);
+		this->_bgpd.resize(0x40, 0x7FFF);
+		this->_obpd.resize(0x40);
+#ifdef ARDUINO
+		this->_spritesMap = new unsigned char *[256];
+		for (int i = 0; i < 256; i++)
+			memset(this->_spritesMap[i], 0, 256);
+#else
+		this->_spritesMap = new unsigned char[256 * 256];
+		memset(this->_spritesMap, 0, 256 * 256);
+#endif
 		screen.setMaxSize(160, 144);
 		screen.clear();
 		screen.display();
@@ -39,7 +49,7 @@ namespace GBEmulator
 			this->_tiles[j] = new unsigned char[NB_TILES];
 			for (int i = 0; i < NB_TILES; i++)
 				this->_tiles[j][i] = rand() & 0b11U;
-			std::memset(this->_tiles[j], 0, NB_TILES);
+			memset(this->_tiles[j], 0, NB_TILES);
 		}
 
 		this->_backgroundMap = new unsigned char *[NB_VRAM_BANK];
@@ -58,11 +68,15 @@ namespace GBEmulator
 		for (int i = 0; i < NB_VRAM_BANK; i++)
 			delete[] this->_tiles[i];
 		delete[] this->_tiles;
+#ifdef ARDUINO
+		for (int i = 0; i < 256; i++)
+			delete[] this->_spritesMap[i];
+#endif
 		delete[] this->_spritesMap;
 		delete[] this->_backgroundMap;
 	}
 
-	unsigned char GPU::readVRAM(unsigned short address) const
+	unsigned char GPU::readVRAM(uint16_t address) const
 	{
 		if (this->getMode() == 3)
 			return 0xFF;
@@ -96,7 +110,7 @@ namespace GBEmulator
 		);
 	}
 
-	void GPU::writeVRAM(unsigned short address, unsigned char value)
+	void GPU::writeVRAM(uint16_t address, uint8_t value)
 	{
 		if (this->getMode() == 3)
 			return;
@@ -118,11 +132,11 @@ namespace GBEmulator
 				this->_tiles[this->_vramBankSwitch][tile + i] &= 0b10U;
 				this->_tiles[this->_vramBankSwitch][tile + i] |= value >> (7U - i) & 1U;
 			}
-		if (std::find(this->_tilesToUpdate.begin(), this->_tilesToUpdate.end(), address / 16) == this->_tilesToUpdate.end())
+		if (standard::find(this->_tilesToUpdate.begin(), this->_tilesToUpdate.end(), address / 16) == this->_tilesToUpdate.end())
 			this->_tilesToUpdate.push_back(address / 16);
 	}
 
-	unsigned char GPU::readOAM(unsigned short address) const
+	unsigned char GPU::readOAM(uint16_t address) const
 	{
 		if (this->getMode() >= 2)
 			return 0xFF;
@@ -130,7 +144,7 @@ namespace GBEmulator
 		return _oam.read(address);
 	}
 
-	void GPU::writeOAM(unsigned short address, unsigned char value)
+	void GPU::writeOAM(uint16_t address, uint8_t value)
 	{
 		if (this->getMode() >= 2)
 			return;
@@ -138,14 +152,14 @@ namespace GBEmulator
 		this->_oam.write(address, value);
 	}
 
-	unsigned char GPU::readBGPD(unsigned short address) const
+	unsigned char GPU::readBGPD(uint16_t address) const
 	{
 		if (address % 2)
 			return this->_bgpd[address / 2] >> 8U;
 		return this->_bgpd[address / 2] & 0xFFU;
 	}
 
-	void GPU::writeBGPD(unsigned short address, unsigned char value)
+	void GPU::writeBGPD(uint16_t address, uint8_t value)
 	{
 		if (address % 2)
 			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0x00FFU) | (value << 8U);
@@ -153,14 +167,14 @@ namespace GBEmulator
 			this->_bgpd[address / 2] = (this->_bgpd[address / 2] & 0xFF00U) | value;
 	}
 
-	unsigned char GPU::readOBPD(unsigned short address) const
+	unsigned char GPU::readOBPD(uint16_t address) const
 	{
 		if (address % 2)
 			return this->_obpd[address / 2] >> 8U;
 		return this->_obpd[address / 2] & 0xFFU;
 	}
 
-	void GPU::writeOBPD(unsigned short address, unsigned char value)
+	void GPU::writeOBPD(uint16_t address, uint8_t value)
 	{
 		if (address % 2)
 			this->_obpd[address / 2] = (this->_obpd[address / 2] & 0x00FFU) | (value << 8U);
@@ -243,12 +257,21 @@ namespace GBEmulator
 			}
 		}
 
+#ifdef ARDUINO
+		if (!(this->_spritesMap[y][x] & 0x80))
+			if (((this->_spritesMap[y][x] & 0b100U) == 0 && (this->_control.bgDisplayEnabled || this->_gbMode) && !bgPriority) || bgZero) {
+				color = this->_spritesMap[y][x] & 0b11U;
+				if (!this->_gbMode)
+					paletteIndex = ((this->_spritesMap[y][x] & 0b111000U) >> 3U) + 9;
+			}
+#else
 		if (!(this->_spritesMap[x + y * 256] & 0x80))
 			if (((this->_spritesMap[x + y * 256] & 0b100U) == 0 && (this->_control.bgDisplayEnabled || this->_gbMode) && !bgPriority) || bgZero) {
 				color = this->_spritesMap[x + y * 256] & 0b11U;
 				if (!this->_gbMode)
 					paletteIndex = ((this->_spritesMap[x + y * 256] & 0b111000U) >> 3U) + 9;
 			}
+#endif
 
 		if (paletteIndex > 8)
 			this->_screen.setPixel(x, y, Graphics::RGBColor(this->_obpd[(paletteIndex - 9) * 4 + color]));
@@ -258,25 +281,40 @@ namespace GBEmulator
 			this->_screen.setPixel(x, y, defaultColors[color]);
 	}
 
+	struct sss {
+		GPU::Sprite sprite;
+		unsigned index;
+	};
+
+#if ARDUINO
+	bool cmpFct(const sss *s1, const sss *s2)
+	{
+		if (s1->sprite.x == s2->sprite.x)
+			return s1->index > s2->index;
+		return s1->sprite.x < s2->sprite.x;
+	}
+#endif
+
 	void GPU::updateOAM(unsigned int line)
 	{
 		unsigned nbPixels = 0;
 		unsigned char v = 8 * (1 + this->_control.spriteSizeSelect);
-		struct sss {
-			Sprite sprite;
-			unsigned index;
-		} sprites[OAM_SIZE / 4];
+		sss sprites[OAM_SIZE / 4];
 		auto buf = reinterpret_cast<Sprite *>(this->_oam.getBuffer());
 
 		for (unsigned i = 0; i < OAM_SIZE / 4; i++) {
 			sprites[i].index = i;
 			sprites[i].sprite = buf[i];
 		}
-		std::sort(sprites, sprites + OAM_SIZE / 4, [](sss &s1, sss &s2){
+#ifdef ARDUINO
+		qsort(sprites, OAM_SIZE / 4, sizeof(sss), reinterpret_cast<int (*)(const void *, const void *)>(cmpFct));
+#else
+		standard::sort(sprites, sprites + OAM_SIZE / 4, [](sss &s1, sss &s2){
 			if (s1.sprite.x == s2.sprite.x)
 				return s1.index > s2.index;
 			return s1.sprite.x < s2.sprite.x;
 		});
+#endif
 		for (auto &sprite : sprites) {
 			if (nbPixels == 80)
 				break;
@@ -299,10 +337,17 @@ namespace GBEmulator
 						unsigned char newColor = DUCT_TAPE(val);
 						unsigned char palette = sprite.sprite.palette_number == 0 ? this->_objectPalette0Value : this->_objectPalette1Value;
 
+#ifdef ARDUINO
+						if (newColor && !this->_gbMode)
+							this->_spritesMap[realY][realX] = newColor | (sprite.sprite.priority * 0b100) | (sprite.sprite.cgb_palette_number << 3U);
+						else if (newColor)
+							this->_spritesMap[realY][realX] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.sprite.priority * 0b100);
+#else
 						if (newColor && !this->_gbMode)
 							this->_spritesMap[realX + realY * 256] = newColor | (sprite.sprite.priority * 0b100) | (sprite.sprite.cgb_palette_number << 3U);
 						else if (newColor)
 							this->_spritesMap[realX + realY * 256] = ((palette >> (newColor * 2U)) & 0b11U) | (sprite.sprite.priority * 0b100);
+#endif
 						nbPixels += newColor != 0;
 					}
 				}
@@ -315,9 +360,14 @@ namespace GBEmulator
 		if (!this->_control.enabled)
 			return;
 
-		if (this->_cycles == 0)
-			std::memset(this->_spritesMap, 0xFF, 256 * 256);
-		else if (this->_cycles == VBLANK_CYCLE_PT) {
+		if (this->_cycles == 0) {
+#ifdef ARDUINO
+			for (int i = 0; i < 256; i++)
+				memset(this->_spritesMap[i], 0xFF, 256);
+#else
+			memset(this->_spritesMap, 0xFF, 256 * 256);
+#endif
+		} else if (this->_cycles == VBLANK_CYCLE_PT) {
 			this->_screen.display();
 			this->_screen.clear();
 		} else if (this->_cycles % DEVIDER == 0 && this->_control.spriteDisplayEnabled)
@@ -346,7 +396,7 @@ namespace GBEmulator
 		return this->_isTransferring;
 	}
 
-	unsigned char GPU::update(CPU &cpu, int cycle)
+	unsigned char GPU::update(CPU &cpu, long cycle)
 	{
 		while (cycle-- > 0)
 			this->update(cpu);
@@ -360,39 +410,39 @@ namespace GBEmulator
 		return 0;
 	}
 
-	unsigned char GPU::getCurrentLine() const
+	uint8_t GPU::getCurrentLine() const
 	{
 		return this->_cycles * 153 / GPU_FULL_CYCLE_DURATION;
 	}
 
-	void GPU::setControlByte(unsigned char value)
+	void GPU::setControlByte(uint8_t value)
 	{
 		if (this->_control.enabled && (value & 0x80U) == 0)
 			this->_cycles = 0;
 		this->_control = *reinterpret_cast<const ControlByte *>(&value);
 	}
 
-	unsigned char GPU::getControlByte() const
+	uint8_t GPU::getControlByte() const
 	{
 		return *reinterpret_cast<const unsigned char *>(&this->_control);
 	}
 
-	unsigned char GPU::getXScroll() const
+	uint8_t GPU::getXScroll() const
 	{
 		return this->_scrollX;
 	}
 
-	unsigned char GPU::getYScroll() const
+	uint8_t GPU::getYScroll() const
 	{
 		return this->_scrollY;
 	}
 
-	void GPU::setXScroll(unsigned char value)
+	void GPU::setXScroll(uint8_t value)
 	{
 		this->_scrollX = value;
 	}
 
-	void GPU::setYScroll(unsigned char value)
+	void GPU::setYScroll(uint8_t value)
 	{
 		this->_scrollY = value;
 	}
@@ -404,12 +454,12 @@ namespace GBEmulator
 		return this->_backgroundMap[bank];
 	}
 
-	unsigned char GPU::getStatByte() const
+	uint8_t GPU::getStatByte() const
 	{
 		return (this->_stat & 0b01111000U) | 0x80U | ((this->getCurrentLine() == this->_lyc && this->_control.enabled) << 2U) | this->getMode();
 	}
 
-	void GPU::setStatByte(unsigned char value)
+	void GPU::setStatByte(uint8_t value)
 	{
 		//TODO: Implement the quirk that sometimes triggers interrupts when writing
 		this->_stat = value;
@@ -424,7 +474,7 @@ namespace GBEmulator
 		return trigger;
 	}
 
-	unsigned char GPU::getMode() const
+	uint8_t GPU::getMode() const
 	{
 		if (!this->_control.enabled)
 			return 0;
@@ -451,52 +501,52 @@ namespace GBEmulator
 		return trigger;
 	}
 
-	unsigned char GPU::getLycByte() const
+	uint8_t GPU::getLycByte() const
 	{
 		return this->_lyc;
 	}
 
-	void GPU::setLycByte(unsigned char value)
+	void GPU::setLycByte(uint8_t value)
 	{
 		this->_lyc = value;
 	}
 
-	void GPU::setWindowX(unsigned char value)
+	void GPU::setWindowX(uint8_t value)
 	{
 		this->_windowX = value - 7;
 	}
 
-	unsigned char GPU::getWindowX() const
+	uint8_t GPU::getWindowX() const
 	{
 		return this->_windowX + 7;
 	}
 
-	void GPU::setWindowY(unsigned char value)
+	void GPU::setWindowY(uint8_t value)
 	{
 		this->_windowY = value;
 	}
 
-	unsigned char GPU::getWindowY() const
+	uint8_t GPU::getWindowY() const
 	{
 		return this->_windowY;
 	}
 
-	unsigned char GPU::getBGPalette() const
+	uint8_t GPU::getBGPalette() const
 	{
 		return this->_bgPaletteValue;
 	}
 
-	unsigned char GPU::getObjectPalette0() const
+	uint8_t GPU::getObjectPalette0() const
 	{
 		return this->_objectPalette0Value;
 	}
 
-	unsigned char GPU::getObjectPalette1() const
+	uint8_t GPU::getObjectPalette1() const
 	{
 		return this->_objectPalette1Value;
 	}
 
-	void GPU::setBGPalette(unsigned char value)
+	void GPU::setBGPalette(uint8_t value)
 	{
 		if (this->_bgPaletteValue != value)
 			for (unsigned i = 0; i < 4; i++)
@@ -504,7 +554,7 @@ namespace GBEmulator
 		this->_bgPaletteValue = value;
 	}
 
-	void GPU::setObjectPalette0(unsigned char value)
+	void GPU::setObjectPalette0(uint8_t value)
 	{
 		if (this->_objectPalette0Value != value)
 			for (unsigned i = 0; i < 4; i++)
@@ -512,7 +562,7 @@ namespace GBEmulator
 		this->_objectPalette0Value = value;
 	}
 
-	void GPU::setObjectPalette1(unsigned char value)
+	void GPU::setObjectPalette1(uint8_t value)
 	{
 		if (this->_objectPalette1Value != value)
 			for (unsigned i = 0; i < 4; i++)
@@ -533,7 +583,7 @@ namespace GBEmulator
 		this->_vramBankSwitch = value & 0b1U;
 	}
 
-	void GPU::startHDMA(unsigned short len, unsigned short src, unsigned short dest)
+	void GPU::startHDMA(uint16_t len, uint16_t src, uint16_t dest)
 	{
 		if (this->_gbMode)
 			return;
@@ -544,7 +594,7 @@ namespace GBEmulator
 		this->_isTransferring = true;
 	}
 
-	unsigned short GPU::getTransferLength() const
+	uint16_t GPU::getTransferLength() const
 	{
 		return this->_transfertLen;
 	}

@@ -46,7 +46,7 @@ namespace GBEmulator::Timing
 		/*! @brief Retourne la fréquence passée en entrée du registre du Timer Control
 		 * @return La fréquence en Hertz en fonction des bits 1 et 0 de l'input clock du Timer Control
 		 */
-		unsigned getFrequency() const;
+		unsigned long getFrequency() const;
 		//! @brief Retourne l'octet Timer Control
 		//!@return La valeur de l'octet Timer Control
 		//! @details

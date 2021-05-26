@@ -5,7 +5,11 @@
 ** Apu.cpp
 */
 
+#ifndef ARDUINO
 #include <cassert>
+#else
+#include <assert.h>
+#endif
 #include "APU.hpp"
 #include "SoundChannel/BasicSoundChannel.hpp"
 #include "SoundChannel/SquareWaveChannel.hpp"
@@ -19,10 +23,10 @@ namespace GBEmulator
 	APU::APU(ISound &soundPlayer) :
 		_soundPlayer(soundPlayer),
 		_channels{
-			std::make_unique<SquareWaveChannel>(),
-			std::make_unique<SquareWaveChannel>(),
-			std::make_unique<ModulableWaveChannel>(),
-			std::make_unique<NoiseWaveChannel>()
+			standard::make_unique<SquareWaveChannel>(),
+			standard::make_unique<SquareWaveChannel>(),
+			standard::make_unique<ModulableWaveChannel>(),
+			standard::make_unique<NoiseWaveChannel>()
 		}
 	{
 		this->_samples._buffer.resize(SAMPLE_BUFFER_SIZE);
@@ -33,7 +37,7 @@ namespace GBEmulator
 	void APU::update(unsigned cycle)
 	{
 		if (!this->_enabled) {
-			this->_samples = std::vector<short>{};
+			this->_samples = standard::vector<int16_t>{};
 			return;
 		}
 		this->_samples.leftVolume = this->_channelControl.SO1volume / 7.f;
@@ -48,7 +52,7 @@ namespace GBEmulator
 		}
 	}
 
-	void APU::write(unsigned short address, unsigned char value)
+	void APU::write(uint16_t address, uint8_t value)
 	{
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->write(address - NR30, value);
@@ -66,7 +70,7 @@ namespace GBEmulator
 			return this->_internalWrite(address - NR50, value);
 	}
 
-	unsigned char APU::read(unsigned short address) const
+	unsigned char APU::read(uint16_t address) const
 	{
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->read(address - NR30);
@@ -87,7 +91,7 @@ namespace GBEmulator
 		return 0xFF;
 	}
 
-	void APU::_internalWrite(unsigned short relativeAddress, unsigned char value)
+	void APU::_internalWrite(unsigned short relativeAddress, uint8_t value)
 	{
 		switch (relativeAddress) {
 		case APU_CHANNEL_CONTROL:
@@ -127,7 +131,7 @@ namespace GBEmulator
 		}
 	}
 
-	std::vector<short> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
+	standard::vector<int16_t> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
 	{
 		auto result = this->_channels[channelNb]->update(cycles);
 		APUSoundOutputTerminalSelect term = static_cast<unsigned char>(this->_terminalSelect) >> channelNb;
@@ -142,13 +146,13 @@ namespace GBEmulator
 		return result;
 	}
 
-	SampleBuffer &SampleBuffer::operator=(const std::vector<short> &samples)
+	SampleBuffer &SampleBuffer::operator=(const standard::vector<int16_t> &samples)
 	{
 		this->_buffer = samples;
 		return *this;
 	}
 
-	SampleBuffer &SampleBuffer::operator+=(const std::vector<short> &samples)
+	SampleBuffer &SampleBuffer::operator+=(const standard::vector<int16_t> &samples)
 	{
 		unsigned offset = this->_buffer.size() - samples.size();
 
@@ -161,7 +165,7 @@ namespace GBEmulator
 		return *this;
 	}
 
-	SampleBuffer &SampleBuffer::operator<<(const std::vector<short> &samples)
+	SampleBuffer &SampleBuffer::operator<<(const standard::vector<int16_t> &samples)
 	{
 		assert(samples.size() % 2 == 0);
 		this->_buffer.reserve(samples.size() + this->_buffer.size());

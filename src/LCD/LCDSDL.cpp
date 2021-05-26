@@ -15,21 +15,21 @@ namespace GBEmulator::Graphics
 		LCDSDL(SDLVideoMode({640, 576, 32, SDL_SWSURFACE}), "GBEmulator")
 	{}
 
-	LCDSDL::LCDSDL(SDLVideoMode mode, const std::string &title) :
+	LCDSDL::LCDSDL(SDLVideoMode mode, const standard::string &title) :
 		video_mode(mode)
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) == -1)
-			throw Exception(std::string("Can't init SDL: ") + SDL_GetError());
+			throw Exception(standard::string("Can't init SDL: ") + SDL_GetError());
 		this->screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.width, mode.height, SDL_WINDOW_SHOWN );
 		if (this->screen == nullptr)
-			throw Exception(std::string("Can't create window: ") + SDL_GetError());
+			throw Exception(standard::string("Can't create window: ") + SDL_GetError());
 		this->context = SDL_CreateRenderer(this->screen, -1, 0);
 		if (this->context == nullptr)
-			throw Exception(std::string("Can't create renderer: ") + SDL_GetError());
+			throw Exception(standard::string("Can't create renderer: ") + SDL_GetError());
 		SDL_SetRenderDrawColor(this->context, RGBColor::White.r, RGBColor::White.g, RGBColor::White.b, 255);
 		this->texture = SDL_CreateTexture(this->context, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, W, H);
 		if (this->texture == nullptr)
-			throw Exception(std::string("Can't create texture: ") + SDL_GetError());
+			throw Exception(standard::string("Can't create texture: ") + SDL_GetError());
 		this->buffer = new RGBColor[W * H];
 		this->framebuffer = new RGBColor[W * H];
 	}

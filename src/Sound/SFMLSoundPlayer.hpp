@@ -31,7 +31,7 @@ namespace GBEmulator {
 		~SFMLSoundPlayer() override;
 
 		void setVolume(float volume) override;
-		void pushSamples(short *samples, size_t sampleCount) override;
+		void pushSamples(int16_t *samples, size_t sampleCount) override;
 
 	private:
 		virtual bool onGetData(Chunk &data);
@@ -43,8 +43,8 @@ namespace GBEmulator {
 		bool mutex = false;
 		char readHead = 0;
 		char writeHead = 0;
-		std::vector<short> _samples[NB_SAMPLE_BUFFER];
-		std::vector<short> _buffer;
+		std::vector<int16_t> _samples[NB_SAMPLE_BUFFER];
+		std::vector<int16_t> _buffer;
 	};
 }
 

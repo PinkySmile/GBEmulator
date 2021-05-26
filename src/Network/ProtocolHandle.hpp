@@ -14,9 +14,9 @@
 //! @brief Transforme un charactère sous sa représentation hexadécimale.
 #define charToHex(val)\
 ([](unsigned char i){\
-	std::stringstream stream;\
+	standard::stringstream stream;\
 \
-	stream << "0x" << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << static_cast<int>(i);\
+	stream << "0x" << standard::setfill('0') << standard::setw(2) << standard::hex << standard::uppercase << static_cast<int>(i);\
 	return stream.str();\
 }(val))
 
@@ -52,7 +52,7 @@ namespace GBEmulator::Network
 		//! @brief Se connecte à un serveur avec une ip ou un nom de domaine et un port.
 		//! @param ip Ip ou non de domaine.
 		//! @param port Port d'écoute du serveur.
-		virtual void connect(const std::string &ip, unsigned short port) = 0;
+		virtual void connect(const standard::string &ip, unsigned short port) = 0;
 		//! @brief Envoie un byte de donnée en mode master.
 		//! @param byte Byte à envoyer.
 		virtual void sendByte(unsigned char byte) = 0;

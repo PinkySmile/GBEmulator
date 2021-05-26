@@ -29,7 +29,7 @@ namespace GBEmulator::Network
 		//! @brief Socket du client.
 		sf::TcpSocket _socket;
 		//! @brief Thread qui gère les connections.
-		std::unique_ptr<sf::Thread> _mainThread;
+		standard::unique_ptr<sf::Thread> _mainThread;
 		//! @brief Nombre de cycles CPU écoulés.
 		unsigned _ticks = 0;
 		//! @brief Handler qui gère les connections.
@@ -69,8 +69,8 @@ namespace GBEmulator::Network
 		~BGBHandler();
 		void host(unsigned short port) override;
 		//! @param Afficher un message dans le flux.
-		void log(const std::string &string, std::ostream &stream = std::cerr);
-		void connect(const std::string &ip, unsigned short port) override;
+		void log(const standard::string &string, std::ostream &stream = std::cerr);
+		void connect(const standard::string &ip, unsigned short port) override;
 		void disconnect() override;
 		void sendByte(unsigned char byte) override;
 		void reply(unsigned char byte) override;

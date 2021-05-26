@@ -18,11 +18,11 @@ namespace GBEmulator::Input
 {
 	class SDLKeyboardJoypadEmulator : public JoypadEmulator {
 	private:
-		std::map<Keys, SDL_KeyCode> _keys;
-		std::unordered_map<SDL_KeyCode, Keys> _rkeys;
+		standard::map<Keys, SDL_KeyCode> _keys;
+		standard::unordered_map<SDL_KeyCode, Keys> _rkeys;
 		bool _keyPressed[KEYS_LENGTH] = {false};
 		Graphics::LCDSDL &_screen;
-		std::thread _thread;
+		standard::thread _thread;
 		bool _ended = false;
 
 	public:
@@ -30,7 +30,7 @@ namespace GBEmulator::Input
 		SDLKeyboardJoypadEmulator(const SDLKeyboardJoypadEmulator &) = delete;
 		~SDLKeyboardJoypadEmulator();
 		SDLKeyboardJoypadEmulator &operator=(const SDLKeyboardJoypadEmulator &) = delete;
-		explicit SDLKeyboardJoypadEmulator(Graphics::LCDSDL &screen, const std::map<Keys, SDL_KeyCode> &&keys);
+		explicit SDLKeyboardJoypadEmulator(Graphics::LCDSDL &screen, const standard::map<Keys, SDL_KeyCode> &&keys);
 		void update();
 		void setKeyValue(SDL_KeyCode keysym, bool value);
 		void setKey(Keys button, SDL_KeyCode key);

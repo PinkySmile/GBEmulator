@@ -2,13 +2,16 @@
 // Created by andgel on 06/05/2021
 //
 
+#ifndef ARDUINO
 #include <cstdio>
+#else
+#include <stdio.h>
+#endif
 #include "NoiseWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
 namespace GBEmulator
 {
-
 	void NoiseWaveChannel::_update(unsigned int cycles)
 	{
 		double volumeCount = this->_effectiveVolumeEnvelopeRegister.numberOfSweeps * Timing::getCyclesPerSecondsFromFrequency(64);
@@ -55,16 +58,16 @@ namespace GBEmulator
 		}
 	}
 
-	short NoiseWaveChannel::_getSoundData() const
+	int16_t NoiseWaveChannel::_getSoundData() const
 	{
-		short realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
+		int16_t realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		if (this->_lfsr & 1)
 			return -SOUND_VALUE;
 		return realValue - SOUND_VALUE;
 	}
 
-	void NoiseWaveChannel::write(unsigned int relativeAddress, unsigned char value)
+	void NoiseWaveChannel::write(unsigned int relativeAddress, uint8_t value)
 	{
 		switch (relativeAddress) {
 		case NOISE_CHANNEL_SOUND_LENGTH:
@@ -120,5 +123,13 @@ namespace GBEmulator
 	void NoiseWaveChannel::onPowerOff()
 	{
 
+	}
+
+	NoiseWaveChannel::NoiseWaveChannel()
+	{
+		this->_lfsr = 0x7FFF;
+		this->_length = 0;
+		this->_initial = false;
+		this->_useLength = false;
 	}
 }

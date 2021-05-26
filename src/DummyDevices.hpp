@@ -33,7 +33,7 @@ namespace GBEmulator
 
 	class DummySoundPlayer : public GBEmulator::ISound {
 	public:
-		void pushSamples(short *samples, size_t sampleCount) override{}
+		void pushSamples(int16_t *samples, size_t sampleCount) override{}
 		void setVolume(float) override{}
 	};
 

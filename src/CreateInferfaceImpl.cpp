@@ -97,14 +97,14 @@ namespace GBEmulator
 		auto network = new Network::BGBProtocolCableInterface();
 
 		if (!args.connectIp.empty() && !args.listenPort.empty())
-			throw std::invalid_argument("Cannot connect and listen at the same time");
+			throw standard::invalid_argument("Cannot connect and listen at the same time");
 		else if (!args.connectIp.empty())
 			network->connect(
 				args.connectIp.substr(0, args.connectIp.find(':')),
-				std::stoi(args.connectIp.substr(args.connectIp.find(':') + 1))
+				standard::stoi(args.connectIp.substr(args.connectIp.find(':') + 1))
 			);
 		else if (!args.listenPort.empty())
-			network->host(std::stoi(args.listenPort));
+			network->host(standard::stoi(args.listenPort));
 		return network;
 #else
 		return new DummyCable();

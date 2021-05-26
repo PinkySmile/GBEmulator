@@ -8,7 +8,12 @@
 #ifndef GBEMULATOR_GPU_HPP
 #define GBEMULATOR_GPU_HPP
 
+
+#ifndef ARDUINO
 #include <memory>
+#else
+#include "../ArduinoStuff/Memory.hpp"
+#endif
 #include "../Memory/Memory.hpp"
 #include "../LCD/ILCD.hpp"
 
@@ -18,7 +23,7 @@
 #define BG_MAP_SIZE 0x800
 #define OAM_SIZE 0xA0
 #define DEVIDER 457
-#define GPU_FULL_CYCLE_DURATION (DEVIDER * 153)
+#define GPU_FULL_CYCLE_DURATION (DEVIDER * 153L)
 //69921
 #define VBLANK_CYCLE_PT 66093
 #define HBLANK_CYLCE_PT
@@ -36,14 +41,14 @@ namespace GBEmulator
 	 * Lien vers le Pan Docs: http://problemkaputt.de/pandocs.htm
 	 */
 	class GPU {
-	private:
+	public:
 		/*! @struct Sprite
 		 *  @brief struct représentant un sprite dans l'OAM.
 		 */
 		struct Sprite {
-			unsigned char y;                //! Position du sprite sur l'axe des ordonnées.
-			unsigned char x;                //! Position du sprite sur l'axe des abscisses.
-			unsigned char texture_id;       //! ID de texture utilisé par le sprite.
+			uint8_t y;                //! Position du sprite sur l'axe des ordonnées.
+			uint8_t x;                //! Position du sprite sur l'axe des abscisses.
+			uint8_t texture_id;       //! ID de texture utilisé par le sprite.
 			union {
 				struct {
 					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
@@ -54,10 +59,11 @@ namespace GBEmulator
 					bool priority:1;                        //! Si 1 le sprite est afficher par dessus le Background.
 					//! Si 0 le sprite est afficher en dessous du Background.
 				};
-				unsigned char flags;
+				uint8_t flags;
 			};
 		};
 
+	private:
 		/*! @struct BGData
 		 *  @brief struct représentant les paramètre de background.
 		 */
@@ -91,21 +97,21 @@ namespace GBEmulator
 		Graphics::ILCD &_screen;
 
 		//! Palettes de couleurs par default pour le Background.
-		std::vector<Graphics::RGBColor> _bgPalette{
+		Graphics::RGBColor _bgPalette[4]{
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
 			Graphics::RGBColor::DGray,
 			Graphics::RGBColor::Black
 		};
 		//! Palettes numéro 0 de couleurs par default pour les Sprites.
-		std::vector<Graphics::RGBColor> _objectPalette0{
+		Graphics::RGBColor _objectPalette0[4]{
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
 			Graphics::RGBColor::DGray,
 			Graphics::RGBColor::Black
 		};
 		//! Palettes numéro 1 de couleurs par default pour les Sprites.
-		std::vector<Graphics::RGBColor> _objectPalette1{
+		Graphics::RGBColor _objectPalette1[4] = {
 			Graphics::RGBColor::White,
 			Graphics::RGBColor::LGray,
 			Graphics::RGBColor::DGray,
@@ -124,19 +130,19 @@ namespace GBEmulator
 		 *   	2: Pendant la recherche dans l'OAM ou la RAM
 		 *   	3: Pendant le transfert de données vers le LCD
 		 */
-		unsigned char _stat = 0;
+		uint8_t _stat = 0;
 		//! Byte correspondant à la comparaison entre les valeurs des registre LYC et LY. (FF45)
-		unsigned char _lyc = 0;
+		uint8_t _lyc = 0;
 		//! Byte correspondant au registre de control du LCD. (FF40)
 		ControlByte _control = {false, false, false, false, false, false, false, false};
 		//! Byte specifiant la position (sur l'axe des abscisses) de l'écran à partir du coin superieur/gauche sur le BG de 256x256 pixels (32x32 tiles). (FF43)
-		unsigned char _scrollX = 0;
+		uint8_t _scrollX = 0;
 		//! Byte specifiant la position (sur l'axe des ordonnées) de l'écran sur le BG. (FF42)
-		unsigned char _scrollY = 0;
+		uint8_t _scrollY = 0;
 		//! Byte specifiant la position (sur l'axe des abscisses) de la fenêtre à partir du coin superieur/gauche sur le BG. (FF4B)
 		signed short _windowX = 0;
 		//! Byte specifiant la position (sur l'axe des ordonnées) de la fenêtre  sur le BG. (FF4A)
-		unsigned char _windowY = 0;
+		uint8_t _windowY = 0;
 		//! Byte specifiant la bank de VRAM a utilisé.
 		bool _vramBankSwitch = false;
 		/*! Byte représentant la palette de couleur pour le background (BGP). (FF47)
@@ -151,20 +157,24 @@ namespace GBEmulator
 		 *      2  Gris foncé
 		 *     	3  Noir
 		 */
-		unsigned char _bgPaletteValue = 0b00011011;
+		uint8_t _bgPaletteValue = 0b00011011;
 		//! Byte représentant la palette de couleurs (0) pour les Sprites. (FF48)
 		//! Même fonctionnement que la BGP mais la couleur numéro 0 est transparente.
-		unsigned char _objectPalette0Value = 0b00011011;
+		uint8_t _objectPalette0Value = 0b00011011;
 		//! Byte représentant la palette de couleurs (1) pour les Sprites. (FF49)
 		//! Même fonctionnement que la BGP mais la couleur numéro 0 est transparente.
-		unsigned char _objectPalette1Value = 0b00011011;
+		uint8_t _objectPalette1Value = 0b00011011;
 
 		//! Tableau de bytes représentant les tiles présente dans la VRAM.
 		unsigned char **_tiles = nullptr;
 		/*//! Tableau de bytes représentant les tiles présente dans la Bank 1 de la VRAM.
 		unsigned char *_tilesBank1 = nullptr;*/
 		//! Tableau de bytes représentant des sprites présents à l'écran.
+#ifdef ARDUINO
+		unsigned char **_spritesMap = nullptr;
+#else
 		unsigned char *_spritesMap = nullptr;
+#endif
 		//! Tableau de bytes représentant le Background de l'écran.
 		unsigned char **_backgroundMap = nullptr;
 
@@ -172,13 +182,13 @@ namespace GBEmulator
 		unsigned _cycles = 0;
 
 		//! Palette de couleur du background.
-		std::vector<unsigned short> _bgpd;
+		standard::vector<uint16_t> _bgpd;
 
 		//! Palette de couleur des sprites.
-		std::vector<unsigned short> _obpd;
+		standard::vector<uint16_t> _obpd;
 
 		//! Tableau de tiles a mettre à jour sur l'écran.
-		std::vector<unsigned> _tilesToUpdate;
+		standard::vector<unsigned> _tilesToUpdate;
 
 		/*!
 		 * @brief Dessine un pixel à la position x, y
@@ -218,7 +228,7 @@ namespace GBEmulator
 		GPU(const GPU &) = delete;
 		GPU &operator=(const GPU &) = delete;
 
-		static std::vector<Graphics::RGBColor> defaultColors;
+		static Graphics::RGBColor defaultColors[4];
 
 		void setToGBMode(bool gb);
 
@@ -238,25 +248,25 @@ namespace GBEmulator
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readVRAM(unsigned short address) const;
+		unsigned char readVRAM(uint16_t address) const;
 		/*!
 		 * @brief Lit l'OAM
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readOAM(unsigned short address) const;
+		unsigned char readOAM(uint16_t address) const;
 		/*!
 		 * @brief Lit la palette de couleur du fond (BackGround Palette Data)
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readBGPD(unsigned short address) const;
+		unsigned char readBGPD(uint16_t address) const;
 		/*!
 		 * @brief Lit la palette de couleur dues sprites (OBjects Palette Data)
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readOBPD(unsigned short address) const;
+		unsigned char readOBPD(uint16_t address) const;
 		/*!
 		 * @brief Obtient le byte indiquant la bank de VRAM utilisé.
 		 * @return false si bank 0 - true si bank 1.
@@ -322,25 +332,25 @@ namespace GBEmulator
 		 * @param address: position à laquelle écrire.
 		 * @param value: valeur à écrire.
 		 */
-		void writeVRAM(unsigned short address, unsigned char value);
+		void writeVRAM(uint16_t address, uint8_t value);
 		/*!
 		 * @brief Ecrit sur l'OAM
 		 * @param address: position à laquelle écrire.
 		 * @param value: valeur à écrire.
 		 */
-		void writeOAM(unsigned short address, unsigned char value);
+		void writeOAM(uint16_t address, uint8_t value);
 		/*!
 		 * @brief Ecrit sur la palette de couleur du fond (BackGround Palette Data)
 		 * @param address: position à laquelle écrire.
 		 * @param value: valeur à écrire.
 		 */
-		void writeBGPD(unsigned short address, unsigned char value);
+		void writeBGPD(uint16_t address, uint8_t value);
 		/*!
 		 * @brief Lit la palette de couleur dues sprites (OBjects Palette Data)
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		void writeOBPD(unsigned short address, unsigned char value);
+		void writeOBPD(uint16_t address, uint8_t value);
 		/*!
 		 * @brief Ecrit le byte indiquant la bank de VRAM utilisé.
 		 * @param value: la valeur à écrire.
@@ -350,58 +360,58 @@ namespace GBEmulator
 		 * @brief Ecrit le byte LCD Monochrome Palettes (FF47)
 		 * @param value: la valeur à écrire.
 		 */
-		void setControlByte(unsigned char value);
+		void setControlByte(uint8_t value);
 
-		unsigned short getTransferLength() const;
+		uint16_t getTransferLength() const;
 
 		bool isTransfering() const;
 		/*!
 		 * @brief Ecrit le byte LCD Status (FF41)
 		 * @param value: la valeur à écrire.
 		 */
-		void setStatByte(unsigned char value);
+		void setStatByte(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte  BG Palette Data (FF47)
 		 * @param value: la valeur à écrire.
 		 */
-		void setBGPalette(unsigned char value);
+		void setBGPalette(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Scroll X (FF43)
 		 * @param value: la valeur à écrire.
 		 */
-		void setXScroll(unsigned char value);
+		void setXScroll(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Scroll Y (FF42)
 		 * @param value: la valeur à écrire.
 		 */
-		void setYScroll(unsigned char value);
+		void setYScroll(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte LY Compare (FF45)
 		 * @param value: la valeur à écrire.
 		 */
-		void setLycByte(unsigned char value);
+		void setLycByte(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Window X Position (FF4B)
 		 * @param value: la valeur à écrire.
 		 */
-		void setWindowX(unsigned char value);
+		void setWindowX(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Window Y Position (FF4A)
 		 * @param value: la valeur à écrire.
 		 */
-		void setWindowY(unsigned char value);
+		void setWindowY(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Object Palette 0 Data (FF48)
 		 * @param value: la valeur à écrire.
 		 */
-		void setObjectPalette0(unsigned char value);
+		void setObjectPalette0(uint8_t value);
 		/*!
 		 * @brief Ecrit le byte Object Palette 1 Data (FF49)
 		 * @param value: la valeur à écrire.
 		 */
-		void setObjectPalette1(unsigned char value);
+		void setObjectPalette1(uint8_t value);
 
-		void startHDMA(unsigned short len, unsigned short src, unsigned short dest);
+		void startHDMA(uint16_t len, uint16_t src, uint16_t dest);
 
 		/*!
 		 * @brief Met à jour le GPU
@@ -409,7 +419,7 @@ namespace GBEmulator
 		 * @param cycle: cycle GPU à un instant T.
 		 * @return 0 ou un interrupt.
 		 */
-		unsigned char update(CPU &cpu, int cycle);
+		unsigned char update(CPU &cpu, long cycle);
 		/*!
 		 * @brief Met à jour le GPU
 		 */
@@ -425,11 +435,11 @@ namespace GBEmulator
 		unsigned char *_getTileMap(unsigned char bank, bool alt);
 
 		//! HDMA transfert destination.
-		unsigned short _HDMADest = 0x8000;
+		uint16_t _HDMADest = 0x8000;
 		//! HDMA transfert source.
-		unsigned short _HDMASrc = 0;
+		uint16_t _HDMASrc = 0;
 		//! HDMA transfert taille.
-		unsigned short _transfertLen = 0;
+		uint16_t _transfertLen = 0;
 
 		//! Si HDMA transfert.
 		bool _isTransferring = false;

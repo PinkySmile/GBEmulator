@@ -17,31 +17,31 @@
 namespace GBEmulator::Debugger
 {
 	//! @brief Exception de base du Debugger.
-	class Exception : public std::exception {
+	class Exception : public standard::exception {
 	private:
-		std::string _msg;
+		standard::string _msg;
 
 	public:
-		Exception(const std::string &msg) : _msg(msg) {};
+		Exception(const standard::string &msg) : _msg(msg) {};
 		const char *what() const noexcept override { return this->_msg.c_str(); };
 	};
 
 	//! @brief La commande saisie n'a pas été reconnue.
 	class CommandNotFoundException : public Exception {
 	public:
-		CommandNotFoundException(const std::string &msg) : Exception(msg) {};
+		CommandNotFoundException(const standard::string &msg) : Exception(msg) {};
 	};
 
 	//! @brief Debugger de CPU.
 	class Debugger {
 	private:
 		bool _checkForStackCorruption = false;
-		std::stack<unsigned short> _latest;
-		std::stack<unsigned short> _expectedPcAtRet;
-		std::vector<unsigned short> _jumpList;
-		std::vector<unsigned short> _ignoredCorruptedStackAddress;
-		std::vector<std::shared_ptr<Operation>> _condBreakPoints;
-		std::vector<unsigned short> _oldpcs{64};
+		standard::stack<unsigned short> _latest;
+		standard::stack<unsigned short> _expectedPcAtRet;
+		standard::vector<unsigned short> _jumpList;
+		standard::vector<unsigned short> _ignoredCorruptedStackAddress;
+		standard::vector<standard::shared_ptr<Operation>> _condBreakPoints;
+		standard::vector<unsigned short> _oldpcs{64};
 		//! @brief Le CPU à débugger.
 		CPU &_cpu;
 		//! @brief Utilisé pour ralentir la vitesse du CPU.
@@ -51,9 +51,9 @@ namespace GBEmulator::Debugger
 		//! @brief Le joypad utilisé par le CPU.
 		Input::JoypadEmulator &_input;
 		//! @brief La dernière commande éxecutée.
-		std::string _lastCmd;
+		standard::string _lastCmd;
 		//! @brief Le point d'arrêts placés.
-		std::vector<unsigned short> _breakPoints;
+		standard::vector<unsigned short> _breakPoints;
 		//! @brief La police d'écriture chargée.
 		sf::Font _font;
 		//! @brief Contenu de la mémoire sous forme de text.
@@ -62,11 +62,11 @@ namespace GBEmulator::Debugger
 		unsigned short _memBeg;
 		//! @brief Registres du CPU transformé en text.
 		sf::Text _registers;
-		std::thread _cpuThread;
+		standard::thread _cpuThread;
 		unsigned _timer = 0;
 
 		//! @brief Taille en byte des opcodes.
-		static const std::vector<unsigned char> _instrSize;
+		static const standard::vector<unsigned char> _instrSize;
 
 		//! Affiche le registre donné sur l'entrée standard
 		//! @param name Nom du registre à afficher.
@@ -74,7 +74,7 @@ namespace GBEmulator::Debugger
 		//! a, b, c, d, e, f, h, l, af, bc, de, hl, sp, pc.
 		//! Si la variable n'est pas dans cette liste, alors name est
 		//! l'adresse en hexadécimal à déréferencer et afficher le contenu.
-		void _dispVar(const std::string &name);
+		void _dispVar(const standard::string &name);
 		//! Change la valeur de force de la variable donnée dans le CPU
 		//! @param name Nom du registre à afficher.
 		//! Les registres pouvant être affichés sont:
@@ -82,21 +82,21 @@ namespace GBEmulator::Debugger
 		//! Si la variable n'est pas dans cette liste, alors name est
 		//! l'adresse en hexadécimal à déréferencer et afficher le contenu.
 		//! @param value La nouvelle valeur à assigner au registre.
-		void _setVar(const std::string &name, unsigned short value);
+		void _setVar(const standard::string &name, unsigned short value);
 		//! Récupère la prochaine commande dans le flux et appelle processCommandLine
 		//! @param dbg Réference vers le booléen à modifier si l'execution normal est reprise.
 		//! @param stream Flux de donnée à utiliser pour recuperer la prochaine commande.
-		void _checkCommands(bool &dbg, std::istream &stream = std::cin);
+		void _checkCommands(bool &dbg, standard::istream &stream = standard::cin);
 		//! Affiche l'instruction en cours d'éxecution ainsi que son adresse.
-		void _displayCurrentLine(std::ostream &stream = std::cout);
+		void _displayCurrentLine(standard::ostream &stream = std::cout);
 		//! Affiche l'instruction à l'adresse d'éxecution ainsi que son adresse.
 		//! @param address Addresse de l'instruction à afficher.
 		//! @param stream Flux à utiliser pour l'affichage.
-		void _displayCurrentLine(unsigned short address, std::ostream &stream = std::cout);
+		void _displayCurrentLine(uint16_t address, standard::ostream &stream = std::cout);
 		//! Sépare la ligne de commande en respectant les quotes (comme un shell)
 		//! @param line Ligne à séparer.
 		//! @return Un tableau des élements une fois séparés.
-		static std::vector<std::string> _splitCommand(const std::string& line);
+		static standard::vector<standard::string> _splitCommand(const standard::string& line);
 		//! Affiche l'instruction sur la fenetre du débugger
 		//! @param _debugWindow Fenêtre sur laquelle afficher.
 		void _drawInstruction(sf::RenderWindow &_debugWindow);
@@ -120,7 +120,7 @@ namespace GBEmulator::Debugger
 		 * @param palette Pallette de couleur à afficher.
 		 * @param transparent Est-ce que la première couleur est transparente ?
 		 */
-		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
 		/*!
 		 * Affiche la VRAM en utilisant la palette.
 		 * @param _debugWindow
@@ -129,7 +129,7 @@ namespace GBEmulator::Debugger
 		 * @param palette Pallette de couleur à afficher.
 		 * @param transparent Est-ce que la première couleur est transparente ?
 		 */
-		void _displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const std::vector<GBEmulator::Graphics::RGBColor> &palette, bool transparent);
+		void _displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
 		//! Affiche l'état de la window sur la fenetre du débugger.
 		//! @param _debugWindow Fenêtre sur laquelle afficher.
 		//! @param posx Position de la boîte en abcisses.
@@ -145,14 +145,14 @@ namespace GBEmulator::Debugger
 
 	public:
 		//! Constructeur du debugger
-		Debugger(const std::string &programPath, CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
+		Debugger(const standard::string &programPath, CPU &cpu, Graphics::ILCD &window, Input::JoypadEmulator &input);
 		//! Destructeur du debugger
 		~Debugger();
 
 		//! Lance la commande donnée en paramètre
 		//! @param line Commande à executer.
 		//! @throw CommandNotFoundException
-		bool processCommandLine(const std::string& line);
+		bool processCommandLine(const standard::string& line);
 		//! @brief Vérifie si un point d'arrêt a été atteint
 		//! @return true si un point d'arrêt a été atteint. Sinon, false.
 		bool checkBreakPoints();

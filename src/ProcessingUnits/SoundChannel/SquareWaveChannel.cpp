@@ -5,7 +5,6 @@
 #include "SquareWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
-#include <cstdio>
 namespace GBEmulator
 {
 	void SquareWaveChannel::_update(unsigned int cycles)
@@ -67,10 +66,10 @@ namespace GBEmulator
 		}
 	}
 
-	short SquareWaveChannel::_getSoundData() const
+	int16_t SquareWaveChannel::_getSoundData() const
 	{
 		auto v = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
-		short realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
+		int16_t realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		switch (this->_soundLenPatternDutyRegister.patternDuty) {
 		case DUTY_12_5_PERCENT:
@@ -86,13 +85,12 @@ namespace GBEmulator
 			v *= 75.0 / 100;
 			break;
 		}
-
 		if (this->_frequencyCounter > v)
 			return -SOUND_VALUE;
 		return realValue - SOUND_VALUE;
 	}
 
-	void SquareWaveChannel::write(unsigned int relativeAddress, unsigned char value)
+	void SquareWaveChannel::write(unsigned int relativeAddress, uint8_t value)
 	{
 		switch (relativeAddress) {
 		case SQUARE_CHANNEL_SWEEP_REGISTER:
