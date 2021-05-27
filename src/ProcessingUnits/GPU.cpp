@@ -34,8 +34,10 @@ namespace GBEmulator
 		this->_obpd.resize(0x40);
 #ifdef ARDUINO
 		this->_spritesMap = new unsigned char *[256];
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 256; i++) {
+			this->_spritesMap[i] = new unsigned char [256];
 			memset(this->_spritesMap[i], 0, 256);
+		}
 #else
 		this->_spritesMap = new unsigned char[256 * 256];
 		memset(this->_spritesMap, 0, 256 * 256);

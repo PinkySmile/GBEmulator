@@ -32,6 +32,7 @@ namespace GBEmulator::Network
 		bool _isTransfering = false;
 
 	public:
+		virtual ~CableInterface() = default;
 		//! @brief Le byte utilisé pour l'I/O ($FF01)
 		unsigned char byte = 0x00;
 

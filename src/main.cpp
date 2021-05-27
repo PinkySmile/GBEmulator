@@ -5,6 +5,10 @@
 #include "ProcessingUnits/CPU.hpp"
 #include "CreateInferfaceImpl.hpp"
 
+#ifdef ARDUINO
+#include <sys/stat.h>
+#endif
+
 #if !NODEBUGGER
 #include "debugger/debugger.hpp"
 #endif
@@ -192,7 +196,28 @@ int main(int argc, char **argv)
 #ifdef __cpp_exceptions
 	try {
 #endif
+
+#ifdef ARDUINO
+		struct stat stats;
+
+		if (stat(path.c_str(), &stats) == -1)
+			return EXIT_FAILURE;
+
+		FILE *stream = fopen(args.fileName.c_str(), "rb");
+		unsigned char *mem;
+
+		if (!stream)
+			return EXIT_FAILURE;
+
+		mem = new unsigned char[stats.st_size];
+		memset(mem, 0, stats.st_size);
+		fread(mem, 1, stats.st_size, stream);
+		fclose(stream);
+
+		cpu.getCartridgeEmulator().loadROM(mem, stats.st_size, true);
+#else
 		cpu.getCartridgeEmulator().loadROM(args.fileName);
+#endif
 
 #ifdef __cpp_exceptions
 	} catch (standard::exception &e) {

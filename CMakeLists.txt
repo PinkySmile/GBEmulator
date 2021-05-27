@@ -32,7 +32,8 @@ set(SPECIFIC_COMPILE_FLAGS standard=std)
 if (ARDUINO)
 	set(SPECIFIC_COMPILE_FLAGS ARDUINO=1)
 	set(ADDITIONAL_SOURCES src/ArduinoStuff/Impl.cpp)
-elseif (SFML_FOUND)
+endif()
+if (SFML_FOUND)
 	include_directories(
 		${SFML_INCLUDE_DIRS}
 	)
@@ -151,7 +152,9 @@ add_library(
 target_compile_definitions(GBEmulator_Core PRIVATE ${SPECIFIC_COMPILE_FLAGS})
 
 if (NODEBUGGER)
-	set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp)
+	if (NOT ARDUINO)
+		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp)
+	endif ()
 else ()
 	set(NODEBUGGER 0)
 	set(
@@ -161,6 +164,8 @@ else ()
 		src/Network/BgbHandler.hpp
 		src/debugger/CompiledCondition.cpp
 		src/debugger/CompiledCondition.hpp
+		src/ProcessingUnits/Instructions/Strings.cpp
+		src/ProcessingUnits/Instructions/Strings.hpp
 	)
 endif()
 
@@ -175,8 +180,6 @@ add_executable(
 	src/CreateInferfaceImpl.cpp
 	src/CreateInferfaceImpl.hpp
 	src/DummyDevices.hpp
-	src/ProcessingUnits/Instructions/Strings.cpp
-	src/ProcessingUnits/Instructions/Strings.hpp
 )
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
 	set(DEBUG_FLAG DEBUG)

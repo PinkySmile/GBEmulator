@@ -49,7 +49,6 @@ namespace GBEmulator
 
 	void SFMLSoundPlayer::onSeek(sf::Time)
 	{
-		assert(false);
 	}
 
 	void SFMLSoundPlayer::pushSamples(int16_t *samples, size_t sampleCount)

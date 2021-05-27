@@ -75,17 +75,12 @@ namespace standard
 		template<typename ...Args>
 		inline void _insert(const T &elem, Args &...args)
 		{
-			this->_insert(move(elem));
+			memcpy(&this->_buffer[this->_size], &elem, sizeof(elem));
+			this->_size++;
 			this->_insert(args...);
 		}
 
 		inline void _insert() {}
-
-		inline void _insert(const T &&elem)
-		{
-			memcpy(&this->_buffer[this->_size], &elem, sizeof(elem));
-			this->_size++;
-		}
 
 	public:
 		vector() : _buffer(nullptr), _size(0), _allocSize(0) {}
@@ -229,8 +224,8 @@ namespace standard
 			if (!__has_trivial_destructor(T)) {
 				for (int i = 0; i < this->_size; i++)
 					this->_buffer[i].~T();
-				this->_size = 0;
 			}
+			this->_size = 0;
 		}
 
 		sizetype size() const { return this->_size; }

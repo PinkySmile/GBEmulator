@@ -124,22 +124,8 @@ namespace GBEmulator::Memory
 			memset(mem, 0, size);
 			fread(mem, 1, size, stream);
 			fclose(stream);
-			this->_rom.setMemory(mem, size);
-			this->_rom.setBank(1);
-			this->_rom.setBankSize(ROM_BANK_SIZE);
-			this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
-			this->_checkROM();
 
-			size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
-			mem = new unsigned char[size];
-			this->_ram.setMemory(mem, size);
-			if (size > RAM_BANKING_SIZE)
-				this->_ram.setBank(0);
-			else
-				this->_ram.setBankSize(size);
-			for (size_t i = 0; i < size; i++)
-				mem[i] = rand() % 0x100;
-			this->_ramMem = mem;
+			bool result = this->loadROM(mem, size, true);
 
 			this->_savePath = rom.substr(0, rom.find_last_of('.')) + ".sav";
 			stream = fopen(this->_savePath.c_str(), "rb");
@@ -147,7 +133,7 @@ namespace GBEmulator::Memory
 				fread(mem, 1, size, stream);
 				fclose(stream);
 			}
-			return true;
+			return false;
 #ifdef __cpp_exceptions
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
@@ -157,6 +143,34 @@ namespace GBEmulator::Memory
 			throw;
 		}
 #endif
+	}
+
+	bool Cartridge::loadROM(unsigned char *data, size_t size, bool canKeep)
+	{
+		unsigned char *mem;
+
+		if (canKeep)
+			mem = data;
+		else {
+			mem = new unsigned char[size];
+			memcpy(mem, data, size);
+		}
+		this->_rom.setMemory(mem, size);
+		this->_rom.setBank(1);
+		this->_rom.setBankSize(ROM_BANK_SIZE);
+		this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
+		this->_checkROM();
+
+		size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
+		mem = new unsigned char[size];
+		this->_ram.setMemory(mem, size);
+		if (size > RAM_BANKING_SIZE)
+			this->_ram.setBank(0);
+		else
+			this->_ram.setBankSize(size);
+		for (size_t i = 0; i < size; i++)
+			mem[i] = rand() % 0x100;
+		this->_ramMem = mem;
 	}
 
 	bool Cartridge::saveRAM()

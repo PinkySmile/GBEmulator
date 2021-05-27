@@ -164,6 +164,11 @@ namespace GBEmulator::Memory
 		//! @brief Charge une ROM.
 		//! @param rom Chemin d'accès vers le fichier de ROM.
 		bool loadROM(const standard::string &rom);
+		//! @brief Charge une ROM.
+		//! @param data Donnes binaires de la rom.
+		//! @param size Taille du buffer.
+		//! @param canKeep Est-ce que le buffer envoyé peut-être gardé. Le buffer sera copié sur la valeur est false.
+		bool loadROM(unsigned char *data, size_t size, bool canKeep = false);
 		//! @brief Sauvegarde la RAM dans un fichier.
 		bool saveRAM();
 		//! Écrit la valeur à l'adresse donnée dand la cartouche
