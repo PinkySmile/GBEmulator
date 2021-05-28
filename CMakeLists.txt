@@ -153,7 +153,7 @@ target_compile_definitions(GBEmulator_Core PRIVATE ${SPECIFIC_COMPILE_FLAGS})
 
 if (NODEBUGGER)
 	if (NOT ARDUINO)
-		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp)
+		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp src/ProcessingUnits/Instructions/Strings2.cpp)
 	endif ()
 else ()
 	set(NODEBUGGER 0)
@@ -166,6 +166,7 @@ else ()
 		src/debugger/CompiledCondition.hpp
 		src/ProcessingUnits/Instructions/Strings.cpp
 		src/ProcessingUnits/Instructions/Strings.hpp
+		src/ProcessingUnits/Instructions/Strings2.cpp
 	)
 endif()
 

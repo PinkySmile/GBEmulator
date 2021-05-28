@@ -22,6 +22,7 @@ namespace GBEmulator
 		bool _expired = true;
 
 	public:
+		virtual ~BasicSoundChannel() = default;
 		bool hasExpired() const override final { return this->_expired; };
 		standard::vector<int16_t> update(unsigned int cycles) override;
 	};
