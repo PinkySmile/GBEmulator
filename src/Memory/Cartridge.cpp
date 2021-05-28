@@ -105,6 +105,7 @@ namespace GBEmulator::Memory
 #ifdef __cpp_exceptions
 		try {
 #endif
+			puts("Ouah");
 			size_t size = this->_getBestSizeForFile(rom);
 
 			if (size == 0)
@@ -120,6 +121,7 @@ namespace GBEmulator::Memory
 				return false;
 #endif
 
+			printf("%s %lu\n", rom.c_str(), size);
 			mem = new unsigned char[size];
 			memset(mem, 0, size);
 			fread(mem, 1, size, stream);
@@ -128,12 +130,8 @@ namespace GBEmulator::Memory
 			bool result = this->loadROM(mem, size, true);
 
 			this->_savePath = rom.substr(0, rom.find_last_of('.')) + ".sav";
-			stream = fopen(this->_savePath.c_str(), "rb");
-			if (stream) {
-				fread(mem, 1, size, stream);
-				fclose(stream);
-			}
-			return false;
+			this->loadRAM(this->_savePath);
+			return result;
 #ifdef __cpp_exceptions
 		} catch (InvalidRomSizeException &) {
 			this->resetROM();
@@ -170,12 +168,31 @@ namespace GBEmulator::Memory
 			this->_ram.setBankSize(size);
 		for (size_t i = 0; i < size; i++)
 			mem[i] = rand() % 0x100;
-		this->_ramMem = mem;
+		return true;
 	}
 
-	bool Cartridge::saveRAM()
+	bool Cartridge::loadRAM(const std::string &ram)
 	{
-		FILE *stream = fopen(this->_savePath.c_str(), "wb");
+		FILE *stream = fopen(ram.c_str(), "rb");
+		if (stream) {
+			fread(this->_ram.getBuffer(), 1, this->_ram.getSize(), stream);
+			fclose(stream);
+			return true;
+		}
+		return false;
+	}
+
+	bool Cartridge::loadRAM(unsigned char *data, size_t size)
+	{
+		if (this->_ram.getSize() != size)
+			return false;
+		memcpy(this->_ram.getBuffer(), data, size);
+		return true;
+	}
+
+	bool Cartridge::saveRAM(const char *path)
+	{
+		FILE *stream = fopen(path ? path : this->_savePath.c_str(), "wb");
 
 		if (!stream)
 #ifdef __cpp_exceptions
@@ -184,7 +201,7 @@ namespace GBEmulator::Memory
 			return false;
 #endif
 
-		fwrite(this->_ramMem, 1, this->_ram.getSize(), stream);
+		fwrite(this->_ram.getBuffer(), 1, this->_ram.getSize(), stream);
 		fclose(stream);
 		return true;
 	}

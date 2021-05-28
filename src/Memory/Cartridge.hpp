@@ -109,8 +109,6 @@ namespace GBEmulator::Memory
 
 		//! @brief Le fichier de ROM chargé.
 		ROM _rom;
-		//! @brief La mémoire RAM de la cartouche.
-		unsigned char *_ramMem = nullptr;
 		//! @brief Le chemin de sauvegarde.
 		standard::string _savePath;
 		//! @brief Est-ce que la RAM de la cartouche est activée.
@@ -169,8 +167,10 @@ namespace GBEmulator::Memory
 		//! @param size Taille du buffer.
 		//! @param canKeep Est-ce que le buffer envoyé peut-être gardé. Le buffer sera copié sur la valeur est false.
 		bool loadROM(unsigned char *data, size_t size, bool canKeep = false);
+		bool loadRAM(const standard::string &ram);
+		bool loadRAM(unsigned char *data, size_t size);
 		//! @brief Sauvegarde la RAM dans un fichier.
-		bool saveRAM();
+		bool saveRAM(const char *path = nullptr);
 		//! Écrit la valeur à l'adresse donnée dand la cartouche
 		//! @param address Adresse à laquelle écrire.
 		//! @param value La valeur à écrire.
