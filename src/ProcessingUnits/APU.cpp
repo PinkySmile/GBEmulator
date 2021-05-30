@@ -37,7 +37,7 @@ namespace GBEmulator
 	void APU::update(unsigned cycle)
 	{
 		if (!this->_enabled) {
-			this->_samples = standard::vector<int16_t>{};
+			this->_samples._buffer.clear();
 			return;
 		}
 		this->_samples.leftVolume = this->_channelControl.SO1volume / 7.f;
@@ -131,7 +131,7 @@ namespace GBEmulator
 		}
 	}
 
-	standard::vector<int16_t> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
+	standard::vector<uint16_t> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
 	{
 		auto result = this->_channels[channelNb]->update(cycles);
 		APUSoundOutputTerminalSelect term = static_cast<unsigned char>(this->_terminalSelect) >> channelNb;
@@ -146,32 +146,26 @@ namespace GBEmulator
 		return result;
 	}
 
-	SampleBuffer &SampleBuffer::operator=(const standard::vector<int16_t> &samples)
-	{
-		this->_buffer = samples;
-		return *this;
-	}
-
-	SampleBuffer &SampleBuffer::operator+=(const standard::vector<int16_t> &samples)
+	SampleBuffer &SampleBuffer::operator+=(const standard::vector<uint16_t> &samples)
 	{
 		unsigned offset = this->_buffer.size() - samples.size();
 
 		assert(this->_buffer.size() >= samples.size());
 		assert(samples.size() % 2 == 0);
 		for (unsigned i = 0; i < samples.size(); i += 2) {
-			this->_buffer[  i + offset  ] += samples[  i  ] * this->leftVolume;
-			this->_buffer[i + offset + 1] += samples[i + 1] * this->rightVolume;
+			this->_buffer[  i + offset  ] += (SOUND_VALUE - samples[  i  ]) * this->leftVolume;
+			this->_buffer[i + offset + 1] += (SOUND_VALUE - samples[i + 1]) * this->rightVolume;
 		}
 		return *this;
 	}
 
-	SampleBuffer &SampleBuffer::operator<<(const standard::vector<int16_t> &samples)
+	SampleBuffer &SampleBuffer::operator<<(const standard::vector<uint16_t> &samples)
 	{
 		assert(samples.size() % 2 == 0);
 		this->_buffer.reserve(samples.size() + this->_buffer.size());
 		for (unsigned i = 0; i < samples.size(); i += 2) {
-			this->_buffer.push_back(samples[  i  ] * this->leftVolume);
-			this->_buffer.push_back(samples[i + 1] * this->rightVolume);
+			this->_buffer.push_back((SOUND_VALUE - samples[  i  ]) * this->leftVolume);
+			this->_buffer.push_back((SOUND_VALUE - samples[i + 1]) * this->rightVolume);
 		}
 		return *this;
 	}

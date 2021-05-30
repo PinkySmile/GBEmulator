@@ -88,9 +88,8 @@ namespace GBEmulator
 		float leftVolume = 1;
 		float rightVolume = 1;
 
-		SampleBuffer &operator=(const standard::vector<int16_t> &samples);
-		SampleBuffer &operator<<(const standard::vector<int16_t> &samples);
-		SampleBuffer &operator+=(const standard::vector<int16_t> &samples);
+		SampleBuffer &operator<<(const standard::vector<uint16_t> &samples);
+		SampleBuffer &operator+=(const standard::vector<uint16_t> &samples);
 	};
 
 	struct APUSoundOutputTerminalSelect {
@@ -156,7 +155,7 @@ namespace GBEmulator
 	private:
 		void _internalWrite(unsigned short relativeAddress, uint8_t value);
 		unsigned char _internalRead(unsigned short relativeAddress) const;
-		standard::vector<int16_t> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
+		standard::vector<uint16_t> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
 
 		//! @brief Lecteur de son
 		ISound &_soundPlayer;

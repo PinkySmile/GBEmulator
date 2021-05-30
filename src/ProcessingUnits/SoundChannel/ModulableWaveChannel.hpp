@@ -65,7 +65,7 @@ namespace GBEmulator
 		double _lengthCounter = 0;
 
 		void _update(unsigned cycles) override;
-		int16_t _getSoundData() const override;
+		uint16_t _getSoundData() const override;
 		void _restart();
 	public:
 		void write(unsigned int relativeAddress, uint8_t value) override;

@@ -105,7 +105,6 @@ namespace GBEmulator::Memory
 #ifdef __cpp_exceptions
 		try {
 #endif
-			puts("Ouah");
 			size_t size = this->_getBestSizeForFile(rom);
 
 			if (size == 0)
@@ -121,7 +120,6 @@ namespace GBEmulator::Memory
 				return false;
 #endif
 
-			printf("%s %lu\n", rom.c_str(), size);
 			mem = new unsigned char[size];
 			memset(mem, 0, size);
 			fread(mem, 1, size, stream);

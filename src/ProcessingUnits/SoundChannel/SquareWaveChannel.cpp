@@ -66,10 +66,10 @@ namespace GBEmulator
 		}
 	}
 
-	int16_t SquareWaveChannel::_getSoundData() const
+	uint16_t SquareWaveChannel::_getSoundData() const
 	{
 		auto v = Timing::getCyclesPerSecondsFromFrequency(this->_frequencyRegister.getActualFrequency());
-		int16_t realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
+		uint16_t realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		switch (this->_soundLenPatternDutyRegister.patternDuty) {
 		case DUTY_12_5_PERCENT:
@@ -86,8 +86,8 @@ namespace GBEmulator
 			break;
 		}
 		if (this->_frequencyCounter > v)
-			return -SOUND_VALUE;
-		return realValue - SOUND_VALUE;
+			return 0;
+		return realValue;
 	}
 
 	void SquareWaveChannel::write(unsigned int relativeAddress, uint8_t value)
