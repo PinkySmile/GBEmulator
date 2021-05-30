@@ -121,7 +121,6 @@ namespace GBEmulator::Memory
 				return false;
 #endif
 
-			printf("%s %lu\n", rom.c_str(), size);
 			mem = new unsigned char[size];
 			memset(mem, 0, size);
 			fread(mem, 1, size, stream);
@@ -171,7 +170,7 @@ namespace GBEmulator::Memory
 		return true;
 	}
 
-	bool Cartridge::loadRAM(const std::string &ram)
+	bool Cartridge::loadRAM(const standard::string &ram)
 	{
 		FILE *stream = fopen(ram.c_str(), "rb");
 		if (stream) {
