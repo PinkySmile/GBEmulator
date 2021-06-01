@@ -17,8 +17,7 @@ namespace GBEmulator
 {
 	standard::vector<uint16_t> BasicSoundChannel::update(unsigned int cycles)
 	{
-		if (!this->hasExpired())
-			this->_update(cycles);
+		this->_update(cycles);
 		this->_cycles += cycles;
 		if (this->_cycles >= GB_CPU_FREQUENCY / SAMPLE_RATE) {
 			uint16_t data = min(this->hasExpired() ? 0 : this->_getSoundData(), SOUND_VALUE * 2 - 1);

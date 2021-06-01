@@ -18,6 +18,7 @@ namespace GBEmulator
 			this->_current = (this->_current + 1) % 0x20;
 		}
 
+		this->_lengthCounter += cycles;
 		while (this->_lengthCounter >= lengthCount) {
 			this->_lengthCounter -= lengthCount;
 			if (!this->_frequencyRegister.useLength)
@@ -44,6 +45,7 @@ namespace GBEmulator
 		switch (relativeAddress) {
 		case MODULABLE_CHANNEL_ON_OFF:
 			this->_enabled = value & 0x80;
+			this->_expired |= !this->_enabled;
 			break;
 		case MODULABLE_CHANNEL_SOUND_LENGTH:
 			if (!value)
@@ -102,6 +104,11 @@ namespace GBEmulator
 
 	void ModulableWaveChannel::onPowerOff()
 	{
-
+		this->_enabled = false;
+		this->_length = 0;
+		this->_volume = OUTPUT_MUTED;
+		this->_frequencyRegister.loFrequency = 0;
+		this->_frequencyRegister.setHigh(0);
+		this->_expired = true;
 	}
 }

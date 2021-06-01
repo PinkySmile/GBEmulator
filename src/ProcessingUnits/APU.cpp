@@ -74,8 +74,6 @@ namespace GBEmulator
 	{
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->read(address - NR30);
-		if (!this->_enabled && address != NR52)
-			return 0xFF;
 		if (address >= NR10 && address <= NR14)
 			return this->_channels[0]->read(address - NR10);
 		//NR20 Doesn't actually exist
@@ -101,9 +99,12 @@ namespace GBEmulator
 			this->_terminalSelect = value;
 			break;
 		case APU_SOUND_ON_OFF:
-			if (this->_enabled && (value & 0x80) == 0)
+			if (this->_enabled && (value & 0x80) == 0) {
+				this->_channelControl = 0;
+				this->_terminalSelect = 0;
 				for (auto &channel : this->_channels)
 					channel->onPowerOff();
+			}
 			this->_enabled = (value & 0x80) != 0;
 			break;
 		default:

@@ -122,7 +122,13 @@ namespace GBEmulator
 
 	void NoiseWaveChannel::onPowerOff()
 	{
-
+		this->_lfsr = 0x7FFF;
+		this->_volumeEnvelopeRegister = 0;
+		this->_effectiveVolumeEnvelopeRegister = 0;
+		this->_polynomialCounter = 0;
+		this->_initial = false;
+		this->_useLength = false;
+		this->_expired = true;
 	}
 
 	NoiseWaveChannel::NoiseWaveChannel()

@@ -151,6 +151,10 @@ namespace GBEmulator
 	{
 		this->_volumeEnvelopeRegister = 0;
 		this->_effectiveVolumeEnvelopeRegister = 0;
+		this->_sweepRegister = 0;
+		this->_soundLenPatternDutyRegister = 0;
+		this->_frequencyRegister.loFrequency = 0;
+		this->_frequencyRegister.setHigh(0);
 		this->_expired = true;
 	}
 }
