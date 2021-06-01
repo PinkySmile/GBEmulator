@@ -105,7 +105,6 @@ namespace GBEmulator::Memory
 #ifdef __cpp_exceptions
 		try {
 #endif
-			puts("Ouah");
 			size_t size = this->_getBestSizeForFile(rom);
 
 			if (size == 0)

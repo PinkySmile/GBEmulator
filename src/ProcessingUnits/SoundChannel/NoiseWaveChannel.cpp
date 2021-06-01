@@ -58,13 +58,13 @@ namespace GBEmulator
 		}
 	}
 
-	int16_t NoiseWaveChannel::_getSoundData() const
+	uint16_t NoiseWaveChannel::_getSoundData() const
 	{
 		int16_t realValue = 2 * SOUND_VALUE * this->_effectiveVolumeEnvelopeRegister.initialVolume / 15;
 
 		if (this->_lfsr & 1)
-			return -SOUND_VALUE;
-		return realValue - SOUND_VALUE;
+			return 0;
+		return realValue;
 	}
 
 	void NoiseWaveChannel::write(unsigned int relativeAddress, uint8_t value)

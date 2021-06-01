@@ -75,7 +75,7 @@ namespace GBEmulator
 
 		void _restart();
 		void _update(unsigned cycles) override;
-		int16_t _getSoundData() const override;
+		uint16_t _getSoundData() const override;
 
 	public:
 		NoiseWaveChannel();

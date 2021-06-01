@@ -27,16 +27,16 @@ namespace GBEmulator
 		}
 	}
 
-	int16_t ModulableWaveChannel::_getSoundData() const
+	uint16_t ModulableWaveChannel::_getSoundData() const
 	{
 		if (this->_volume == 0)
-			return -SOUND_VALUE;
+			return 0;
 
-		int16_t realVal = this->_wpram[this->_current];
+		uint16_t realVal = this->_wpram[this->_current];
 
 		realVal >>= (this->_volume - 1);
 		realVal <<= 10;
-		return realVal - SOUND_VALUE;
+		return realVal;
 	}
 
 	void ModulableWaveChannel::write(unsigned int relativeAddress, uint8_t value)
