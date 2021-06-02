@@ -7,7 +7,7 @@
 
 #include <unistd.h>
 #include "LCDSDL.hpp"
-#define FRAMES_PER_SECOND 60
+#define FRAMES_PER_SECOND 10
 #define W 640
 #define H 576
 
@@ -48,6 +48,9 @@ namespace GBEmulator::Graphics
 	void LCDSDL::display()
 	{
 		memcpy(this->framebuffer, this->buffer, W * H * sizeof(*this->buffer));
+#ifdef NO_DISPLAY_THREAD
+		this->render()
+#endif
 	}
 
 	void LCDSDL::render()
@@ -59,8 +62,8 @@ namespace GBEmulator::Graphics
 
 		auto ticks = SDL_GetTicks();
 
-		if (1000 / 60 > (ticks - this->start))
-			SDL_Delay(1000 / 60 - (ticks - this->start));
+		if (1000 / FRAMES_PER_SECOND > (ticks - this->start))
+			SDL_Delay(1000 / FRAMES_PER_SECOND - (ticks - this->start));
 		this->start = SDL_GetTicks();
 	}
 

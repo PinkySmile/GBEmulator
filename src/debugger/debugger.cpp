@@ -20,7 +20,6 @@ typedef fd_set FD_SET;
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../ProcessingUnits/Instructions/Strings.hpp"
-#include "../LCD/LCDSFML.hpp"
 
 namespace GBEmulator::Debugger
 {
