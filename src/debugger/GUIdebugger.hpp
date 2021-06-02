@@ -10,6 +10,7 @@
 
 #include <stack>
 #include <thread>
+#include <SFML/Graphics.hpp>
 #include "../ProcessingUnits/CPU.hpp"
 #include "CompiledCondition.hpp"
 
@@ -53,8 +54,14 @@ namespace GBEmulator::Debugger
 		standard::string _lastCmd;
 		//! @brief Le point d'arrêts placés.
 		standard::vector<unsigned short> _breakPoints;
+		//! @brief La police d'écriture chargée.
+		sf::Font _font;
+		//! @brief Contenu de la mémoire sous forme de text.
+		sf::Text _memory;
 		//! @brief Adresse de début de la mémoire affichée.
 		unsigned short _memBeg;
+		//! @brief Registres du CPU transformé en text.
+		sf::Text _registers;
 		standard::thread _cpuThread;
 		unsigned _timer = 0;
 
@@ -90,6 +97,49 @@ namespace GBEmulator::Debugger
 		//! @param line Ligne à séparer.
 		//! @return Un tableau des élements une fois séparés.
 		static standard::vector<standard::string> _splitCommand(const standard::string& line);
+		//! Affiche l'instruction sur la fenetre du débugger
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		void _drawInstruction(sf::RenderWindow &_debugWindow);
+		//! Affiche l'état de la mémoire sur la fenetre du débugger
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		void _drawMemory(sf::RenderWindow &_debugWindow);
+		//! Affiche l'état des registres sur la fenetre du débugger
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		void _drawRegisters(sf::RenderWindow &_debugWindow);
+		//! Petmet d'utiliser les commandes en raccourcis de clavier sur le débugger
+		//! @param _debugWindow Fenêtre sur laquelle récuperer les entrées.
+		void _handleWindowCommands(sf::RenderWindow &_debugWindow);
+		//! Affiche le contenu de la Vram sur la fenetre du débugger
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		void _drawVram(sf::RenderWindow &_debugWindow);
+		/*!
+		 * Affiche l'état d'une palette sur la fenetre du débugger
+		 * @param _debugWindow Fenêtre sur laquelle afficher
+		 * @param x Position de la boîte en abcisses.
+		 * @param y Position de la boîte en ordonnées
+		 * @param palette Pallette de couleur à afficher.
+		 * @param transparent Est-ce que la première couleur est transparente ?
+		 */
+		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
+		/*!
+		 * Affiche la VRAM en utilisant la palette.
+		 * @param _debugWindow
+		 * @param posx Position de la boîte en abcisses.
+		 * @param posy Position de la boîte en ordonnées
+		 * @param palette Pallette de couleur à afficher.
+		 * @param transparent Est-ce que la première couleur est transparente ?
+		 */
+		void _displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
+		//! Affiche l'état de la window sur la fenetre du débugger.
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		//! @param posx Position de la boîte en abcisses.
+		//! @param posy Position de la boîte en ordonnées
+		void _displayWindow(sf::RenderWindow &_debugWindow, float posx, float posy);
+		//! Affiche l'état du background sur la fenetre du débugger.
+		//! @param _debugWindow Fenêtre sur laquelle afficher.
+		//! @param posx Position de la boîte en abcisses.
+		//! @param posy Position de la boîte en ordonnées
+		void _displayBackground(sf::RenderWindow &_debugWindow, float posx, float posy);
 
 		void _executeNextInstruction(bool resetClock);
 

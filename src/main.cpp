@@ -9,7 +9,9 @@
 #include <sys/stat.h>
 #endif
 
-#if !NODEBUGGER
+#if DEBUGGER == 1
+#include "debugger/GUIdebugger.hpp"
+#elif DEBUGGER == 2
 #include "debugger/debugger.hpp"
 #endif
 
@@ -51,7 +53,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 {
 #ifdef __GNUG__
 	struct option long_options[] = {
-	#if !NODEBUGGER
+	#if DEBUGGER
 		{"debug",     no_argument,       nullptr, 'd'},
 	#endif
 		{"listen",    required_argument, nullptr, 'l'},
@@ -141,7 +143,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 void printUsage(char *program)
 {
 	std::cout << "Usage: " << program << " rom.gb [-";
-#if !NODEBUGGER
+#if DEBUGGER
 	std::cout << "d";
 #endif
 	std::cout << "nrmba] [-l <port>] [-c <ip:port>] [-g auto|dmg|gbc]" << std::endl;
@@ -179,14 +181,14 @@ int main(int argc, char **argv)
 #endif
 
 	standard::string path = argv[0];
+	Components components = buildComponents(args);
+	GBEmulator::CPU cpu(*components.sound, *components.window, *components.joypad, *components.network, args.error);
+#if DEBUGGER
 #ifdef _WIN32
 	size_t occurence = path.find_last_of('\\');
 #else
 	size_t occurence = path.find_last_of('/');
 #endif
-	Components components = buildComponents(args);
-	GBEmulator::CPU cpu(*components.sound, *components.window, *components.joypad, *components.network, args.error);
-#if !NODEBUGGER
 	GBEmulator::Debugger::Debugger debugger{occurence == path.size() ? "." : path.substr(0, occurence), cpu, *components.window, *components.joypad};
 #endif
 
@@ -227,7 +229,7 @@ int main(int argc, char **argv)
 #endif
 
 	cpu.init();
-#if !NODEBUGGER
+#if DEBUGGER
 	if (args.debug) {
 		int result = debugger.startDebugSession();
 

@@ -12,12 +12,17 @@ if (NOT MSVC)
 	endif()
 	if (NO_EXCEPTION OR ARDUINO)
 		message("Exceptions disabled")
-		set(NODEBUGGER 1)
+		if (NOT DEBUGGER)
+			set(DEBUGGER CMD)
+		endif ()
 		add_compile_options(-fno-exceptions)
+	elseif (NOT DEBUGGER)
+		set(DEBUGGER GUI)
 	endif ()
 endif()
 
-if (NOT NODEBUGGER)
+message("Selected Debugger is ${DEBUGGER}")
+if (DEBUGGER STREQUAL GUI)
 	find_package(SFML REQUIRED)
 	find_package(TGUI)
 else ()
@@ -151,12 +156,21 @@ add_library(
 )
 target_compile_definitions(GBEmulator_Core PRIVATE ${SPECIFIC_COMPILE_FLAGS})
 
-if (NODEBUGGER)
-	if (NOT ARDUINO)
-		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp src/ProcessingUnits/Instructions/Strings2.cpp)
-	endif ()
-else ()
-	set(NODEBUGGER 0)
+if (DEBUGGER STREQUAL GUI)
+	set(DEBUGGER_DEFINE 1)
+	set(
+		DEBUGGER_SRC
+		src/debugger/GUIdebugger.cpp
+		src/debugger/GUIdebugger.hpp
+		src/Network/BgbHandler.hpp
+		src/debugger/CompiledCondition.cpp
+		src/debugger/CompiledCondition.hpp
+		src/ProcessingUnits/Instructions/Strings.cpp
+		src/ProcessingUnits/Instructions/Strings.hpp
+		src/ProcessingUnits/Instructions/Strings2.cpp
+	)
+elseif (DEBUGGER STREQUAL CMD)
+	set(DEBUGGER_DEFINE 2)
 	set(
 		DEBUGGER_SRC
 		src/debugger/debugger.cpp
@@ -168,6 +182,11 @@ else ()
 		src/ProcessingUnits/Instructions/Strings.hpp
 		src/ProcessingUnits/Instructions/Strings2.cpp
 	)
+else ()
+	set(DEBUGGER_DEFINE 2)
+	if (NOT ARDUINO)
+		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp src/ProcessingUnits/Instructions/Strings2.cpp)
+	endif ()
 endif()
 
 add_executable(
@@ -190,7 +209,7 @@ endif()
 
 target_compile_definitions(
 	GBEmulator PRIVATE
-	NODEBUGGER=${NODEBUGGER}
+	DEBUGGER=${DEBUGGER_DEFINE}
 	SDL_IMPL=${SDL_IMPL}
 	SFML_IMPL=${SFML_IMPL}
 	SERENITY_IMPL=${SERENITY_IMPL}

@@ -20,7 +20,7 @@ namespace GBEmulator::Input
 	private:
 		standard::map<Keys, SDL_Keycode> _keys;
 		standard::unordered_map<SDL_Keycode, Keys> _rkeys;
-		bool _keyPressed[KEYS_LENGTH] = {false};
+		bool _keyPressed[KEYS_LENGTH] = {false, false, false, false, false, false, false, false, false};
 		Graphics::LCDSDL &_screen;
 		standard::thread _thread;
 		bool _ended = false;
