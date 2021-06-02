@@ -13,8 +13,10 @@ namespace GBEmulator::Input
 		_keys(keys),
 		_screen(screen),
 		_thread([this]{
-			while (!this->_ended)
+			while (!this->_ended) {
 				this->update();
+				std::this_thread::sleep_for(std::chrono::milliseconds(2));
+			}
 		})
 	{
 		for (standard::pair<GBEmulator::Input::Keys, SDL_Keycode> i : this->_keys)

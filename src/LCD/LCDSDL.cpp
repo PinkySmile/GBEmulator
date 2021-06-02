@@ -4,6 +4,8 @@
 ** File description:
 ** LCDSDL.cpp
 */
+
+#include <unistd.h>
 #include "LCDSDL.hpp"
 #define FRAMES_PER_SECOND 60
 #define W 640
@@ -50,17 +52,16 @@ namespace GBEmulator::Graphics
 
 	void LCDSDL::render()
 	{
-		//int ticks = fps.get_ticks();
-
-		//this->frame_counter++;
-//		if (ticks < 1000 / FRAMES_PER_SECOND) {
-//			SDL_Delay((1000 / FRAMES_PER_SECOND) - ticks);
-//		}
 		SDL_RenderClear(this->context);
 		SDL_UpdateTexture(this->texture, nullptr, this->framebuffer, W * sizeof(*this->framebuffer));
 		SDL_RenderCopy(this->context, this->texture, nullptr, nullptr);
 		SDL_RenderPresent(this->context);
-		this->fps.reset();
+
+		auto ticks = SDL_GetTicks();
+
+		if (1000 / 60 > (ticks - this->start))
+			SDL_Delay(1000 / 60 - (ticks - this->start));
+		this->start = SDL_GetTicks();
 	}
 
 	double LCDSDL::getFramerate()

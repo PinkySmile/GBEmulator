@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include "./ILCD.hpp"
 #include "util/TimerSDL.hpp"
+#include "../Timing/Clock.hpp"
 
 namespace GBEmulator::Graphics {
 	class Exception : public standard::exception {
@@ -31,12 +32,12 @@ namespace GBEmulator::Graphics {
 
 	class LCDSDL : public ILCD {
 	private:
+		Uint32 start = 0;
 		RGBColor *buffer;
 		RGBColor *framebuffer;
 		SDL_Window *screen;
 		SDL_Texture *texture;
 		SDL_Renderer *context;
-		TimerSDL fps = TimerSDL();
 		int frame_counter = 0;
 		SDLVideoMode video_mode;
 
