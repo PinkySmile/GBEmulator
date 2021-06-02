@@ -35,12 +35,12 @@ namespace GBEmulator::Memory
 		delete[] this->_memory;
 	}
 
-	unsigned char Memory::rawRead(uint16_t address) const
+	uint8_t Memory::rawRead(uint16_t address) const
 	{
 		return this->_memory[address % this->_bankSize];
 	}
 
-	unsigned char Memory::read(uint16_t address) const
+	uint8_t Memory::read(uint16_t address) const
 	{
 		if (!this->_size)
 			return 0xFF;
@@ -58,7 +58,7 @@ namespace GBEmulator::Memory
 		this->_bankPtr = this->_memory + size * this->_currentBank;
 	}
 
-	unsigned char Memory::getCurrentBank() const
+	uint8_t Memory::getCurrentBank() const
 	{
 		return this->_currentBank;
 	}
@@ -104,7 +104,7 @@ namespace GBEmulator::Memory
 		this->_bankPtr[address % this->_bankSize] = value;
 	}
 
-	void Memory::setBank(unsigned char bank)
+	void Memory::setBank(uint8_t bank)
 	{
 		if (!this->_size)
 			return;

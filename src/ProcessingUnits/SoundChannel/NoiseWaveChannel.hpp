@@ -35,23 +35,23 @@ namespace GBEmulator
 		  Bit 2-0 - Dividing Ratio of Frequencies (r)
 		Frequency = 524288 Hz / r / 2^(s+1) ;For r=0 assume r=0.5 instead*/
 		struct VolumeEnvelopeRegister {
-			unsigned char numberOfSweeps : 3;
+			uint8_t numberOfSweeps : 3;
 			bool increases : 1;
-			unsigned char initialVolume : 4;
+			uint8_t initialVolume : 4;
 
-			VolumeEnvelopeRegister(unsigned char v) { *this = v; };
-			VolumeEnvelopeRegister &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-			operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+			VolumeEnvelopeRegister(uint8_t v) { *this = v; };
+			VolumeEnvelopeRegister &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+			operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 		};
 
 		struct PolynomialCounterRegister {
-			unsigned char dividingRatio : 3;
+			uint8_t dividingRatio : 3;
 			bool isCounter7bits : 1;
-			unsigned char shiftClockFrequency : 4;
+			uint8_t shiftClockFrequency : 4;
 
-			PolynomialCounterRegister(unsigned char v) { *this = v; };
-			PolynomialCounterRegister &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-			operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+			PolynomialCounterRegister(uint8_t v) { *this = v; };
+			PolynomialCounterRegister &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+			operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 			double getFrequency() const {
 				double r = this->dividingRatio;
 
@@ -65,7 +65,7 @@ namespace GBEmulator
 		VolumeEnvelopeRegister _effectiveVolumeEnvelopeRegister = 0;
 		PolynomialCounterRegister _polynomialCounter = 0;
 		unsigned short _lfsr : 15;
-		unsigned char _length : 7;
+		uint8_t _length : 7;
 		bool _initial : 1;
 		bool _useLength : 1;
 		double _lengthCounter = 0;
@@ -80,7 +80,7 @@ namespace GBEmulator
 	public:
 		NoiseWaveChannel();
 		void write(unsigned int relativeAddress, uint8_t value) override;
-		unsigned char read(unsigned int relativeAddress) override;
+		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
 	};

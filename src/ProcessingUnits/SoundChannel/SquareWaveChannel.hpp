@@ -28,37 +28,37 @@ namespace GBEmulator
 		};
 
 		struct SweepRegister {
-			unsigned char sweepShifts : 3;
+			uint8_t sweepShifts : 3;
 			bool substract : 1;
-			unsigned char sweepTime : 3;
-			unsigned char _ : 1;
+			uint8_t sweepTime : 3;
+			uint8_t _ : 1;
 
-			SweepRegister(unsigned char v) { *this = v; };
-			SweepRegister &operator=(unsigned char v) {
-				*reinterpret_cast<unsigned char *>(this) = v;
+			SweepRegister(uint8_t v) { *this = v; };
+			SweepRegister &operator=(uint8_t v) {
+				*reinterpret_cast<uint8_t *>(this) = v;
 				this->_ = 1;
 				return *this;
 			}
-			operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+			operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 		};
 
 		struct SoundLenPatternDutyRegister {
-			unsigned char length : 6;
+			uint8_t length : 6;
 			PatternDuty patternDuty : 2;
 
-			SoundLenPatternDutyRegister(unsigned char v) { *this = v; };
-			SoundLenPatternDutyRegister &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-			operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this) | 0x3F; }
+			SoundLenPatternDutyRegister(uint8_t v) { *this = v; };
+			SoundLenPatternDutyRegister &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+			operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this) | 0x3F; }
 		};
 
 		struct VolumeEnvelopeRegister {
-			unsigned char numberOfSweeps : 3;
+			uint8_t numberOfSweeps : 3;
 			bool increases : 1;
-			unsigned char initialVolume : 4;
+			uint8_t initialVolume : 4;
 
-			VolumeEnvelopeRegister(unsigned char v) { *this = v; };
-			VolumeEnvelopeRegister &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-			operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+			VolumeEnvelopeRegister(uint8_t v) { *this = v; };
+			VolumeEnvelopeRegister &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+			operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 		};
 
 		struct FrequencyRegister {
@@ -66,16 +66,16 @@ namespace GBEmulator
 			union {
 				uint8_t highByte;
 				struct {
-					unsigned char hiFrequency : 3;
-					unsigned char _ : 3;
+					uint8_t hiFrequency : 3;
+					uint8_t _ : 3;
 					bool useLength: 1;
 					bool initial : 1;
 				};
 			};
 
 			FrequencyRegister(unsigned short v) { *reinterpret_cast<unsigned short *>(this) = v; };
-			void setHigh(unsigned char v) { this->highByte = v; this->_ = 0x7; }
-			unsigned char getHigh() const  { return this->highByte | 0xBF; }
+			void setHigh(uint8_t v) { this->highByte = v; this->_ = 0x7; }
+			uint8_t getHigh() const  { return this->highByte | 0xBF; }
 			void setFrequency(unsigned short frequ) {
 				FrequencyRegister temp = frequ;
 
@@ -106,7 +106,7 @@ namespace GBEmulator
 
 	public:
 		void write(unsigned int relativeAddress, uint8_t value) override;
-		unsigned char read(unsigned int relativeAddress) override;
+		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
 	};

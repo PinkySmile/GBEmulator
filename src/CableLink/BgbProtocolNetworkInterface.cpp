@@ -10,7 +10,7 @@
 namespace GBEmulator::Network
 {
 	BGBProtocolCableInterface::BGBProtocolCableInterface() :
-		_handler([this](ProtocolHandle &handler, unsigned char rbyte){
+		_handler([this](ProtocolHandle &handler, uint8_t rbyte){
 			if (this->isTransfering() && this->isExternal()) {
 				//std::cout << "Successfully received 0x" << standard::hex << static_cast<int>(rbyte) << standard::dec << " as master (Replying 0x" << standard::hex << static_cast<int>(this->byte) << standard::dec << ")" << standard::endl;
 				handler.reply(this->byte);
@@ -24,7 +24,7 @@ namespace GBEmulator::Network
 			else
 				std::cout << "Receive 0x" << standard::hex << static_cast<int>(rbyte) << standard::dec << " but not transfering (master)" << standard::endl;*/
 		},
-		[this](ProtocolHandle &, unsigned char b){
+		[this](ProtocolHandle &, uint8_t b){
 			if (this->isTransfering() && !this->isExternal()) {
 				this->_isTransfering = false;
 				this->_needInterrupt = true;
@@ -48,7 +48,7 @@ namespace GBEmulator::Network
 		this->_handler.host(port);
 	}
 
-	void BGBProtocolCableInterface::_sendByte(unsigned char sbyte)
+	void BGBProtocolCableInterface::_sendByte(uint8_t sbyte)
 	{
 		//std::cout << "Sending 0x" << standard::hex << static_cast<int>(sbyte) << standard::dec << standard::endl;
 		if (this->_handler.isConnected()) {

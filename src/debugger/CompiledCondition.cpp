@@ -209,19 +209,19 @@ namespace GBEmulator::Debugger
 			str.erase(0, 1);
 		}
 		if (name == "a")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.a, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.a, name);
 		else if (name == "b")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.b, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.b, name);
 		else if (name == "c")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.c, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.c, name);
 		else if (name == "d")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.d, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.d, name);
 		else if (name == "e")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.e, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.e, name);
 		else if (name == "h")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.h, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.h, name);
 		else if (name == "l")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.l, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.l, name);
 		else if (name == "zf")
 			return standard::make_shared<ValueRegister<bool>>(regs, name);
 		else if (name == "cf")
@@ -231,7 +231,7 @@ namespace GBEmulator::Debugger
 		else if (name == "hcf" || name == "hf")
 			return standard::make_shared<ValueRegister<bool>>(regs, "hf");
 		else if (name == "f")
-			return standard::make_shared<ValueRegister<unsigned char>>(regs.f, name);
+			return standard::make_shared<ValueRegister<uint8_t>>(regs.f, name);
 		else if (name == "af")
 			return standard::make_shared<ValueRegister<unsigned short>>(regs.af, name);
 		else if (name == "bc")

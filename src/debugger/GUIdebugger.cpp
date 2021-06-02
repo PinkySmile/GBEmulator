@@ -940,7 +940,7 @@ namespace GBEmulator::Debugger
 				palette[i].r,
 				palette[i].g,
 				palette[i].b,
-				static_cast<unsigned char>(transparent && i == 0 ? 0 : 255)
+				static_cast<uint8_t>(transparent && i == 0 ? 0 : 255)
 			});
 			square.setPosition(x + 32 * i, y);
 			_debugWindow.draw(square);
@@ -965,7 +965,7 @@ namespace GBEmulator::Debugger
 							color.r,
 							color.g,
 							color.b,
-							static_cast<unsigned char>(transparent && index == 0 ? 0 : 255)
+							static_cast<uint8_t>(transparent && index == 0 ? 0 : 255)
 						};
 					}
 				}

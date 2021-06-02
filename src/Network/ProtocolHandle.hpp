@@ -13,7 +13,7 @@
 
 //! @brief Transforme un charactère sous sa représentation hexadécimale.
 #define charToHex(val)\
-([](unsigned char i){\
+([](uint8_t i){\
 	standard::stringstream stream;\
 \
 	stream << "0x" << standard::setfill('0') << standard::setw(2) << standard::hex << standard::uppercase << static_cast<int>(i);\
@@ -23,7 +23,7 @@
 namespace GBEmulator::Network
 {
 	//! @brief Handler appelé quand un byte est reçu.
-	typedef std::function<void(class ProtocolHandle &handler, unsigned char byte)> ByteHandle;
+	typedef std::function<void(class ProtocolHandle &handler, uint8_t byte)> ByteHandle;
 
 	//! @brief Une interface qui permet de recevoire des données et en envoyer pour GameBoy.
 	class ProtocolHandle {
@@ -55,10 +55,10 @@ namespace GBEmulator::Network
 		virtual void connect(const standard::string &ip, unsigned short port) = 0;
 		//! @brief Envoie un byte de donnée en mode master.
 		//! @param byte Byte à envoyer.
-		virtual void sendByte(unsigned char byte) = 0;
+		virtual void sendByte(uint8_t byte) = 0;
 		//! @brief Envoie un byte de donnée en mode slave.
 		//! @param byte Byte à envoyer.
-		virtual void reply(unsigned char byte) = 0;
+		virtual void reply(uint8_t byte) = 0;
 		//! @brief Se déconnecte du serveur
 		virtual void disconnect() = 0;
 		//! @brief Attends qu'un byte soit reçu pendant timeout secondes.

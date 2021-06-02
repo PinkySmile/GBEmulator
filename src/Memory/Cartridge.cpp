@@ -204,7 +204,7 @@ namespace GBEmulator::Memory
 		return true;
 	}
 
-	unsigned char Cartridge::read(uint16_t address) const
+	uint8_t Cartridge::read(uint16_t address) const
 	{
 		if (address < 0x4000)
 			return this->_rom.rawRead(address);
@@ -246,12 +246,12 @@ namespace GBEmulator::Memory
 		}
 	}
 
-	unsigned char Cartridge::getRamBank() const
+	uint8_t Cartridge::getRamBank() const
 	{
 		return this->_ram.getCurrentBank();
 	}
 
-	unsigned char Cartridge::getRomBank() const
+	uint8_t Cartridge::getRomBank() const
 	{
 		return this->_rom.getCurrentBank();
 	}

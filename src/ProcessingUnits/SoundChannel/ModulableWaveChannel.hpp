@@ -30,20 +30,20 @@ namespace GBEmulator
 		};
 
 		struct FrequencyRegister {
-			unsigned char loFrequency;
+			uint8_t loFrequency;
 			union {
-				unsigned char highByte;
+				uint8_t highByte;
 				struct {
-					unsigned char hiFrequency : 3;
-					unsigned char _ : 3;
+					uint8_t hiFrequency : 3;
+					uint8_t _ : 3;
 					bool useLength: 1;
 					bool initial : 1;
 				};
 			};
 
 			FrequencyRegister(unsigned short v) { *reinterpret_cast<unsigned short *>(this) = v; };
-			void setHigh(unsigned char v) { this->highByte = v; this->_ = 0x7; }
-			unsigned char getHigh() const  { return this->highByte | 0xBF; }
+			void setHigh(uint8_t v) { this->highByte = v; this->_ = 0x7; }
+			uint8_t getHigh() const  { return this->highByte | 0xBF; }
 			void setFrequency(unsigned short frequ) {
 				FrequencyRegister temp = frequ;
 
@@ -56,11 +56,11 @@ namespace GBEmulator
 		};
 
 		bool _enabled = false;
-		unsigned char _length = 0;
-		unsigned char _wpram[0x20];
+		uint8_t _length = 0;
+		uint8_t _wpram[0x20];
 		OutputLevel _volume = OUTPUT_MUTED;
 		FrequencyRegister _frequencyRegister = 0;
-		unsigned char _current = 0;
+		uint8_t _current = 0;
 		double _nextByteCounter = 0;
 		double _lengthCounter = 0;
 
@@ -69,7 +69,7 @@ namespace GBEmulator
 		void _restart();
 	public:
 		void write(unsigned int relativeAddress, uint8_t value) override;
-		unsigned char read(unsigned int relativeAddress) override;
+		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
 	};

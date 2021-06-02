@@ -178,13 +178,13 @@ namespace GBEmulator::Memory
 		//! Lis la valeur à l'adresse donnée dand la cartouche
 		//! @param address Adresse à lire.
 		//! @return Valeur lue.
-		unsigned char read(uint16_t address) const;
+		uint8_t read(uint16_t address) const;
 		//! Récupère le numéro de la Banque de ROM en cours d'utilisation
 		//! @return Le numéro de la Banque de ROM en cours d'utilisation.
-		unsigned char getRomBank() const;
+		uint8_t getRomBank() const;
 		//! Récupère le numéro de la Banque de RAM en cours d'utilisation
 		//! @return Le numéro de la Banque de RAM en cours d'utilisation.
-		unsigned char getRamBank() const;
+		uint8_t getRamBank() const;
 
 		bool isGameBoyOnly() const;
 	};

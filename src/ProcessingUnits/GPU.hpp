@@ -51,7 +51,7 @@ namespace GBEmulator
 			uint8_t texture_id;       //! ID de texture utilisé par le sprite.
 			union {
 				struct {
-					unsigned char cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
+					uint8_t cgb_palette_number:3;  	//! CGB uniquement (non utilisé).
 					bool tile_bank:1;                       //! CGB uniquement (non utilisé).
 					bool palette_number:1;                  //! Palette de couleurs utilisé par le sprite (0 ou 1).
 					bool x_flip:1;                          //! Symetrie horizontal.
@@ -68,9 +68,9 @@ namespace GBEmulator
 		 *  @brief struct représentant les paramètre de background.
 		 */
 		struct BGData {
-			unsigned char palette:3;                //! Palette de couleurs utilisé.
-			unsigned char tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
-			unsigned char not_used:1;
+			uint8_t palette:3;                //! Palette de couleurs utilisé.
+			uint8_t tile_bank:1;              //! Bank de tile utilisé (0 ou 1).
+			uint8_t not_used:1;
 			bool x_flip:1;                          //! Symetrie horizontal.
 			bool y_flip:1;                          //! Symetrie Vertical.
 			bool priority:1;                        //! Si 1 la tile est afficher par dessus le Background.
@@ -166,17 +166,17 @@ namespace GBEmulator
 		uint8_t _objectPalette1Value = 0b00011011;
 
 		//! Tableau de bytes représentant les tiles présente dans la VRAM.
-		unsigned char **_tiles = nullptr;
+		uint8_t **_tiles = nullptr;
 		/*//! Tableau de bytes représentant les tiles présente dans la Bank 1 de la VRAM.
-		unsigned char *_tilesBank1 = nullptr;*/
+		uint8_t *_tilesBank1 = nullptr;*/
 		//! Tableau de bytes représentant des sprites présents à l'écran.
 #ifdef ARDUINO
-		unsigned char **_spritesMap = nullptr;
+		uint8_t **_spritesMap = nullptr;
 #else
-		unsigned char *_spritesMap = nullptr;
+		uint8_t *_spritesMap = nullptr;
 #endif
 		//! Tableau de bytes représentant le Background de l'écran.
-		unsigned char **_backgroundMap = nullptr;
+		uint8_t **_backgroundMap = nullptr;
 
 		//! Cycles GPU.
 		unsigned _cycles = 0;
@@ -203,7 +203,7 @@ namespace GBEmulator
 		 * @param y: position du pixel sur l'axe des ordonnées.
 		 * @return le pixel
 		 */
-		unsigned char _getSpritePixel(const Sprite &sprite, unsigned int x, unsigned int y);
+		uint8_t _getSpritePixel(const Sprite &sprite, unsigned int x, unsigned int y);
 		/*!
 		 * @brief Obtient le pixel à la position x, y d'une tile map.
 		 * @param tile: la tile map
@@ -212,7 +212,7 @@ namespace GBEmulator
 		 * @param signedMode: mode signé
 		 * @return le pixel
 		 */
-		unsigned char _getPixelAt(const unsigned char *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y, bool bank);
+		uint8_t _getPixelAt(const uint8_t *tiles, unsigned int x, unsigned int y, bool signedMode, bool flipped_x, bool flipped_y, bool bank);
 
 	public:
 		/*!
@@ -237,36 +237,36 @@ namespace GBEmulator
 		 * le mode peut être H-Blank, V-Blank, Searching OAM-RAM ou Transfering Data to LCD Driver.
 		 * @return 0 pendant H-Blank, 1 pendant V-Blank, 2 pendant Searching OAM-RAM ou 3 pendant Transfering Data to LCD Driver.
 		 */
-		unsigned char getMode() const;
+		uint8_t getMode() const;
 		/*!
 		 * @brief Obtient la ligne à laquelle le GPU écrit sur le LCD.
 		 * @return le numéro de la ligne (entre 0 et 153)
 		 */
-		unsigned char getCurrentLine() const;
+		uint8_t getCurrentLine() const;
 		/*!
 		 * @brief Lit la VRAM
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readVRAM(uint16_t address) const;
+		uint8_t readVRAM(uint16_t address) const;
 		/*!
 		 * @brief Lit l'OAM
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readOAM(uint16_t address) const;
+		uint8_t readOAM(uint16_t address) const;
 		/*!
 		 * @brief Lit la palette de couleur du fond (BackGround Palette Data)
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readBGPD(uint16_t address) const;
+		uint8_t readBGPD(uint16_t address) const;
 		/*!
 		 * @brief Lit la palette de couleur dues sprites (OBjects Palette Data)
 		 * @param address: position du byte a lire.
 		 * @return la valeur du byte lu.
 		 */
-		unsigned char readOBPD(uint16_t address) const;
+		uint8_t readOBPD(uint16_t address) const;
 		/*!
 		 * @brief Obtient le byte indiquant la bank de VRAM utilisé.
 		 * @return false si bank 0 - true si bank 1.
@@ -276,52 +276,52 @@ namespace GBEmulator
 		 * @brief Obtient le LCD Control Register (FF40)
 		 * @return la valeur byte
 		 */
-		unsigned char getControlByte() const;
+		uint8_t getControlByte() const;
 		/*!
 		 * @brief Obtient la LCD Monochrome Palettes (FF47)
 		 * @return la valeur byte
 		 */
-		unsigned char getBGPalette() const;
+		uint8_t getBGPalette() const;
 		/*!
 		 * @brief Obtient le Scroll X (FF43)
 		 * @return la valeur byte
 		 */
-		unsigned char getXScroll() const;
+		uint8_t getXScroll() const;
 		/*!
 		 * @brief Obtient le Scroll Y (FF42)
 		 * @return la valeur byte
 		 */
-		unsigned char getYScroll() const;
+		uint8_t getYScroll() const;
 		/*!
 		 * @brief Obtient le STAT - LCD Status (FF41)
 		 * @return la valeur du byte
 		 */
-		unsigned char getStatByte() const;
+		uint8_t getStatByte() const;
 		/*!
 		 * @brief Obtient LYC - LY Compare (FF45)
 		 * @return la valeur du byte
 		 */
-		unsigned char getLycByte() const;
+		uint8_t getLycByte() const;
 		/*!
 		 * @brief Obtient Window X Position (FF4B)
 		 * @return la valeur du byte moins 7
 		 */
-		unsigned char getWindowX() const;
+		uint8_t getWindowX() const;
 		/*!
 		 * @brief Obtient Window Y Position (FF4A)
 		 * @return la valeur du byte
 		 */
-		unsigned char getWindowY() const;
+		uint8_t getWindowY() const;
 		/*!
 		 * @brief Obtient Object Palette 0 Data (FF48)
 		 * @return la valeur du byte
 		 */
-		unsigned char getObjectPalette0() const;
+		uint8_t getObjectPalette0() const;
 		/*!
 		 * @brief Obtient Object Palette 1 Data (FF49)
 		 * @return la valeur du byte
 		 */
-		unsigned char getObjectPalette1() const;
+		uint8_t getObjectPalette1() const;
 
 		/*!
 		 * @brief Met à jour l'OAM.
@@ -419,7 +419,7 @@ namespace GBEmulator
 		 * @param cycle: cycle GPU à un instant T.
 		 * @return 0 ou un interrupt.
 		 */
-		unsigned char update(CPU &cpu, long cycle);
+		uint8_t update(CPU &cpu, long cycle);
 		/*!
 		 * @brief Met à jour le GPU
 		 */
@@ -432,7 +432,7 @@ namespace GBEmulator
 		 * @param alt: mode signé
 		 * @return la tile map
 		 */
-		unsigned char *_getTileMap(unsigned char bank, bool alt);
+		uint8_t *_getTileMap(uint8_t bank, bool alt);
 
 		//! HDMA transfert destination.
 		uint16_t _HDMADest = 0x8000;

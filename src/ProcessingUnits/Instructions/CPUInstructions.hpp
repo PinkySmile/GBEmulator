@@ -71,7 +71,7 @@ namespace GBEmulator::Instructions
 	 * @param off Offset à ajouter à PC
 	 * @return Nombre de cycles écoulés
 	 */
-	uint8_t JR(CPU::Registers &reg, bool cond, char off);
+	uint8_t JR(CPU::Registers &reg, bool cond, int8_t off);
 	/*!
 	 * Change la valeur de pc à address si cond est true.
 	 * @param reg Registres CPU
@@ -419,7 +419,7 @@ namespace GBEmulator::Instructions
 	 * @param value2 Valeur 2
 	 * @return Nombre de cycles écoulés
 	 */
-	uint8_t SPECIAL_ADD(CPU::Registers &reg, uint16_t &value1, char value2);
+	uint8_t SPECIAL_ADD(CPU::Registers &reg, uint16_t &value1, int8_t value2);
 	/*!
 	 * Execute une fonction sur la valeur pointé par address
 	 * @param cpu CPU

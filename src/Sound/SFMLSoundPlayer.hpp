@@ -41,8 +41,8 @@ namespace GBEmulator {
 		 */
 		float _masterVolume = 0;
 		bool mutex = false;
-		char readHead = 0;
-		char writeHead = 0;
+		int8_t readHead = 0;
+		int8_t writeHead = 0;
 		std::vector<int16_t> _samples[NB_SAMPLE_BUFFER];
 		std::vector<int16_t> _buffer;
 	};

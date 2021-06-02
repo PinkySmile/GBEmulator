@@ -26,7 +26,7 @@ namespace GBEmulator::Memory
 		//! @brief Est-ce en lecture seule ?
 		bool _readOnly;
 		//! @brief Bank actuelle.
-		unsigned char _currentBank;
+		uint8_t _currentBank;
 		//! @brief Taille d'une bank.
 		uint16_t _bankSize;
 		//! @brief Pointeur vers le début de la bank séléctionnée.
@@ -59,21 +59,21 @@ namespace GBEmulator::Memory
 		void resize(size_t size);
 		//! Change la banque utilisé pour l'adressage de la cartouche
 		//! @param bank Nouvelle bank.
-		void setBank(unsigned char bank);
+		void setBank(uint8_t bank);
 		//! Change la taille de banque utilisé
 		//! @param size Nouvelle taille de bank.
 		void setBankSize(size_t size);
 		//! Récupère le numéro de la banque en cours d'utilisation
 		//! @return La bank actuelle.
-		unsigned char getCurrentBank() const;
+		uint8_t getCurrentBank() const;
 		//! Lis la valeur à l'adresse de la mémoire
 		//! @param address Adresse à lire.
 		//! @return La valeur à l'adresse.
-		unsigned char read(uint16_t address) const;
+		uint8_t read(uint16_t address) const;
 		//! Lis la valeur à l'adresse de la mémoire en ignorant les banks
 		//! @param address Adresse à lire.
 		//! @return La valeur à l'adresse.
-		unsigned char rawRead(uint16_t address) const;
+		uint8_t rawRead(uint16_t address) const;
 		//! Renvoie la taille de la mémoire
 		//! @return La taille totale de la mémoire.
 		size_t getSize() const;

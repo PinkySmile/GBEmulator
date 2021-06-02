@@ -18,7 +18,7 @@ namespace GBEmulator::Instructions {
 	 * @param reg Registres du CPU qui execute l'instruction.
 	 * @return Le nombre de cycles écoulés.
 	 */
-	unsigned executeInstruction(unsigned char opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
+	unsigned executeInstruction(uint8_t opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
 	/*!
 	 * Execute une instruction bit.
 	 * @param opcode Opcode à executer.
@@ -26,7 +26,7 @@ namespace GBEmulator::Instructions {
 	 * @param reg Registres du CPU qui execute l'instruction.
 	 * @return Le nombre de cycles écoulés.
 	 */
-	unsigned executeBitInstruction(unsigned char opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
+	unsigned executeBitInstruction(uint8_t opcode, GBEmulator::CPU &cpu, GBEmulator::CPU::Registers &reg);
 }
 
 #endif //GBEMULATOR_INSTRUCTIONS_HPP

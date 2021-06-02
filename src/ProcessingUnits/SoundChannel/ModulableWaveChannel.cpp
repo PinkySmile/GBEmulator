@@ -73,7 +73,7 @@ namespace GBEmulator
 		}
 	}
 
-	unsigned char ModulableWaveChannel::read(unsigned int relativeAddress)
+	uint8_t ModulableWaveChannel::read(unsigned int relativeAddress)
 	{
 		switch (relativeAddress) {
 		case MODULABLE_CHANNEL_ON_OFF:

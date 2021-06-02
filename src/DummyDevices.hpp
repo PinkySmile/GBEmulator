@@ -40,7 +40,7 @@ namespace GBEmulator
 	class DummyCable : public Network::CableInterface {
 	private:
 		virtual void _sync(unsigned) {};
-		virtual void _sendByte(unsigned char) {};
+		virtual void _sendByte(uint8_t) {};
 	};
 }
 

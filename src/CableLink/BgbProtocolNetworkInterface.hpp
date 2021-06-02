@@ -21,7 +21,7 @@ namespace GBEmulator::Network
 		//! @brief Le ProtocolHandler utilisée pour communiquer via le protocole de BGB.
 		BGBHandler _handler;
 		void _sync(unsigned cycles) override;
-		void _sendByte(unsigned char byte) override;
+		void _sendByte(uint8_t byte) override;
 
 	public:
 		//! @brief Constructeur.

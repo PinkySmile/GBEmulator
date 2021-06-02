@@ -37,10 +37,10 @@ namespace GBEmulator::Network
 
 		//! @brief Un packet
 		struct BGBPacket {
-			unsigned char b1;
-			unsigned char b2;
-			unsigned char b3;
-			unsigned char b4;
+			uint8_t b1;
+			uint8_t b2;
+			uint8_t b3;
+			uint8_t b4;
 			unsigned int  i1;
 		};
 
@@ -72,8 +72,8 @@ namespace GBEmulator::Network
 		void log(const standard::string &string, std::ostream &stream = std::cerr);
 		void connect(const standard::string &ip, unsigned short port) override;
 		void disconnect() override;
-		void sendByte(unsigned char byte) override;
-		void reply(unsigned char byte) override;
+		void sendByte(uint8_t byte) override;
+		void reply(uint8_t byte) override;
 		void waitAnswer(unsigned timeout = -1) override;
 		//! @brief Fait s'ecouler nb ticks.
 		//! @param nb Nombre de cycles CPU écoulés.
@@ -98,7 +98,7 @@ namespace GBEmulator::Network
 		};
 
 		//! @brief Taille d'un packet dans le protocol.
-		static const char PACKET_SIZE = 8;
+		static const int8_t PACKET_SIZE = 8;
 	};
 }
 

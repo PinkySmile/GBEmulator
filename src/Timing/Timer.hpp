@@ -9,6 +9,12 @@
 #define GBEMULATOR_TIMER_HPP
 
 
+#ifdef ARDUINO
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
+
 #define GB_CPU_FREQUENCY 4194304
 
 namespace GBEmulator::Timing
@@ -25,9 +31,9 @@ namespace GBEmulator::Timing
 	class Timer {
 	private:
 		//! @brief Octet de contrôle du timer.
-		unsigned char _byte = 0;
+		uint8_t _byte = 0;
 		//! @brief Octet de compte pour le timer.
-		unsigned char _counter = 0;
+		uint8_t _counter = 0;
 		//! @brief Nombre de cycles du timer.
 		double _cycles = 0;
 		//! @brief Nombre de cycles attendus par le timer.
@@ -37,7 +43,7 @@ namespace GBEmulator::Timing
 		//! @brief Création de la classe timer : Initialise _expected par le nombre de cycles attendus.
 		Timer();
 		//! @brief Modulo du timer.
-		unsigned char modulo = 0;
+		uint8_t modulo = 0;
 
 		/*! @brief Retourne un booléen pour savoir si le timer est activé ou non
 		 *  @returns L'état du timer : True -> En marche / False -> A l'arrêt
@@ -56,15 +62,15 @@ namespace GBEmulator::Timing
 		//!           01: 262144 Hz  (~268400 Hz SGB)
 		//!           10:  65536 Hz   (~67110 Hz SGB)
 		//!           11:  16384 Hz   (~16780 Hz SGB)
-		unsigned char getControlByte() const;
+		uint8_t getControlByte() const;
 		//! @brief Retourne le compteur du Timer Counter
 		//! @return La valeur de l'octet Timer Counter
-		unsigned char getCounter() const;
+		uint8_t getCounter() const;
 
 		/*! @brief Permet de renseigner la nouvelle valeur dans _counter.
 		 * @param byte Nouvelle valeur du _counter.
 		 */
-		void setCounter(unsigned char byte);
+		void setCounter(uint8_t byte);
 		//! @brief Permet de renseigner la nouvelle valeur dans _byte.
 		//!@param byte Nouvelle valeur du _byte.
 		//! @details
@@ -74,7 +80,7 @@ namespace GBEmulator::Timing
 		//!           01: 262144 Hz  (~268400 Hz SGB)
 		//!           10:  65536 Hz   (~67110 Hz SGB)
 		//!           11:  16384 Hz   (~16780 Hz SGB)
-		void setControlByte(unsigned char byte);
+		void setControlByte(uint8_t byte);
 		/*!@brief Permet de mettre à jour _cycles et _counter.
 		 * @param cycles Le nombre de cycles CPU écoulés
 		 * @return Si le counter tombe à 0, retourne True, sinon False.

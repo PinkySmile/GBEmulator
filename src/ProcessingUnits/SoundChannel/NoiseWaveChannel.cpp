@@ -97,7 +97,7 @@ namespace GBEmulator
 		}
 	}
 
-	unsigned char NoiseWaveChannel::read(unsigned int relativeAddress)
+	uint8_t NoiseWaveChannel::read(unsigned int relativeAddress)
 	{
 		switch (relativeAddress) {
 		case NOISE_CHANNEL_VOLUME:

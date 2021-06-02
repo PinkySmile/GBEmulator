@@ -9,7 +9,7 @@
 #include "Instructions.hpp"
 
 namespace GBEmulator::Instructions {
-	unsigned executeInstruction(unsigned char opcode, CPU &cpu, CPU::Registers &reg)
+	unsigned executeInstruction(uint8_t opcode, CPU &cpu, CPU::Registers &reg)
 	{
 		switch (opcode) {
 		//! 00; NOP: do nothing

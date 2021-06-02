@@ -8,6 +8,12 @@
 #ifndef GBEMULATOR_CABLEINTERFACE_HPP
 #define GBEMULATOR_CABLEINTERFACE_HPP
 
+#ifdef ARDUINO
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
+
 namespace GBEmulator::Network
 {
 	//! @brief L'interface émulant le CableLink.
@@ -21,7 +27,7 @@ namespace GBEmulator::Network
 
 		//! @brief Envoie un byte de donnée.
 		//! @param byte Le byte qui doit être envoyé.
-		virtual void _sendByte(unsigned char byte) = 0;
+		virtual void _sendByte(uint8_t byte) = 0;
 
 	protected:
 		//! @brief Est-ce qu'une interruption doit être envoyé.
@@ -34,21 +40,21 @@ namespace GBEmulator::Network
 	public:
 		virtual ~CableInterface() = default;
 		//! @brief Le byte utilisé pour l'I/O ($FF01)
-		unsigned char byte = 0x00;
+		uint8_t byte = 0x00;
 
 		//! @brief Change le byte de controle.
 		//! @param c_byte Le nouveau byte de controle
 		//! @details
 		//! Bit 7 - Transfert démarré (0=Pas de transfert, 1=Transfert en cours)
 		//! Bit 0 - Horloge utilisée (0=Horloge externe, 1=Horloge interne)
-		void setControlByte(unsigned char c_byte);
+		void setControlByte(uint8_t c_byte);
 
 		//! @brief Construit le byte de controle.
 		//! @return Le byte de controle.
 		//! @details
 		//! Bit 7 - Transfert démarré (0=Pas de transfert, 1=Transfert en cours)
 		//! Bit 0 - Horloge utilisée (0=Horloge externe, 1=Horloge interne)
-		unsigned char getControlByte() const;
+		uint8_t getControlByte() const;
 
 		//! @brief Est-ce que l'horloge utilisée est celle de la console distante.
 		//! @return false si l'horloge utilisée est l'horloge interne. Sinon, true.

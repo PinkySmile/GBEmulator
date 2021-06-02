@@ -13,18 +13,18 @@ namespace GBEmulator::Timing
 		_expected(getCyclesPerSecondsFromFrequency(this->getFrequency()))
 	{}
 
-	unsigned char Timer::getControlByte() const
+	uint8_t Timer::getControlByte() const
 	{
 		return this->_byte;
 	}
 
-	void Timer::setControlByte(unsigned char byte)
+	void Timer::setControlByte(uint8_t byte)
 	{
 		this->_byte = byte;
 		this->_expected = getCyclesPerSecondsFromFrequency(this->getFrequency());
 	}
 
-	unsigned char Timer::getCounter() const
+	uint8_t Timer::getCounter() const
 	{
 		return this->_counter;
 	}
@@ -48,7 +48,7 @@ namespace GBEmulator::Timing
 		return this->_byte & 0b100U;
 	}
 
-	void Timer::setCounter(unsigned char byte)
+	void Timer::setCounter(uint8_t byte)
 	{
 		this->_counter = byte;
 	}

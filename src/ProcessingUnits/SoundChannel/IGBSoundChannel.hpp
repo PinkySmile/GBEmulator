@@ -20,7 +20,7 @@ namespace GBEmulator
 	class IGBSoundChannel {
 	public:
 		virtual void write(unsigned int relativeAddress, uint8_t value) = 0;
-		virtual unsigned char read(unsigned int relativeAddress) = 0;
+		virtual uint8_t read(unsigned int relativeAddress) = 0;
 		virtual standard::vector<uint16_t> update(unsigned int cycles) = 0;
 		virtual bool hasExpired() const = 0;
 		virtual void onPowerOff() = 0;

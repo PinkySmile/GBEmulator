@@ -102,20 +102,20 @@ namespace GBEmulator
 		bool outputSound3toSO2 : 1;
 		bool outputSound4toSO2 : 1;
 
-		APUSoundOutputTerminalSelect(unsigned char v) { *this = v; };
-		APUSoundOutputTerminalSelect &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-		operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+		APUSoundOutputTerminalSelect(uint8_t v) { *this = v; };
+		APUSoundOutputTerminalSelect &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+		operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 	};
 
 	struct APUChannelControl {
-		unsigned char SO1volume : 3;
+		uint8_t SO1volume : 3;
 		bool vinToSO1 : 1;
-		unsigned char SO2volume : 3;
+		uint8_t SO2volume : 3;
 		bool vinToSO2 : 1;
 
-		APUChannelControl(unsigned char v) { *this = v; };
-		APUChannelControl &operator=(unsigned char v) { *reinterpret_cast<unsigned char *>(this) = v; return *this; }
-		operator unsigned char() const { return *reinterpret_cast<const unsigned char *>(this); }
+		APUChannelControl(uint8_t v) { *this = v; };
+		APUChannelControl &operator=(uint8_t v) { *reinterpret_cast<uint8_t *>(this) = v; return *this; }
+		operator uint8_t() const { return *reinterpret_cast<const uint8_t *>(this); }
 	};
 
 	/*!
@@ -144,7 +144,7 @@ namespace GBEmulator
 		 * @param address Adresse où la fonction read lit. (Les valeurs sont légèrement modifiés de l'original, voir l'enumération regist pour plus d'informations)
 		 * @return La valeur écrite à l'adresse renseignée dans la fonction.
 		 */
-		unsigned char read(uint16_t address) const;
+		uint8_t read(uint16_t address) const;
 		/*!
 		 * @brief La fonction update permet d'effectuer des mises à jours des sons joués.
 		 * Il est souvent utilisé lorsqu'un son joué est soumis à un blayage/changement continu de volume ou de fréquence.
@@ -154,7 +154,7 @@ namespace GBEmulator
 
 	private:
 		void _internalWrite(unsigned short relativeAddress, uint8_t value);
-		unsigned char _internalRead(unsigned short relativeAddress) const;
+		uint8_t _internalRead(unsigned short relativeAddress) const;
 		standard::vector<uint16_t> _updateAndProcessChannelSound(int channelNb, unsigned cycles);
 
 		//! @brief Lecteur de son

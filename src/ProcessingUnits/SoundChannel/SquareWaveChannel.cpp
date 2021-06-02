@@ -120,7 +120,7 @@ namespace GBEmulator
 		}
 	}
 
-	unsigned char SquareWaveChannel::read(unsigned int relativeAddress)
+	uint8_t SquareWaveChannel::read(unsigned int relativeAddress)
 	{
 		switch (relativeAddress) {
 		case SQUARE_CHANNEL_SWEEP_REGISTER:

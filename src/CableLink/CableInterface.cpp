@@ -19,7 +19,7 @@ namespace GBEmulator::Network
 		return this->_isTransfering;
 	}
 
-	void CableInterface::setControlByte(unsigned char c_byte)
+	void CableInterface::setControlByte(uint8_t c_byte)
 	{
 		this->_isExternal = (c_byte & 0x01U) == 0;
 		this->_isTransfering = c_byte & 0x80U;
@@ -27,7 +27,7 @@ namespace GBEmulator::Network
 			this->transfer();
 	}
 
-	unsigned char CableInterface::getControlByte() const
+	uint8_t CableInterface::getControlByte() const
 	{
 		return (this->_isTransfering << 7U) | !this->_isExternal | 0b01111110U;
 	}

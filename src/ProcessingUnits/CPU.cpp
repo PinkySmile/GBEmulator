@@ -76,7 +76,7 @@ namespace GBEmulator
 		return this->_rom;
 	}
 
-	unsigned char CPU::read(uint16_t address) const
+	uint8_t CPU::read(uint16_t address) const
 	{
 #ifndef ARDUINO
 		auto it = this->_frozenAddresses.find(address);
@@ -200,7 +200,7 @@ namespace GBEmulator
 #endif
 	}
 
-	unsigned char CPU::fetchArgument()
+	uint8_t CPU::fetchArgument()
 	{
 		return this->read(this->_registers.pc++);
 	}
@@ -433,7 +433,7 @@ namespace GBEmulator
 
 	bool CPU::_checkInterrupts()
 	{
-		unsigned char mask = this->_interruptRequest | this->_hardwareInterruptRequests;
+		uint8_t mask = this->_interruptRequest | this->_hardwareInterruptRequests;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if ((mask & (1U << i)) && this->_executeInterrupt(i))
@@ -457,9 +457,9 @@ namespace GBEmulator
 		return true;
 	}
 
-	unsigned char CPU::_generateJoypadByte() const
+	uint8_t CPU::_generateJoypadByte() const
 	{
-		unsigned byte = this->_joypadCache | 0x0FU;
+		uint8_t byte = this->_joypadCache | 0x0FU;
 
 		if (this->_buttonEnabled)
 			byte &= (
@@ -482,7 +482,7 @@ namespace GBEmulator
 		return byte;
 	}
 
-	unsigned char CPU::_readIOPort(unsigned char address) const
+	uint8_t CPU::_readIOPort(uint8_t address) const
 	{
 		switch (address) {
 		case SERIAL_DATA:
@@ -583,7 +583,7 @@ namespace GBEmulator
 		}
 	}
 
-	void CPU::_writeIOPort(unsigned char address, uint8_t value)
+	void CPU::_writeIOPort(uint8_t address, uint8_t value)
 	{
 		switch (address) {
 		case SERIAL_DATA:
@@ -730,7 +730,7 @@ namespace GBEmulator
 
 	int CPU::_executeNextInstruction()
 	{
-		unsigned char opcode = this->read(this->_registers.pc++);
+		uint8_t opcode = this->read(this->_registers.pc++);
 		unsigned cycles;
 
 #ifndef ARDUINO
@@ -862,7 +862,7 @@ namespace GBEmulator
 
 	void CPU::_initState()
 	{
-		unsigned char pattern[] = {
+		uint8_t pattern[] = {
 			0x00, 0x00, 0x00, 0x00, 0xF0, 0xFC, 0xFC, 0xF3,
 			0x3C, 0x3C, 0x3C, 0x3C, 0xF0, 0xF0, 0x00, 0xF3,
 			0x00, 0x00, 0x00, 0xCF, 0x00, 0x0F, 0x3F, 0x0F,
@@ -877,7 +877,7 @@ namespace GBEmulator
 			0xC3, 0xC3, 0xC3, 0xFF, 0xCF, 0xCF, 0xCF, 0xC3,
 			0x0F, 0x0F, 0x0F, 0xFC
 		};
-		unsigned char pattern2[] = {
+		uint8_t pattern2[] = {
 			0x3C, 0x42, 0xB9, 0xA5, 0xB9, 0xA5, 0x42, 0x3C
 		};
 		unsigned short addr = 0;

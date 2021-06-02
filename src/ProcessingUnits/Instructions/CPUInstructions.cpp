@@ -60,7 +60,7 @@ namespace GBEmulator::Instructions
 		return COMPLEX_BIT_OPERATION_CYCLE_DURATION;
 	}
 
-	uint8_t JR(CPU::Registers &reg, bool cond, char off)
+	uint8_t JR(CPU::Registers &reg, bool cond, int8_t off)
 	{
 		if (!cond)
 			return BASIC_BIT_OPERATION_CYCLE_DURATION;
@@ -171,7 +171,7 @@ namespace GBEmulator::Instructions
 		return ARITHMETIC_OPERATION_CYCLE_DURATION;
 	}
 
-	uint8_t SPECIAL_ADD(CPU::Registers &reg, uint16_t &value1, char value2)
+	uint8_t SPECIAL_ADD(CPU::Registers &reg, uint16_t &value1, int8_t value2)
 	{
 		if (value2 >= 0) {
 			setFlags(

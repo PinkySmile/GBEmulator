@@ -70,7 +70,7 @@ namespace GBEmulator
 			return this->_internalWrite(address - NR50, value);
 	}
 
-	unsigned char APU::read(uint16_t address) const
+	uint8_t APU::read(uint16_t address) const
 	{
 		if (address >= WPRAM_START && address <= WPRAM_END)
 			return this->_channels[2]->read(address - NR30);
@@ -112,7 +112,7 @@ namespace GBEmulator
 		}
 	}
 
-	unsigned char APU::_internalRead(unsigned short relativeAddress) const
+	uint8_t APU::_internalRead(unsigned short relativeAddress) const
 	{
 		switch (relativeAddress) {
 		case APU_CHANNEL_CONTROL:
@@ -122,7 +122,7 @@ namespace GBEmulator
 		default:
 			return 0xFF;
 		case APU_SOUND_ON_OFF:
-			unsigned char v = 0;
+			uint8_t v = 0;
 
 			for (int i = 4; i; i--) {
 				v <<= 1U;
@@ -135,7 +135,7 @@ namespace GBEmulator
 	standard::vector<uint16_t> APU::_updateAndProcessChannelSound(int channelNb, unsigned cycles)
 	{
 		auto result = this->_channels[channelNb]->update(cycles);
-		APUSoundOutputTerminalSelect term = static_cast<unsigned char>(this->_terminalSelect) >> channelNb;
+		APUSoundOutputTerminalSelect term = static_cast<uint8_t>(this->_terminalSelect) >> channelNb;
 
 		assert(result.size() % 2 == 0);
 		for (unsigned i = 0; i < result.size(); i += 2) {

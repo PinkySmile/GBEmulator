@@ -190,7 +190,7 @@ namespace GBEmulator
 					union {
 						uint8_t f;
 						struct {
-							unsigned char _ : 4;
+							uint8_t _ : 4;
 							bool fc : 1;
 							bool fh : 1;
 							bool fn : 1;
@@ -233,7 +233,7 @@ namespace GBEmulator
 			char _buffer[40];
 
 		public:
-			InvalidOpcodeException(unsigned short op, uint16_t address);
+			InvalidOpcodeException(uint16_t op, uint16_t address);
 			const char *what() const noexcept override;
 		};
 #endif
@@ -260,9 +260,9 @@ namespace GBEmulator
 		//! Lis la valeur pointé par l'adresse passée
 		//! @param address Adresse à lire
 		//! @return Valeur pointé par adresse
-		unsigned char read(uint16_t address) const;
+		uint8_t read(uint16_t address) const;
 		//! Récupère l'adresse pointé par pc et incrémente pc
-		unsigned char fetchArgument();
+		uint8_t fetchArgument();
 		//! Récupère l'adresse pointé par pc et pc+1 et incrémente pc de deux.
 		//! Renvoie les valeurs sous forme d'un nombre à 16 bits
 		unsigned short fetchArgument16();
@@ -311,8 +311,8 @@ namespace GBEmulator
 	private:
 		friend Debugger::Debugger;
 		//! Vecteur de données contenant les instructions de la ROM interne de la Gameboy.
-		static const unsigned char _startupCode[256];
-		static const unsigned char _gbcStartupCode[2304];
+		static const uint8_t _startupCode[256];
+		static const uint8_t _gbcStartupCode[2304];
 
 		//! APU de la Gameboy.
 		APU _apu;
@@ -329,7 +329,7 @@ namespace GBEmulator
 		double _oldTime;
 		double _newTime;
 #ifndef ARDUINO
-		standard::map<unsigned short, unsigned char> _frozenAddresses;
+		standard::map<unsigned short, uint8_t> _frozenAddresses;
 #endif
 		bool _profiling = false;
 		standard::map<standard::string, standard::pair<float, unsigned>> _profiler;
@@ -415,15 +415,15 @@ namespace GBEmulator
 		//! Bit 2 - P12 Haut   or Select   (0=Appuyé) (Lecture seule)
 		//! Bit 1 - P11 Gauche or Bouton B (0=Appuyé) (Lecture seule)
 		//! Bit 0 - P10 Droite or Bouton A (0=Appuyé) (Lecture seule)
-		unsigned char _generateJoypadByte() const;
+		uint8_t _generateJoypadByte() const;
 		//! @brief Lis une valeur d'un port d'I/O.
 		//! @param address Adresse de lecture.
 		//! @return Le byte lu.
-		unsigned char _readIOPort(unsigned char address) const;
+		uint8_t _readIOPort(uint8_t address) const;
 		//! @brief Écrire une valeur d'un port d'I/O.
 		//! @param address Adresse d'écriture.
 		//! @param value Nouvelle valeur.
-		void _writeIOPort(unsigned char address, uint8_t value);
+		void _writeIOPort(uint8_t address, uint8_t value);
 	};
 }
 

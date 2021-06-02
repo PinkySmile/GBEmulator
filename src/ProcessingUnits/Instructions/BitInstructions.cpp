@@ -9,7 +9,7 @@
 
 namespace GBEmulator::Instructions
 {
-	unsigned executeBitInstruction(unsigned char opcode, CPU &cpu, CPU::Registers &reg)
+	unsigned executeBitInstruction(uint8_t opcode, CPU &cpu, CPU::Registers &reg)
 	{
 		switch (opcode) {
 		//! 00; RLC b: The contents of b are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0.
@@ -550,7 +550,7 @@ namespace GBEmulator::Instructions
 
 		//! 86; RES 0,(hl): Resets bit 0 of (hl).
 		case 0x86:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(0));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(0));
 
 		//! 87; RES 0,a: Resets bit 0 of a.
 		case 0x87:
@@ -582,7 +582,7 @@ namespace GBEmulator::Instructions
 
 		//! 8E; RES 1,(hl): Resets bit 1 of (hl).
 		case 0x8E:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(1));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(1));
 
 		//! 8F; RES 1,a: Resets bit 1 of a.
 		case 0x8F:
@@ -614,7 +614,7 @@ namespace GBEmulator::Instructions
 
 		//! 96; RES 2,(hl): Resets bit 2 of (hl).
 		case 0x96:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(2));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(2));
 
 		//! 97; RES 2,a: Resets bit 2 of a.
 		case 0x97:
@@ -646,7 +646,7 @@ namespace GBEmulator::Instructions
 
 		//! 9E; RES 3,(hl): Resets bit 3 of (hl).
 		case 0x9E:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(3));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(3));
 
 		//! 9F; RES 3,a: Resets bit 3 of a.
 		case 0x9F:
@@ -678,7 +678,7 @@ namespace GBEmulator::Instructions
 
 		//! A6; RES 4,(hl): Resets bit 4 of (hl).
 		case 0xA6:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(4));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(4));
 
 		//! A7; RES 4,a: Resets bit 4 of a.
 		case 0xA7:
@@ -710,7 +710,7 @@ namespace GBEmulator::Instructions
 
 		//! AE; RES 5,(hl): Resets bit 5 of (hl).
 		case 0xAE:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(5));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(5));
 
 		//! AF; RES 5,a: Resets bit 5 of a.
 		case 0xAF:
@@ -742,7 +742,7 @@ namespace GBEmulator::Instructions
 
 		//! B6; RES 6,(hl): Resets bit 6 of (hl).
 		case 0xB6:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(6));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(6));
 
 		//! B7; RES 6,a: Resets bit 6 of a.
 		case 0xB7:
@@ -774,7 +774,7 @@ namespace GBEmulator::Instructions
 
 		//! BE; RES 7,(hl): Resets bit 7 of (hl).
 		case 0xBE:
-			return executeOnPtr(cpu, reg.hl, RES, static_cast<unsigned char>(7));
+			return executeOnPtr(cpu, reg.hl, RES, static_cast<uint8_t>(7));
 
 		//! BF; RES 7,a: Resets bit 7 of a.
 		case 0xBF:
@@ -806,7 +806,7 @@ namespace GBEmulator::Instructions
 
 		//! C6; SET 0,(hl): Sets bit 0 of (hl).
 		case 0xC6:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(0));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(0));
 
 		//! C7; SET 0,a: Sets bit 0 of a.
 		case 0xC7:
@@ -838,7 +838,7 @@ namespace GBEmulator::Instructions
 
 		//! CE; SET 1,(hl): Sets bit 1 of (hl).
 		case 0xCE:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(1));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(1));
 
 		//! CF; SET 1,a: Sets bit 1 of a.
 		case 0xCF:
@@ -870,7 +870,7 @@ namespace GBEmulator::Instructions
 
 		//! D6; SET 2,(hl): Sets bit 2 of (hl).
 		case 0xD6:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(2));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(2));
 
 		//! D7; SET 2,a: Sets bit 2 of a.
 		case 0xD7:
@@ -902,7 +902,7 @@ namespace GBEmulator::Instructions
 
 		//! DE; SET 3,(hl): Sets bit 3 of (hl).
 		case 0xDE:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(3));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(3));
 
 		//! DF; SET 3,a: Sets bit 3 of a.
 		case 0xDF:
@@ -934,7 +934,7 @@ namespace GBEmulator::Instructions
 
 		//! E6; SET 4,(hl): Sets bit 4 of (hl).
 		case 0xE6:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(4));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(4));
 
 		//! E7; SET 4,a: Sets bit 4 of a.
 		case 0xE7:
@@ -966,7 +966,7 @@ namespace GBEmulator::Instructions
 
 		//! EE; SET 5,(hl): Sets bit 5 of (hl).
 		case 0xEE:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(5));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(5));
 
 		//! EF; SET 5,a: Sets bit 5 of a.
 		case 0xEF:
@@ -998,7 +998,7 @@ namespace GBEmulator::Instructions
 
 		//! F6; SET 6,(hl): Sets bit 6 of (hl).
 		case 0xF6:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(6));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(6));
 
 		//! F7; SET 6,a: Sets bit 6 of a.
 		case 0xF7:
@@ -1030,7 +1030,7 @@ namespace GBEmulator::Instructions
 
 		//! FE; SET 7,(hl): Sets bit 7 of (hl).
 		case 0xFE:
-			return executeOnPtr(cpu, reg.hl, SETB, static_cast<unsigned char>(7));
+			return executeOnPtr(cpu, reg.hl, SETB, static_cast<uint8_t>(7));
 
 		//! FF; SET 7,a: Sets bit 7 of a.
 		case 0xFF:

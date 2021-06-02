@@ -10,8 +10,8 @@
 namespace GBEmulator::Network
 {
 	BGBHandler::BGBHandler(
-		const standard::function<void(ProtocolHandle &handler, unsigned char byte)> &masterHandler,
-		const standard::function<void(ProtocolHandle &handler, unsigned char byte)> &slaveHandler,
+		const standard::function<void(ProtocolHandle &handler, uint8_t byte)> &masterHandler,
+		const standard::function<void(ProtocolHandle &handler, uint8_t byte)> &slaveHandler,
 		bool log
 	) :
 		ProtocolHandle(masterHandler, slaveHandler),
@@ -112,13 +112,13 @@ namespace GBEmulator::Network
 		this->_logging = false;
 	}
 
-	void BGBHandler::sendByte(unsigned char byte)
+	void BGBHandler::sendByte(uint8_t byte)
 	{
 		this->log("Sending " + charToHex(byte));
 		this->_sendPacket({SYNC1_SIGNAL, byte, 0x80, 0, this->_ticks});
 	}
 
-	void BGBHandler::reply(unsigned char byte)
+	void BGBHandler::reply(uint8_t byte)
 	{
 		this->log("Replying " + charToHex(byte));
 		this->_sendPacket({SYNC2_SIGNAL, byte, 0x80, 0, this->_ticks});
@@ -149,10 +149,10 @@ namespace GBEmulator::Network
 		buffer[1] = packet.b2;
 		buffer[2] = packet.b3;
 		buffer[3] = packet.b4;
-		buffer[4] = (static_cast<unsigned char>(packet.i1) >> 0LU);
-		buffer[5] = (static_cast<unsigned char>(packet.i1) >> 8LU);
-		buffer[6] = (static_cast<unsigned char>(packet.i1) >> 16LU);
-		buffer[7] = (static_cast<unsigned char>(packet.i1) >> 24LU);
+		buffer[4] = (static_cast<uint8_t>(packet.i1) >> 0LU);
+		buffer[5] = (static_cast<uint8_t>(packet.i1) >> 8LU);
+		buffer[6] = (static_cast<uint8_t>(packet.i1) >> 16LU);
+		buffer[7] = (static_cast<uint8_t>(packet.i1) >> 24LU);
 		this->_socket.send(buffer, sizeof(buffer));
 	}
 
@@ -173,15 +173,15 @@ namespace GBEmulator::Network
 			throw InvalidVersionException("Server sent a " + standard::to_string(readSize) + " bytes long packet but it should be 8");
 
 		return {
-			static_cast<unsigned char>(buffer[0]),
-			static_cast<unsigned char>(buffer[1]),
-			static_cast<unsigned char>(buffer[2]),
-			static_cast<unsigned char>(buffer[3]),
-			static_cast<unsigned int>(
-				(static_cast<unsigned char>(buffer[4]) << 0LU) +
-				(static_cast<unsigned char>(buffer[5]) << 8LU) +
-				(static_cast<unsigned char>(buffer[6]) << 16LU)+
-				(static_cast<unsigned char>(buffer[7]) << 24LU)
+			static_cast<uint8_t>(buffer[0]),
+			static_cast<uint8_t>(buffer[1]),
+			static_cast<uint8_t>(buffer[2]),
+			static_cast<uint8_t>(buffer[3]),
+			static_cast<uint32_t>(
+				(static_cast<uint8_t>(buffer[4]) << 0LU) +
+				(static_cast<uint8_t>(buffer[5]) << 8LU) +
+				(static_cast<uint8_t>(buffer[6]) << 16LU)+
+				(static_cast<uint8_t>(buffer[7]) << 24LU)
 			)
 		};
 	}
