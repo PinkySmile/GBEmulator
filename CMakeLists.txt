@@ -30,6 +30,13 @@ else ()
 	find_package(SDL2)
 endif()
 
+if (NO_DISPLAY_THREAD)
+	message("Run display in the main thread")
+	set(NO_DISPLAY_THREAD 1)
+else ()
+	set(NO_DISPLAY_THREAD 0)
+endif ()
+
 set(SDL_IMPL 0)
 set(SFML_IMPL 0)
 set(SERENITY_IMPL 0)
@@ -213,6 +220,7 @@ target_compile_definitions(
 	SDL_IMPL=${SDL_IMPL}
 	SFML_IMPL=${SFML_IMPL}
 	SERENITY_IMPL=${SERENITY_IMPL}
+	NO_DISPLAY_THREAD=${NO_DISPLAY_THREAD}
 	${DEBUG_FLAG}=1
 	${SPECIFIC_COMPILE_FLAGS}
 )

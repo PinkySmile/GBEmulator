@@ -46,6 +46,9 @@ void GBEmulator::Graphics::LCDSFML::display()
 	memcpy(this->_framebuffer, this->_screen, this->_size.x * this->_size.y * sizeof(sf::Color));
 	this->_lastFrameTime = this->_emulatorSpeed.getElapsedTime().asSeconds();
 	this->_emulatorSpeed.restart();
+#if NO_DISPLAY_THREAD
+	this->render();
+#endif
 }
 
 double GBEmulator::Graphics::LCDSFML::getFramerate()

@@ -48,8 +48,8 @@ namespace GBEmulator::Graphics
 	void LCDSDL::display()
 	{
 		memcpy(this->framebuffer, this->buffer, W * H * sizeof(*this->buffer));
-#ifdef NO_DISPLAY_THREAD
-		this->render()
+#if NO_DISPLAY_THREAD
+		this->render();
 #endif
 	}
 
@@ -60,11 +60,13 @@ namespace GBEmulator::Graphics
 		SDL_RenderCopy(this->context, this->texture, nullptr, nullptr);
 		SDL_RenderPresent(this->context);
 
+#if !NO_DISPLAY_THREAD
 		auto ticks = SDL_GetTicks();
 
 		if (1000 / FRAMES_PER_SECOND > (ticks - this->start))
 			SDL_Delay(1000 / FRAMES_PER_SECOND - (ticks - this->start));
 		this->start = SDL_GetTicks();
+#endif
 	}
 
 	double LCDSDL::getFramerate()

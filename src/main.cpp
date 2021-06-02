@@ -242,7 +242,37 @@ int main(int argc, char **argv)
 	cpu.setProfiling(args.profiler);
 #endif
 
+#if NO_DISPLAY_THREAD
+	bool crashed = false;
+
+	while (!components.window->isClosed()) {
+		if (!crashed) {
+		#ifdef __cpp_exceptions
+			try {
+				cpu.update();
+			} catch (standard::exception &e)
+		#else
+			if (cpu.update() == -2)
+		#endif
+			{
+				crashed = true;
+			#ifdef __cpp_exceptions
+				const char *errorStr = e.what();
+			#else
+				const char *errorStr = "Updating CPU failed";
+			#endif
+			#ifdef _WIN32
+				MessageBox(nullptr, errorStr, getLastExceptionName().c_str(), MB_ICONERROR);
+			#else
+				std::cerr << "Fatal error: " << getLastExceptionName() << ": " << errorStr << standard::endl;
+			#endif
+			}
+		} else
+			crashed = cpu.update(0) != -1;
+	}
+#else
 	bool end = false;
+
 	std::thread thread{
 		[&cpu, &end]{
 			bool crashed = false;
@@ -281,6 +311,7 @@ int main(int argc, char **argv)
 	}
 
 	thread.join();
+#endif
 	cpu.getCartridgeEmulator().saveRAM();
 #ifndef ARDUINO
 	if (args.profiler)
