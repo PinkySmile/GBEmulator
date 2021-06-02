@@ -60,10 +60,17 @@ namespace GBEmulator::Input
 	}
 
 	void SDLKeyboardJoypadEmulator::setKeyValue(SDL_Keycode keysym, bool value) {
+	#ifdef __cpp_exceptions
 		try {
 			Keys button = this->_rkeys.at(keysym);
 			this->_keyPressed[button] = value;
 		} catch (standard::exception &e) {}
+	#else
+		auto button = this->_rkeys.find(keysym);
+
+		if (this->_rkeys.end() != button)
+			this->_keyPressed[button->second] = value;
+	#endif
 	}
 
 	bool SDLKeyboardJoypadEmulator::isButtonPressed(GBEmulator::Input::Keys button) const noexcept
