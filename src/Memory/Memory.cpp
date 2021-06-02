@@ -8,9 +8,11 @@
 #ifndef ARDUINO
 #include <cstring>
 #include <cctype>
+#include <cstdlib>
 #else
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 #endif
 #include "Memory.hpp"
 

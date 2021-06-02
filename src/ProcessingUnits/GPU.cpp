@@ -7,6 +7,7 @@
 
 #ifndef ARDUINO
 #include <cstring>
+#include <algorithm>
 #else
 #include <string.h>
 #include "../ArduinoStuff/Algorithm.h"

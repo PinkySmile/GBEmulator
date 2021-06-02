@@ -20,7 +20,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#elif !defined(__serenity__)
+#elif SFML_IMPL
 #include <X11/Xlib.h>
 #endif
 
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 
 	srand(time(nullptr));
 
-#if !defined(_WIN32) && !defined(__serenity__)
+#if !defined(_WIN32) && SFML_IMPL
 	XInitThreads();
 #endif
 
