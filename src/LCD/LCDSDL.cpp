@@ -9,6 +9,10 @@
 #define W 640
 #define H 576
 
+#ifndef __cpp_exceptions
+#define throw std::terminate();
+#endif
+
 namespace GBEmulator::Graphics
 {
 	LCDSDL::LCDSDL() :
