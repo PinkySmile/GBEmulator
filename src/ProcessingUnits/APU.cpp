@@ -16,8 +16,6 @@
 #include "SoundChannel/ModulableWaveChannel.hpp"
 #include "SoundChannel/NoiseWaveChannel.hpp"
 
-#define SAMPLE_BUFFER_SIZE 4000
-
 namespace GBEmulator
 {
 	APU::APU(ISound &soundPlayer) :
@@ -149,25 +147,43 @@ namespace GBEmulator
 
 	SampleBuffer &SampleBuffer::operator+=(const standard::vector<uint16_t> &samples)
 	{
+
+		assert(samples.size() % 2 == 0);
+#if !MONO_SOUND
 		unsigned offset = this->_buffer.size() - samples.size();
 
 		assert(this->_buffer.size() >= samples.size());
-		assert(samples.size() % 2 == 0);
 		for (unsigned i = 0; i < samples.size(); i += 2) {
 			this->_buffer[  i + offset  ] += (SOUND_VALUE - samples[  i  ]) * this->leftVolume;
 			this->_buffer[i + offset + 1] += (SOUND_VALUE - samples[i + 1]) * this->rightVolume;
 		}
+#else
+		unsigned offset = this->_buffer.size() - samples.size() / 2;
+
+		assert(this->_buffer.size() >= samples.size() / 2);
+		for (unsigned i = 0; i < samples.size(); i += 2)
+			this->_buffer[  i + offset  ] +=
+				(SOUND_VALUE - samples[  i  ]) * this->leftVolume / 2 +
+				(SOUND_VALUE - samples[i + 1]) * this->rightVolume / 2;
+#endif
 		return *this;
 	}
 
 	SampleBuffer &SampleBuffer::operator<<(const standard::vector<uint16_t> &samples)
 	{
 		assert(samples.size() % 2 == 0);
-		this->_buffer.reserve(samples.size() + this->_buffer.size());
+#if !MONO_SOUND
 		for (unsigned i = 0; i < samples.size(); i += 2) {
 			this->_buffer.push_back((SOUND_VALUE - samples[  i  ]) * this->leftVolume);
 			this->_buffer.push_back((SOUND_VALUE - samples[i + 1]) * this->rightVolume);
 		}
+#else
+		for (unsigned i = 0; i < samples.size(); i += 2)
+			this->_buffer.push_back(
+				(SOUND_VALUE - samples[  i  ]) * this->leftVolume / 2 +
+				(SOUND_VALUE - samples[i + 1]) * this->rightVolume / 2
+			);
+#endif
 		return *this;
 	}
 }

@@ -6,7 +6,6 @@
 #define GBEMULATOR_IGBSOUNDCHANNEL_HPP
 
 
-#define SAMPLE_RATE 44100
 #ifndef ARDUINO
 #include <vector>
 #include <cstdint>

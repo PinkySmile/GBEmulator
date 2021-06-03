@@ -4,15 +4,30 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/pkgs)
 
-if(NOT FRAMES_PER_SECOND)
+if (NOT FRAMES_PER_SECOND)
 	set(FRAMES_PER_SECOND 60)
-endif()
-if(NOT WINDOW_W)
+endif ()
+if (NOT WINDOW_W)
 	set(WINDOW_W 640)
-endif()
-if(NOT WINDOW_H)
+endif ()
+if (NOT WINDOW_H)
 	set(WINDOW_H 576)
-endif()
+endif ()
+if (NOT SAMPLE_BUFFER_SIZE)
+	if (NOT MONO_SOUND)
+		set(SAMPLE_BUFFER_SIZE 2000)
+	else ()
+		set(SAMPLE_BUFFER_SIZE 1000)
+	endif()
+endif ()
+if (NOT SAMPLE_RATE)
+	set(SAMPLE_RATE 44100)
+endif ()
+if (NOT MONO_SOUND)
+	set(MONO_SOUND 0)
+else ()
+	set(MONO_SOUND 1)
+endif ()
 
 if (NOT MSVC)
 	if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
@@ -50,6 +65,7 @@ endif ()
 set(SDL_IMPL 0)
 set(SFML_IMPL 0)
 set(SERENITY_IMPL 0)
+set(RASPBERRY_IMPL 0)
 set(SPECIFIC_COMPILE_FLAGS standard=std)
 if (ARDUINO)
 	set(SPECIFIC_COMPILE_FLAGS ARDUINO=1)
@@ -127,7 +143,15 @@ elseif (SERENITYOS)
 else ()
 	message(FATAL_ERROR "Cannot find either SDL2 or SFML. Please either set SFML_DIR or SDL2_DIR.")
 endif ()
-
+if (RASPBERRY_SOUND)
+	set(RASPBERRY_IMPL 1)
+	set(
+		SOUND_IMPL
+		src/Sound/RaspberrySoundPlayer.cpp
+		src/Sound/RaspberrySoundPlayer.hpp
+	)
+	set(SAMPLE_BUFFER_SIZE 1)
+endif ()
 add_library(
 	GBEmulator_Core STATIC
 	${ADDITIONAL_SOURCES}
@@ -170,7 +194,13 @@ add_library(
 	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.cpp
 	src/ProcessingUnits/SoundChannel/NoiseWaveChannel.hpp
 )
-target_compile_definitions(GBEmulator_Core PRIVATE ${SPECIFIC_COMPILE_FLAGS})
+target_compile_definitions(
+	GBEmulator_Core PRIVATE
+	${SPECIFIC_COMPILE_FLAGS}
+	SAMPLE_BUFFER_SIZE=${SAMPLE_BUFFER_SIZE}
+	MONO_SOUND=${MONO_SOUND}
+	SAMPLE_RATE=${SAMPLE_RATE}
+)
 
 if (DEBUGGER STREQUAL GUI)
 	set(DEBUGGER_DEFINE 1)
@@ -230,8 +260,12 @@ target_compile_definitions(
 	SDL_IMPL=${SDL_IMPL}
 	SFML_IMPL=${SFML_IMPL}
 	SERENITY_IMPL=${SERENITY_IMPL}
+	RASPBERRY_IMPL=${RASPBERRY_IMPL}
 	NO_DISPLAY_THREAD=${NO_DISPLAY_THREAD}
 	FRAMES_PER_SECOND=${FRAMES_PER_SECOND}
+	SAMPLE_BUFFER_SIZE=${SAMPLE_BUFFER_SIZE}
+	MONO_SOUND=${MONO_SOUND}
+	SAMPLE_RATE=${SAMPLE_RATE}
 	WINDOW_W=${WINDOW_W}
 	WINDOW_H=${WINDOW_H}
 	${DEBUG_FLAG}=1

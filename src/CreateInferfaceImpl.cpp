@@ -6,12 +6,14 @@
 #include "CreateInferfaceImpl.hpp"
 #include "DummyDevices.hpp"
 
+#if RASPBERRY_IMPL
+#include "Sound/RaspberrySoundPlayer.hpp"
+#endif
 #if SFML_IMPL
 #include "CableLink/BgbProtocolNetworkInterface.hpp"
 #include "LCD/LCDSFML.hpp"
 #include "Joypad/SfmlKeyboardJoypadEmulator.hpp"
 #include "Sound/SFMLSoundPlayer.hpp"
-
 #elif SERENITY_IMPL
 #include "LCD/LCDSerenityLibGui.hpp"
 #elif SDL_IMPL
@@ -67,6 +69,8 @@ namespace GBEmulator
 			return new DummySoundPlayer();
 #if SFML_IMPL
 		return new SFMLSoundPlayer();
+#elif RASPBERRY_IMPL
+		return new RaspberrySoundPlayer();
 #else
 		return new DummySoundPlayer();
 #endif

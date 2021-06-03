@@ -11,11 +11,17 @@
 #include <thread>
 #include "SFMLSoundPlayer.hpp"
 
+#if MONO_SOUND
+#define NB_CHANNEL 1
+#else
+#define NB_CHANNEL 2
+#endif
+
 namespace GBEmulator
 {
 	SFMLSoundPlayer::SFMLSoundPlayer()
 	{
-		this->initialize(2, 44100);
+		this->initialize(NB_CHANNEL, SAMPLE_RATE);
 	}
 
 	SFMLSoundPlayer::~SFMLSoundPlayer()
