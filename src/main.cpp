@@ -274,7 +274,7 @@ int main(int argc, char **argv)
 	bool end = false;
 
 	std::thread thread{
-		[&cpu, &end]{
+		[&cpu, &end, &args]{
 			bool crashed = false;
 
 			while (!end) {
@@ -282,6 +282,8 @@ int main(int argc, char **argv)
 				#ifdef __cpp_exceptions
 					try {
 						cpu.update();
+						if (!args.maxSpeed)
+							std::this_thread::sleep_for(std::chrono::microseconds(10));
 					} catch (standard::exception &e)
 				#else
 					if (cpu.update() == -2)
