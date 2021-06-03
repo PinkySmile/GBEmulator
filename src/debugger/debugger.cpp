@@ -11,15 +11,32 @@ typedef fd_set FD_SET;
 #else
 #	include <windows.h>
 #endif
-
-#include <iostream>
+#include <sys/time.h>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <functional>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../ProcessingUnits/Instructions/Strings.hpp"
+
+#if !defined(__cpp_exceptions) || defined(__serenity__)
+#define stoul my_stoul
+
+namespace std
+{
+	static unsigned long my_stoul(const std::string &str, size_t *index = nullptr, int base = 0)
+	{
+		char *endptr;
+		unsigned long result = std::strtoul(str.c_str(), &endptr, base);
+
+		if (index)
+			*index = endptr - str.c_str();
+		return result;
+	}
+}
+#endif
 
 namespace GBEmulator::Debugger
 {

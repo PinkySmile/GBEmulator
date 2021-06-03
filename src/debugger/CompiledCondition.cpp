@@ -3,10 +3,26 @@
 //
 
 #include <cmath>
+#include <string>
 #include <sstream>
 #include "CompiledCondition.hpp"
-#ifndef __cpp_exceptions
+#if !defined(__cpp_exceptions) || defined(__serenity__)
 #include <iostream>
+
+#define stol my_stol
+
+namespace std
+{
+	static long my_stol(const std::string &str, size_t *index, int base)
+	{
+		char *endptr;
+		long result = std::strtol(str.c_str(), &endptr, base);
+
+		if (index)
+			*index = endptr - str.c_str();
+		return result;
+	}
+}
 #endif
 
 namespace GBEmulator::Debugger

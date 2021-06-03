@@ -15,7 +15,7 @@ namespace GBEmulator::Input
 		_thread([this]{
 			while (!this->_ended) {
 				this->update();
-				std::this_thread::sleep_for(std::chrono::milliseconds(2));
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			}
 		})
 	{
@@ -54,7 +54,7 @@ namespace GBEmulator::Input
 			case SDL_WINDOWEVENT_CLOSE:
 				this->_screen.close();
 				this->_ended = true;
-				break;
+				return;
 			default:
 				break;
 			}
