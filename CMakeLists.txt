@@ -190,7 +190,7 @@ elseif (DEBUGGER STREQUAL CMD)
 		src/ProcessingUnits/Instructions/Strings2.cpp
 	)
 else ()
-	set(DEBUGGER_DEFINE 2)
+	set(DEBUGGER_DEFINE 0)
 	if (NOT ARDUINO)
 		set(DEBUGGER_SRC src/ProcessingUnits/Instructions/Strings.cpp src/ProcessingUnits/Instructions/Strings.hpp src/ProcessingUnits/Instructions/Strings2.cpp)
 	endif ()
