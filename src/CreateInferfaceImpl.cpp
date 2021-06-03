@@ -77,9 +77,9 @@ namespace GBEmulator
 		if (args.noDisplay)
 			return new DummyLCD();
 #if SFML_IMPL
-		auto win = new Graphics::LCDSFML{sf::VideoMode{640, 576}, "GBEmulator"};
+		auto win = new Graphics::LCDSFML{sf::VideoMode{WINDOW_W, WINDOW_H}, "GBEmulator"};
 
-		win->setFramerateLimit(60);
+		win->setFramerateLimit(FRAMES_PER_SECOND);
 		return win;
 #elif SERENITY_IMPL
 		Serenity::initSerenityApp();

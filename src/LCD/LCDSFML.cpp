@@ -58,13 +58,14 @@ double GBEmulator::Graphics::LCDSFML::getFramerate()
 
 void GBEmulator::Graphics::LCDSFML::clear()
 {
-	for (unsigned i = 0; i < this->_size.x * this->_size.y; i++)
-		this->_screen[i] = {
-			RGBColor::White.r,
-			RGBColor::White.g,
-			RGBColor::White.b,
-			255
-		};
+	memset(this->_screen, 0xFF, this->_size.x * this->_size.y * sizeof(*this->_screen));
+	//for (unsigned i = 0; i < this->_size.x * this->_size.y; i++)
+	//	this->_screen[i] = {
+	//		RGBColor::White.r,
+	//		RGBColor::White.g,
+	//		RGBColor::White.b,
+	//		255
+	//	};
 }
 
 GBEmulator::Graphics::LCDSFML::~LCDSFML()

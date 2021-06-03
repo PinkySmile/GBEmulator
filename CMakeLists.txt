@@ -4,6 +4,16 @@ project(GBEmulator)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/pkgs)
 
+if(NOT FRAMES_PER_SECOND)
+	set(FRAMES_PER_SECOND 60)
+endif()
+if(NOT WINDOW_W)
+	set(WINDOW_W 640)
+endif()
+if(NOT WINDOW_H)
+	set(WINDOW_H 576)
+endif()
+
 if (NOT MSVC)
 	if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
 		add_compile_options(-W -Wall -Wextra -Wshadow)
@@ -213,6 +223,7 @@ else()
 	set(DEBUG_FLAG NDEBUG)
 endif()
 
+message("${WINDOW_W}x${WINDOW_H}@${FRAMES_PER_SECOND}")
 target_compile_definitions(
 	GBEmulator PRIVATE
 	DEBUGGER=${DEBUGGER_DEFINE}
@@ -220,6 +231,9 @@ target_compile_definitions(
 	SFML_IMPL=${SFML_IMPL}
 	SERENITY_IMPL=${SERENITY_IMPL}
 	NO_DISPLAY_THREAD=${NO_DISPLAY_THREAD}
+	FRAMES_PER_SECOND=${FRAMES_PER_SECOND}
+	WINDOW_W=${WINDOW_W}
+	WINDOW_H=${WINDOW_H}
 	${DEBUG_FLAG}=1
 	${SPECIFIC_COMPILE_FLAGS}
 )

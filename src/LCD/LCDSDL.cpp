@@ -7,9 +7,6 @@
 
 #include <unistd.h>
 #include "LCDSDL.hpp"
-#define FRAMES_PER_SECOND 10
-#define W 640
-#define H 576
 
 #ifndef __cpp_exceptions
 #define throw std::terminate();
@@ -18,7 +15,7 @@
 namespace GBEmulator::Graphics
 {
 	LCDSDL::LCDSDL() :
-		LCDSDL(SDLVideoMode({640, 576, 32, SDL_SWSURFACE}), "GBEmulator")
+		LCDSDL(SDLVideoMode({WINDOW_W, WINDOW_H, 32, SDL_SWSURFACE}), "GBEmulator")
 	{}
 
 	LCDSDL::LCDSDL(SDLVideoMode mode, const standard::string &title) :
@@ -33,11 +30,11 @@ namespace GBEmulator::Graphics
 		if (this->context == nullptr)
 			throw Exception(standard::string("Can't create renderer: ") + SDL_GetError());
 		SDL_SetRenderDrawColor(this->context, RGBColor::White.r, RGBColor::White.g, RGBColor::White.b, 255);
-		this->texture = SDL_CreateTexture(this->context, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, W, H);
+		this->texture = SDL_CreateTexture(this->context, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 160, 144);
 		if (this->texture == nullptr)
 			throw Exception(standard::string("Can't create texture: ") + SDL_GetError());
-		this->buffer = new RGBColor[W * H];
-		this->framebuffer = new RGBColor[W * H];
+		this->buffer = new RGBColor[160 * 144];
+		this->framebuffer = new RGBColor[160 * 144];
 	}
 
 	LCDSDL::~LCDSDL()
@@ -47,7 +44,7 @@ namespace GBEmulator::Graphics
 
 	void LCDSDL::display()
 	{
-		memcpy(this->framebuffer, this->buffer, W * H * sizeof(*this->buffer));
+		memcpy(this->framebuffer, this->buffer, 160 * 144 * sizeof(*this->buffer));
 #if NO_DISPLAY_THREAD
 		this->render();
 #endif
@@ -56,7 +53,7 @@ namespace GBEmulator::Graphics
 	void LCDSDL::render()
 	{
 		SDL_RenderClear(this->context);
-		SDL_UpdateTexture(this->texture, nullptr, this->framebuffer, W * sizeof(*this->framebuffer));
+		SDL_UpdateTexture(this->texture, nullptr, this->framebuffer, 160 * sizeof(*this->framebuffer));
 		SDL_RenderCopy(this->context, this->texture, nullptr, nullptr);
 		SDL_RenderPresent(this->context);
 
@@ -87,17 +84,14 @@ namespace GBEmulator::Graphics
 
 	void LCDSDL::clear()
 	{
-		for (int i = 0; i < W * H; i++)
-			this->buffer[i] = RGBColor::White;
+		//for (int i = 0; i < 160 * 144; i++)
+		//	this->buffer[i] = RGBColor::White;
+		memset(this->buffer, 0xFF, 160 * 144 * sizeof(*this->buffer));
 	}
 
 	void LCDSDL::setPixel(unsigned int x, unsigned y, const GBEmulator::Graphics::RGBColor &color)
 	{
-		x *= 4;
-		y *= 4;
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 4; j++)
-				this->buffer[(y + j) * W + (x + i)] = color;
+		this->buffer[y * 160 + x] = color;
 	}
 
 	void LCDSDL::setMaxSize(unsigned int, unsigned)
