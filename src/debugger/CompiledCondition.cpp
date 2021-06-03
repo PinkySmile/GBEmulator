@@ -5,6 +5,9 @@
 #include <cmath>
 #include <sstream>
 #include "CompiledCondition.hpp"
+#ifndef __cpp_exceptions
+#include <iostream>
+#endif
 
 namespace GBEmulator::Debugger
 {
@@ -190,14 +193,18 @@ namespace GBEmulator::Debugger
 			break;
 		}
 
+	#ifdef __cpp_exceptions
 		try {
+	#endif
 			auto val = standard::stol(str, &index, base);
 
 			str.erase(0, index);
 			return standard::make_shared<Value>(val);
+	#ifdef __cpp_exceptions
 		} catch (...) {
 			throw standard::invalid_argument("Invalid number literal");
 		}
+	#endif
 	}
 
 	static standard::shared_ptr<Operation> getRegister(const CPU::Registers &regs, standard::string &str)
@@ -244,7 +251,12 @@ namespace GBEmulator::Debugger
 			return standard::make_shared<ValueRegister<unsigned short>>(regs.pc, name);
 		else if (name == "sp")
 			return standard::make_shared<ValueRegister<unsigned short>>(regs.sp, name);
+	#ifdef __cpp_exceptions
 		throw standard::invalid_argument(name + " is not a valid register name");
+	#else
+		std::cout << name << " is not a valid register name";
+		return nullptr;
+	#endif
 	}
 
 	static standard::shared_ptr<Operation> getVal(const CPU::Registers &regs, standard::string &str)
@@ -306,9 +318,7 @@ namespace GBEmulator::Debugger
 
 	static standard::shared_ptr<Operation> getValue(const CPU::Registers &regs, const CPU &cpu, standard::string &str)
 	{
-		try {
-			_unFcts.at(str.substr(0, 1));
-		} catch (standard::out_of_range &) {
+		if (_unFcts.find(str.substr(0, 1)) == _unFcts.end()) {
 			if (str[0] == '(') {
 				str.erase(0, 1);
 				return compileCondition(regs, cpu, str, 0);
@@ -326,14 +336,29 @@ namespace GBEmulator::Debugger
 	standard::shared_ptr<Operation> compileCondition(const CPU::Registers &regs, const CPU &cpu, const standard::string &line)
 	{
 		standard::string str = line;
+	#ifdef __cpp_exceptions
 		try {
+	#endif
 			auto val = compileCondition(regs, cpu, str, 0);
 
+		#ifndef __cpp_exceptions
+			if (!val)
+				return nullptr;
+		#endif
 			if (!str.empty())
-				throw standard::invalid_argument("Unexpected character found");
+			#ifdef __cpp_exceptions
+				throw standard::invalid_argument("Unexpected character found near " + str);
+			#else
+			{
+				std::cout << "Unexpected character found near " << str;
+				return nullptr;
+			}
+			#endif
 			return val;
+	#ifdef __cpp_exceptions
 		} catch (standard::exception &e) {
 			throw standard::invalid_argument(e.what() + standard::string(" near character ") + standard::to_string(line.size() - str.size()) + " \"" + str + "\"");
 		}
+	#endif
 	}
 }

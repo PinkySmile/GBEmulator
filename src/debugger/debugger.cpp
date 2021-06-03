@@ -111,7 +111,14 @@ namespace GBEmulator::Debugger
 			size_t address = standard::stoul(name, nullptr, 16);
 
 			if (address > UINT16_MAX)
+			#ifdef __cpp_exceptions
 				throw standard::invalid_argument("stoul");
+			#else
+			{
+				std::cout << "Number too big" << std::endl;
+				return;
+			}
+			#endif
 			this->_cpu.write(address, value);
 		}
 	}
@@ -150,7 +157,14 @@ namespace GBEmulator::Debugger
 			size_t address = standard::stoul(name, nullptr, 16);
 
 			if (address > UINT16_MAX)
+			#ifdef __cpp_exceptions
 				throw standard::invalid_argument("stoul");
+			#else
+			{
+				std::cout << "Number too big" << std::endl;
+				return;
+			}
+			#endif
 			std::cout << "$" << Instructions::intToHex(address, 4) << ": " << Instructions::intToHex(this->_cpu.read(address)) << standard::endl;
 			this->_displayCurrentLine(address);
 		}
@@ -211,14 +225,22 @@ namespace GBEmulator::Debugger
 
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				std::cout << "Added conditional breakpoint #" << this->_condBreakPoints.size() << " when (" << op->tostring() << ") != 0" << standard::endl;
 				this->_condBreakPoints.push_back(op);
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "help") {
 			std::cout << "help" << standard::endl;
 			std::cout << "jump <addr>" << standard::endl;
@@ -299,48 +321,87 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "print") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				std::cout << standard::dec << op->getValue(this->_cpu) << standard::endl;
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "printx") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				std::cout << "$" << standard::hex << static_cast<unsigned>(op->getValue(this->_cpu)) << standard::endl;
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "printi") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				this->_displayCurrentLine(static_cast<unsigned>(op->getValue(this->_cpu)));
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "printo") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				std::cout << "&" << standard::oct << static_cast<unsigned>(op->getValue(this->_cpu)) << standard::endl;
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "ignore") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				unsigned op = compileCondition(this->_cpu._registers, this->_cpu, cmd)->getValue(this->_cpu);
+
+			#ifndef __cpp_exceptions
+				if (!op)
+					return false;
+			#endif
 				auto it = standard::find(this->_ignoredCorruptedStackAddress.begin(), this->_ignoredCorruptedStackAddress.end(), op);
 
 				if (it == this->_ignoredCorruptedStackAddress.end()) {
@@ -350,13 +411,17 @@ namespace GBEmulator::Debugger
 					this->_ignoredCorruptedStackAddress.erase(it);
 					std::cout << "Address $" << standard::hex << op << " is no longer ignored for stack corruption and source code break points" << standard::endl;
 				}
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "printb") {
 			standard::string cmd = line.substr(args[0].size());
 
+		#ifdef __cpp_exceptions
 			try {
+		#endif
 				auto op = compileCondition(this->_cpu._registers, this->_cpu, cmd);
 				auto val = static_cast<unsigned>(op->getValue(this->_cpu));
 				standard::stringstream s;
@@ -372,9 +437,11 @@ namespace GBEmulator::Debugger
 				for (int i = str.length()-1; i>=0; i--)
 					std::cout << str[i];
 				std::cout << standard::endl;
+		#ifdef __cpp_exceptions
 			} catch (standard::exception &e) {
 				std::cout << e.what() << standard::endl;
 			}
+		#endif
 		} else if (args[0] == "set") {
 			this->_setVar(args.at(1), standard::stoul(args.at(2), nullptr, 16));
 			this->_dispVar(args.at(1));
@@ -445,7 +512,11 @@ namespace GBEmulator::Debugger
 			else
 				std::cout << "no longer frozen" << val << standard::endl;
 		} else
+		#ifdef __cpp_exceptions
 			throw CommandNotFoundException("Cannot find the command '" + args[0] + "'");
+		#else
+			std::cout <<  "Cannot find the command '" << args[0] << "'" << std::endl;
+		#endif
 		return false;
 	}
 
@@ -479,6 +550,7 @@ namespace GBEmulator::Debugger
 		if (standard::cin.eof())
 			return;
 
+		#ifdef __cpp_exceptions
 		try {
 			standard::getline(inputStream, line);
 			if ((standard::cin.eof() && line.empty()) || this->processCommandLine(line))
@@ -490,6 +562,7 @@ namespace GBEmulator::Debugger
 		} catch (standard::exception &e) {
 			std::cout << "Error running command: " << e.what() << standard::endl;
 		}
+		#endif
 	}
 
 	int Debugger::startDebugSession()
@@ -510,11 +583,20 @@ namespace GBEmulator::Debugger
 				while (dbg)
 					standard::this_thread::sleep_for(standard::chrono::milliseconds(1));
 
+			#ifdef __cpp_exceptions
 				try {
-					this->_executeNextInstruction(false);
+			#else
+				if (!
+			#endif
+					this->_executeNextInstruction(false)
+			#ifdef __cpp_exceptions
+				;
 				} catch (CPU::InvalidOpcodeException &e) {
-					dbg = true;
 					std::cout << e.what() << standard::endl;
+			#else
+				) {
+			#endif
+					dbg = true;
 					this->_displayCurrentLine();
 					std::cout << "gbdb> ";
 					std::cout.flush();
@@ -679,12 +761,16 @@ namespace GBEmulator::Debugger
 			std::cout << "Executing commands in .emudbgbrc." << standard::endl;
 			while (standard::getline(stream, line)) {
 				currentLine++;
+			#ifdef __cpp_exceptions
 				try {
+			#endif
 					dbg &= !processCommandLine(line);
+			#ifdef __cpp_exceptions
 				} catch (standard::exception &e) {
 					std::cout << "Error line " << currentLine << ": " << line << standard::endl;
 					std::cout << e.what() << standard::endl;
 				}
+			#endif
 			}
 		}
 		if (dbg) {
@@ -752,7 +838,7 @@ namespace GBEmulator::Debugger
 		return -1;
 	}
 
-	void Debugger::_executeNextInstruction(bool resetClock)
+	bool Debugger::_executeNextInstruction(bool resetClock)
 	{
 		if (this->_oldpcs.back() != this->_cpu._registers.pc) {
 			this->_oldpcs.erase(this->_oldpcs.begin());
@@ -763,6 +849,6 @@ namespace GBEmulator::Debugger
 			this->_cpu._oldTime = -1;
 		}
 
-		this->_cpu.update(1);
+		return this->_cpu.update(1) >= -1;
 	}
 }

@@ -91,7 +91,7 @@ namespace GBEmulator::Debugger
 		//! @return Un tableau des élements une fois séparés.
 		static standard::vector<standard::string> _splitCommand(const standard::string& line);
 
-		void _executeNextInstruction(bool resetClock);
+		bool _executeNextInstruction(bool resetClock);
 
 	public:
 		//! Constructeur du debugger

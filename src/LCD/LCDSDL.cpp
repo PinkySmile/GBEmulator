@@ -9,7 +9,7 @@
 #include "LCDSDL.hpp"
 
 #ifndef __cpp_exceptions
-#define throw std::terminate();
+#define throw abort(), (void)
 #endif
 
 namespace GBEmulator::Graphics

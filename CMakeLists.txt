@@ -150,6 +150,7 @@ if (RASPBERRY_SOUND)
 		src/Sound/RaspberrySoundPlayer.cpp
 		src/Sound/RaspberrySoundPlayer.hpp
 	)
+	set(MONO_SOUND 1)
 	set(SAMPLE_BUFFER_SIZE 1)
 endif ()
 add_library(
