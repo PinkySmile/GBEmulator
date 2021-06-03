@@ -137,7 +137,6 @@ add_library(
 	src/ProcessingUnits/CPU.cpp
 	src/ProcessingUnits/CPU.hpp
 	src/ProcessingUnits/Instructions/Instructions.hpp
-	src/ProcessingUnits/Instructions/CPUInstructions.cpp
 	src/ProcessingUnits/Instructions/CPUInstructions.hpp
 	src/ProcessingUnits/Instructions/BasicInstructions.cpp
 	src/ProcessingUnits/Instructions/BitInstructions.cpp
