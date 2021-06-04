@@ -20,6 +20,9 @@ typedef fd_set FD_SET;
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../ProcessingUnits/Instructions/Strings.hpp"
+#include "../ProcessingUnits/SoundChannel/SquareWaveChannel.hpp"
+#include "../ProcessingUnits/SoundChannel/ModulableWaveChannel.hpp"
+#include "../ProcessingUnits/SoundChannel/NoiseWaveChannel.hpp"
 
 #if !defined(__cpp_exceptions) || defined(__serenity__)
 #define stoul my_stoul
@@ -40,6 +43,33 @@ namespace std
 
 namespace GBEmulator::Debugger
 {
+	std::string intToHex(uint8_t b, bool noDollar = false)
+	{
+		char arr[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+		char buffer[4];
+
+		buffer[0] = '$';
+		buffer[1] = arr[(b >> 4)];
+		buffer[2] = arr[(b & 0xF)];
+		buffer[3] = 0;
+		return noDollar ? buffer + 1 : buffer;
+	}
+
+	inline std::string intToHex(uint16_t b)
+	{
+		return intToHex(static_cast<uint8_t>(b >> 8)) + intToHex(static_cast<uint8_t>(b), true);
+	}
+
+	inline std::string intToHex(int16_t b)
+	{
+		return intToHex(static_cast<uint16_t>(b));
+	}
+
+	inline std::string intToHex(int8_t b)
+	{
+		return intToHex(static_cast<uint8_t>(b));
+	}
+
 	const standard::vector<unsigned char> Debugger::_instrSize = {
 		1, 3, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 1, 1, 2, 1,
 		2, 3, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1,
@@ -299,7 +329,121 @@ namespace GBEmulator::Debugger
 				  << " latest jumps" << standard::endl;
 			for (auto pc : this->_jumpList)
 				this->_displayCurrentLine(pc);
-		} else if (args[0] == "cpuState") {std::cout << std::hex << std::uppercase;
+		} else if (args[0] == "apuState") {
+			auto &channel1 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[0]);
+			auto &channel2 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[1]);
+			auto &channel3 = reinterpret_cast<ModulableWaveChannel &>(*this->_cpu._apu._channels[2]);
+			auto &channel4 = reinterpret_cast<NoiseWaveChannel &>(*this->_cpu._apu._channels[3]);
+			auto &apu = this->_cpu._apu;
+
+			std::cout << std::hex << std::uppercase;
+			std::cout << "------APU------" << std::endl;
+			std::cout << intToHex(apu._internalRead(0)) << " " << intToHex(apu._internalRead(1)) << " " << intToHex(apu._internalRead(2)) << std::endl;
+			std::cout << (apu._enabled ? "Enabled" : "Disabled") << std::endl;
+			std::cout << "SO1volume: " << intToHex(apu._channelControl.SO1volume) << std::endl;
+			std::cout << "SO2volume: " << intToHex(apu._channelControl.SO2volume) << std::endl;
+			std::cout << "Vin to SO1 ?: " << (apu._channelControl.vinToSO1 ? "Yes" : "No") << std::endl;
+			std::cout << "Vin to SO2 ?: " << (apu._channelControl.vinToSO2 ? "Yes" : "No") << std::endl;
+			std::cout << "Sound1:" << (apu._terminalSelect.outputSound1toSO1 ? " SO1" : "") << (apu._terminalSelect.outputSound1toSO2 ? " SO2" : "") << std::endl;
+			std::cout << "Sound2:" << (apu._terminalSelect.outputSound2toSO1 ? " SO1" : "") << (apu._terminalSelect.outputSound2toSO2 ? " SO2" : "") << std::endl;
+			std::cout << "Sound3:" << (apu._terminalSelect.outputSound3toSO1 ? " SO1" : "") << (apu._terminalSelect.outputSound3toSO2 ? " SO2" : "") << std::endl;
+			std::cout << "Sound4:" << (apu._terminalSelect.outputSound4toSO1 ? " SO1" : "") << (apu._terminalSelect.outputSound4toSO2 ? " SO2" : "") << std::endl;
+			std::cout << std::dec << apu._samples._buffer.size() << " buffered samples" << std::endl << std::endl;
+
+			std::cout << std::hex << std::uppercase;
+			std::cout << "------Channel1------" << std::endl;
+			std::cout << intToHex(channel1.read(0)) << " " << intToHex(channel1.read(1)) << " ";
+			std::cout << intToHex(channel1.read(2)) << " " << intToHex(channel1.read(3)) << " " << intToHex(channel1.read(4)) << std::endl;
+			std::cout << "DAC Disabled ?: " << (channel1._expired ? "Yes" : "No") << std::endl;
+			std::cout << "LenCtr: " << channel1._lengthCounter << std::endl;
+			std::cout << "VolCtr: " << channel1._volumeEnvelopeCounter << std::endl;
+			std::cout << "FrequCtr: " << channel1._frequencyCounter << std::endl;
+			std::cout << "FrequSweepCtr: " << channel1._frequencySweepCounter << std::endl;
+			std::cout << "CycleCtr: " << channel1._cycles << std::endl;
+			std::cout << "Length: " << intToHex(channel1._soundLenPatternDutyRegister.length) << std::endl;
+			std::cout << "Duty: " << channel1._soundLenPatternDutyRegister.patternDuty << std::endl;
+			std::cout << "Frequency: " << intToHex(channel1._frequencyRegister.getFrequency()) << ": " << channel1._frequencyRegister.getActualFrequency() << "Hz" << std::endl;
+			std::cout << "Use length ?: " << (channel1._frequencyRegister.useLength ? "Yes" : "No") << std::endl;
+			std::cout << "Initial ?: " << (channel1._frequencyRegister.initial ? "Yes" : "No") << std::endl;
+			std::cout << "Initial volume: " << intToHex(channel1._volumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Direction: " << (channel1._volumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Number of sweeps: " << intToHex(channel1._volumeEnvelopeRegister.numberOfSweeps) << std::endl;
+			std::cout << "Effective volume: " << intToHex(channel1._effectiveVolumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Effective direction: " << (channel1._effectiveVolumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Effective number of sweeps: " << intToHex(channel1._effectiveVolumeEnvelopeRegister.numberOfSweeps) << std::endl;
+			std::cout << "Sweep shadow: " << intToHex(channel1._sweepFrequencyShadow) << std::endl;
+			std::cout << "Sweep time: " << intToHex(channel1._sweepRegister.sweepTime) << std::endl;
+			std::cout << "Sweep mode: " << (channel1._sweepRegister.substract ? "Sub" : "Add") << std::endl;
+			std::cout << "Sweep shifts: " << intToHex(channel1._sweepRegister.sweepShifts) << std::endl << std::endl;
+
+			std::cout << "------Channel2------" << std::endl;
+			std::cout << intToHex(channel2.read(0)) << " " << intToHex(channel2.read(1)) << " ";
+			std::cout << intToHex(channel2.read(2)) << " " << intToHex(channel2.read(3)) << " " << intToHex(channel2.read(4)) << std::endl;
+			std::cout << "DAC Disabled ?: " << (channel2._expired ? "Yes" : "No") << std::endl;
+			std::cout << "LenCtr: " << channel2._lengthCounter << std::endl;
+			std::cout << "VolCtr: " << channel2._volumeEnvelopeCounter << std::endl;
+			std::cout << "FrequCtr: " << channel2._frequencyCounter << std::endl;
+			std::cout << "FrequSweepCtr: " << channel2._frequencySweepCounter << std::endl;
+			std::cout << "CycleCtr: " << channel2._cycles << std::endl;
+			std::cout << "Length: " << intToHex(channel2._soundLenPatternDutyRegister.length) << std::endl;
+			std::cout << "Duty: " << channel2._soundLenPatternDutyRegister.patternDuty << std::endl;
+			std::cout << "Frequency: " << intToHex(channel2._frequencyRegister.getFrequency()) << ": " << channel2._frequencyRegister.getActualFrequency() << "Hz" << std::endl;
+			std::cout << "Use length ?: " << (channel2._frequencyRegister.useLength ? "Yes" : "No") << std::endl;
+			std::cout << "Initial ?: " << (channel2._frequencyRegister.initial ? "Yes" : "No") << std::endl;
+			std::cout << "Initial volume: " << intToHex(channel2._volumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Direction: " << (channel2._volumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Number of sweeps: " << intToHex(channel2._volumeEnvelopeRegister.numberOfSweeps) << std::endl;
+			std::cout << "Effective volume: " << intToHex(channel2._effectiveVolumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Effective direction: " << (channel2._effectiveVolumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Effective number of sweeps: " << intToHex(channel2._effectiveVolumeEnvelopeRegister.numberOfSweeps) << std::endl;
+			std::cout << "Sweep shadow: " << intToHex(channel2._sweepFrequencyShadow) << std::endl;
+			std::cout << "Sweep time: " << intToHex(channel2._sweepRegister.sweepTime) << std::endl;
+			std::cout << "Sweep mode: " << (channel2._sweepRegister.substract ? "Sub" : "Add") << std::endl;
+			std::cout << "Sweep shifts: " << intToHex(channel2._sweepRegister.sweepShifts) << std::endl << std::endl;
+
+			std::cout << "------Channel3------" << std::endl;
+			std::cout << intToHex(channel3.read(0)) << " " << intToHex(channel3.read(1)) << " ";
+			std::cout << intToHex(channel3.read(2)) << " " << intToHex(channel3.read(3)) << " " << intToHex(channel3.read(4)) << std::endl;
+			std::cout << "DAC Disabled ?: " << (channel3._expired ? "Yes" : "No") << std::endl;
+			std::cout << "LenCtr: " << channel3._lengthCounter << std::endl;
+			std::cout << "ByteCtr: " << channel3._nextByteCounter << std::endl;
+			std::cout << "CycleCtr: " << channel3._cycles << std::endl;
+			std::cout << "Length: " << intToHex(channel3._length) << std::endl;
+			std::cout << "Current Byte: " << static_cast<int>(channel3._current) << std::endl;
+			std::cout << "WPRAM:";
+			for (auto i : channel3._wpram)
+				std::cout << " $" << static_cast<int>(channel3._length);
+			std::cout << std::endl << "Frequency: " << intToHex(channel3._frequencyRegister.getFrequency()) << ": " << channel3._frequencyRegister.getActualFrequency() << "Hz" << std::endl;
+			std::cout << "Use length ?: " << (channel3._frequencyRegister.useLength ? "Yes" : "No") << std::endl;
+			std::cout << "Initial ?: " << (channel3._frequencyRegister.initial ? "Yes" : "No") << std::endl;
+			std::cout << "Enabled ?: " << (channel3._enabled ? "Yes" : "No") << std::endl;
+			std::cout << "Volume: " << channel3._volume << std::endl;
+			std::cout << std::endl;
+
+			std::cout << "------Channel4------" << std::endl;
+			std::cout << intToHex(channel4.read(0)) << " " << intToHex(channel4.read(1)) << " ";
+			std::cout << intToHex(channel4.read(2)) << " " << intToHex(channel4.read(3)) << " " << intToHex(channel4.read(4)) << std::endl;
+			std::cout << "DAC Disabled ?: " << (channel4._expired ? "Yes" : "No") << std::endl;
+			std::cout << "LenCtr: " << channel4._lengthCounter << std::endl;
+			std::cout << "VolCtr: " << channel4._volumeEnvelopeCounter << std::endl;
+			std::cout << "LFSRCtr: " << channel4._lfsrCounter << std::endl;
+			std::cout << "CycleCtr: " << channel4._cycles << std::endl;
+			std::cout << "Length: " << intToHex(channel4._length) << std::endl;
+			std::cout << "Frequency: " << intToHex(channel4._polynomialCounter.shiftClockFrequency) << ": " << channel4._polynomialCounter.getFrequency() << "Hz" << std::endl;
+			std::cout << "LFSR: " << intToHex(channel4._lfsr) << std::endl;
+			std::cout << "LSFR bit depth: " << (channel4._polynomialCounter.isCounter7bits ? "7 bits" : "15 bits") << std::endl;
+			std::cout << "Dividing ratio: " << intToHex(channel4._polynomialCounter.dividingRatio) << std::endl;
+			std::cout << "Use length ?: " << (channel4._useLength ? "Yes" : "No") << std::endl;
+			std::cout << "Initial ?: " << (channel4._initial ? "Yes" : "No") << std::endl;
+			std::cout << "Initial volume: " << intToHex(channel4._volumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Direction: " << (channel4._volumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Number of sweeps: " << intToHex(channel4._volumeEnvelopeRegister.numberOfSweeps) << std::endl;
+			std::cout << "Effective volume: " << intToHex(channel4._effectiveVolumeEnvelopeRegister.initialVolume) << std::endl;
+			std::cout << "Effective direction: " << (channel4._effectiveVolumeEnvelopeRegister.increases ? "Increase" : "Decrease") << std::endl;
+			std::cout << "Effective number of sweeps: " << intToHex(channel4._effectiveVolumeEnvelopeRegister.numberOfSweeps) << std::endl;
+
+		} else if (args[0] == "cpuState") {
+			std::cout << std::hex << std::uppercase;
 			std::cout << "af: " << std::setw(4) << std::setfill('0') << this->_cpu._registers.af;
 			std::cout << " (a: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.a);
 			std::cout << ", f: " << std::setw(2) << std::setfill('0') << static_cast<int>(this->_cpu._registers.f) << ")" << std::endl;

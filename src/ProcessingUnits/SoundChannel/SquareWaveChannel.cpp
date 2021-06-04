@@ -112,7 +112,7 @@ namespace GBEmulator
 			break;
 		case SQUARE_CHANNEL_FREQUENCY_HI:
 			this->_frequencyRegister.setHigh(value);
-			if (this->_frequencyRegister.initial)
+			if (this->_frequencyRegister.useLength || this->_frequencyRegister.initial && this->_volumeEnvelopeRegister.initialVolume)
 				this->_restart();
 			break;
 		default:

@@ -89,7 +89,7 @@ namespace GBEmulator
 		case NOISE_CHANNEL_COUNTER_CONSEC_INITIAL:
 			this->_initial = value & 0x80;
 			this->_useLength = value & 0x40;
-			if (this->_initial)
+			if (this->_useLength || this->_initial && this->_volumeEnvelopeRegister.initialVolume)
 				this->_restart();
 			break;
 		default:

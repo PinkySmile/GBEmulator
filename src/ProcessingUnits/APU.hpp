@@ -23,6 +23,9 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
 	/*!
 	 * @brief Liste des adresses que le CPU peut envoyer à l'APU.
 	 * Acutellement, n'utilise qu'une partie des adresses.
@@ -169,6 +172,8 @@ namespace GBEmulator
 		bool _enabled = false;
 		APUSoundOutputTerminalSelect _terminalSelect = 0x00;
 		APUChannelControl _channelControl = 0x00;
+
+		friend Debugger::Debugger;
 	};
 }
 

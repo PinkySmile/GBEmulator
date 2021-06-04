@@ -17,6 +17,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	enum NoiseWaveChannelInternalRegisters {
 		NOISE_CHANNEL_SOUND_LENGTH = 1,
 		NOISE_CHANNEL_VOLUME,
@@ -83,6 +87,8 @@ namespace GBEmulator
 		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
+
+		friend Debugger::Debugger;
 	};
 }
 

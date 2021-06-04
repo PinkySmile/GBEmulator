@@ -11,6 +11,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	class BasicSoundChannel : public IGBSoundChannel {
 	private:
 		unsigned _cycles = 0;
@@ -25,6 +29,8 @@ namespace GBEmulator
 		virtual ~BasicSoundChannel() = default;
 		bool hasExpired() const override final { return this->_expired; };
 		standard::vector<uint16_t> update(unsigned int cycles) override;
+
+		friend Debugger::Debugger;
 	};
 }
 

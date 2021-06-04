@@ -10,6 +10,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	enum SquareWaveChannelInternalRegisters {
 		SQUARE_CHANNEL_SWEEP_REGISTER,
 		SQUARE_CHANNEL_SOUND_LENGTH_WAVE_PATTERN_DUTY,
@@ -109,6 +113,8 @@ namespace GBEmulator
 		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
+
+		friend Debugger::Debugger;
 	};
 }
 

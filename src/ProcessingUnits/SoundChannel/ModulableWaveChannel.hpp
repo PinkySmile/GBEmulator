@@ -10,6 +10,10 @@
 
 namespace GBEmulator
 {
+	namespace Debugger {
+		class Debugger;
+	}
+
 	enum ModulableWaveChannelInternalRegisters {
 		MODULABLE_CHANNEL_ON_OFF,
 		MODULABLE_CHANNEL_SOUND_LENGTH,
@@ -72,6 +76,8 @@ namespace GBEmulator
 		uint8_t read(unsigned int relativeAddress) override;
 
 		void onPowerOff() override;
+
+		friend Debugger::Debugger;
 	};
 }
 
