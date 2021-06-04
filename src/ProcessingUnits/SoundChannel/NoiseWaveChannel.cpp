@@ -2,11 +2,6 @@
 // Created by andgel on 06/05/2021
 //
 
-#ifndef ARDUINO
-#include <cstdio>
-#else
-#include <stdio.h>
-#endif
 #include "NoiseWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 
@@ -18,6 +13,7 @@ namespace GBEmulator
 		double lfsrCount = Timing::getCyclesPerSecondsFromFrequency(this->_polynomialCounter.getFrequency());
 		double lengthCount = Timing::getCyclesPerSecondsFromFrequency(256);
 
+		this->_lengthCounter += cycles;
 		this->_lfsrCounter += cycles;
 		this->_volumeEnvelopeCounter += cycles;
 
@@ -71,8 +67,6 @@ namespace GBEmulator
 	{
 		switch (relativeAddress) {
 		case NOISE_CHANNEL_SOUND_LENGTH:
-			if (!value)
-				value = 0xFF;
 			this->_length = value;
 			break;
 		case NOISE_CHANNEL_VOLUME:

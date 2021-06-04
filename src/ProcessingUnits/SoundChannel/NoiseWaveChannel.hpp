@@ -30,14 +30,6 @@ namespace GBEmulator
 
 	class NoiseWaveChannel : public BasicSoundChannel {
 	private:
-		/*
-		FF22 - NR43 - Channel 4 Polynomial Counter (R/W)
-		The amplitude is randomly switched between high and low at the given frequency. A higher frequency will make the noise to appear 'softer'.
-		When Bit 3 is set, the output will become more regular, and some frequencies will sound more like Tone than Noise.
-		  Bit 7-4 - Shift Clock Frequency (s)
-		  Bit 3   - Counter Step/Width (0=15 bits, 1=7 bits)
-		  Bit 2-0 - Dividing Ratio of Frequencies (r)
-		Frequency = 524288 Hz / r / 2^(s+1) ;For r=0 assume r=0.5 instead*/
 		struct VolumeEnvelopeRegister {
 			uint8_t numberOfSweeps : 3;
 			bool increases : 1;
@@ -69,7 +61,7 @@ namespace GBEmulator
 		VolumeEnvelopeRegister _effectiveVolumeEnvelopeRegister = 0;
 		PolynomialCounterRegister _polynomialCounter = 0;
 		unsigned short _lfsr : 15;
-		uint8_t _length : 7;
+		uint8_t _length : 6;
 		bool _initial : 1;
 		bool _useLength : 1;
 		double _lengthCounter = 0;

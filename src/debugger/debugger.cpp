@@ -17,6 +17,7 @@ typedef fd_set FD_SET;
 #include <sstream>
 #include <iostream>
 #include <functional>
+#include <csignal>
 #include "debugger.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 #include "../ProcessingUnits/Instructions/Strings.hpp"
@@ -43,6 +44,13 @@ namespace std
 
 namespace GBEmulator::Debugger
 {
+#ifdef DEBUG
+	void trap(int)
+	{
+		std::cout << "No debugger attached" << std::endl;
+	}
+#endif
+
 	std::string intToHex(uint8_t b, bool noDollar = false)
 	{
 		char arr[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -329,6 +337,10 @@ namespace GBEmulator::Debugger
 				  << " latest jumps" << standard::endl;
 			for (auto pc : this->_jumpList)
 				this->_displayCurrentLine(pc);
+	#ifdef DEBUG
+		} else if (args[0] == "trap") {
+			raise(SIGTRAP);
+	#endif
 		} else if (args[0] == "apuState") {
 			auto &channel1 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[0]);
 			auto &channel2 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[1]);
@@ -412,7 +424,7 @@ namespace GBEmulator::Debugger
 			std::cout << "Current Byte: " << static_cast<int>(channel3._current) << std::endl;
 			std::cout << "WPRAM:";
 			for (auto i : channel3._wpram)
-				std::cout << " $" << static_cast<int>(channel3._length);
+				std::cout << " $" << static_cast<int>(i);
 			std::cout << std::endl << "Frequency: " << intToHex(channel3._frequencyRegister.getFrequency()) << ": " << channel3._frequencyRegister.getActualFrequency() << "Hz" << std::endl;
 			std::cout << "Use length ?: " << (channel3._frequencyRegister.useLength ? "Yes" : "No") << std::endl;
 			std::cout << "Initial ?: " << (channel3._frequencyRegister.initial ? "Yes" : "No") << std::endl;
@@ -728,6 +740,9 @@ namespace GBEmulator::Debugger
 
 	int Debugger::startDebugSession()
 	{
+	#ifdef DEBUG
+		signal(SIGTRAP, trap);
+	#endif
 		bool dbg = true;
 
 #ifdef _WIN32

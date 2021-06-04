@@ -72,6 +72,7 @@ namespace GBEmulator
 		uint16_t _getSoundData() const override;
 		void _restart();
 	public:
+		ModulableWaveChannel();
 		void write(unsigned int relativeAddress, uint8_t value) override;
 		uint8_t read(unsigned int relativeAddress) override;
 

@@ -48,8 +48,6 @@ namespace GBEmulator
 			this->_expired |= !this->_enabled;
 			break;
 		case MODULABLE_CHANNEL_SOUND_LENGTH:
-			if (!value)
-				value = 0xFF;
 			this->_length = value;
 			break;
 		case MODULABLE_CHANNEL_VOLUME:
@@ -110,5 +108,11 @@ namespace GBEmulator
 		this->_frequencyRegister.loFrequency = 0;
 		this->_frequencyRegister.setHigh(0);
 		this->_expired = true;
+	}
+
+	ModulableWaveChannel::ModulableWaveChannel()
+	{
+		for (auto &e : this->_wpram)
+			e = rand() & 0xF;
 	}
 }
