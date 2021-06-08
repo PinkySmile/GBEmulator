@@ -44,6 +44,19 @@ namespace GBEmulator
 				{Input::ENABLE_DEBUGGING, sf::Keyboard::V}
 			}
 		};
+#elif RASPBERRY_IMPL
+		return new Input::RaspberryJoypadEmulator({
+			{Input::RESET,            -1},
+			{Input::JOYPAD_A,         22},
+			{Input::JOYPAD_B,         23},
+			{Input::JOYPAD_UP,        26},
+			{Input::JOYPAD_DOWN,      27},
+			{Input::JOYPAD_LEFT,      17},
+			{Input::JOYPAD_RIGHT,     16},
+			{Input::JOYPAD_START,     24},
+			{Input::JOYPAD_SELECT,    25},
+			{Input::ENABLE_DEBUGGING, -1}
+		});
 #elif SDL_IMPL
 		return new Input::SDLKeyboardJoypadEmulator(
 			reinterpret_cast<Graphics::LCDSDL &>(*otherComponents.window), {
@@ -59,19 +72,6 @@ namespace GBEmulator
 				{Input::ENABLE_DEBUGGING, SDLK_v}
 			}
 		);
-#elif RASPBERRY_IMPL
-		return new Input::RaspberryJoypadEmulator({
-			{Input::RESET,            -1},
-			{Input::JOYPAD_A,         22},
-			{Input::JOYPAD_B,         23},
-			{Input::JOYPAD_UP,        -1},
-			{Input::JOYPAD_DOWN,      -1},
-			{Input::JOYPAD_LEFT,      -1},
-			{Input::JOYPAD_RIGHT,     -1},
-			{Input::JOYPAD_START,     24},
-			{Input::JOYPAD_SELECT,    25},
-			{Input::ENABLE_DEBUGGING, -1}
-		});
 #else
 		return new DummyJoypadInput();
 #endif

@@ -4,6 +4,7 @@
 
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <iostream>
 #include "RaspberrySoundPlayer.hpp"
 
 #define SPEAKER_PIN 18
@@ -15,6 +16,7 @@ namespace GBEmulator
 		pinMode(SPEAKER_PIN, OUTPUT);
 		softPwmCreate(SPEAKER_PIN, 0, UINT16_MAX);
 		this->_thread = std::thread{[this]{
+			return;
 			while (true) {
 				if (!this->_buffer.empty()) {
 					softPwmWrite(SPEAKER_PIN, this->_buffer[this->_head] - INT16_MIN);

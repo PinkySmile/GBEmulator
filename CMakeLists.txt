@@ -156,7 +156,11 @@ if (RASPBERRY_SOUND)
 		src/Joypad/RaspberryJoypadEmulator.hpp
 	)
 	set(MONO_SOUND 1)
-	set(SAMPLE_BUFFER_SIZE 1)
+	set(
+		OTHER_LIBRARIES
+		${OTHER_LIBRARIES}
+		wiringPi
+	)
 endif ()
 add_library(
 	GBEmulator_Core STATIC

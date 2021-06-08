@@ -2,6 +2,11 @@
 // Created by andgel on 05/05/2021
 //
 
+#ifdef ARDUINO
+#include <stdlib.h>
+#else
+#include <cstdlib>
+#endif
 #include "ModulableWaveChannel.hpp"
 #include "../../Timing/Timer.hpp"
 

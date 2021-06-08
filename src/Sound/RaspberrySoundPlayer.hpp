@@ -6,6 +6,7 @@
 #define GBEMULATOR_RASPBERRYSOUNDPLAYER_HPP
 
 
+#include <thread>
 #include "ISound.hpp"
 
 namespace GBEmulator {
