@@ -150,6 +150,11 @@ if (RASPBERRY_SOUND)
 		src/Sound/RaspberrySoundPlayer.cpp
 		src/Sound/RaspberrySoundPlayer.hpp
 	)
+	set(
+		JOYPAD_IMPL
+		src/Joypad/RaspberryJoypadEmulator.cpp
+		src/Joypad/RaspberryJoypadEmulator.hpp
+	)
 	set(MONO_SOUND 1)
 	set(SAMPLE_BUFFER_SIZE 1)
 endif ()

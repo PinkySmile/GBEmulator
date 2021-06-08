@@ -8,6 +8,7 @@
 
 #if RASPBERRY_IMPL
 #include "Sound/RaspberrySoundPlayer.hpp"
+#include "Joypad/RaspberryJoypadEmulator.hpp"
 #endif
 #if SFML_IMPL
 #include "CableLink/BgbProtocolNetworkInterface.hpp"
@@ -58,6 +59,19 @@ namespace GBEmulator
 				{Input::ENABLE_DEBUGGING, SDLK_v}
 			}
 		);
+#elif RASPBERRY_IMPL
+		return new Input::RaspberryJoypadEmulator({
+			{Input::RESET,            -1},
+			{Input::JOYPAD_A,         22},
+			{Input::JOYPAD_B,         23},
+			{Input::JOYPAD_UP,        -1},
+			{Input::JOYPAD_DOWN,      -1},
+			{Input::JOYPAD_LEFT,      -1},
+			{Input::JOYPAD_RIGHT,     -1},
+			{Input::JOYPAD_START,     24},
+			{Input::JOYPAD_SELECT,    25},
+			{Input::ENABLE_DEBUGGING, -1}
+		});
 #else
 		return new DummyJoypadInput();
 #endif
