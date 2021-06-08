@@ -20,6 +20,7 @@
 #elif SDL_IMPL
 #include "LCD/LCDSDL.hpp"
 #include "Joypad/SDLKeyboardJoypadEmulator.hpp"
+#include "Sound/SDLSoundPlayer.hpp"
 #endif
 
 namespace GBEmulator
@@ -83,8 +84,10 @@ namespace GBEmulator
 			return new DummySoundPlayer();
 #if SFML_IMPL
 		return new SFMLSoundPlayer();
-#elif RASPBERRY_IMPL
-		return new RaspberrySoundPlayer();
+#elif SDL_IMPL
+		return new SDLSoundPlayer();
+//#elif RASPBERRY_IMPL
+//		return new RaspberrySoundPlayer();
 #else
 		return new DummySoundPlayer();
 #endif

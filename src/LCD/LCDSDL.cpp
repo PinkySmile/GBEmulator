@@ -22,7 +22,7 @@ namespace GBEmulator::Graphics
 		video_mode(mode)
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) == -1)
-			throw Exception(standard::string("Can't init SDL: ") + SDL_GetError());
+			throw Exception(standard::string("Can't init SDL video: ") + SDL_GetError());
 		this->screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.width, mode.height, SDL_WINDOW_SHOWN );
 		if (this->screen == nullptr)
 			throw Exception(standard::string("Can't create window: ") + SDL_GetError());

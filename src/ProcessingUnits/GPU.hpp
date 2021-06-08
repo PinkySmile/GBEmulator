@@ -22,11 +22,11 @@
 #define NB_VRAM_BANK 2
 #define BG_MAP_SIZE 0x800
 #define OAM_SIZE 0xA0
-#define DEVIDER 457
+#define DEVIDER 452
 #define GPU_FULL_CYCLE_DURATION (DEVIDER * 153L)
 //69921
 #define VBLANK_CYCLE_PT 66093
-#define HBLANK_CYLCE_PT
+#define HBLANK_CYCLE_PT
 
 namespace GBEmulator
 {
@@ -88,6 +88,8 @@ namespace GBEmulator
 			bool windowEnabled:1;             //! Is window enabled.
 			bool windowTileMapSelect:1;       //! Window tile map select (false -> $9800-$9BFF, true -> $9C00-$9FFF).
 			bool enabled:1;                   //! Is display enabled.
+
+			operator uint8_t() { return *reinterpret_cast<uint8_t *>(this); }
 		};
 
 		bool _gbMode = false;
@@ -140,7 +142,7 @@ namespace GBEmulator
 		//! Byte specifiant la position (sur l'axe des ordonnées) de l'écran sur le BG. (FF42)
 		uint8_t _scrollY = 0;
 		//! Byte specifiant la position (sur l'axe des abscisses) de la fenêtre à partir du coin superieur/gauche sur le BG. (FF4B)
-		signed short _windowX = 0;
+		int16_t _windowX = 0;
 		//! Byte specifiant la position (sur l'axe des ordonnées) de la fenêtre  sur le BG. (FF4A)
 		uint8_t _windowY = 0;
 		//! Byte specifiant la bank de VRAM a utilisé.

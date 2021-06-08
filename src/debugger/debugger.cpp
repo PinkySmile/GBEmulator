@@ -341,6 +341,32 @@ namespace GBEmulator::Debugger
 		} else if (args[0] == "trap") {
 			raise(SIGTRAP);
 	#endif
+		} else if (args[0] == "gpuState") {
+			std::cout << std::dec << std::uppercase;
+			std::cout << "Stat: " << intToHex(this->_cpu._gpu._stat) << std::endl;
+			std::cout << "LYC: " << intToHex(this->_cpu._gpu._lyc) << std::endl;
+			std::cout << "Control: " << intToHex(this->_cpu._gpu._control) << std::endl;
+			std::cout << "Bg display: " << (this->_cpu._gpu._control.bgDisplayEnabled ? "Enabled" : "Disabled") << std::endl;
+			std::cout << "Sprite display: " << (this->_cpu._gpu._control.spriteDisplayEnabled ? "Enabled" : "Disabled") << std::endl;
+			std::cout << "Sprite size: " << (this->_cpu._gpu._control.spriteSizeSelect ? "8x8" : "8x16") << std::endl;
+			std::cout << "Bg tile map: " << (this->_cpu._gpu._control.bgTileMapSelect ? "8000-8FFF" : "8800-97FF") << std::endl;
+			std::cout << "Bg and win tile data: " << (this->_cpu._gpu._control.bgAndWindowTileDataSelect ? "9C00-9FFF" : "9800-9BFF") << std::endl;
+			std::cout << "Window: " << (this->_cpu._gpu._control.windowEnabled ? "Enabled" : "Disabled") << std::endl;
+			std::cout << "Window tile map: " << (this->_cpu._gpu._control.windowTileMapSelect ? "9C00-9FFF" : "9800-9BFF") << std::endl;
+			std::cout << "State: " << (this->_cpu._gpu._control.enabled ? "Enabled" : "Disabled") << std::endl;
+			std::cout << "ScrollX: " << intToHex(this->_cpu._gpu._scrollX) << std::endl;
+			std::cout << "ScrollY: " << intToHex(this->_cpu._gpu._scrollY) << std::endl;
+			std::cout << "WindowX: " << intToHex(this->_cpu._gpu._windowX) << std::endl;
+			std::cout << "WindowY: " << intToHex(this->_cpu._gpu._windowY) << std::endl;
+			std::cout << "VRAM selected bank" << this->_cpu._gpu._vramBankSwitch << std::endl;
+			std::cout << "BG palette: " << intToHex(this->_cpu._gpu._bgPaletteValue) << std::endl;
+			std::cout << "OBJ0 palette: " << intToHex(this->_cpu._gpu._objectPalette0Value) << std::endl;
+			std::cout << "OBJ1 palette: " << intToHex(this->_cpu._gpu._objectPalette1Value) << std::endl;
+			std::cout << "Cycles: " << this->_cpu._gpu._cycles << std::endl;
+			std::cout << "HDMA dest: " << intToHex(this->_cpu._gpu._HDMADest) << std::endl;
+			std::cout << "HDMA src: " << intToHex(this->_cpu._gpu._HDMASrc) << std::endl;
+			std::cout << "Transfer length: " << intToHex(this->_cpu._gpu._transfertLen) << std::endl;
+			std::cout << "Transfer: " << (this->_cpu._gpu._isTransferring ? "In progress" : "Done") << std::endl;
 		} else if (args[0] == "apuState") {
 			auto &channel1 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[0]);
 			auto &channel2 = reinterpret_cast<SquareWaveChannel &>(*this->_cpu._apu._channels[1]);

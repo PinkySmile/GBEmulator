@@ -118,6 +118,11 @@ elseif (SDL2_FOUND)
 		src/Joypad/SDLKeyboardJoypadEmulator.hpp
 	)
 	set(
+		SOUND_IMPL
+		src/Sound/SDLSoundPlayer.cpp
+		src/Sound/SDLSoundPlayer.hpp
+	)
+	set(
 		LCD_IMPL
 		src/LCD/LCDSDL.cpp
 		src/LCD/LCDSDL.hpp
@@ -143,19 +148,12 @@ elseif (SERENITYOS)
 else ()
 	message(FATAL_ERROR "Cannot find either SDL2 or SFML. Please either set SFML_DIR or SDL2_DIR.")
 endif ()
-if (RASPBERRY_SOUND)
-	set(RASPBERRY_IMPL 1)
-	set(
-		SOUND_IMPL
-		src/Sound/RaspberrySoundPlayer.cpp
-		src/Sound/RaspberrySoundPlayer.hpp
-	)
+if (RASPBERRY)
 	set(
 		JOYPAD_IMPL
 		src/Joypad/RaspberryJoypadEmulator.cpp
 		src/Joypad/RaspberryJoypadEmulator.hpp
 	)
-	set(MONO_SOUND 1)
 	set(
 		OTHER_LIBRARIES
 		${OTHER_LIBRARIES}

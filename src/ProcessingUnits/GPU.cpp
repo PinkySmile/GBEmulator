@@ -415,7 +415,7 @@ namespace GBEmulator
 
 	uint8_t GPU::getCurrentLine() const
 	{
-		return this->_cycles * 153 / GPU_FULL_CYCLE_DURATION;
+		return this->_cycles / DEVIDER;
 	}
 
 	void GPU::setControlByte(uint8_t value)
