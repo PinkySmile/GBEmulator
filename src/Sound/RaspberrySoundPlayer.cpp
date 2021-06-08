@@ -14,6 +14,15 @@ namespace GBEmulator
 	{
 		pinMode(SPEAKER_PIN, OUTPUT);
 		softPwmCreate(SPEAKER_PIN, 0, UINT16_MAX);
+		this->_thread = std::thread{[this]{
+			while (true) {
+				if (!this->_buffer.empty()) {
+					softPwmWrite(SPEAKER_PIN, this->_buffer[this->_head] - INT16_MIN);
+					this->_head = (this->_head + 1) % this->_buffer.size();
+				}
+				std::this_thread::sleep_for(std::chrono::microseconds(1000000 / SAMPLE_RATE));
+			}
+		}};
 	}
 
 	RaspberrySoundPlayer::~RaspberrySoundPlayer()
@@ -25,8 +34,8 @@ namespace GBEmulator
 		this->_masterVolume = volume;
 	}
 
-	void RaspberrySoundPlayer::pushSamples(int16_t *samples, size_t)
+	void RaspberrySoundPlayer::pushSamples(int16_t *samples, size_t size)
 	{
-		softPwmWrite(SPEAKER_PIN, *samples - INT16_MIN);
+		this->_buffer = std::vector<int16_t>{samples, samples + size};
 	}
 }

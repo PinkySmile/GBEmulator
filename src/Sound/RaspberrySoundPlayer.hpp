@@ -30,8 +30,10 @@ namespace GBEmulator {
 		/*!
 		 * @brief Volume général
 		 */
+		 std::thread _thread;
 		float _masterVolume = 0;
 		unsigned _head;
+		std::vector<int16_t> _buffer;
 	};
 }
 
