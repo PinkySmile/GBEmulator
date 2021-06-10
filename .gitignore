@@ -47,6 +47,7 @@ CMakeCache.txt
 *.fx
 *.sav
 *.gb
+*.gbc
 *.sym
 
 build*
