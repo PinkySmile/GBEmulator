@@ -231,3 +231,35 @@ getKeys::
 	and a, $F
 	or b
 	ret
+
+; Get all the pressed keys but disabled ones.
+; Params:
+;    None
+; Return:
+;    (Pressed when bit is 0)
+;    a -> All the pressed keys
+;       bit 0 -> Right
+;       bit 1 -> Left
+;       bit 2 -> Up
+;       bit 3 -> Down
+;       bit 4 -> A
+;       bit 5 -> B
+;       bit 6 -> Select
+;       bit 7 -> Start
+; Registers:
+;    af -> Not preserved
+;    bc -> Not preserved
+;    de -> Preserved
+;    hl -> Not preserved
+getKeysFiltered::
+	call getKeys
+	ld b, a
+	ld hl, KEYS_DISABLED
+	ld a, [hl]
+	or b
+	ld c, a
+	ld a, b
+	cpl
+	ld [hl], a
+	ld a, c
+	ret

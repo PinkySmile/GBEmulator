@@ -64,12 +64,13 @@ bool parseArguments(int argc, char **argv, Args &args)
 		{"no-display",no_argument,       nullptr, 'b'},
 		{"no-audio",  no_argument,       nullptr, 'a'},
 		{"no-bootrom",no_argument,       nullptr, 'r'},
+		{"root",      required_argument, nullptr, 'h'},
 		{"mode",      required_argument, nullptr, 'g'},
 		{nullptr,     no_argument,       nullptr, 0}
 	};
 
 	while (true) {
-		int c = getopt_long(argc, argv, "l:c:dnpmbag:r", long_options, nullptr);
+		int c = getopt_long(argc, argv, "l:c:dnpmbag:rh:", long_options, nullptr);
 
 		if (c == -1)
 			break;
@@ -77,6 +78,9 @@ bool parseArguments(int argc, char **argv, Args &args)
 		switch (c) {
 		case 'd':
 			args.debug = true;
+			break;
+		case 'h':
+			args.romRoot = optarg;
 			break;
 		case 'g':
 			if (strcmp(optarg, "auto") == 0)
@@ -218,7 +222,12 @@ int main(int argc, char **argv)
 
 		cpu.getCartridgeEmulator().loadROM(mem, stats.st_size, true);
 #else
-		cpu.getCartridgeEmulator().loadROM(args.fileName);
+		auto &cart = cpu.getCartridgeEmulator();
+
+		if (!args.fileName.empty())
+			cart.loadROM(args.fileName);
+		if (cart.read(0x147) == 0xCE && !args.romRoot.empty())
+			cart.setRootFolder(args.romRoot);
 #endif
 
 #ifdef __cpp_exceptions

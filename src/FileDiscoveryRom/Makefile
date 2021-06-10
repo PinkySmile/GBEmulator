@@ -18,13 +18,13 @@ FX = rgbgfx
 
 SRCS = \
 	src/main.asm \
-	src/mem_layout.asm \
-	src/assets.asm \
-	src/text.asm
+	src/mem_layout.asm
 
 IMGS =
 
-COMPRESSED_IMGS =
+COMPRESSED_IMGS = \
+	assets/font.png \
+	assets/file_types.png
 
 COMPRESSEDIMGSFX = $(COMPRESSED_IMGS:%.png=%.cfx)
 

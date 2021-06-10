@@ -1,1 +1,5 @@
-SECTION "Assets", ROMX[$6800], BANK[1]
+fontSprite:
+incbin "assets/font.cfx"
+fileTypeSprites:
+incbin "assets/file_types.cfx"
+assetsEnd:

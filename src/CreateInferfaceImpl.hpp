@@ -17,6 +17,7 @@ namespace GBEmulator
 {
 	struct Args
 	{
+		standard::string romRoot;
 		standard::string fileName;
 		standard::string listenPort;
 		standard::string connectIp;

@@ -49,5 +49,6 @@ CMakeCache.txt
 *.gb
 *.gbc
 *.sym
-
+*.pfi
+*.inl
 build*

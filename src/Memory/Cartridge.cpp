@@ -103,6 +103,7 @@ namespace GBEmulator::Memory
 
 	bool Cartridge::loadROM(const standard::string &rom, bool resetActual)
 	{
+		printf("Loading rom %s\n", rom.c_str());
 #ifdef __cpp_exceptions
 		try {
 #endif

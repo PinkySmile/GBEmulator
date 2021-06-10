@@ -1,1 +1,0 @@
-SECTION "Text", ROMX[$7D00], BANK[1]
