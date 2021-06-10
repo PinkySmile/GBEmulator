@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
+#include <dirent.h>
 #include "../ProcessingUnits/Instructions/Strings.hpp"
 #else
 #include <string.h>
@@ -100,7 +101,7 @@ namespace GBEmulator::Memory
 		this->_rom.setBankSize(1);
 	}
 
-	bool Cartridge::loadROM(const standard::string &rom)
+	bool Cartridge::loadROM(const standard::string &rom, bool resetActual)
 	{
 #ifdef __cpp_exceptions
 		try {
@@ -125,7 +126,7 @@ namespace GBEmulator::Memory
 			fread(mem, 1, size, stream);
 			fclose(stream);
 
-			bool result = this->loadROM(mem, size, true);
+			bool result = this->loadROM(mem, size, true, resetActual);
 
 			this->_savePath = rom.substr(0, rom.find_last_of('.')) + ".sav";
 			this->loadRAM(this->_savePath);
@@ -141,7 +142,7 @@ namespace GBEmulator::Memory
 #endif
 	}
 
-	bool Cartridge::loadROM(unsigned char *data, size_t size, bool canKeep)
+	bool Cartridge::loadROM(unsigned char *data, size_t size, bool canKeep, bool resetActual)
 	{
 		unsigned char *mem;
 
@@ -154,7 +155,16 @@ namespace GBEmulator::Memory
 		this->_rom.setMemory(mem, size);
 		this->_rom.setBank(1);
 		this->_rom.setBankSize(ROM_BANK_SIZE);
+		if (resetActual) {
+			mem = new unsigned char[size];
+			memcpy(mem, data, size);
+			this->_originalRom.setMemory(mem, size);
+			this->_originalRom.setBank(1);
+			this->_originalRom.setBankSize(ROM_BANK_SIZE);
+		}
 		this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
+		if (resetActual)
+			this->_actualType = this->_type;
 		this->_checkROM();
 
 		size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
@@ -238,10 +248,28 @@ namespace GBEmulator::Memory
 		case MBC5_RUMBLE_RAM_BATTERY:
 		case HuC1_RAM_BATTERY:
 		case HuC3:
+			if (address < 0x8000)
+				return this->_rom.read(address - 0x4000);
 			if (address >= 0xA000 && this->_ram.getSize())
 				return this->_ram.read(address - 0xA000);
-			else if (address < 0x8000)
+			return 0xFF;
+		case FILE_SYSTEM_CUSTOM_ROM:
+			if (address < 0x8000)
 				return this->_rom.read(address - 0x4000);
+			if (address == 0xA000)
+				return this->_currentEntryLow;
+			if (address == 0xA001)
+				return this->_currentEntryHigh;
+			if (address == 0xA002)
+				return this->_entries.size() & 0xFF;
+			if (address == 0xA003)
+				return this->_entries.size() >> 8;
+			if (this->_currentEntry >= this->_entries.size())
+				return 0xFF;
+			if (address == 0xA004)
+				return this->_entries[this->_currentEntry].first;
+			if (address <= this->_entries[this->_currentEntry].second.size() + 0xA005)
+				return this->_entries[this->_currentEntry].second[address - 0xA005];
 			return 0xFF;
 		}
 	}
@@ -304,12 +332,59 @@ namespace GBEmulator::Memory
 		case HuC1_RAM_BATTERY:
 		case HuC3:
 			return this->_handleHuCWrite(address, value);
+
+		case FILE_SYSTEM_CUSTOM_ROM:
+			return this->_handleFSCustomWrite(address, value);
 		}
 	}
 
 	void Cartridge::_handleHuCWrite(uint16_t address, uint8_t value)
 	{
 		return this->_handleMBC1Write(address, value);
+	}
+
+	void Cartridge::_handleFSCustomWrite(uint16_t address, uint8_t value)
+	{
+		if (address == 0xA000) {
+			this->_currentEntryLow = value;
+			return;
+		}
+
+		if (address == 0xA001) {
+			this->_currentEntryHigh = value;
+			return;
+		}
+
+		if (address < 0xB000 || this->_currentEntry >= this->_entries.size())
+			return;
+
+		auto &entry = this->_entries[this->_currentEntry];
+
+		if (entry.first != TYPE_SYMLINK) {
+			this->loadROM(this->_rootFolder + this->_currentSelectedFolder, false);
+			return;
+		}
+
+		if (entry.first == TYPE_DIRECTORY) {
+			if (entry.second == ".")
+				return;
+			if (entry.second == "..") {
+				if (this->_currentSelectedFolder == "/")
+					return;
+
+				auto pos = this->_currentSelectedFolder.find_last_of('/');
+
+				if (pos == 0)
+					this->_currentSelectedFolder = "/";
+				else
+					this->_currentSelectedFolder = this->_currentSelectedFolder.substr(0, pos - 1);
+				this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder);
+				return;
+			}
+
+			if (this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second))
+				this->_currentSelectedFolder += "/" + entry.second;
+		}
 	}
 
 	void Cartridge::_handleMBC1Write(uint16_t address, uint8_t value)
@@ -416,5 +491,66 @@ namespace GBEmulator::Memory
 	bool Cartridge::isGameBoyOnly() const
 	{
 		return !(this->read(0x0143) & 0x80U);
+	}
+
+	bool Cartridge::goToMenu()
+	{
+		if (this->_actualType != FILE_SYSTEM_CUSTOM_ROM)
+			return false;
+		return this->loadROM(this->_originalRom.getBuffer(), this->_originalRom.getSize(), false, false);
+	}
+
+	bool Cartridge::setRootFolder(const std::string &root)
+	{
+		if (!this->_getFolderContent(root))
+#ifdef __cpp_exceptions
+			throw InvalidRomException(strerror(errno));
+#else
+			return false;
+#endif
+		this->_rootFolder = root;
+		this->_currentSelectedFolder = "/";
+		return true;
+	}
+
+	bool Cartridge::_getFolderContent(const std::string &path)
+	{
+		DIR *stream = opendir(path.c_str());
+
+		if (!stream)
+			return false;
+		this->_entries.clear();
+		for (struct dirent *dir = readdir(stream); dir && this->_entries.size() < 65535; dir = readdir(stream))
+			this->_entries.emplace_back(Cartridge::_getOSType(dir->d_type), dir->d_name);
+		closedir(stream);
+		std::sort(this->_entries.begin(), this->_entries.end());
+		return true;
+	}
+
+	Cartridge::Cartridge()
+	{
+		this->_getFolderContent("/");
+	}
+
+	Cartridge::OSType Cartridge::_getOSType(uint8_t type)
+	{
+		switch (type) {
+		case DT_DIR:
+			return Cartridge::TYPE_DIRECTORY;
+		case DT_REG:
+			return Cartridge::TYPE_FILE;
+		case DT_FIFO:
+			return Cartridge::TYPE_FIFO;
+		case DT_CHR:
+			return Cartridge::TYPE_CHARACTER_DEV;
+		case DT_LNK:
+			return Cartridge::TYPE_SYMLINK;
+		case DT_BLK:
+			return Cartridge::TYPE_BLOCK_DEV;
+		case DT_SOCK:
+			return Cartridge::TYPE_SOCKET;
+		default:
+			return Cartridge::TYPE_UNKNOWN;
+		}
 	}
 }

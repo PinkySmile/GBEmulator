@@ -1,0 +1,1 @@
+SECTION "Assets", ROMX[$6800], BANK[1]

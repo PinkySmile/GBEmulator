@@ -243,6 +243,11 @@ else ()
 	endif ()
 endif()
 
+add_custom_target(
+	file_discovery
+	COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/src/FileDiscoveryRom
+	BYPRODUCTS ${CMAKE_SOURCE_DIR}/src/FileDiscoveryRom/file_discovery.inl
+)
 add_executable(
         GBEmulator
 	src/main.cpp

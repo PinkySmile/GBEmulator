@@ -371,6 +371,14 @@ namespace GBEmulator
 			this->init();
 			return -1;
 		}
+		if (this->_joypad.isButtonPressed(Input::MENU) && this->_rom.goToMenu()) {
+			auto old = this->_noBootRom;
+
+			this->_noBootRom = true;
+			this->init();
+			this->_noBootRom = old;
+			return -1;
+		}
 		while (true) {
 			if (!this->_maxSpeed) {
 				this->_newTime = this->_clock.getElapsedTime().asSeconds();
@@ -801,6 +809,7 @@ namespace GBEmulator
 		this->_oldTime = 0;
 		this->_newTime = 0;
 		this->_clock.restart();
+		this->_apu.write(NR52, 0);
 	}
 
 	void CPU::_startDMA()

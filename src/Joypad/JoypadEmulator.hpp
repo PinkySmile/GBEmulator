@@ -24,6 +24,7 @@ namespace GBEmulator::Input
 		JOYPAD_START,
 		RESET,
 		ENABLE_DEBUGGING,
+		MENU,
 		NB_KEYS
 	};
 

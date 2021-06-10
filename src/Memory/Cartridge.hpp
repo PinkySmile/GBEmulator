@@ -15,6 +15,7 @@
 #include "../ArduinoStuff/FakeSTL.hpp"
 #endif
 #include "ROM.hpp"
+#include "../Joypad/JoypadEmulator.hpp"
 
 //! La taille d'une bank de ROM
 #define ROM_BANK_SIZE 0x4000
@@ -81,6 +82,7 @@ namespace GBEmulator::Memory
 			MBC5_RUMBLE             = 0x1C,
 			MBC5_RUMBLE_RAM         = 0x1D,
 			MBC5_RUMBLE_RAM_BATTERY = 0x1E,
+			FILE_SYSTEM_CUSTOM_ROM  = 0xCE,
 			POCKET_CAMERA           = 0xFC,
 			BANDAI_TAMA5            = 0xFD,
 			HuC3                    = 0xFE,
@@ -103,12 +105,25 @@ namespace GBEmulator::Memory
 			SIZE_1_5MByte = 0x54,
 		};
 
+		enum OSType {
+			TYPE_DIRECTORY,
+			TYPE_FILE,
+			TYPE_SYMLINK,
+			TYPE_BLOCK_DEV,
+			TYPE_CHARACTER_DEV,
+			TYPE_FIFO,
+			TYPE_SOCKET,
+			TYPE_UNKNOWN,
+		};
+
 		//! @brief Lie une taille de fichier à son byte de taille en ROM.
 		//! http://problemkaputt.de/pandocs.htm#thecartridgeheader
 		static const standard::map<uint32_t, ROMSize> _sizeBytes;
 
 		//! @brief Le fichier de ROM chargé.
 		ROM _rom;
+		//! @brief Le fichier de ROM chargé.
+		Memory _originalRom{0, ROM_BANK_SIZE};
 		//! @brief Le chemin de sauvegarde.
 		standard::string _savePath;
 		//! @brief Est-ce que la RAM de la cartouche est activée.
@@ -119,9 +134,24 @@ namespace GBEmulator::Memory
 		unsigned short _romBank = 1;
 		//! @brief La RAM de la cartouche.
 		Memory _ram{0, RAM_BANKING_SIZE};
-		//! @brief La type actuel de la cartouche.
+		//! @brief La type effectif de la cartouche.
 		CartridgeType _type = ROM_ONLY;
+		//! @brief La type reel de la cartouche.
+		CartridgeType _actualType = ROM_ONLY;
+		std::vector<std::pair<OSType, std::string>> _entries;
+		union {
+			struct {
+				uint8_t _currentEntryLow;
+				uint8_t _currentEntryHigh;
+			};
+			uint16_t _currentEntry;
+		};
+		std::string _rootFolder = "/";
+		std::string _currentSelectedFolder = "/";
+		bool _suspended = false;
 
+		static OSType _getOSType(uint8_t type);
+		bool _getFolderContent(const std::string &path);
 		//! @brief Vérifie si la ROM est valide.
 		//! @throw InvalidRomException
 		void _checkROM();
@@ -155,18 +185,20 @@ namespace GBEmulator::Memory
 		//! @param address Adresse d'écriture.
 		//! @param value Valeur écrite.
 		void _handleRumbleWrite(uint16_t address, uint8_t value);
+		void _handleFSCustomWrite(uint16_t address, uint8_t value);
 
 	public:
+		Cartridge();
 		//! @brief Réinitialise la ROM présente.
 		void resetROM();
 		//! @brief Charge une ROM.
 		//! @param rom Chemin d'accès vers le fichier de ROM.
-		bool loadROM(const standard::string &rom);
+		bool loadROM(const standard::string &rom, bool resetActual = true);
 		//! @brief Charge une ROM.
 		//! @param data Donnes binaires de la rom.
 		//! @param size Taille du buffer.
 		//! @param canKeep Est-ce que le buffer envoyé peut-être gardé. Le buffer sera copié sur la valeur est false.
-		bool loadROM(unsigned char *data, size_t size, bool canKeep = false);
+		bool loadROM(unsigned char *data, size_t size, bool canKeep = false, bool resetActual = true);
 		bool loadRAM(const standard::string &ram);
 		bool loadRAM(unsigned char *data, size_t size);
 		//! @brief Sauvegarde la RAM dans un fichier.
@@ -185,8 +217,9 @@ namespace GBEmulator::Memory
 		//! Récupère le numéro de la Banque de RAM en cours d'utilisation
 		//! @return Le numéro de la Banque de RAM en cours d'utilisation.
 		uint8_t getRamBank() const;
-
+		bool goToMenu();
 		bool isGameBoyOnly() const;
+		bool setRootFolder(const std::string &root);
 	};
 }
 

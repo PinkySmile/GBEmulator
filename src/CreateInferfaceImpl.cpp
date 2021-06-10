@@ -42,7 +42,8 @@ namespace GBEmulator
 				{Input::JOYPAD_RIGHT,     sf::Keyboard::Right},
 				{Input::JOYPAD_START,     sf::Keyboard::Return},
 				{Input::JOYPAD_SELECT,    sf::Keyboard::BackSpace},
-				{Input::ENABLE_DEBUGGING, sf::Keyboard::V}
+				{Input::ENABLE_DEBUGGING, sf::Keyboard::V},
+				{Input::MENU,             sf::Keyboard::M}
 			}
 		};
 #elif RASPBERRY_IMPL
@@ -56,7 +57,8 @@ namespace GBEmulator
 			{Input::JOYPAD_RIGHT,     16},
 			{Input::JOYPAD_START,     24},
 			{Input::JOYPAD_SELECT,    25},
-			{Input::ENABLE_DEBUGGING, -1}
+			{Input::ENABLE_DEBUGGING, -1},
+			{Input::MENU,             -1}
 		});
 #elif SDL_IMPL
 		return new Input::SDLKeyboardJoypadEmulator(
@@ -70,7 +72,8 @@ namespace GBEmulator
 				{Input::JOYPAD_RIGHT,     SDLK_RIGHT},
 				{Input::JOYPAD_START,     SDLK_RETURN},
 				{Input::JOYPAD_SELECT,    SDLK_BACKSPACE},
-				{Input::ENABLE_DEBUGGING, SDLK_v}
+				{Input::ENABLE_DEBUGGING, SDLK_v},
+				{Input::MENU,             SDLK_m}
 			}
 		);
 #else
