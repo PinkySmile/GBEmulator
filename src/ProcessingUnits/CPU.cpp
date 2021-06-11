@@ -367,6 +367,11 @@ namespace GBEmulator
 	{
 		int total = 0;
 
+		if (
+			this->_gbmode == MODE_AUTO &&
+			this->_rom.isGameBoyOnly() != this->_gpu.getGBMode()
+		)
+			this->_gpu.setToGBMode(this->_rom.isGameBoyOnly());
 		if (this->_joypad.isButtonPressed(Input::RESET)) {
 			this->init();
 			return -1;
@@ -775,6 +780,7 @@ namespace GBEmulator
 
 	void CPU::init()
 	{
+		this->_apu.write(NR52, 0);
 		this->_interruptRequest = 0;
 		this->_hardwareInterruptRequests = 0;
 		this->_bgpi = 0;
@@ -809,7 +815,6 @@ namespace GBEmulator
 		this->_oldTime = 0;
 		this->_newTime = 0;
 		this->_clock.restart();
-		this->_apu.write(NR52, 0);
 	}
 
 	void CPU::_startDMA()
@@ -936,6 +941,9 @@ namespace GBEmulator
 		}
 		if (!this->_isDMGMode())
 			this->_gpu.update(*this, GPU_FULL_CYCLE_DURATION * 0x90 / 153);
+		this->_apu.write(NR50, 0xFF);
+		this->_apu.write(NR51, 0xFF);
+		this->_apu.write(NR52, 0x80);
 	}
 
 	bool CPU::_isDMGMode() const

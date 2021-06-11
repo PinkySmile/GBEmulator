@@ -611,4 +611,9 @@ namespace GBEmulator
 			this->_isTransferring = false;
 		}
 	}
+
+	bool GPU::getGBMode() const
+	{
+		return this->_gbMode;
+	}
 }

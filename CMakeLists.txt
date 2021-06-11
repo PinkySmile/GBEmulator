@@ -246,6 +246,18 @@ endif()
 add_custom_target(
 	file_discovery
 	COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/src/FileDiscoveryRom re
+	BYPRODUCTS ${CMAKE_SOURCE_DIR}/src/FileDiscoveryRom/file_discovery.inl
+	SOURCES
+	src/FileDiscoveryRom/src/main.asm
+	src/FileDiscoveryRom/src/assets.asm
+	src/FileDiscoveryRom/src/constants.asm
+	src/FileDiscoveryRom/src/init.asm
+	src/FileDiscoveryRom/src/interrupts.asm
+	src/FileDiscoveryRom/src/macro.asm
+	src/FileDiscoveryRom/src/mem_layout.asm
+	src/FileDiscoveryRom/src/registers.asm
+	src/FileDiscoveryRom/src/text.asm
+	src/FileDiscoveryRom/src/utils.asm
 )
 add_executable(
         GBEmulator
@@ -259,6 +271,8 @@ add_executable(
 	src/CreateInferfaceImpl.hpp
 	src/DummyDevices.hpp
 )
+add_dependencies(GBEmulator file_discovery)
+
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
 	set(DEBUG_FLAG DEBUG)
 else()

@@ -232,6 +232,7 @@ namespace GBEmulator
 
 		static Graphics::RGBColor defaultColors[4];
 
+		bool getGBMode() const;
 		void setToGBMode(bool gb);
 
 		/*!

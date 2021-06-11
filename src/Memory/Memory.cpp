@@ -16,6 +16,8 @@
 #endif
 #include "Memory.hpp"
 
+#define max(x, y) (((x) < (y)) ? (y) : (x))
+
 namespace GBEmulator::Memory
 {
 	Memory::Memory(unsigned size, unsigned short bankSize, bool readOnly) :
@@ -109,7 +111,7 @@ namespace GBEmulator::Memory
 		if (!this->_size)
 			return;
 
-		this->_currentBank = bank % (this->_size / this->_bankSize);
+		this->_currentBank = bank % max(1, this->_size / this->_bankSize);
 		this->_bankPtr = this->_memory + this->_bankSize * this->_currentBank;
 	}
 

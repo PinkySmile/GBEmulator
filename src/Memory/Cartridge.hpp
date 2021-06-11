@@ -146,7 +146,7 @@ namespace GBEmulator::Memory
 			};
 			uint16_t _currentEntry;
 		};
-		std::string _rootFolder = "/";
+		std::string _rootFolder = ".";
 		std::string _currentSelectedFolder = "/";
 		bool _suspended = false;
 
@@ -198,7 +198,7 @@ namespace GBEmulator::Memory
 		//! @param data Donnes binaires de la rom.
 		//! @param size Taille du buffer.
 		//! @param canKeep Est-ce que le buffer envoyé peut-être gardé. Le buffer sera copié sur la valeur est false.
-		bool loadROM(unsigned char *data, size_t size, bool canKeep = false, bool resetActual = true);
+		bool loadROM(const unsigned char *data, size_t size, bool canKeep = false, bool resetActual = true);
 		bool loadRAM(const standard::string &ram);
 		bool loadRAM(unsigned char *data, size_t size);
 		//! @brief Sauvegarde la RAM dans un fichier.

@@ -4,6 +4,7 @@
 #include <cstring>
 #include "ProcessingUnits/CPU.hpp"
 #include "CreateInferfaceImpl.hpp"
+#include "FileDiscoveryRom/file_discovery.inl"
 
 #ifdef ARDUINO
 #include <sys/stat.h>
@@ -128,18 +129,20 @@ bool parseArguments(int argc, char **argv, Args &args)
 		#endif
 		}
 	}
-	if (optind != argc - 1)
+	if (optind < argc - 1)
 	#ifdef __cpp_exceptions
 		throw standard::invalid_argument("Too many or no ROM given");
 	#else
 		return false;
 	#endif
-	args.fileName = argv[optind];
+	if (optind == argc - 1)
+		args.fileName = argv[optind];
 #else
 	//TODO: Redo a proper getopt implem for MSVC
-	if (argc != 2)
+	if (argc > 2)
 		throw standard::invalid_argument("Too many or no ROM given");
-	args.fileName = argv[1];
+	if (argc == 2)
+		args.fileName = argv[1];
 #endif
 	return true;
 }
@@ -156,11 +159,6 @@ void printUsage(char *program)
 int main(int argc, char **argv)
 {
 	Args args;
-
-	if (argc == 1) {
-		printUsage(argv[0]);
-		return EXIT_SUCCESS;
-	}
 
 #ifdef __cpp_exceptions
 	try {
@@ -226,6 +224,13 @@ int main(int argc, char **argv)
 
 		if (!args.fileName.empty())
 			cart.loadROM(args.fileName);
+		else {
+			auto mem = new unsigned char[0x8000];
+
+			memset(mem, 0, 0x8000);
+			memcpy(mem, romData, sizeof(romData));
+			cart.loadROM(mem, 0x8000, true);
+		}
 		if (cart.read(0x147) == 0xCE && !args.romRoot.empty())
 			cart.setRootFolder(args.romRoot);
 #endif

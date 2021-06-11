@@ -143,25 +143,25 @@ namespace GBEmulator::Memory
 #endif
 	}
 
-	bool Cartridge::loadROM(unsigned char *data, size_t size, bool canKeep, bool resetActual)
+	bool Cartridge::loadROM(const unsigned char *data, size_t size, bool canKeep, bool resetActual)
 	{
 		unsigned char *mem;
 
 		if (canKeep)
-			mem = data;
+			mem = const_cast<unsigned char *>(data);
 		else {
 			mem = new unsigned char[size];
 			memcpy(mem, data, size);
 		}
 		this->_rom.setMemory(mem, size);
-		this->_rom.setBank(1);
 		this->_rom.setBankSize(ROM_BANK_SIZE);
+		this->_rom.setBank(1);
 		if (resetActual) {
 			mem = new unsigned char[size];
 			memcpy(mem, data, size);
 			this->_originalRom.setMemory(mem, size);
-			this->_originalRom.setBank(1);
 			this->_originalRom.setBankSize(ROM_BANK_SIZE);
+			this->_originalRom.setBank(1);
 		}
 		this->_type = static_cast<CartridgeType>(this->_rom.rawRead(0x147));
 		if (resetActual)
@@ -171,6 +171,7 @@ namespace GBEmulator::Memory
 		size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
 		mem = new unsigned char[size];
 		this->_ram.setMemory(mem, size);
+		this->_ram.setBankSize(RAM_BANKING_SIZE);
 		if (size > RAM_BANKING_SIZE)
 			this->_ram.setBank(0);
 		else
@@ -201,6 +202,9 @@ namespace GBEmulator::Memory
 
 	bool Cartridge::saveRAM(const char *path)
 	{
+		if (this->_ram.getSize() == 0)
+			return true;
+
 		FILE *stream = fopen(path ? path : this->_savePath.c_str(), "wb");
 
 		if (!stream)
@@ -359,13 +363,9 @@ namespace GBEmulator::Memory
 		if (address < 0xB000 || this->_currentEntry >= this->_entries.size())
 			return;
 
-		auto &entry = this->_entries[this->_currentEntry];
+		auto entry = this->_entries[this->_currentEntry];
 
-		if (entry.first != TYPE_SYMLINK) {
-			this->loadROM(this->_rootFolder + this->_currentSelectedFolder, false);
-			return;
-		}
-
+		printf("Selected entry %s\n", entry.second.c_str());
 		if (entry.first == TYPE_DIRECTORY) {
 			if (entry.second == ".")
 				return;
@@ -383,8 +383,15 @@ namespace GBEmulator::Memory
 				return;
 			}
 
-			if (this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second))
+			if (this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second)) {
 				this->_currentSelectedFolder += "/" + entry.second;
+				printf("New current folder is %s\n", this->_currentSelectedFolder.c_str());
+			}
+			return;
+		}
+		if (entry.first != TYPE_SYMLINK) {
+			this->loadROM(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second, false);
+			return;
 		}
 	}
 
@@ -498,6 +505,7 @@ namespace GBEmulator::Memory
 	{
 		if (this->_actualType != FILE_SYSTEM_CUSTOM_ROM)
 			return false;
+		this->saveRAM();
 		return this->loadROM(this->_originalRom.getBuffer(), this->_originalRom.getSize(), false, false);
 	}
 
@@ -518,6 +526,7 @@ namespace GBEmulator::Memory
 	{
 		DIR *stream = opendir(path.c_str());
 
+		printf("Fetching content of %s\n", path.c_str());
 		if (!stream)
 			return false;
 		this->_entries.clear();
@@ -530,7 +539,7 @@ namespace GBEmulator::Memory
 
 	Cartridge::Cartridge()
 	{
-		this->_getFolderContent("/");
+		this->_getFolderContent(".");
 	}
 
 	Cartridge::OSType Cartridge::_getOSType(uint8_t type)

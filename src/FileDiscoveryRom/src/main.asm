@@ -146,6 +146,9 @@ drawEntry::
 	push hl
 	call getFileType
 	pop hl
+	push af
+	call waitVBLANK
+	pop af
 	ld [hli], a
 	ld bc, 31
 	ld d, h
@@ -157,6 +160,17 @@ drawEntry::
 copyFolderFirstTime::
 	call waitVBLANK
 	reset LCD_CONTROL
+
+	reg VRAMBankSelect, 1
+	xor a
+	ld de, $9800
+	ld bc, $300
+	call fillMemory
+	ld [VRAMBankSelect], a
+	ld de, $9800
+	ld bc, $300
+	call fillMemory
+
 	ld c, 18
 	ld a, [numberOfEntries + 1]
 	or a
@@ -177,14 +191,16 @@ copyFolderFirstTime::
 	ld [hld], a
 	xor a
 	ld [hld], a
-	ld a, c
-	ld [hld], a
-	xor a
-	ld [hld], a
-	ld [hld], a
 	ld [hld], a
 	ld [currentlySelectedEntry + 1], a
 	ld [VRAMBankSelect], a
+	ld [bgScrollY], a
+	ld a, c
+	ld [hld], a
+	or $FF
+	ld [hld], a
+	ld [hld], a
+	xor a
 	ld hl, $9800
 .copyLoop:
 	ld [currentlySelectedEntry], a
@@ -202,9 +218,6 @@ copyFolderFirstTime::
 	jr nz, .copyLoop
 	reset currentlySelectedEntry
 	reg LCD_CONTROL, LCD_BASE_CONTROL
-	ret
-
-validate::
 	ret
 
 moveDown::
@@ -250,10 +263,45 @@ moveDown::
 	ld hl, currentlySelectedEntry
 	ld a, [hl]
 	add 1
+	ld c, a
 	ld [hli], a
 	ld a, [hl]
 	adc 0
+	ld b, a
 	ld [hli], a
+
+	; if (*SELECT_ITEM_BOTTOM != bc) return;
+	ld hl, SELECT_ITEM_BOTTOM
+	ld a, [hli]
+	cp c
+	ret nz
+	ld a, [hl]
+	cp b
+	ret nz
+
+	inc bc
+	ld a, b
+	ld [hld], a
+	ld [hl], c
+
+	ld hl, SELECT_ITEM_TOP
+	ld a, [hl]
+	add 1
+	ld c, a
+	ld [hli], a
+	ld a, [hl]
+	adc 0
+	ld b, a
+	ld [hli], a
+
+	ld h, d
+	ld l, e
+	call drawEntry
+
+	ld hl, bgScrollY
+	ld a, [hl]
+	add 8
+	ld [hl], a
       	ret
 
 moveUp::
@@ -299,10 +347,45 @@ moveUp::
 	ld hl, currentlySelectedEntry
 	ld a, [hl]
 	sub 1
+	ld c, a
 	ld [hli], a
 	ld a, [hl]
 	sbc 0
+	ld b, a
 	ld [hli], a
+
+	; if (*SELECT_ITEM_TOP != bc) return;
+	ld hl, SELECT_ITEM_TOP
+	ld a, [hli]
+	cp c
+	ret nz
+	ld a, [hl]
+	cp b
+	ret nz
+
+	dec bc
+	ld a, b
+	ld [hld], a
+	ld [hl], c
+
+	ld hl, SELECT_ITEM_BOTTOM
+	ld a, [hl]
+	sub 1
+	ld c, a
+	ld [hli], a
+	ld a, [hl]
+	sbc 0
+	ld b, a
+	ld [hli], a
+
+	ld h, d
+	ld l, e
+	call drawEntry
+
+	ld hl, bgScrollY
+	ld a, [hl]
+	sub 8
+	ld [hl], a
       	ret
 
 ; Main function
@@ -315,7 +398,7 @@ main::
 	call getKeysFiltered
 	bit A_BIT, a
 	push af
-	call z, validate
+	call z, EntryPoint
 	pop af
 	push af
 	bit UP_BIT, a
