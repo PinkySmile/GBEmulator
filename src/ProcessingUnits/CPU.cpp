@@ -460,6 +460,7 @@ namespace GBEmulator
 			return false;
 
 		this->_halted = false;
+		//this->_executeNextInstruction();
 
 		if (!this->_interruptMasterEnableFlag)
 			return false;

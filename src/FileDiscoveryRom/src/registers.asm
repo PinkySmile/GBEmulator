@@ -114,6 +114,7 @@ interruptEnable= $FFFF
 
 ;From FS cartridge
 currentlySelectedEntry= $A000
+showOnlyRoms          = $A002
 numberOfEntries       = $A002
 selectedEntryType     = $A004
 selectedEntryName     = $A005

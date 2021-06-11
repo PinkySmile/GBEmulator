@@ -360,6 +360,12 @@ namespace GBEmulator::Memory
 			return;
 		}
 
+		if (address == 0xA002) {
+			this->_onlyRoms = (value & 1) == 1;
+			this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder, this->_currentSelectedFolder != "/");
+			return;
+		}
+
 		if (address < 0xB000 || this->_currentEntry >= this->_entries.size())
 			return;
 
@@ -367,23 +373,19 @@ namespace GBEmulator::Memory
 
 		printf("Selected entry %s\n", entry.second.c_str());
 		if (entry.first == TYPE_DIRECTORY) {
-			if (entry.second == ".")
-				return;
 			if (entry.second == "..") {
-				if (this->_currentSelectedFolder == "/")
-					return;
-
 				auto pos = this->_currentSelectedFolder.find_last_of('/');
 
 				if (pos == 0)
 					this->_currentSelectedFolder = "/";
 				else
-					this->_currentSelectedFolder = this->_currentSelectedFolder.substr(0, pos - 1);
-				this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder);
+					this->_currentSelectedFolder = this->_currentSelectedFolder.substr(0, pos);
+				printf("New current folder is %s\n", this->_currentSelectedFolder.c_str());
+				this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder, this->_currentSelectedFolder != "/");
 				return;
 			}
 
-			if (this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second)) {
+			if (this->_getFolderContent(this->_rootFolder + this->_currentSelectedFolder + "/" + entry.second, true)) {
 				this->_currentSelectedFolder += "/" + entry.second;
 				printf("New current folder is %s\n", this->_currentSelectedFolder.c_str());
 			}
@@ -511,7 +513,7 @@ namespace GBEmulator::Memory
 
 	bool Cartridge::setRootFolder(const std::string &root)
 	{
-		if (!this->_getFolderContent(root))
+		if (!this->_getFolderContent(root, false))
 #ifdef __cpp_exceptions
 			throw InvalidRomException(strerror(errno));
 #else
@@ -522,7 +524,7 @@ namespace GBEmulator::Memory
 		return true;
 	}
 
-	bool Cartridge::_getFolderContent(const std::string &path)
+	bool Cartridge::_getFolderContent(const std::string &path, bool keepDotDot)
 	{
 		DIR *stream = opendir(path.c_str());
 
@@ -530,8 +532,27 @@ namespace GBEmulator::Memory
 		if (!stream)
 			return false;
 		this->_entries.clear();
-		for (struct dirent *dir = readdir(stream); dir && this->_entries.size() < 65535; dir = readdir(stream))
+		for (struct dirent *dir = readdir(stream); dir && this->_entries.size() < 65535; dir = readdir(stream)) {
+			if (strcmp(dir->d_name, ".") == 0)
+				continue;
+			if (strcmp(dir->d_name, "..") == 0 && !keepDotDot)
+				continue;
+
+			auto chr = strrchr(dir->d_name, '.');
+
+			if (
+				this->_onlyRoms &&
+				dir->d_type != DT_DIR &&
+				(chr == nullptr || (
+					strcmp(chr, ".gb") != 0 &&
+					strcmp(chr, ".gbc") != 0 &&
+					strcmp(chr, ".GB") != 0 &&
+					strcmp(chr, ".GBC") != 0
+				))
+			)
+				continue;
 			this->_entries.emplace_back(Cartridge::_getOSType(dir->d_type), dir->d_name);
+		}
 		closedir(stream);
 		std::sort(this->_entries.begin(), this->_entries.end());
 		return true;
@@ -539,7 +560,7 @@ namespace GBEmulator::Memory
 
 	Cartridge::Cartridge()
 	{
-		this->_getFolderContent(".");
+		this->_getFolderContent(".", false);
 	}
 
 	Cartridge::OSType Cartridge::_getOSType(uint8_t type)

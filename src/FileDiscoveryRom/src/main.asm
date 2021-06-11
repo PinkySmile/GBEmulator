@@ -156,6 +156,12 @@ drawEntry::
 	ld hl, selectedEntryName
 	jp strncpy
 
+swapOnlyRom::
+	ld hl, ONLY_ROM_BIT
+	ld a, 1
+	xor [hl]
+	ld [hl], a
+	ld [showOnlyRoms], a
 
 copyFolderFirstTime::
 	call waitVBLANK
@@ -388,6 +394,35 @@ moveUp::
 	ld [hl], a
       	ret
 
+tryGoBack::
+	ld hl, currentlySelectedEntry
+	ld a, [hli]
+	ld b, [hl]
+	ld c, a
+	xor a
+	ld [hld], a
+	ld [hl], a
+	ld de, selectedEntryName
+	ld a, [de]
+	cp "."
+	jr nz, .noGood
+
+	inc e
+	ld a, [de]
+	cp "."
+	jr nz, .noGood
+
+	inc e
+	ld a, [de]
+	or a
+	jp z, EntryPoint
+
+.noGood::
+	ld a, c
+	ld [hli], a
+	ld [hl], b
+	ret
+
 ; Main function
 main::
 	call init               ; Init
@@ -395,18 +430,79 @@ main::
 	call copyFolderFirstTime
 .loop:
 	halt
-	call getKeysFiltered
-	bit A_BIT, a
-	push af
-	call z, EntryPoint
-	pop af
+	call getKeys
+
+upKeyHandler::
 	push af
 	bit UP_BIT, a
-	call z, moveUp
+	jr nz, .nope
+	ld de, .end
+	push de
+	ld hl, PRESS_UP_CTR
+	ld a, [hl]
+	inc [hl]
+	or a
+	jp z, moveUp
+	bit 7, a
+	jr nz, .allGood
+	bit 6, a
+	jr nz, .allGood
+	bit 5, a
+	ret z
+.allGood:
+	set 7, [hl]
+	and 3
+	jp z, moveUp
+	ret
+.nope:
+	xor a
+	ld [PRESS_UP_CTR], a
+.end:
 	pop af
+
+downKeyHandler::
+	push af
 	bit DOWN_BIT, a
-	call z, moveDown
-	jr .loop
+	jr nz, .nope
+	ld de, .end
+	push de
+	ld hl, PRESS_DOWN_CTR
+	ld a, [hl]
+	inc [hl]
+	or a
+	jp z, moveDown
+	bit 7, a
+	jr nz, .allGood
+	bit 6, a
+	jr nz, .allGood
+	bit 5, a
+	ret z
+.allGood:
+	set 7, [hl]
+	and 3
+	jp z, moveDown
+	ret
+.nope:
+	xor a
+	ld [PRESS_DOWN_CTR], a
+.end:
+	pop af
+
+
+	call getKeysFiltered
+	push af
+	bit A_BIT, a
+	call z, EntryPoint
+	pop af
+
+	push af
+	bit B_BIT, a
+	call z, tryGoBack
+	pop af
+
+	bit SELECT_BIT, a
+	call z, swapOnlyRom
+	jr main.loop
 
 include "src/init.asm"
 include "src/utils.asm"

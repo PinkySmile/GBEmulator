@@ -149,9 +149,10 @@ namespace GBEmulator::Memory
 		std::string _rootFolder = ".";
 		std::string _currentSelectedFolder = "/";
 		bool _suspended = false;
+		bool _onlyRoms = false;
 
 		static OSType _getOSType(uint8_t type);
-		bool _getFolderContent(const std::string &path);
+		bool _getFolderContent(const std::string &path, bool keepDotDot);
 		//! @brief Vérifie si la ROM est valide.
 		//! @throw InvalidRomException
 		void _checkROM();
