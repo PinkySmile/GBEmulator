@@ -117,7 +117,7 @@ def executeTestSuite(directory):
 
 def testEmulator(path):
 	expected = "Usage: " + path + " rom.gb [-dnrmba] [-l <port>] [-c <ip:port>] [-g auto|dmg|gbc]"
-	f = os.popen(path, "r")
+	f = os.popen(path + " --help", "r")
 	if f.read(len(expected)) != expected:
 		print(path + ": GBEmulator didn't return the proper help message")
 		exit(1)

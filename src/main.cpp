@@ -50,6 +50,15 @@ standard::string getLastExceptionName()
 #endif
 }
 
+void printUsage(char *program)
+{
+	std::cout << "Usage: " << program << " rom.gb [-";
+#if DEBUGGER
+	std::cout << "d";
+#endif
+	std::cout << "nrmba] [-l <port>] [-c <ip:port>] [-g auto|dmg|gbc]" << std::endl;
+}
+
 bool parseArguments(int argc, char **argv, Args &args)
 {
 #ifdef __GNUG__
@@ -67,6 +76,7 @@ bool parseArguments(int argc, char **argv, Args &args)
 		{"no-bootrom",no_argument,       nullptr, 'r'},
 		{"root",      required_argument, nullptr, 'h'},
 		{"mode",      required_argument, nullptr, 'g'},
+		{"help",      no_argument,       nullptr, 1},
 		{nullptr,     no_argument,       nullptr, 0}
 	};
 
@@ -77,6 +87,9 @@ bool parseArguments(int argc, char **argv, Args &args)
 			break;
 
 		switch (c) {
+		case 1:
+			printUsage(argv[0]);
+			exit(EXIT_SUCCESS);
 		case 'd':
 			args.debug = true;
 			break;
@@ -145,15 +158,6 @@ bool parseArguments(int argc, char **argv, Args &args)
 		args.fileName = argv[1];
 #endif
 	return true;
-}
-
-void printUsage(char *program)
-{
-	std::cout << "Usage: " << program << " rom.gb [-";
-#if DEBUGGER
-	std::cout << "d";
-#endif
-	std::cout << "nrmba] [-l <port>] [-c <ip:port>] [-g auto|dmg|gbc]" << std::endl;
 }
 
 int main(int argc, char **argv)
