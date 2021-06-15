@@ -217,7 +217,8 @@ namespace GBEmulator
 
 	void CPU::halt()
 	{
-		this->_halted = true;
+		this->_haltBug = !this->_interruptMasterEnableFlag && (this->_interruptRequest & this->_interruptEnabled);
+		this->_halted = !this->_haltBug;
 	}
 
 	void CPU::stop()
@@ -693,7 +694,7 @@ namespace GBEmulator
 			break;
 
 		case INTERRUPT_REQUESTS:
-			this->_interruptRequest = value;
+			this->_interruptRequest = value & 0b11111U;
 			break;
 
 		case DIVIDER_REGISTER:
@@ -742,9 +743,12 @@ namespace GBEmulator
 
 	int CPU::_executeNextInstruction()
 	{
-		uint8_t opcode = this->read(this->_registers.pc++);
+		uint8_t opcode = this->read(this->_registers.pc);
 		unsigned cycles;
 
+		if (!this->_haltBug)
+			this->_registers.pc++;
+		this->_haltBug = false;
 #ifndef ARDUINO
 		if (!this->_profiling)
 			cycles = Instructions::executeInstruction(opcode, *this, this->_registers);
@@ -779,6 +783,7 @@ namespace GBEmulator
 
 	void CPU::init()
 	{
+		this->_haltBug = false;
 		this->_apu.write(NR52, 0);
 		this->_interruptRequest = 0;
 		this->_bgpi = 0;

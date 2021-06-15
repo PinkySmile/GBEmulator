@@ -296,7 +296,6 @@ namespace GBEmulator
 		unsigned short getDecPc() noexcept;
 
 		void setSpeed(float);
-
 		void init();
 
 #ifndef ARDUINO
@@ -324,6 +323,7 @@ namespace GBEmulator
 		bool _directionEnabled;
 		//! Est-ce que le CPU est en mode 'halted'
 		bool _halted;
+		bool _haltBug = false;
 		bool _maxSpeed = false;
 		bool _noBootRom = false;
 		double _oldTime;
