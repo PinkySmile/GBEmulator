@@ -430,6 +430,7 @@ main::
 	call copyFolderFirstTime
 .loop:
 	halt
+	reset interruptFlag
 	call getKeys
 
 upKeyHandler::

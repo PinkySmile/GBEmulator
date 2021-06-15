@@ -431,11 +431,10 @@ namespace GBEmulator
 		unsigned gpuInts = this->_gpu.update(*this, cycles);
 
 		this->_oldTime += cycles * 1. / GB_CPU_FREQUENCY / this->_speed;
-		this->_hardwareInterruptRequests = 0;
-		this->_hardwareInterruptRequests |= gpuInts;
+		this->_interruptRequest |= gpuInts;
 
 		if (this->_cable.triggerInterrupt())
-			this->_hardwareInterruptRequests |= SERIAL_INTERRUPT;
+			this->_interruptRequest |= SERIAL_INTERRUPT;
 		this->_cable.update(cycles);
 
 		if (this->_timer.update(cycles))
@@ -446,7 +445,7 @@ namespace GBEmulator
 
 	bool CPU::_checkInterrupts()
 	{
-		uint8_t mask = this->_interruptRequest | this->_hardwareInterruptRequests;
+		uint8_t mask = this->_interruptRequest;
 
 		for (unsigned i = 0; i < NB_INTERRUPT_BITS; i++)
 			if ((mask & (1U << i)) && this->_executeInterrupt(i))
@@ -460,7 +459,6 @@ namespace GBEmulator
 			return false;
 
 		this->_halted = false;
-		//this->_executeNextInstruction();
 
 		if (!this->_interruptMasterEnableFlag)
 			return false;
@@ -563,7 +561,7 @@ namespace GBEmulator
 			return this->_generateJoypadByte();
 
 		case INTERRUPT_REQUESTS:
-			return this->_interruptRequest | this->_hardwareInterruptRequests | 0b11100000U;
+			return this->_interruptRequest | 0b11100000U;
 
 		case DIVIDER_REGISTER:
 			return this->_divRegister >> 8U;
@@ -783,7 +781,6 @@ namespace GBEmulator
 	{
 		this->_apu.write(NR52, 0);
 		this->_interruptRequest = 0;
-		this->_hardwareInterruptRequests = 0;
 		this->_bgpi = 0;
 		this->_autoIncrementBgpi = false;
 		this->_obpi = 0;

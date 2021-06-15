@@ -359,11 +359,9 @@ namespace GBEmulator
 		//! Entrée utilisateur
 		Input::JoypadEmulator &_joypad;
 		//! True si l'interrupt est activé
-		uint8_t _interruptEnabled;
+		uint8_t _interruptEnabled = 0;
 		//! True si l'interrupt est demandé
 		uint8_t _interruptRequest = 0;
-		//! True si l'interrupt est demandé
-		uint8_t _hardwareInterruptRequests = 0;
 		//! True si les interrupts sont activés
 		bool _interruptMasterEnableFlag;
 		//! Interface du Cable Link
