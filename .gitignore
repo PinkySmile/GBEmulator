@@ -40,7 +40,7 @@ vgcore*
 cmake-build-*
 
 # Others
-Pokemon_Yellow_Version.gb
+src/FileDiscoveryRom/tools/compressor
 cmake_install.cmake
 CMakeFiles/
 CMakeCache.txt

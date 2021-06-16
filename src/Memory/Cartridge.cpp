@@ -20,6 +20,8 @@
 #include "Cartridge.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
+#include <windows.h>
+
 namespace GBEmulator::Memory
 {
 	const standard::map<uint32_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
@@ -31,6 +33,7 @@ namespace GBEmulator::Memory
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x100000L, SIZE_1MByte  },
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x200000L, SIZE_2MByte  },
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x400000L, SIZE_4MByte  },
+		standard::pair<uint32_t, Cartridge::ROMSize>{0x800000L, SIZE_8MByte  },
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x120000L, SIZE_1_1MByte},
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x140000L, SIZE_1_2MByte},
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x180000L, SIZE_1_5MByte},
@@ -67,13 +70,13 @@ namespace GBEmulator::Memory
 		return stats.st_size;
 #endif
 #else
-		size_t best = 0x400000;
+		size_t best = 0x800000;
 		struct stat stats;
 
 		if (stat(path.c_str(), &stats) == -1)
 			throw InvalidRomException("Cannot stat file " + path + ": " + strerror(errno));
 
-		if (stats.st_size > 0x400000) {
+		if (stats.st_size > 0x800000) {
 			standard::string sizeRepresentation;
 #ifdef __serenity__
 			char buffer[64];
@@ -83,7 +86,7 @@ namespace GBEmulator::Memory
 #else
 			sizeRepresentation = standard::to_string(stats.st_size / 1048576.);
 #endif
-			throw InvalidRomSizeException("The ROM is too large (Max 4MB but rom size is " + sizeRepresentation + "MB)");
+			throw InvalidRomSizeException("The ROM is too large (Max 8MB but rom size is " + sizeRepresentation + "MB)");
 		}
 
 		for (auto &size : Cartridge::_sizeBytes) {
@@ -538,11 +541,13 @@ namespace GBEmulator::Memory
 			if (strcmp(dir->d_name, "..") == 0 && !keepDotDot)
 				continue;
 
+			struct stat s;
 			auto chr = strrchr(dir->d_name, '.');
 
+			stat((path + "/" + dir->d_name).c_str(), &s);
 			if (
 				this->_onlyRoms &&
-				dir->d_type != DT_DIR &&
+				S_ISDIR(s.st_mode) &&
 				(chr == nullptr || (
 					strcmp(chr, ".gb") != 0 &&
 					strcmp(chr, ".gbc") != 0 &&
@@ -551,7 +556,7 @@ namespace GBEmulator::Memory
 				))
 			)
 				continue;
-			this->_entries.emplace_back(Cartridge::_getOSType(dir->d_type), dir->d_name);
+			this->_entries.emplace_back(Cartridge::_getOSType(s.st_mode), dir->d_name);
 		}
 		closedir(stream);
 		std::sort(this->_entries.begin(), this->_entries.end());
@@ -563,23 +568,29 @@ namespace GBEmulator::Memory
 		this->_getFolderContent(".", false);
 	}
 
-	Cartridge::OSType Cartridge::_getOSType(uint8_t type)
+	Cartridge::OSType Cartridge::_getOSType(uint16_t type)
 	{
-		switch (type) {
-		case DT_DIR:
+		switch (type & S_IFMT) {
+		case S_IFDIR:
 			return Cartridge::TYPE_DIRECTORY;
-		case DT_REG:
+		case S_IFREG:
 			return Cartridge::TYPE_FILE;
-		case DT_FIFO:
+#ifdef S_IFFIFO
+		case S_IFFIFO:
 			return Cartridge::TYPE_FIFO;
-		case DT_CHR:
+#endif
+		case S_IFCHR:
 			return Cartridge::TYPE_CHARACTER_DEV;
-		case DT_LNK:
+#ifdef S_IFLNK
+		case S_IFLNK:
 			return Cartridge::TYPE_SYMLINK;
-		case DT_BLK:
+#endif
+		case S_IFBLK:
 			return Cartridge::TYPE_BLOCK_DEV;
-		case DT_SOCK:
+#ifdef S_IFSOCK
+		case S_IFSOCK:
 			return Cartridge::TYPE_SOCKET;
+#endif
 		default:
 			return Cartridge::TYPE_UNKNOWN;
 		}

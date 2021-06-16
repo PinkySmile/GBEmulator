@@ -100,6 +100,7 @@ namespace GBEmulator::Memory
 			SIZE_1MByte   = 0x05,
 			SIZE_2MByte   = 0x06,
 			SIZE_4MByte   = 0x07,
+			SIZE_8MByte   = 0x08,
 			SIZE_1_1MByte = 0x52,
 			SIZE_1_2MByte = 0x53,
 			SIZE_1_5MByte = 0x54,
@@ -151,7 +152,7 @@ namespace GBEmulator::Memory
 		bool _suspended = false;
 		bool _onlyRoms = false;
 
-		static OSType _getOSType(uint8_t type);
+		static OSType _getOSType(uint16_t type);
 		bool _getFolderContent(const std::string &path, bool keepDotDot);
 		//! @brief Vérifie si la ROM est valide.
 		//! @throw InvalidRomException

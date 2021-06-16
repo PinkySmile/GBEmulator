@@ -6,7 +6,7 @@ LD = rgblink
 
 FIX = rgbfix
 
-FIXFLAGS = -jsvc -k 01 -l 0x33 -m 0xCE -p 0 -t "`echo "$(NAME)" | tr a-z A-Z | tr "_" " "`"
+FIXFLAGS = -jsvc -k 01 -l 0x33 -m 0xCE -p 0 -t FILE_DISCOVERY
 
 ASMFLAGS =
 
@@ -54,7 +54,7 @@ runw:	re
 	$(ASM) -o $@ $(ASMFLAGS) $<
 
 $(NAME).inl: $(NAME).gbc
-	./inliner.py $(NAME).gbc $@
+	python ./inliner.py $(NAME).gbc $@
 
 $(NAME).gbc:	$(COMPRESSEDIMGSFX) $(IMGSFX) $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS)
