@@ -20,8 +20,6 @@
 #include "Cartridge.hpp"
 #include "../ProcessingUnits/Instructions/CPUInstructions.hpp"
 
-#include <windows.h>
-
 namespace GBEmulator::Memory
 {
 	const standard::map<uint32_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
