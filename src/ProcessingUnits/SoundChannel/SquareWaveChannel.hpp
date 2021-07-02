@@ -103,6 +103,7 @@ namespace GBEmulator
 
 		uint16_t _sweepFrequencyShadow = 0;
 
+		bool _skipLength = false;
 		double _lengthCounter = 0;
 		double _frequencyCounter = 0;
 		double _volumeEnvelopeCounter = 0;

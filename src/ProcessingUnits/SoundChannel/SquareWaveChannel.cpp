@@ -14,7 +14,6 @@ namespace GBEmulator
 		double volumeCount = this->_effectiveVolumeEnvelopeRegister.numberOfSweeps * Timing::getCyclesPerSecondsFromFrequency(64);
 		double lengthCount = Timing::getCyclesPerSecondsFromFrequency(256);
 
-		this->_lengthCounter += cycles;
 		this->_frequencyCounter += cycles;
 		this->_volumeEnvelopeCounter += cycles;
 		this->_frequencySweepCounter += cycles;
@@ -57,10 +56,16 @@ namespace GBEmulator
 				this->_frequencyRegister.setFrequency(this->_sweepFrequencyShadow);
 		}
 
+		if (!this->_frequencyRegister.useLength)
+			return;
+
+		this->_lengthCounter += cycles;
 		while (this->_lengthCounter > lengthCount) {
 			this->_lengthCounter -= lengthCount;
-			if (!this->_frequencyRegister.useLength)
+			if (this->_skipLength) {
+				this->_skipLength = false;
 				continue;
+			}
 			this->_soundLenPatternDutyRegister.length++;
 			this->_expired |= !this->_soundLenPatternDutyRegister.length;
 		}
@@ -128,6 +133,7 @@ namespace GBEmulator
 			) {
 				this->_soundLenPatternDutyRegister.length++;
 				this->_expired |= !this->_soundLenPatternDutyRegister.length;
+				this->_skipLength = true;
 			}
 			break;
 		}
