@@ -545,7 +545,7 @@ namespace GBEmulator::Memory
 			stat((path + "/" + dir->d_name).c_str(), &s);
 			if (
 				this->_onlyRoms &&
-				S_ISDIR(s.st_mode) &&
+				!S_ISDIR(s.st_mode) &&
 				(chr == nullptr || (
 					strcmp(chr, ".gb") != 0 &&
 					strcmp(chr, ".gbc") != 0 &&

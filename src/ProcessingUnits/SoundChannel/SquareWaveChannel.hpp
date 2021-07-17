@@ -93,6 +93,10 @@ namespace GBEmulator
 
 		void _restart();
 		void _update(unsigned cycles) override;
+		void _clockUpdate();
+		void _clockLength();
+		void _clockVolume();
+		void _clockSweep();
 		uint16_t _getSoundData() const override;
 
 		SweepRegister               _sweepRegister = 0;
@@ -104,10 +108,11 @@ namespace GBEmulator
 		uint16_t _sweepFrequencyShadow = 0;
 
 		bool _skipLength = false;
-		double _lengthCounter = 0;
+		double _clockCounter = 0;
 		double _frequencyCounter = 0;
-		double _volumeEnvelopeCounter = 0;
-		double _frequencySweepCounter = 0;
+		char _sweepClockCount = 0;
+		char _volumeClockCount = 0;
+		char _clockStep = 0;
 
 	public:
 		void write(unsigned int relativeAddress, uint8_t value) override;
