@@ -1,0 +1,38 @@
+ScrollablePanel.ScrollablePanel1 {
+    ContentSize = (0, 0);
+    Position = (0, 20);
+    Size = (550, 440);
+
+    Renderer {
+        backgroundcolor = white;
+        bordercolor = black;
+        texturebackground = None;
+    }
+}
+
+Tabs.Tabs1 {
+    AutoSize = 0;
+    Selected = 0;
+    Size = (550, 22);
+    Tabs = [Control, VRAM, Background, Window, OAM, Palettes];
+    TextSize = 13;
+
+    Renderer {
+        backgroundcolor = #F5F5F5;
+        backgroundcolordisabled = #E6E6E6;
+        backgroundcolorhover = white;
+        bordercolor = black;
+        borders = (1, 1, 1, 1);
+        selectedbackgroundcolor = #006EFF;
+        selectedbackgroundcolorhover = #1E96FF;
+        selectedtextcolor = white;
+        textcolor = #3C3C3C;
+        textcolordisabled = #7D7D7D;
+        textcolorhover = black;
+        texturedisabledtab = None;
+        textureselectedtab = None;
+        textureselectedtabhover = None;
+        texturetab = None;
+        texturetabhover = None;
+    }
+}

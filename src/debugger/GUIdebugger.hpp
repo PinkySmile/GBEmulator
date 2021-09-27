@@ -62,6 +62,7 @@ namespace GBEmulator::Debugger
 		unsigned short _memBeg;
 		//! @brief Registres du CPU transformé en text.
 		sf::Text _registers;
+		sf::Text _text;
 		standard::thread _cpuThread;
 		unsigned _timer = 0;
 
@@ -121,6 +122,7 @@ namespace GBEmulator::Debugger
 		 * @param transparent Est-ce que la première couleur est transparente ?
 		 */
 		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
+		void _displayPalette(sf::RenderWindow &_debugWindow, float x, float y, unsigned short *bytes, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent);
 		/*!
 		 * Affiche la VRAM en utilisant la palette.
 		 * @param _debugWindow

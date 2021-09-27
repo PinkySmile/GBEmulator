@@ -26,6 +26,13 @@ namespace GBEmulator::Graphics
 		g(((gbc_color >> 5U)  & 0x1FU) * 255 / 31),
 		b(((gbc_color >> 10U) & 0x1FU) * 255 / 31)
 	{
+		int result = (this->g * 3 + b) / 4;
+		if (result < 0)
+			this->g = 0;
+		else if (result > 255)
+			this->g = 255;
+		else
+			this->g = result;
 	}
 
 	RGBColor::RGBColor(uint32_t rgba_color) noexcept :

@@ -5,6 +5,7 @@
 ** SfmlKeyboardJoypadEmulator.cpp
 */
 
+#include <SFML/Window/Joystick.hpp>
 #include "SfmlKeyboardJoypadEmulator.hpp"
 
 namespace GBEmulator::Input
@@ -19,6 +20,17 @@ namespace GBEmulator::Input
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				for (auto &data : this->_keys)
 					this->_state[data.first] = this->_window.hasFocus() && sf::Keyboard::isKeyPressed(data.second);
+				//this->_state[JOYPAD_RIGHT] = sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 50;
+				//this->_state[JOYPAD_LEFT] = sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -50;
+				//this->_state[JOYPAD_UP] = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) < -50;
+				//this->_state[JOYPAD_DOWN] = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) > 50;
+				//this->_state[JOYPAD_A] = sf::Joystick::isButtonPressed(0, 1);
+				//this->_state[JOYPAD_B] = sf::Joystick::isButtonPressed(0, 2);
+				//this->_state[JOYPAD_SELECT] = sf::Joystick::isButtonPressed(0, 8);
+				//this->_state[JOYPAD_START] = sf::Joystick::isButtonPressed(0, 9);
+				//this->_state[RESET] = sf::Joystick::isButtonPressed(0, 0) && sf::Joystick::isButtonPressed(0, 3);
+				//this->_state[ENABLE_DEBUGGING] = false;
+				//this->_state[MENU] = sf::Joystick::isButtonPressed(0, 9) && sf::Joystick::isButtonPressed(0, 8);
 			}
 		})
 	{

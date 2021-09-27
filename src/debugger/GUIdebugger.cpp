@@ -63,6 +63,11 @@ namespace GBEmulator::Debugger
 		this->_registers.setCharacterSize(14);
 		this->_registers.setFillColor(sf::Color::Black);
 		this->_registers.setPosition(10, 10);
+
+		this->_text.setFont(this->_font);
+		this->_text.setCharacterSize(10);
+		this->_text.setFillColor(sf::Color::Black);
+		this->_text.setPosition(10, 10);
 	}
 
 
@@ -947,6 +952,25 @@ namespace GBEmulator::Debugger
 		}
 	}
 
+	void Debugger::_displayPalette(sf::RenderWindow &_debugWindow, float x, float y, unsigned short *bytes, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent)
+	{
+		sf::RectangleShape square{sf::Vector2f{32, 16}};
+
+		for (int i = 0; i < 4; i++) {
+			square.setFillColor({
+				palette[i].r,
+				palette[i].g,
+				palette[i].b,
+				static_cast<uint8_t>(transparent && i == 0 ? 0 : 255)
+			});
+			square.setPosition(x + 32 * i, y);
+			_debugWindow.draw(square);
+			this->_text.setString(Instructions::intToHex(bytes[i], 4));
+			this->_text.setPosition(x + 32 * i + 4, y + 16);
+			_debugWindow.draw(this->_text);
+		}
+	}
+
 	void Debugger::_displayVRAMContent(sf::RenderWindow &_debugWindow, float posx, float posy, const GBEmulator::Graphics::RGBColor (&palette)[4], bool transparent)
 	{
 		auto colors = new sf::Color[16 * 24 * 8 * 8];
@@ -1112,7 +1136,7 @@ namespace GBEmulator::Debugger
 
 			for (int i = 0; i < 4; i++)
 				colorBG[i] = this->_cpu._gpu._bgpd[j * 4 + i];
-			this->_displayPalette(_debugWindow, 1500, 600 + j * 20, colorBG, false);
+			this->_displayPalette(_debugWindow, 1200, 600 + j * 30, &this->_cpu._gpu._bgpd[j * 4], colorBG, false);
 		}
 	}
 
