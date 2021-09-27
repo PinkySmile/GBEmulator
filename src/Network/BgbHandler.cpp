@@ -149,10 +149,10 @@ namespace GBEmulator::Network
 		buffer[1] = packet.b2;
 		buffer[2] = packet.b3;
 		buffer[3] = packet.b4;
-		buffer[4] = (static_cast<uint8_t>(packet.i1) >> 0LU);
-		buffer[5] = (static_cast<uint8_t>(packet.i1) >> 8LU);
-		buffer[6] = (static_cast<uint8_t>(packet.i1) >> 16LU);
-		buffer[7] = (static_cast<uint8_t>(packet.i1) >> 24LU);
+		buffer[4] = static_cast<uint8_t>(packet.i1 >> 0LU);
+		buffer[5] = static_cast<uint8_t>(packet.i1 >> 8LU);
+		buffer[6] = static_cast<uint8_t>(packet.i1 >> 16LU);
+		buffer[7] = static_cast<uint8_t>(packet.i1 >> 24LU);
 		this->_socket.send(buffer, sizeof(buffer));
 	}
 

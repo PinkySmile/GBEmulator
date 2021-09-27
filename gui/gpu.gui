@@ -12,9 +12,8 @@ ScrollablePanel.ScrollablePanel1 {
 
 Tabs.Tabs1 {
     AutoSize = 0;
-    Selected = 0;
     Size = (550, 22);
-    Tabs = [Control, VRAM, Background, Window, OAM, Palettes];
+    Tabs = [Control, VRAM, BG, Window, OAM, Palettes, Memory];
     TextSize = 13;
 
     Renderer {
