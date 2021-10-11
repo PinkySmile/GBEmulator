@@ -195,6 +195,7 @@ namespace GBEmulator
 		this->_clockCounter = 0;
 		this->_clockStep = 0;
 		this->_effectiveVolumeEnvelopeRegister = 0;
+		this->_volumeEnvelopeRegister = 0;
 		this->_sweepRegister = 0;
 		this->_soundLenPatternDutyRegister = 0;
 		this->_frequencyRegister.loFrequency = 0;
