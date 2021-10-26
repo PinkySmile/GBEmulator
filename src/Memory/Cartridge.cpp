@@ -22,6 +22,33 @@
 
 namespace GBEmulator::Memory
 {
+	std::string sanatize(std::string val)
+	{
+		for (auto i = 0ULL; i < val.size(); i++) {
+			if (val[i] == '"' || val[i] == '\\' || val[i] == '$') {
+				val.insert(val.begin() + i, '\\');
+				i++;
+			}
+		}
+		return val;
+	}
+
+	std::string exec(const char *cmd) {
+		setenv("LANG", "EN_us.UTF8", true);
+
+		std::array<char, 128> buffer;
+		std::string result;
+		std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+
+		printf("Exec %s\n", cmd);
+		if (!pipe)
+			throw std::runtime_error("popen() failed!");
+		while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+			result += buffer.data();
+		}
+		return result;
+	}
+
 	const standard::map<uint32_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x008000L, SIZE_32KByte },
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x010000L, SIZE_64KByte },
@@ -277,6 +304,30 @@ namespace GBEmulator::Memory
 			if (address <= this->_entries[this->_currentEntry].second.size() + 0xA005)
 				return this->_entries[this->_currentEntry].second[address - 0xA005];
 			return 0xFF;
+		case WIFI_CUSTOM_ROM:
+			if (address < 0x8000)
+				return this->_rom.read(address - 0x4000);
+			if (address < 0xA002)
+				return 0xFF;
+			if (address == 0xA002)
+				return !this->_buffer2.empty();
+			if (address == 0xA003) {
+				if (this->_buffer2.empty())
+					return 0xFF;
+				return this->_buffer2.front();
+			}
+			if (address <= 0xA005)
+				return ((this->_port >> (address - 0xA004) * 8)) & 0xFF;
+			if (address <= 0xA009)
+				return ((this->_addr.toInteger() >> (address - 0xA006) * 8)) & 0xFF;
+			if (address == 0xA00A) {
+				if (this->_requTime.getElapsedTime().asSeconds() >= 1) {
+					this->_connected = exec("nmcli networking connectivity").starts_with("full");
+					this->_requTime.restart();
+				}
+				return this->_connected;
+			}
+			return 0xFF;
 		}
 	}
 
@@ -341,6 +392,9 @@ namespace GBEmulator::Memory
 
 		case FILE_SYSTEM_CUSTOM_ROM:
 			return this->_handleFSCustomWrite(address, value);
+
+		case WIFI_CUSTOM_ROM:
+			return this->_handleWifiCustomWrite(address, value);
 		}
 	}
 
@@ -499,6 +553,73 @@ namespace GBEmulator::Memory
 			this->_ram.setBank(value & 0b111U);
 	}
 
+	void Cartridge::_handleWifiCustomWrite(uint16_t address, uint8_t value)
+	{
+		if (address < 0x8000)
+			return this->_handleMBC1Write(address, value);
+
+		if (address == 0xA000) {
+			switch (value) {
+			case 0:
+				puts("Clear BUFFER1");
+				this->_buffer1.clear();
+				return;
+			case 1:
+				puts("Clear BUFFER2");
+				this->_buffer2.clear();
+				return;
+			case 2:
+				this->_ssid = {this->_buffer1.data(), this->_buffer1.data() + this->_buffer1.size()};
+				printf("New SSID is %s\n", this->_ssid.c_str());
+				return;
+			case 3:
+				this->_passwd = {this->_buffer1.data(), this->_buffer1.data() + this->_buffer1.size()};
+				printf("New passwd is %s\n", this->_passwd.c_str());
+				return;
+			case 5:
+				puts("Stream BUFFER2");
+				this->_buffer2.pop_front();
+				return;
+			default:
+				this->_fillError("Invalid opcode");
+				return;
+			case 4:
+				auto v = exec(("nmcli dev wifi connect \"" + sanatize(this->_ssid) + "\" password \"" + sanatize(this->_passwd) + "\" 2>&1").c_str());
+
+				if (v.find("successfully activated") == std::string::npos)
+					this->_fillError(v);
+				return;
+			}
+		}
+
+		if (address == 0xA001) {
+			printf("Add '%c' (%i) to BUFFER1\n", value, value);
+			return this->_buffer1.push_back(value);
+		}
+
+		if (address == 0xA005) {
+			this->_port = (this->_port & 0xFF00) | value;
+			return;
+		}
+
+		if (address == 0xA006) {
+			this->_port = (this->_port & 0x00FF) | (value << 8);
+			return;
+		}
+		if (address <= 0xA005) {
+			auto b = (address - 0xA004) * 8;
+
+			this->_port = (this->_port & ~(0xFF << b)) | (value << b);
+			return;
+		}
+		if (address <= 0xA009) {
+			auto b = (address - 0xA004) * 8;
+
+			this->_addr = sf::IpAddress((this->_addr.toInteger() & ~(0xFF << b)) | (value << b));
+			return;
+		}
+	}
+
 	bool Cartridge::isGameBoyOnly() const
 	{
 		return !(this->read(0x0143) & 0x80U);
@@ -592,5 +713,14 @@ namespace GBEmulator::Memory
 		default:
 			return Cartridge::TYPE_UNKNOWN;
 		}
+	}
+
+	void Cartridge::_fillError(const std::string &error)
+	{
+		this->_buffer2.clear();
+		this->_buffer2.resize(error.size());
+		for (unsigned i = 0; i < error.size(); i++)
+			this->_buffer2[i] = error[i];
+		printf("%s", error.c_str());
 	}
 }

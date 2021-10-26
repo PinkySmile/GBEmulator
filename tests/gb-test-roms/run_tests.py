@@ -5,7 +5,7 @@ from typing import Tuple, List
 import asyncio
 
 
-base_port = 15800
+base_port = 10800
 
 async def getEmuTestResult(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> bytearray:
 	buffer = bytearray()
@@ -25,8 +25,8 @@ async def getEmuTestResult(reader: asyncio.StreamReader, writer: asyncio.StreamW
 				if timeSpent > 10:
 					print("Time !", buffer.count(10))
 					return buffer
-			if timeSpent2 >= 40:
-				buffer += b"\nTimed out after 10 seconds\n"
+			if timeSpent2 >= 30:
+				buffer += b"\nTimed out after 30 seconds\n"
 				return buffer
 			continue
 		if not b:
@@ -47,11 +47,17 @@ async def executeTest(emuPath: str, romPath: str, port: int) -> Tuple[str, str]:
 	except asyncio.TimeoutError as e:
 		print("Cannot connect to emulator......", e)
 		return romPath.replace("/", "_").replace(" ", "_"), "Cannot connect to emulator\n"
+	except ConnectionRefusedError as e:
+		print("Cannot connect to emulator......", e)
+		return romPath.replace("/", "_").replace(" ", "_"), "Cannot connect to emulator\n"
 	writer.write(bytes([1, 1, 4, 0, 0, 0, 0, 0]))
 	await writer.drain()
 
 	buffer = await getEmuTestResult(reader, writer)
-	process.terminate()
+	try:
+		process.terminate()
+	except ProcessLookupError:
+		pass
 	old = buffer.decode("ASCII")
 	result = []
 	count = 0
@@ -95,15 +101,24 @@ async def testEmulator(path: str) -> None:
 async def main():
 	longestName = 0
 
-	if len(sys.argv) != 2:
+	if len(sys.argv) < 2:
 		print("Usage:", sys.argv[0], "<GBEmulator executable>")
 		exit(1)
 
 	emuPath = sys.argv[1]
 	await testEmulator(emuPath)
 
-	tasks = [executeTestSuite(emuPath, suite, base_port + i * 100) for i, suite in enumerate(sorted(os.listdir("."))) if os.path.isdir(suite)]
-	results = await asyncio.gather(*tasks)
+	if len(sys.argv) == 2:
+		tasks = [executeTestSuite(emuPath, suite, base_port + i * 100) for i, suite in enumerate(sorted(os.listdir("."))) if os.path.isdir(suite)]
+		results = await asyncio.gather(*tasks)
+	else:
+		x = Tuple[str, str]
+		tasks = [executeTest(emuPath, suite, base_port + i) for i, suite in enumerate(sys.argv[2:])]
+		r: List[x] = await asyncio.gather(*tasks)
+		zipped: List[Tuple[str, x]] = list(zip(sys.argv[2:], [f for _, f in r]))
+		results = []
+		for name, result in zipped:
+			results.append([len(name), {name: result}])
 
 	result = {}
 	for length, r in results:

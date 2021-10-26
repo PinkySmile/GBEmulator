@@ -11,11 +11,15 @@
 
 #ifndef ARDUINO
 #include <map>
+#include <SFML/Network/UdpSocket.hpp>
+#include <deque>
+#include <netinet/in.h>
 #else
 #include "../ArduinoStuff/FakeSTL.hpp"
 #endif
 #include "ROM.hpp"
 #include "../Joypad/JoypadEmulator.hpp"
+#include "../Timing/Clock.hpp"
 
 //! La taille d'une bank de ROM
 #define ROM_BANK_SIZE 0x4000
@@ -82,6 +86,7 @@ namespace GBEmulator::Memory
 			MBC5_RUMBLE             = 0x1C,
 			MBC5_RUMBLE_RAM         = 0x1D,
 			MBC5_RUMBLE_RAM_BATTERY = 0x1E,
+			WIFI_CUSTOM_ROM         = 0xA0,
 			FILE_SYSTEM_CUSTOM_ROM  = 0xCE,
 			POCKET_CAMERA           = 0xFC,
 			BANDAI_TAMA5            = 0xFD,
@@ -151,6 +156,15 @@ namespace GBEmulator::Memory
 		std::string _currentSelectedFolder = "/";
 		bool _suspended = false;
 		bool _onlyRoms = false;
+		sf::UdpSocket _sock;
+		std::vector<char> _buffer1;
+		std::deque<char> _buffer2;
+		std::string _ssid;
+		std::string _passwd;
+		mutable Timing::Clock _requTime;
+		unsigned short _port;
+		sf::IpAddress _addr;
+		mutable bool _connected = false;
 
 		static OSType _getOSType(uint16_t type);
 		bool _getFolderContent(const std::string &path, bool keepDotDot);
@@ -188,6 +202,8 @@ namespace GBEmulator::Memory
 		//! @param value Valeur écrite.
 		void _handleRumbleWrite(uint16_t address, uint8_t value);
 		void _handleFSCustomWrite(uint16_t address, uint8_t value);
+		void _handleWifiCustomWrite(uint16_t address, uint8_t value);
+		void _fillError(const std::string &error);
 
 	public:
 		Cartridge();

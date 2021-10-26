@@ -186,6 +186,16 @@ namespace GBEmulator
 		this->_expired = false;
 		this->_sweepFrequencyShadow = this->_frequencyRegister.getFrequency();
 		this->_effectiveVolumeEnvelopeRegister = this->_volumeEnvelopeRegister;
+		if (this->_sweepRegister.sweepShifts != 0) {
+			if (this->_sweepRegister.substract)
+				this->_sweepFrequencyShadow -= this->_sweepFrequencyShadow >> this->_sweepRegister.sweepShifts;
+			else
+				this->_sweepFrequencyShadow += this->_sweepFrequencyShadow >> this->_sweepRegister.sweepShifts;
+			if (this->_sweepFrequencyShadow > 0x7FF)
+				this->_expired = true;
+			else
+				this->_frequencyRegister.setFrequency(this->_sweepFrequencyShadow);
+		}
 	}
 
 	void SquareWaveChannel::onPowerOff()
