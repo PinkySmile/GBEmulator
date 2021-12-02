@@ -22,6 +22,7 @@
 
 namespace GBEmulator::Memory
 {
+#ifndef _WIN32
 	std::string sanatize(std::string val)
 	{
 		for (auto i = 0ULL; i < val.size(); i++) {
@@ -32,7 +33,6 @@ namespace GBEmulator::Memory
 		}
 		return val;
 	}
-
 	std::string exec(const char *cmd) {
 		setenv("LANG", "EN_us.UTF8", true);
 
@@ -48,6 +48,7 @@ namespace GBEmulator::Memory
 		}
 		return result;
 	}
+#endif
 
 	const standard::map<uint32_t, Cartridge::ROMSize> Cartridge::_sizeBytes{
 		standard::pair<uint32_t, Cartridge::ROMSize>{0x008000L, SIZE_32KByte },
@@ -304,6 +305,7 @@ namespace GBEmulator::Memory
 			if (address <= this->_entries[this->_currentEntry].second.size() + 0xA005)
 				return this->_entries[this->_currentEntry].second[address - 0xA005];
 			return 0xFF;
+#ifndef _WIN32
 		case WIFI_CUSTOM_ROM:
 			if (address < 0x8000)
 				return this->_rom.read(address - 0x4000);
@@ -328,6 +330,7 @@ namespace GBEmulator::Memory
 				return this->_connected;
 			}
 			return 0xFF;
+#endif
 		}
 	}
 
@@ -393,8 +396,10 @@ namespace GBEmulator::Memory
 		case FILE_SYSTEM_CUSTOM_ROM:
 			return this->_handleFSCustomWrite(address, value);
 
+#ifndef _WIN32
 		case WIFI_CUSTOM_ROM:
 			return this->_handleWifiCustomWrite(address, value);
+#endif
 		}
 	}
 
@@ -555,6 +560,7 @@ namespace GBEmulator::Memory
 
 	void Cartridge::_handleWifiCustomWrite(uint16_t address, uint8_t value)
 	{
+#ifndef _WIN32
 		if (address < 0x8000)
 			return this->_handleMBC1Write(address, value);
 
@@ -618,6 +624,7 @@ namespace GBEmulator::Memory
 			this->_addr = sf::IpAddress((this->_addr.toInteger() & ~(0xFF << b)) | (value << b));
 			return;
 		}
+#endif
 	}
 
 	bool Cartridge::isGameBoyOnly() const
@@ -715,6 +722,7 @@ namespace GBEmulator::Memory
 		}
 	}
 
+#ifndef _WIN32
 	void Cartridge::_fillError(const std::string &error)
 	{
 		this->_buffer2.clear();
@@ -723,4 +731,5 @@ namespace GBEmulator::Memory
 			this->_buffer2[i] = error[i];
 		printf("%s", error.c_str());
 	}
+#endif
 }

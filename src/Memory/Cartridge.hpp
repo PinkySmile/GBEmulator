@@ -11,9 +11,11 @@
 
 #ifndef ARDUINO
 #include <map>
+#ifndef _WIN32
 #include <SFML/Network/UdpSocket.hpp>
 #include <deque>
 #include <netinet/in.h>
+#endif
 #else
 #include "../ArduinoStuff/FakeSTL.hpp"
 #endif
@@ -86,7 +88,9 @@ namespace GBEmulator::Memory
 			MBC5_RUMBLE             = 0x1C,
 			MBC5_RUMBLE_RAM         = 0x1D,
 			MBC5_RUMBLE_RAM_BATTERY = 0x1E,
+#ifndef _WIN32
 			WIFI_CUSTOM_ROM         = 0xA0,
+#endif
 			FILE_SYSTEM_CUSTOM_ROM  = 0xCE,
 			POCKET_CAMERA           = 0xFC,
 			BANDAI_TAMA5            = 0xFD,
@@ -156,6 +160,7 @@ namespace GBEmulator::Memory
 		std::string _currentSelectedFolder = "/";
 		bool _suspended = false;
 		bool _onlyRoms = false;
+#ifndef _WIN32
 		sf::UdpSocket _sock;
 		std::vector<char> _buffer1;
 		std::deque<char> _buffer2;
@@ -164,7 +169,8 @@ namespace GBEmulator::Memory
 		mutable Timing::Clock _requTime;
 		unsigned short _port;
 		sf::IpAddress _addr;
-		mutable bool _connected = false;
+		mutable bool _connected = false
+#endif
 
 		static OSType _getOSType(uint16_t type);
 		bool _getFolderContent(const std::string &path, bool keepDotDot);

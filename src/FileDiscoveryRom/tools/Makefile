@@ -1,4 +1,8 @@
-NAME =	compressor
+ifdef OS
+   NAME = compressor.exe
+else
+   NAME = compressor
+endif
 
 SRC =	compressor.c
 
@@ -26,7 +30,7 @@ clean:
 	$(RM) $(OBJ)
 
 fclean:	clean
-	$(RM) $(NAME) $(NAME).exe
+	$(RM) $(NAME)
 
 ffclean:fclean
 

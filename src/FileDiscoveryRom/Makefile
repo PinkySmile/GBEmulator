@@ -32,10 +32,18 @@ IMGSFX = $(IMGS:%.png=%.fx)
 
 OBJS = $(SRCS:%.asm=%.o)
 
-all:	tools/compressor $(NAME).inl
+ifdef OS
+   COMPRESSOR_EXE = compressor.exe
+   COMPRESSOR = tools\$(COMPRESSOR_EXE)
+else
+   COMPRESSOR_EXE = compressor
+   COMPRESSOR = tools/$(COMPRESSOR_EXE)
+endif
 
-tools/compressor:
-	$(MAKE) -C tools compressor
+all:	$(COMPRESSOR) $(NAME).inl
+
+$(COMPRESSOR):
+	$(MAKE) -C tools $(COMPRESSOR_EXE)
 
 run:	re
 	wine "$(BGB_PATH)" ./$(NAME).gbc
@@ -48,7 +56,7 @@ runw:	re
 
 %.cfx : %.png
 	$(FX) $(FXFLAGS) -o $@ $<
-	tools/compressor $@
+	$(COMPRESSOR) $@
 
 %.o : %.asm
 	$(ASM) -o $@ $(ASMFLAGS) $<
