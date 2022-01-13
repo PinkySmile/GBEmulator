@@ -14,9 +14,12 @@ GBEmulator::Graphics::LCDSFML::LCDSFML(sf::VideoMode mode, const std::string &ti
 	_size(160, 144),
 	_screen(new sf::Color[this->_size.x * this->_size.y]),
 	_framebuffer(new sf::Color[this->_size.x * this->_size.y]),
+	_lastFramebuffer(new sf::Color[this->_size.x * this->_size.y]),
 	_title(title),
 	_view({80, 72}, {160, 144})
 {
+	memset(this->_framebuffer, 0, this->_size.x * this->_size.y * sizeof(*this->_framebuffer));
+	memset(this->_lastFramebuffer, 0, this->_size.x * this->_size.y * sizeof(*this->_lastFramebuffer));
 	this->_texture.create(this->_size.x, this->_size.y);
 	this->setView(this->_view);
 }
@@ -26,8 +29,13 @@ void GBEmulator::Graphics::LCDSFML::render()
 	sf::Event event;
 	sf::Sprite sprite;
 
+	this->_texture.update(reinterpret_cast<sf::Uint8 *>(this->_lastFramebuffer));
+	sprite.setTexture(this->_texture);
+	sprite.setColor(sf::Color{0xFF, 0xFF, 0xFF, 0xFF});
+	this->draw(sprite);
 	this->_texture.update(reinterpret_cast<sf::Uint8 *>(this->_framebuffer));
 	sprite.setTexture(this->_texture);
+	sprite.setColor(sf::Color{0xFF, 0xFF, 0xFF, 0x80});
 	this->draw(sprite);
 	if (this->_clock.getElapsedTime().asMilliseconds() > 500) {
 		this->setTitle((this->_title + " " + std::to_string(static_cast<int>(100 / this->_lastFrameTime / 60)) + "% (" + std::to_string(this->getFramerate()) + " FPS)").c_str());
@@ -43,6 +51,10 @@ void GBEmulator::Graphics::LCDSFML::render()
 
 void GBEmulator::Graphics::LCDSFML::display()
 {
+	auto old = this->_lastFramebuffer;
+
+	this->_lastFramebuffer = this->_framebuffer;
+	this->_framebuffer = old;
 	memcpy(this->_framebuffer, this->_screen, this->_size.x * this->_size.y * sizeof(sf::Color));
 	this->_lastFrameTime = this->_emulatorSpeed.getElapsedTime().asSeconds();
 	this->_emulatorSpeed.restart();
@@ -72,6 +84,7 @@ GBEmulator::Graphics::LCDSFML::~LCDSFML()
 {
 	delete[] this->_screen;
 	delete[] this->_framebuffer;
+	delete[] this->_lastFramebuffer;
 }
 
 bool GBEmulator::Graphics::LCDSFML::isClosed() const

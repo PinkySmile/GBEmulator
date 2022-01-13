@@ -45,6 +45,7 @@ cmake_install.cmake
 CMakeFiles/
 CMakeCache.txt
 *.fx
+*.cfx
 *.sav
 *.gb
 *.gbc

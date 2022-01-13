@@ -27,6 +27,7 @@ namespace GBEmulator
 			sf::Vector2u  _size;
 			sf::Color     *_screen;
 			sf::Color     *_framebuffer;
+			sf::Color     *_lastFramebuffer;
 			std::string   _title;
 			sf::Clock     _fpsClock;
 			sf::Clock     _clock;
