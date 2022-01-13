@@ -169,7 +169,7 @@ namespace GBEmulator::Memory
 		mutable Timing::Clock _requTime;
 		unsigned short _port;
 		sf::IpAddress _addr;
-		mutable bool _connected = false
+		mutable bool _connected = false;
 #endif
 
 		static OSType _getOSType(uint16_t type);
