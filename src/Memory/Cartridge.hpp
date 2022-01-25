@@ -161,15 +161,14 @@ namespace GBEmulator::Memory
 		bool _suspended = false;
 		bool _onlyRoms = false;
 #ifndef _WIN32
+		float _x = 0;
+		float _y = 0;
+		bool _interrupt = false;
 		sf::UdpSocket _sock;
-		std::vector<char> _buffer1;
-		std::deque<char> _buffer2;
-		std::string _ssid;
-		std::string _passwd;
-		mutable Timing::Clock _requTime;
-		unsigned short _port;
-		sf::IpAddress _addr;
-		mutable bool _connected = false;
+		unsigned _cycle = 0;
+		unsigned short _port = 23568;
+		mutable bool _sent = false;
+		sf::IpAddress _addr = "127.0.0.1";
 #endif
 
 		static OSType _getOSType(uint16_t type);
@@ -209,7 +208,8 @@ namespace GBEmulator::Memory
 		void _handleRumbleWrite(uint16_t address, uint8_t value);
 		void _handleFSCustomWrite(uint16_t address, uint8_t value);
 		void _handleWifiCustomWrite(uint16_t address, uint8_t value);
-		void _fillError(const std::string &error);
+		void sendOpcode(int opcode, const void *data, size_t datalen, bool writeLen = false);
+		static unsigned char getWifiLevel();
 
 	public:
 		Cartridge();
@@ -244,6 +244,7 @@ namespace GBEmulator::Memory
 		bool goToMenu();
 		bool isGameBoyOnly() const;
 		bool setRootFolder(const std::string &root);
+		void update();
 	};
 }
 

@@ -442,6 +442,7 @@ namespace GBEmulator
 			this->_interruptRequest |= TIMER_INTERRUPT;
 
 		this->_apu.update(cycles);
+		this->_rom.update();
 	}
 
 	bool CPU::_checkInterrupts()

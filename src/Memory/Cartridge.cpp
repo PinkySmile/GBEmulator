@@ -11,6 +11,7 @@
 #include <cstring>
 #include <cmath>
 #include <dirent.h>
+#include <fstream>
 #include "../ProcessingUnits/Instructions/Strings.hpp"
 #else
 #include <string.h>
@@ -197,7 +198,11 @@ namespace GBEmulator::Memory
 			this->_actualType = this->_type;
 		this->_checkROM();
 
-		size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
+		if (this->_type == WIFI_CUSTOM_ROM)
+			size = 0x400;
+		else
+			size = (this->_rom.rawRead(0x149) != 0) * 2 * pow(4, this->_rom.rawRead(0x149) - 1) * 1024;
+
 		mem = new unsigned char[size];
 		this->_ram.setMemory(mem, size);
 		this->_ram.setBankSize(RAM_BANKING_SIZE);
@@ -205,13 +210,18 @@ namespace GBEmulator::Memory
 			this->_ram.setBank(0);
 		else
 			this->_ram.setBankSize(size);
-		for (size_t i = 0; i < size; i++)
-			mem[i] = rand() % 0x100;
+		if (this->_type == WIFI_CUSTOM_ROM)
+			memset(this->_ram.getBuffer(), 0, size);
+		else
+			for (size_t i = 0; i < size; i++)
+				mem[i] = rand() % 0x100;
 		return true;
 	}
 
 	bool Cartridge::loadRAM(const standard::string &ram)
 	{
+		if (this->_type == WIFI_CUSTOM_ROM)
+			return true;
 		FILE *stream = fopen(ram.c_str(), "rb");
 		if (stream) {
 			fread(this->_ram.getBuffer(), 1, this->_ram.getSize(), stream);
@@ -223,6 +233,8 @@ namespace GBEmulator::Memory
 
 	bool Cartridge::loadRAM(unsigned char *data, size_t size)
 	{
+		if (this->_type == WIFI_CUSTOM_ROM)
+			return true;
 		if (this->_ram.getSize() != size)
 			return false;
 		memcpy(this->_ram.getBuffer(), data, size);
@@ -231,6 +243,8 @@ namespace GBEmulator::Memory
 
 	bool Cartridge::saveRAM(const char *path)
 	{
+		if (this->_type == WIFI_CUSTOM_ROM)
+			return true;
 		if (this->_ram.getSize() == 0)
 			return true;
 
@@ -257,6 +271,11 @@ namespace GBEmulator::Memory
 		default:
 #ifdef __cpp_exceptions
 			throw InvalidRomException("Cartridge " + Instructions::intToHex(this->_type) + " not implemented");
+#endif
+#ifndef _WIN32
+		case WIFI_CUSTOM_ROM:
+			if ((address & (1 << 14)) && (address & (1 << 15)))
+				return (this->_interrupt << 1) | this->_ram.read(address & 0x3FF);
 #endif
 		case ROM_ONLY:
 		case ROM_RAM:
@@ -285,7 +304,7 @@ namespace GBEmulator::Memory
 			if (address < 0x8000)
 				return this->_rom.read(address - 0x4000);
 			if (address >= 0xA000 && this->_ram.getSize())
-				return this->_ram.read(address - 0xA000);
+				return this->_ram.read(address & 0x3FF);
 			return 0xFF;
 		case FILE_SYSTEM_CUSTOM_ROM:
 			if (address < 0x8000)
@@ -305,32 +324,6 @@ namespace GBEmulator::Memory
 			if (address <= this->_entries[this->_currentEntry].second.size() + 0xA005)
 				return this->_entries[this->_currentEntry].second[address - 0xA005];
 			return 0xFF;
-#ifndef _WIN32
-		case WIFI_CUSTOM_ROM:
-			if (address < 0x8000)
-				return this->_rom.read(address - 0x4000);
-			if (address < 0xA002)
-				return 0xFF;
-			if (address == 0xA002)
-				return !this->_buffer2.empty();
-			if (address == 0xA003) {
-				if (this->_buffer2.empty())
-					return 0xFF;
-				return this->_buffer2.front();
-			}
-			if (address <= 0xA005)
-				return ((this->_port >> (address - 0xA004) * 8)) & 0xFF;
-			if (address <= 0xA009)
-				return ((this->_addr.toInteger() >> (address - 0xA006) * 8)) & 0xFF;
-			if (address == 0xA00A) {
-				if (this->_requTime.getElapsedTime().asSeconds() >= 1) {
-					this->_connected = exec("nmcli networking connectivity").starts_with("full");
-					this->_requTime.restart();
-				}
-				return this->_connected;
-			}
-			return 0xFF;
-#endif
 		}
 	}
 
@@ -560,71 +553,64 @@ namespace GBEmulator::Memory
 
 	void Cartridge::_handleWifiCustomWrite(uint16_t address, uint8_t value)
 	{
-#ifndef _WIN32
 		if (address < 0x8000)
-			return this->_handleMBC1Write(address, value);
+			return;
 
-		if (address == 0xA000) {
-			switch (value) {
-			case 0:
-				puts("Clear BUFFER1");
-				this->_buffer1.clear();
-				return;
-			case 1:
-				puts("Clear BUFFER2");
-				this->_buffer2.clear();
-				return;
-			case 2:
-				this->_ssid = {this->_buffer1.data(), this->_buffer1.data() + this->_buffer1.size()};
-				printf("New SSID is %s\n", this->_ssid.c_str());
-				return;
-			case 3:
-				this->_passwd = {this->_buffer1.data(), this->_buffer1.data() + this->_buffer1.size()};
-				printf("New passwd is %s\n", this->_passwd.c_str());
-				return;
-			case 5:
-				puts("Stream BUFFER2");
-				this->_buffer2.pop_front();
-				return;
-			default:
-				this->_fillError("Invalid opcode");
-				return;
-			case 4:
-				auto v = exec(("nmcli dev wifi connect \"" + sanatize(this->_ssid) + "\" password \"" + sanatize(this->_passwd) + "\" 2>&1").c_str());
+		this->_ram.write(address - 0xA000, value);
+		this->_interrupt |= (address & 0x3FF) == 0x3FF;
+		if ((address & 0x3FF) == 0x3FE) {
+			switch (this->_ram.read(0)) {
+			case 1: {
+				auto ssid     = reinterpret_cast<char *>(this->_ram.getBuffer() + 1);
+				auto ssidLen  = strnlen(ssid, 0x200);
+				auto passwd   = reinterpret_cast<char *>(this->_ram.getBuffer() + 1 + strnlen(ssid, 0x200) + 1);
+				auto passwdLen= strnlen(passwd, 0x200 - (strnlen(ssid, 0xFFF) + 1));
+				auto v = exec((
+					"nmcli dev wifi connect \"" + sanatize({ssid, ssid + ssidLen}) + "\" "
+					"password \"" + sanatize({passwd, passwd + passwdLen}) + "\" 2>&1"
+				).c_str());
 
+				memset(this->_ram.getBuffer(), 0, std::min<size_t>(0x2000, ssidLen + passwdLen + 3));
 				if (v.find("successfully activated") == std::string::npos)
-					this->_fillError(v);
+					return sendOpcode(3, v.c_str(), v.size());
+
+				unsigned char wifiLevel = Cartridge::getWifiLevel();
+
+				sendOpcode(1, &wifiLevel, 1);
+				return;
+			}
+			case 2: {
+				auto len = *reinterpret_cast<unsigned short *>(this->_ram.getBuffer() + 1);
+
+				if (len < 0x400 - 3) { // Let's not do that
+					if (*(this->_ram.getBuffer() + 3) == 1 && len == 4) {
+						struct {
+							unsigned char op;
+							float x;
+							float y;
+							unsigned char zoom;
+						} pack;
+
+						this->_x += *(char *)(this->_ram.getBuffer() + 4);
+						this->_y += *(char *)(this->_ram.getBuffer() + 5);
+						pack.op = *(this->_ram.getBuffer() + 3);
+						pack.x = this->_x;
+						pack.y = this->_y;
+						pack.zoom += *(char *)(this->_ram.getBuffer() + 6);
+						this->_sock.send(&pack, sizeof(pack), this->_addr, this->_port);
+					} else
+						this->_sock.send(this->_ram.getBuffer() + 3, len, this->_addr, this->_port);
+					puts("Sent!");
+					this->_sent = true;
+				}
+				memset(this->_ram.getBuffer(), 0, std::min<size_t>(0x400, len + 3));
+				return;
+			}
+			default:
+				memset(this->_ram.getBuffer(), 0, 0x200);
 				return;
 			}
 		}
-
-		if (address == 0xA001) {
-			printf("Add '%c' (%i) to BUFFER1\n", value, value);
-			return this->_buffer1.push_back(value);
-		}
-
-		if (address == 0xA005) {
-			this->_port = (this->_port & 0xFF00) | value;
-			return;
-		}
-
-		if (address == 0xA006) {
-			this->_port = (this->_port & 0x00FF) | (value << 8);
-			return;
-		}
-		if (address <= 0xA005) {
-			auto b = (address - 0xA004) * 8;
-
-			this->_port = (this->_port & ~(0xFF << b)) | (value << b);
-			return;
-		}
-		if (address <= 0xA009) {
-			auto b = (address - 0xA004) * 8;
-
-			this->_addr = sf::IpAddress((this->_addr.toInteger() & ~(0xFF << b)) | (value << b));
-			return;
-		}
-#endif
 	}
 
 	bool Cartridge::isGameBoyOnly() const
@@ -692,6 +678,7 @@ namespace GBEmulator::Memory
 	Cartridge::Cartridge()
 	{
 		this->_getFolderContent(".", false);
+		this->_sock.setBlocking(false);
 	}
 
 	Cartridge::OSType Cartridge::_getOSType(uint16_t type)
@@ -722,14 +709,96 @@ namespace GBEmulator::Memory
 		}
 	}
 
-#ifndef _WIN32
-	void Cartridge::_fillError(const std::string &error)
+	void Cartridge::sendOpcode(int opcode, const void *data, size_t datalen, bool writeLen)
 	{
-		this->_buffer2.clear();
-		this->_buffer2.resize(error.size());
-		for (unsigned i = 0; i < error.size(); i++)
-			this->_buffer2[i] = error[i];
-		printf("%s", error.c_str());
+		size_t start = 0x200;
+
+		for (auto op = this->_ram.read(start); op && start < 0x3FF; op = this->_ram.read(start)) {
+			if (opcode == op && op == 1)
+				break;
+			start++;
+			switch (op) {
+			case 1:
+				start++;
+				break;
+			case 2:
+				start += (this->_ram.read(start) + (this->_ram.read(start) << 8)) + 2;
+				break;
+			case 3:
+				start += strnlen(reinterpret_cast<char *>(this->_ram.getBuffer() + start), 0x400 - start) + 1;
+				break;
+			default:
+				start--;
+				memset(this->_ram.getBuffer() + start, 0, 0x400 - start);
+				break;
+			}
+		}
+		if ((start + datalen + 1 + writeLen * 2) >= 0x400) {
+			if (opcode != 4)
+				sendOpcode(4, nullptr, 0);
+			return;
+		}
+		this->_ram.write(start, opcode);
+		if (writeLen) {
+			this->_ram.write(start + 1, datalen & 0xFF);
+			this->_ram.write(start + 2, (datalen >> 8) & 0xFF);
+		}
+		if (datalen)
+			memcpy(&this->_ram.getBuffer()[start + 1 + writeLen * 2], data, datalen);
+		this->_interrupt = true;
 	}
-#endif
+
+	unsigned char Cartridge::getWifiLevel()
+	{
+		std::ifstream stream{"/proc/net/wireless"};
+		std::string line;
+		int level = 0;
+		size_t i = 0;
+		bool space = false;
+
+		if (!std::getline(std::getline(std::getline(stream, line), line), line))
+			return 0;
+		for (; i < line.size() && level < 3; i++) {
+			bool newSpace = std::isspace(line[i]);
+
+			if (space && !newSpace)
+				level++;
+			space = newSpace;
+		}
+		if (level != 3 || i >= line.size())
+			return 0;
+		return atoi(line.c_str() + i) + 128;
+	}
+
+	void Cartridge::update()
+	{
+		if (this->_type != WIFI_CUSTOM_ROM)
+			return;
+
+		bool ok = true;
+		char buffer[0x200];
+		size_t length;
+
+		this->_cycle++;
+		if ((this->_cycle & 0xFFFF) == 0) {
+			unsigned char wifiLevel = Cartridge::getWifiLevel();
+
+			sendOpcode(1, &wifiLevel, 1);
+		}
+		if (this->_sent && (this->_cycle & 0xFFF) == 0)
+			while (true) {
+				switch (this->_sock.receive(buffer, 0x200, length, this->_addr, this->_port)) {
+				case sf::UdpSocket::Done:
+					if (ok)
+						sendOpcode(2, buffer, length, true);
+				case sf::UdpSocket::NotReady:
+					return;
+				case sf::UdpSocket::Partial:
+					break;
+				case sf::UdpSocket::Error:
+					return sendOpcode(2, "Socket error", strlen("Socket error"));
+				}
+				ok = false;
+			}
+	}
 }
