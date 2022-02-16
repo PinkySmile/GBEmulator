@@ -163,7 +163,7 @@ namespace GBEmulator::Memory
 #ifndef _WIN32
 		float _x = 0;
 		float _y = 0;
-		bool _interrupt = false;
+		mutable bool _interrupt = false;
 		sf::UdpSocket _sock;
 		unsigned _cycle = 0;
 		unsigned short _port = 23568;

@@ -276,6 +276,8 @@ namespace GBEmulator::Memory
 		case WIFI_CUSTOM_ROM:
 			if ((address & (1 << 14)) && (address & (1 << 15)))
 				return (this->_interrupt << 1) | this->_ram.read(address & 0x3FF);
+			if (address > 0xA000)
+				this->_interrupt = false;
 #endif
 		case ROM_ONLY:
 		case ROM_RAM:
@@ -745,6 +747,7 @@ namespace GBEmulator::Memory
 		}
 		if (datalen)
 			memcpy(&this->_ram.getBuffer()[start + 1 + writeLen * 2], data, datalen);
+		this->_ram.write(start + 1 + writeLen * 2 + datalen, 0);
 		this->_interrupt = true;
 	}
 
