@@ -585,6 +585,8 @@ namespace GBEmulator::Memory
 				auto len = *reinterpret_cast<unsigned short *>(this->_ram.getBuffer() + 1);
 
 				if (len < 0x400 - 3) { // Let's not do that
+					this->_addr = sf::IpAddress::Any;
+					this->_port = 23568;
 					if (*(this->_ram.getBuffer() + 3) == 1 && len == 4) {
 						struct {
 							unsigned char op;
@@ -596,8 +598,8 @@ namespace GBEmulator::Memory
 						this->_x += *(char *)(this->_ram.getBuffer() + 4);
 						this->_y += *(char *)(this->_ram.getBuffer() + 5);
 						pack.op = *(this->_ram.getBuffer() + 3);
-						pack.x = this->_x;
-						pack.y = this->_y;
+						pack.x = this->_x * 8;
+						pack.y = this->_y * 8;
 						pack.zoom += *(char *)(this->_ram.getBuffer() + 6);
 						this->_sock.send(&pack, sizeof(pack), this->_addr, this->_port);
 					} else
@@ -713,7 +715,7 @@ namespace GBEmulator::Memory
 
 	void Cartridge::sendOpcode(int opcode, const void *data, size_t datalen, bool writeLen)
 	{
-		size_t start = 0x200;
+		size_t start = 0x100;
 
 		for (auto op = this->_ram.read(start); op && start < 0x3FF; op = this->_ram.read(start)) {
 			if (opcode == op && op == 1)
@@ -779,7 +781,7 @@ namespace GBEmulator::Memory
 			return;
 
 		bool ok = true;
-		char buffer[0x200];
+		char buffer[0x300];
 		size_t length;
 
 		this->_cycle++;
@@ -788,9 +790,9 @@ namespace GBEmulator::Memory
 
 			sendOpcode(1, &wifiLevel, 1);
 		}
-		if (this->_sent && (this->_cycle & 0xFFF) == 0)
+		if (this->_sent && (this->_cycle & 0xFFF) == 0) {
 			while (true) {
-				switch (this->_sock.receive(buffer, 0x200, length, this->_addr, this->_port)) {
+				switch (this->_sock.receive(buffer, 0x2FC, length, this->_addr, this->_port)) {
 				case sf::UdpSocket::Done:
 					if (ok)
 						sendOpcode(2, buffer, length, true);
@@ -803,5 +805,6 @@ namespace GBEmulator::Memory
 				}
 				ok = false;
 			}
+		}
 	}
 }
