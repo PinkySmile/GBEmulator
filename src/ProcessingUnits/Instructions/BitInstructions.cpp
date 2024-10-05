@@ -204,35 +204,35 @@ namespace GBEmulator::Instructions
 		case 0x2F:
 			return SRA(reg, reg.a);
 
-		//! 30; SWAP b: The contents of b are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 30; SWAP b: The low and high nibbles of b are swapped.
 		case 0x30:
 			return SWAP(reg, reg.b);
 
-		//! 31; SWAP c: The contents of c are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 31; SWAP c: The low and high nibbles of c are swapped.
 		case 0x31:
 			return SWAP(reg, reg.c);
 
-		//! 32; SWAP d: The contents of d are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 32; SWAP d: The low and high nibbles of d are swapped.
 		case 0x32:
 			return SWAP(reg, reg.d);
 
-		//! 33; SWAP e: The contents of e are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 33; SWAP e: The low and high nibbles of e are swapped.
 		case 0x33:
 			return SWAP(reg, reg.e);
 
-		//! 34; SWAP h: The contents of h are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 34; SWAP h: The low and high nibbles of h are swapped.
 		case 0x34:
 			return SWAP(reg, reg.h);
 
-		//! 35; SWAP l: The contents of l are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 35; SWAP l: The low and high nibbles of l are swapped.
 		case 0x35:
 			return SWAP(reg, reg.l);
 
-		//! 36; SWAP (hl): The contents of (hl) are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 36; SWAP (hl): The low and high nibbles of (hl) are swapped.
 		case 0x36:
 			return executeOnPtr(cpu, reg.hl, SWAP, reg);
 
-		//! 37; SWAP a: The contents of a are shifted left one bit position. The contents of bit 7 are put into the carry flag and a one is put into bit 0.
+		//! 37; SWAP a: The low and high nibbles of a are swapped.
 		case 0x37:
 			return SWAP(reg, reg.a);
 
